@@ -1,0 +1,160 @@
+﻿Token: api/token
+---------------------------
+Post
+	headers:
+		"Content-Type": "application/json"
+
+	body: {
+		"username": "username",
+		"password": "password"
+	}
+
+	responses:
+		200 OK,
+			headers:
+				"Content-Type": "application/json"
+			body: {
+				token: "abH8j9fghtyu"
+			}
+
+		400 Bad request
+		401 Unauthorized (bad password)
+		415 Unsupported media type
+
+Folders: api/folders
+---------------------------
+Get 
+	optional query parameter: bet_id. api/folders?bet_id={bet_id}. selects folders which have bet with given bet_id.
+	headers:
+		"Authorization": "abH8j9fghtyu"
+
+	responses:
+		200 OK,
+			body: ["folder1", "folder2", "folder3"]
+			headers:
+				"Content-Type": "application/json"
+		401 Unauthorized (invalid token)
+
+Post
+	headers:
+		"Authorization": "abH8j9fghtyu",
+		"Content-Type": "application/json"
+
+	request body:{
+		"folder": "mymasterbets"
+	}
+
+	responses:
+		201 Created
+		401 Unauthorized
+		400 Bad request
+		409 Conflict (Resource already exists)
+		415 Unsupported media type
+
+Delete
+	uri: api/folders?folder={foldername}
+
+	headers:
+		"Authorization": "abH8j9fghtyu",
+		"Content-Type": "application/json"
+
+	responses:
+		204 No content
+		400 Bad request
+		401 Unauthorized
+		404 Not found
+
+User: api/user
+------------------------------------------
+Post
+	headers:
+		"Content-Type": "application/json"
+	request body:{
+		"username": "myusername",
+		"password": "mypassword"
+	}
+
+	responses:
+		201 Created
+		400 Bad request (missing body)
+		409 Conflict (username exists)
+		415 Unsupported media type
+
+Bets: api/bets
+------------------------------------------------------------------------------
+	optional uri parameters: api/bets?finished={true}&folder={foldername}
+
+	finished, bool: if inputted returns bets that have either finished or not.
+	folder, string: if inputted returns bets from a specific folder
+Get
+	headers:
+		"Authorization": "abH8j9fghtyu"
+	
+	responses:
+		200 OK
+		401 Unauthorized
+
+		headers:
+			"Content-Type": "application/json"
+
+Delete 
+	/bets/{id}?folders={foldername}&folders={foldername}: Deletes bet with bet_id from selected folders.
+	/bets/{id}: Deletes bet from all its owners folders.
+	
+	headers:
+		"Authorization": "abH8j9fghtyu"
+
+	responses:
+		204 No content
+		401 Unauthorized
+		404 Not found
+
+Put 
+	/bets/{id}
+	headers:
+		"Authorization": "abH8j9fghtyu"
+
+	request body:{
+		"bet_won": "true",
+		"odd": "2.34",
+		"bet": "2.0",
+		"name": "mybet"
+	}
+	explained: 
+		bet_won: boolean, false: bet lost, true: bet won
+		odd: Odd for the played bet. Optional parameter.
+		bet: stake, amount of money played for the bet. Optional parameter.
+		name: optional name for the bet, to help user identify the bet later on if necessary. Optional parameter.
+
+	responses:
+		204 No content
+		400 Bad request
+		401 Unauthorized
+		404 Not found
+		409 Conflict
+
+Post:
+	headers:
+		"Authorization": "abH8j9fghtyu"
+
+	request body:{
+		"bet_won": "true",
+		"odd": "2.50",
+		"bet": "5",
+		"name": "mynewbet",
+		"datetime": "2018-08-21 12:35:32",
+		"folders":["folder1", "folder2"]
+	}
+
+	bet_won: bool?, 'null' = bet hasn't finished, false = bet lost, true = bet correct. Null value has to be given as a string {"null"}
+	odd: double, odd for the new bet.
+	bet: double, Amount of money user placed on the wager.
+	name: string, name to identify the bet.
+	datetime: string, time when the bet was played. Recommended format: 'yyyy-MM-dd hh:mm:ss'.
+	folders: List<string>, list of folder names to which user would like to place the new bet.
+
+	responses:
+	200 OK
+	400 Bad request (missing parameters in body, invalid parameters)
+	401 Unauthorized (missing authentication header or invalid token)
+
