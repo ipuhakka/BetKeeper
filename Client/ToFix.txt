@@ -1,9 +1,0 @@
--Notify Unauthorized events throughout the app, tell user to login again.
-
--Switch window.alert to bootstrap Alert component throughout the app.
-
--MaskedInput
-
--timezone in dates
-
--Remove input special characters
