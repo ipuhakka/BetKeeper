@@ -16,9 +16,8 @@ import ConstVars from './Consts.js';
 class AddBets extends Component {
 	constructor(props){
 		super(props);
-		console.log("add bets");
+
 		this.state = {
-			folders: [],
 			selected: [],
 			odd: 0.0,
 			bet: 0.0,
@@ -30,7 +29,6 @@ class AddBets extends Component {
 			selectedBet: -1
 		};
 
-		this.onLoad = this.onLoad.bind(this);
 		this.setOdd = this.setOdd.bind(this);
 		this.setBet = this.setBet.bind(this);
 		this.setName = this.setName.bind(this);
@@ -38,7 +36,6 @@ class AddBets extends Component {
 		this.setUpdateBetResult = this.setUpdateBetResult.bind(this);
 		this.addBet = this.addBet.bind(this);
 		this.setFoldersList = this.setFoldersList.bind(this);
-		this.setBetsList = this.setBetsList.bind(this);
 		this.getAlert = this.getAlert.bind(this);
 		this.setAlertState = this.setAlertState.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
@@ -46,18 +43,13 @@ class AddBets extends Component {
 		this.updateResult = this.updateResult.bind(this);
 	}
 	
-	componentDidMount(){
-		this.onLoad();
-	}
-	
-	render(){
-		
+	render(){		
 		var items = [];
-		if (this.state.folders !== null){		
-			for (var i = 0; i < this.state.folders.length; i++){
-				items.push(<ListGroupItem bsStyle={this.state.selected[i] ?  'info': null} onClick={this.pressedListItem.bind(this, i)} key={i}>{this.state.folders[i]}</ListGroupItem>)
-			}
-		}	
+	
+		for (var i = 0; i < this.props.folders.length; i++){
+			items.push(<ListGroupItem bsStyle={this.state.selected[i] ?  'info': null} onClick={this.pressedListItem.bind(this, i)} key={i}>{this.props.folders[i]}</ListGroupItem>)
+		}
+		
 		var alert = this.getAlert();
 		var unResolved = this.renderBetsList();
 		
@@ -101,7 +93,7 @@ class AddBets extends Component {
 								<Radio name="radioGroup" value={true} inline>Won</Radio>{' '}
 								<Radio name="radioGroup" value={false} inline>Lost</Radio>
 						</FormGroup>
-						<Button disabled={this.state.updateBetResult === null} bsStyle="primary" className="button" onClick={this.updateResult}>Update result</Button>
+						<Button disabled={this.state.updateBetResult === null || this.state.selectedBet === -1} bsStyle="primary" className="button" onClick={this.updateResult}>Update result</Button>
 					</Col>
 				</Row>
 			</div>
@@ -110,9 +102,9 @@ class AddBets extends Component {
 	
 	renderBetsList(){
 		var items = [];
-		for (var i = this.state.bets.length - 1; i >= 0; i--){
-			items.push(<ListGroupItem header={this.state.bets[i].name + " " + this.state.bets[i].datetime} key={i} onClick={this.handleBetListClick.bind(this, i)} bsStyle={this.state.selectedBet === i ? 'info' : null}>
-						{"Odd: " + this.state.bets[i].odd + " Bet: " + this.state.bets[i].bet}</ListGroupItem>)
+		for (var i = this.props.bets.length - 1; i >= 0; i--){
+			items.push(<ListGroupItem header={this.props.bets[i].name + " " + this.props.bets[i].datetime} key={i} onClick={this.handleBetListClick.bind(this, i)} bsStyle={this.state.selectedBet === i ? 'info' : null}>
+						{"Odd: " + this.props.bets[i].odd + " Bet: " + this.props.bets[i].bet}</ListGroupItem>)
 		}
 		return items;
 	}
@@ -202,9 +194,9 @@ class AddBets extends Component {
 		}
 		
 		var selectedFolders = []
-		for (var i = 0; i < this.state.folders.length; i++){
+		for (var i = 0; i < this.props.folders.length; i++){
 			if (this.state.selected[i])
-				selectedFolders.push(this.state.folders[i]);
+				selectedFolders.push(this.props.folders[i]);
 		}
 		
 		var bet_won = "null";
@@ -230,7 +222,7 @@ class AddBets extends Component {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
 					this.setAlertState("OK");
-					this.onLoad();
+					this.props.onUpdate();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					this.setAlertState("Bad request");
@@ -294,8 +286,12 @@ class AddBets extends Component {
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
 					console.log(xmlHttp.status);
-					this.setAlertState("No content");
-					this.onLoad();
+					this.setAlertState("No content"); //null selections
+					this.setFoldersList();
+					this.setState({ 
+						selectedBet: -1
+					});
+					this.props.onUpdate();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					this.setAlertState("Bad request");
@@ -315,29 +311,26 @@ class AddBets extends Component {
 					console.log(xmlHttp.status);
 				}		
         });
-		xmlHttp.open("PUT", ConstVars.URI + "bets/" + this.state.bets[this.state.selectedBet].bet_id);
+		xmlHttp.open("PUT", ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id);
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send(JSON.stringify(data));
 	}
 	
 	///init an array of booleans to keep track of selected list items and set the state.
-	setFoldersList(data){
+	setFoldersList(){
 		var selected = []
 		
-		for (var i = 0; i < data.length; i++){
+		for (var i = 0; i < this.props.folders.length; i++){
 			selected.push(false);
 		}
 		
 		this.setState({
-			selected: selected,
-			folders: data
+			selected: selected
 		});
 	}
 	
-	setBetsList(data){
-		this.setState({
-			bets: data
-		});
+	setBetsList(){
+		this.props.onUpdate();
 	}
 	
 	pressedListItem(i){
@@ -347,48 +340,7 @@ class AddBets extends Component {
 		this.setState({
 			selected: selected
 		});
-	}
-	
-	//fetch user folders and unresolved bets. Sets selectedBet as -1, so none are selected just after data has been received.
-	onLoad(){
-		var xmlHttp = new XMLHttpRequest();
-		
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setFoldersList(JSON.parse(xmlHttp.responseText));
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-				}		
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "folders/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
-		
-		var xmlHttp2 = new XMLHttpRequest();
-		
-		xmlHttp2.onreadystatechange =( () => {
-				if (xmlHttp2.readyState === 4 && xmlHttp2.status === 200) {
-					console.log(xmlHttp2.status);
-					this.setBetsList(JSON.parse(xmlHttp2.responseText));
-				}
-				if (xmlHttp2.readyState === 4 && xmlHttp2.status === 401) {
-					console.log(xmlHttp2.status);
-				}		
-
-        });
-		xmlHttp2.open("GET", ConstVars.URI + "bets?finished=false");
-		xmlHttp2.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp2.send();
-		
-		this.setState({
-			selectedBet: -1
-		});
-	}
-	
+	}		
 }
 
 export default AddBets;
-

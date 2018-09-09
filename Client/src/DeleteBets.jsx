@@ -14,19 +14,14 @@ import Col from 'react-bootstrap/lib/Grid';
 class DeleteBets extends Component{
 	constructor(props){
 		super(props);
-		console.log("delete bets");
+
 		this.state = {
-			bets: [],
 			selectedBet: -1,
-			allFolders: [],
 			allFoldersSelected: -1,
-			folders: [],
-			selectedFolders: [],
+			folders: [], //components own state variable folders[] contains folders for the selected bet.
+			selectedFolders: [], //contains folders for selected bet which have been selected.
 			alertState: null
 		};
-		
-		this.onLoad = this.onLoad.bind(this);
-		this.setBets = this.setBets.bind(this);
 		this.setBetsFolders = this.setBetsFolders.bind(this);
 		this.getBetsFolders = this.getBetsFolders.bind(this);
 		this.onPressedFolder = this.onPressedFolder.bind(this);
@@ -37,10 +32,6 @@ class DeleteBets extends Component{
 		this.renderFolderList = this.renderFolderList.bind(this);
 		this.renderBetsList = this.renderBetsList.bind(this);
 		this.showFromFolder = this.showFromFolder.bind(this);
-	}
-	
-	componentDidMount(){
-		this.onLoad();
 	}
 	
 	render(){
@@ -75,7 +66,7 @@ class DeleteBets extends Component{
 				</Row>
 				<Row>
 					<Col className="col-md-6 col-xs-12">
-						<Button className="button" onClick={this.deleteBet} bsStyle="warning">Delete</Button>
+						<Button disabled={this.state.selectedBet === -1} className="button" onClick={this.deleteBet} bsStyle="warning">Delete</Button>
 						<div>{alertState}</div>
 					</Col>
 				</Row>
@@ -86,20 +77,20 @@ class DeleteBets extends Component{
 	renderBetsList(){
 		var betItems = [];
 		var isSelected = false;
-		for (var i = this.state.bets.length -1; i >= 0; i--){
+		for (var i = this.props.bets.length -1; i >= 0; i--){
 			if (i === this.state.selectedBet || i.toString() === this.state.selectedBet)
 				isSelected = true;
 			else
 				isSelected = false;
 			
 			var result = "Unresolved";
-			if (this.state.bets[i].bet_won)
+			if (this.props.bets[i].bet_won)
 				result = "Won";
-			else if (!this.state.bets[i].bet_won)
+			else if (!this.props.bets[i].bet_won)
 				result = "Lost";
-			if (this.state.bets[i].bet_won === null || this.state.bets[i].bet_won.toString() === 'null')
+			if (this.props.bets[i].bet_won === null || this.props.bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
-			betItems.push(<ListGroupItem onClick={this.onPressedBet.bind(this, i)} bsStyle={isSelected ?  'info': null} key={i} header={this.state.bets[i].name + " " + this.state.bets[i].datetime}>{"Odd: " + this.state.bets[i].odd + " Bet: " + this.state.bets[i].bet + " " + result}</ListGroupItem>)
+			betItems.push(<ListGroupItem onClick={this.onPressedBet.bind(this, i)} bsStyle={isSelected ?  'info': null} key={i} header={this.props.bets[i].name + " " + this.props.bets[i].datetime}>{"Odd: " + this.props.bets[i].odd + " Bet: " + this.props.bets[i].bet + " " + result}</ListGroupItem>)
 		}
 		return betItems;
 	}
@@ -108,15 +99,13 @@ class DeleteBets extends Component{
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</MenuItem>);
 		var active = false;
-		if (this.state.allFolders.length > 0){
-			for (var k = 0; k < this.state.allFolders.length; k++){
-				active = false;
-				if (k === this.state.allFoldersSelected || k.toString() === this.state.allFoldersSelected)
-					active = true;
-				menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.state.allFolders[k]}</MenuItem>);
-			}
+		for (var k = 0; k < this.props.folders.length; k++){
+			active = false;
+			if (k === this.state.allFoldersSelected || k.toString() === this.state.allFoldersSelected)
+				active = true;
+			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
 		}
-		
+			
 		return menuItems;
 	}
 	
@@ -157,32 +146,18 @@ class DeleteBets extends Component{
 	
 	//Get bets from selected folder.
 	showFromFolder(key){
-		var xmlHttp = new XMLHttpRequest();
-		
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setBets(JSON.parse(xmlHttp.responseText));
-					this.setState({
-						folders: [],
-						selectedFolders: []			
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-				}		
-
-        });
-		var uri = ConstVars.URI + "bets?folder=";
-		if (key !== '-1' && key !== -1)
-			uri = uri + this.state.allFolders[key];
-		xmlHttp.open("GET", uri);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
-		
 		this.setState({
-			allFoldersSelected: key
+			folders: [],
+			selectedFolders: [],
+			allFoldersSelected: key,
+			selectedBet: -1
 		});
+		
+		if (key !== '-1' && key !== -1)
+			this.props.onUpdate(this.props.folders[key]);
+		else 
+			this.props.onUpdate();
+
 	}
 	
 	//Creates a request to delete the selected bet. If any folders are selected, bet is only deleted from selected folders.
@@ -195,7 +170,7 @@ class DeleteBets extends Component{
 			if (this.state.selectedFolders[i])
 				folders.push(this.state.folders[i]);
 		}		
-		var uri = ConstVars.URI + "bets/" + this.state.bets[this.state.selectedBet].bet_id;
+		var uri = ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id;
 		
 		if (folders.length > 0){
 			uri = uri + "?";
@@ -211,9 +186,12 @@ class DeleteBets extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "OK"
+						folders: [],
+						selectedFolders: [],
+						alertState: "OK",
+						selectedBet: -1
 					});
-					this.onLoad(); ///get new bet list
+					this.props.onUpdate();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
@@ -239,7 +217,7 @@ class DeleteBets extends Component{
 		var value = -1;
 		if (this.state.selectedBet !== key){ //set key and get folders.
 			value = key;
-			this.getBetsFolders(this.state.bets[key].bet_id);
+			this.getBetsFolders(this.props.bets[key].bet_id);
 		}
 		else {
 			this.setState({
@@ -258,57 +236,6 @@ class DeleteBets extends Component{
 		
 		this.setState({
 			selectedFolders: selected
-		});
-	}
-	
-	//Get all bets and folders.
-	onLoad(){
-		var xmlHttp = new XMLHttpRequest(); //bets
-		
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setBets(JSON.parse(xmlHttp.responseText));
-					this.setState({
-						folders: [],
-						selectedFolders: []			
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: "Authorization"
-					});
-					console.log(xmlHttp.status);
-				}		
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "bets/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
-		
-		var xmlHttp2 = new XMLHttpRequest(); //folders
-		
-		xmlHttp2.onreadystatechange =( () => {
-				if (xmlHttp2.readyState === 4 && xmlHttp2.status === 200) {
-					console.log(xmlHttp2.status);
-					this.setState({
-						allFolders: JSON.parse(xmlHttp2.responseText)	
-					});
-				}
-				if (xmlHttp2.readyState === 4 && xmlHttp2.status === 401) {
-					console.log(xmlHttp.status);
-				}		
-
-        });
-		xmlHttp2.open("GET", ConstVars.URI + "folders/");
-		xmlHttp2.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp2.send();
-	}
-	
-	setBets(data){	
-		this.setState({
-			bets: data,
-			selectedBet: -1
 		});
 	}
 	

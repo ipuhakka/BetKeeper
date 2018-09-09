@@ -84,7 +84,6 @@ class Statistics extends Component{
 		);
 	}
 	
-	
 	renderOverviewTable(){
 		var tableItems = []; 
 		var overviewItems = this.state.overviewItems;
@@ -101,9 +100,9 @@ class Statistics extends Component{
 					<thead>
 						<tr>
 							<th>{"Name"}</th>
-							<th>{"Money returned"}</th>
-							<th>{"Return percentage"}</th>
-							<th>{"Win percentage"}</th>
+							<th className="clickable">{"Money returned"}</th>
+							<th className="clickable">{"Return percentage"}</th>
+							<th className="clickable">{"Win percentage"}</th>
 						</tr>
 					</thead>
 					<tbody>{tableItems}</tbody>
@@ -145,11 +144,11 @@ class Statistics extends Component{
 						<td>{this.state.avgReturn}</td>
 					</tr>
 					<tr>
-						<td>{"Expected return %"}</td>
+						<td>{"Expected return"}</td>
 						<td>{this.state.expectedReturn}</td>
 					</tr>
 					<tr className={this.state.verifiedReturn >= 1 ? 'tableGreen' : 'tableRed'}>
-						<td>{"Verified return %"}</td>
+						<td>{"Verified return"}</td>
 						<td>{this.state.verifiedReturn}</td>
 					</tr>
 					<tr>
@@ -269,7 +268,7 @@ class Statistics extends Component{
 		switch(this.state.alertState){
 			case "Unauthorized":
 				return(<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"Session expired, please login again"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button></Alert>);
+						<Button onClick={this.dismissAlert}>{"Hide"}</Button></Alert>);
 			default:
 				return;
 		}

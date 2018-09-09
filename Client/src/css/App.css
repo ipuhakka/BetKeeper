@@ -46,6 +46,10 @@ th{
 	text-align:center;
 }
 
+th.clickable{
+	cursor:pointer;
+}
+
 .tableGreen{
 	color: springgreen;
 }
