@@ -7,7 +7,7 @@ import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Alert from 'react-bootstrap/lib/Alert';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import ConstVars from './Consts.js';
+import ConstVars from './js/Consts.js';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 

@@ -10,7 +10,7 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import * as Stats from './js/Stats.js';
-import ConstVars from './Consts.js';
+import ConstVars from './js/Consts.js';
 
 class Statistics extends Component{
 	constructor(props){

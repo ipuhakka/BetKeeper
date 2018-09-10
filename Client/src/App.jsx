@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ConstVars from './Consts.js';
+import ConstVars from './js/Consts.js';
 import MaskedInput from './MaskedInput.jsx';
 import Alert from 'react-bootstrap/lib/Alert';
 
@@ -69,7 +69,7 @@ class App extends Component {
 	//to sessionStorage and changes html page.
 	requestToken(user, passwd){
 		if (user === "" || passwd === ""){
-			window.alert("Please insert a username and a password");
+			this.setAlertState("missing inputs");
 			return;
 		}
 		

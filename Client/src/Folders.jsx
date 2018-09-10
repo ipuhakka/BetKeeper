@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import Alert from 'react-bootstrap/lib/Alert';
-import ConstVars from './Consts.js';
+import ConstVars from './js/Consts.js';
 
 class Folders extends Component {
 	constructor(props){

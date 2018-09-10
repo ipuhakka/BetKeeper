@@ -6,7 +6,7 @@ import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import AddBets from './AddBets.jsx';
 import DeleteBets from './DeleteBets.jsx';
-import ConstVars from './Consts.js';
+import ConstVars from './js/Consts.js';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 
