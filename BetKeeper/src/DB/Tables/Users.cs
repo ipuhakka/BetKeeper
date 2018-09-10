@@ -18,8 +18,16 @@ namespace BetKeeper.DB.Tables
             if (UsernameExists(connectionString, username))
                 return -1;
 
-            string statement = String.Format("INSERT INTO users (username, password) VALUES ('{0}', '{1}');", username, password);
-            queryUsers(statement, connectionString);
+            string statement = "INSERT INTO users (username, password) VALUES (@username, @password);";
+            SQLiteConnection con = new SQLiteConnection(connectionString);
+            con.Open();
+
+            SQLiteCommand command = new SQLiteCommand(statement, con);
+            command.Parameters.AddWithValue("username", username);
+            command.Parameters.AddWithValue("password", password);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            con.Close();
             return 1;
         }
 
@@ -28,56 +36,13 @@ namespace BetKeeper.DB.Tables
         /// </summary>
         public static int GetUserId(string connectionString, string username)
         {
-            string query = String.Format("SELECT user_id FROM users WHERE username = '{0}';", username);
-            return queryInt(query, connectionString);
-        }
-
-        /// <summary>
-        /// Returns true if username is already in use.
-        /// </summary>
-        private static bool UsernameExists(string connectionString, string username)
-        {
-            string query = String.Format("SELECT(EXISTS(SELECT 1 FROM users WHERE username = '{0}'));", username);
-            return queryBoolean(query, connectionString);
-        }
-
-        /// <summary>
-        /// Returns true if password for the user is correct
-        /// </summary>
-        public static bool PasswordIsCorrect(string connectionString, int user_id, string password)
-        {
-            string query = String.Format("SELECT(EXISTS(SELECT 1 FROM users WHERE user_id = {0} AND password='{1}'));", user_id, password);
-            return queryBoolean(query, connectionString);
-        }
-        
-        /// <summary>
-        /// Makes a query to the database which returns either 0 or 1.
-        /// </summary>
-        private static bool queryBoolean(string query, string connectionString)
-        {
-            bool value = false;
-            SQLiteConnection con = new SQLiteConnection(connectionString);
-            con.Open();
-
-            SQLiteCommand command = new SQLiteCommand(query, con);
-            SQLiteDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                value = reader.GetBoolean(0);
-            }
-
-            con.Close();
-            return value;
-        }
-
-        private static int queryInt(string query, string connectionString)
-        {
+            string query = "SELECT user_id FROM users WHERE username = @username;";
             int value = -1;
             SQLiteConnection con = new SQLiteConnection(connectionString);
             con.Open();
 
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("username", username);
             SQLiteDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -90,18 +55,50 @@ namespace BetKeeper.DB.Tables
         }
 
         /// <summary>
-        /// Interface to handle sqlite-statements for table users.
+        /// Returns true if username is already in use.
         /// </summary>
-        /// <exception cref="SQLiteException"></exception>
-        public static void queryUsers(string query, string connectionString)
+        private static bool UsernameExists(string connectionString, string username)
         {
+            string query = "SELECT(EXISTS(SELECT 1 FROM users WHERE username = @username));";
+            bool value = false;
             SQLiteConnection con = new SQLiteConnection(connectionString);
             con.Open();
 
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("username", username);
             SQLiteDataReader reader = command.ExecuteReader();
 
+            while (reader.Read())
+            {
+                value = reader.GetBoolean(0);
+            }
+
             con.Close();
+            return value;
+        }
+
+        /// <summary>
+        /// Returns true if password for the user is correct, false if not.
+        /// </summary>
+        public static bool PasswordIsCorrect(string connectionString, int user_id, string password)
+        {
+            string query = "SELECT(EXISTS(SELECT 1 FROM users WHERE user_id = @user_id AND password=@password));";
+            bool value = false;
+            SQLiteConnection con = new SQLiteConnection(connectionString);
+            con.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("user_id", user_id);
+            command.Parameters.AddWithValue("password", password);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                value = reader.GetBoolean(0);
+            }
+
+            con.Close();
+            return value;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace BetKeeper.DB.Tables
             string query = "SELECT * FROM bets ";
 
             if (user != -1)
-                query = query + String.Format("WHERE owner = {0} ", user);
+                query = query + "WHERE owner = @owner ";
 
             if (user != -1 && bet_finished != null)
                 if (bet_finished == true)
@@ -38,7 +38,26 @@ namespace BetKeeper.DB.Tables
             }
 
             query = query + ";";
-            return QueryBets(query, ConnectionString);
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", user);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            List<Bet> result = new List<Bet>();
+
+            while (reader.Read())
+            {
+                Bet obj = new Bet(Convert.ToInt32(reader["owner"].ToString()), reader["name"].ToString(), reader["date_time"].ToString(), Convert.ToInt32(reader["bet_won"].ToString()),
+                    Convert.ToInt32(reader["bet_id"].ToString()), Convert.ToDouble(reader["odd"].ToString()),
+                    Convert.ToDouble(reader["bet"].ToString()));
+
+                result.Add(obj);
+            }
+            con.Close();
+
+            return result;
         }
 
         /// <summary>
@@ -47,12 +66,27 @@ namespace BetKeeper.DB.Tables
         /// </summary>
         public static Bet GetBet(string ConnectionString, int id)
         {
-            string query = String.Format("SELECT * FROM bets WHERE bet_id = {0};", id);
-            List<Bet> bets = QueryBets(query, ConnectionString);
-            if (bets.Count == 1)
-                return bets[0];
-            else
-                return null;
+            string query = "SELECT * FROM bets WHERE bet_id = @bet_id;";
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("bet_id", id);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            List<Bet> bets = new List<Bet>();
+
+            while (reader.Read())
+            {
+                Bet obj = new Bet(Convert.ToInt32(reader["owner"].ToString()), reader["name"].ToString(), reader["date_time"].ToString(), Convert.ToInt32(reader["bet_won"].ToString()),
+                    Convert.ToInt32(reader["bet_id"].ToString()), Convert.ToDouble(reader["odd"].ToString()),
+                    Convert.ToDouble(reader["bet"].ToString()));
+
+                bets.Add(obj);
+            }
+            con.Close();
+
+            return (bets.Count == 1) ? bets[0] : null;
         }
 
         /// <summary>
@@ -64,29 +98,22 @@ namespace BetKeeper.DB.Tables
         /// that are either finished or not.</param>
         /// <param name="connectionString">Connectionstring used to connect to database.</param>
         /// <returns>Bets from the folder that match the inputted parameters.</returns>
-        public static List<Bet> GetBetsInBetFolder(string connectionString, string folder, int owner, bool? bet_finished = null)
+        public static List<Bet> GetBetsInBetFolder(string ConnectionString, string folder, int owner, bool? bet_finished = null)
         {
             string query = "";
             if (bet_finished == null)
-                query = String.Format("SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = '{0}' and bf.folder = '{1}';", owner, folder);
+                query = "SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = @owner and bf.folder = @folder;";
             else if (bet_finished == true)           
-                query = String.Format("SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = '{0}' and bf.folder = '{1}' and bet_won != -1;", owner, folder);
+                query = "SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = @owner and bf.folder = @folder and bet_won != -1;";
             else if (bet_finished == false)
-                query = String.Format("SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = '{0}' and bf.folder = '{1}' and bet_won = -1;", owner, folder);
-            return QueryBets(query, connectionString);
-        }
+                query = "SELECT * FROM bet_in_bet_folder bf INNER JOIN bets b ON b.bet_id = bf.bet_id WHERE bf.owner = @owner and bf.folder = @folder and bet_won = -1;";
 
-        /// <summary>
-        /// Creates a query to a database and returns all bets matching the query.
-        /// </summary>
-        /// <param name="query">query to be executed</param>
-        /// <param name="ConnectionString">Connectionstring to be used.</param>
-        private static List<Bet> QueryBets(string query, string ConnectionString)
-        {
             SQLiteConnection con = new SQLiteConnection(ConnectionString);
             con.Open();
 
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", owner);
+            command.Parameters.AddWithValue("folder", folder);
             SQLiteDataReader reader = command.ExecuteReader();
 
             List<Bet> result = new List<Bet>();
@@ -126,9 +153,28 @@ namespace BetKeeper.DB.Tables
             else
                 throw new ArgumentException("Date inputted is not valid");
 
-            string query = String.Format("INSERT INTO bets (bet_won, name, odd, bet, date_time, owner) values ({0}, '{1}', {2}, {3}, '{4}', {5});",
-                result, name, odd, bet, datetime, user_id);
-            return ExecuteCommand(query, ConnectionString, true);
+            string query = "INSERT INTO bets (bet_won, name, odd, bet, date_time, owner) values (@bet_won, @name, @odd, @bet, @date_time, @owner);";
+
+            int queryResult;
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("bet_won", result);
+            command.Parameters.AddWithValue("name", name);
+            command.Parameters.AddWithValue("odd", odd);
+            command.Parameters.AddWithValue("bet", bet);
+            command.Parameters.AddWithValue("date_time", datetime);
+            command.Parameters.AddWithValue("owner", user_id);
+            try
+            {
+                command.ExecuteNonQuery();
+                queryResult = (int)con.LastInsertRowId;   
+            }
+            finally
+            {
+                con.Close();
+            }
+            return queryResult;
         }
 
         /// <summary>
@@ -147,10 +193,24 @@ namespace BetKeeper.DB.Tables
             foreach(string folder in folders)
             {
                 if (user_folders.Contains(folder))
-                    query = query + String.Format("INSERT INTO bet_in_bet_folder VALUES ('{0}', {1}, {2}); ", folder, user_id, bet_id);
+                    query = query + String.Format("INSERT INTO bet_in_bet_folder VALUES ('{0}', @owner, @bet_id);", folder);
             }
 
-            return ExecuteCommand(query, ConnectionString);
+            int queryResult;
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", user_id);
+            command.Parameters.AddWithValue("bet_id", bet_id);
+            try
+            {
+                queryResult = command.ExecuteNonQuery();
+            }
+            finally
+            {
+                con.Close();
+            }
+            return queryResult;
         }
 
         /// <summary>
@@ -171,36 +231,68 @@ namespace BetKeeper.DB.Tables
             if (bet_won != null)
                 result = Convert.ToInt32(bet_won);
 
-            string query = String.Format("UPDATE bets SET bet_won = {0}", result);
+            string query = "UPDATE bets SET bet_won = @bet_won";
 
             if (odd != null)
-                query = query + String.Format(", odd = {0}", odd);
+                query = query + ", odd = @odd";
             if (bet != null)
-                query = query + String.Format(", bet = {0}", bet);
+                query = query + ", bet = @bet";
             if (!String.IsNullOrEmpty(name))
-                query = query + String.Format(", name = '{0}'", name);
+                query = query + ", name = @name";
 
-            return ExecuteCommand(query + String.Format(" WHERE bet_id = {0};", bet_id), ConnectionString);
+            query = query + String.Format(" WHERE bet_id = {0};", bet_id);
+
+            int queryResult;
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("bet_won", result);
+            command.Parameters.AddWithValue("odd", odd);
+            command.Parameters.AddWithValue("bet", bet);
+            command.Parameters.AddWithValue("name", name);
+            try
+            {
+                queryResult = command.ExecuteNonQuery();
+            }
+            finally
+            {
+                con.Close();
+            }
+            return queryResult;
         }
 
         /// <summary>
-        /// Deletes the bet from table bets that matches id. Returns number of rows affected by the statement.
+        /// Deletes the bet from table bets that matches bet_id. Returns number of rows affected by the statement.
         /// Deletes also all matches from table bet_in_bet_folder, since bet deletion cascades.
         /// </summary>
-        /// <param name="id">id of the bet to be deleted.</param>
+        /// <param name="bet_id">id of the bet to be deleted.</param>
         /// <param name="user_id">Id of the user deleting the bet.</param>
         /// <exception cref="UnknownBetError">Thrown when bet with bet_id 'id' is not found.</exception>
         /// <exception cref="AuthenticationError">Thrown when user tries to delete another user's bet.</exception>
-        public static int DeleteBet(string ConnectionString, int id, int user_id)
+        public static int DeleteBet(string ConnectionString, int bet_id, int user_id)
         {
-            if (GetBet(ConnectionString, id) == null)
-                throw new UnknownBetError("Bet with id " + id + " was not found"); 
+            if (GetBet(ConnectionString, bet_id) == null)
+                throw new UnknownBetError("Bet with id " + bet_id + " was not found"); 
 
-            if (GetBet(ConnectionString, id).getOwner() != user_id)
+            if (GetBet(ConnectionString, bet_id).getOwner() != user_id)
                 throw new AuthenticationError("Bet did not belong to user trying to delete it");
 
-            string query = String.Format("DELETE FROM bets WHERE bet_id = {0}", id);
-            return ExecuteCommand(query, ConnectionString);
+            string query = "DELETE FROM bets WHERE bet_id = @bet_id";
+
+            int queryResult;
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            con.Open();
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("bet_id", bet_id);
+            try
+            {
+                queryResult = command.ExecuteNonQuery();
+            }
+            finally
+            {
+                con.Close();
+            }
+            return queryResult;
         }
 
         /// <summary>
@@ -220,7 +312,7 @@ namespace BetKeeper.DB.Tables
             if (folders == null || folders.Count == 0)
                 return -1;
 
-            string query = String.Format("DELETE FROM bet_in_bet_folder WHERE bet_id = {0} AND (", bet_id);
+            string query = "DELETE FROM bet_in_bet_folder WHERE bet_id = @bet_id AND (";
 
             for (int i = 0; i < folders.Count; i++)
             {
@@ -229,41 +321,22 @@ namespace BetKeeper.DB.Tables
                 if (i < folders.Count - 1)
                     query = query + "OR ";
             }
+            query = query + ");";
 
-            return ExecuteCommand(query + ");", ConnectionString);
-        }
-
-        /// <summary>
-        /// Queries the database.
-        /// </summary>
-        /// <returns>Number of affected rows, or id of the last inserted row, if returnLastRowId is
-        /// set to true.</returns>
-        /// <param name="ConnectionString">Connectionstring used to make connetion to database.</param>
-        /// <param name="query">Statement to be performed.</param>
-        /// <param name="returnLastRowId">Optional parameter: If set to true, function returns
-        /// id of the last inserted row.</param>
-        /// <exception cref="SQLiteException"></exception>
-        public static int ExecuteCommand(string query, string ConnectionString, bool returnLastRowId = false)
-        {
-            int result;
+            int queryResult;
             SQLiteConnection con = new SQLiteConnection(ConnectionString);
             con.Open();
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("bet_id", bet_id);
             try
             {
-                result = command.ExecuteNonQuery();
-
-                if (returnLastRowId)
-                {
-                    result = (int)con.LastInsertRowId;
-                }
+                queryResult = command.ExecuteNonQuery();
             }
             finally
             {
                 con.Close();
             }
-            return result;
+            return queryResult;
         }
-
     }
 }

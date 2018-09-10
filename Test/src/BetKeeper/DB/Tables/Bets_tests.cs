@@ -108,10 +108,12 @@ namespace Test.BetKeeper.DB.Tables
         }
 
         [Test]
-        public void test_CreateBet_JavaScriptDate()
+        public void test_CreateBet_JavaScriptDateFormat()
         {
             //JavaScript string format of Date()-object should be able to be parsed correctly.
             Assert.DoesNotThrow(() => Bets.CreateBet(connectionString, 1, "2018-08-31T08:47:25.236Z", 4.8, 4.7, "", true));
+            db.ClearTables();
+            db.FillTables("db_testdata_dump.sql");
         }
 
         [Test]

@@ -14,11 +14,25 @@ namespace BetKeeper.DB.Tables
             string query = "";
 
             if (bet_id == -1)
-                query = String.Format("SELECT DISTINCT folder_name FROM bet_folders WHERE owner = {0}; ", user);
+                query = "SELECT DISTINCT folder_name FROM bet_folders WHERE owner = @owner; ";
             else
-                query = String.Format("select distinct folder from  bet_in_bet_folder bf WHERE bf.owner = '{0}' AND bet_id={1}; ", user, bet_id);
-           
-            return QueryFolders(query, connectionString);
+                query = "SELECT DISTINCT folder from  bet_in_bet_folder bf WHERE bf.owner = @owner AND bet_id = @bet_id; ";
+
+            List<string> results = new List<string>();
+            SQLiteConnection con = new SQLiteConnection(connectionString);
+            con.Open();
+
+            SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", user);
+            command.Parameters.AddWithValue("bet_id", bet_id);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                results.Add(reader.GetString(0));
+            }
+            con.Close();
+            return results;
         }
 
         /// <summary>
@@ -31,8 +45,14 @@ namespace BetKeeper.DB.Tables
             if (FolderExists(connectionString, user_id, folder_name))
                 return -1;
 
-            string statement = String.Format("INSERT INTO bet_folders VALUES ('{0}', {1});", folder_name, user_id);
-            AddToFolders(statement, connectionString);
+            string statement = "INSERT INTO bet_folders VALUES (@folder, @owner);";
+            SQLiteConnection con = new SQLiteConnection(connectionString);
+            con.Open();
+            SQLiteCommand command = new SQLiteCommand(statement, con);
+            command.Parameters.AddWithValue("folder", folder_name);
+            command.Parameters.AddWithValue("owner", user_id);
+            SQLiteDataReader reader = command.ExecuteReader();
+            con.Close();
             return 1;
         }
 
@@ -41,41 +61,13 @@ namespace BetKeeper.DB.Tables
         /// </summary>
         public static int DeleteFolder(string connectionString, int user_id, string folder_name)
         {
-            string query = String.Format("DELETE FROM bet_folders WHERE owner = {0} and folder_name = '{1}';", user_id, folder_name);
-            return QueryInt(query, connectionString);
-        }
-
-        /// <summary>
-        /// returns true if a folder with given name exists and it belongs to the user with given id.
-        /// </summary>
-        private static bool FolderExists(string connectionString, int user_id, string folder)
-        {
-            string query = String.Format("SELECT(EXISTS(SELECT 1 FROM bet_folders WHERE owner = {0} AND folder_name = '{1}'));", user_id, folder);
-            bool value = false;
-            SQLiteConnection con = new SQLiteConnection(connectionString);
-            con.Open();
-
-            SQLiteCommand command = new SQLiteCommand(query, con);
-            SQLiteDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                value = reader.GetBoolean(0);
-            }
-
-            con.Close();
-            return value;
-        }
-
-        /// <summary>
-        /// Executes an sqlite command which returns an integer value. 
-        /// </summary>
-        private static int QueryInt(string query, string connectionString)
-        {
+            string query = "DELETE FROM bet_folders WHERE owner = @owner AND folder_name = @folder;";
             int result = 0;
             SQLiteConnection con = new SQLiteConnection(connectionString);
             con.Open();
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", user_id);
+            command.Parameters.AddWithValue("folder", folder_name);
             try
             {
                 result = command.ExecuteNonQuery();
@@ -87,30 +79,28 @@ namespace BetKeeper.DB.Tables
             return result;
         }
 
-        private static List<string> QueryFolders(string query, string connectionString)
+        /// <summary>
+        /// returns true if a folder with given name exists and it belongs to the user with given id.
+        /// </summary>
+        private static bool FolderExists(string connectionString, int user_id, string folder)
         {
-            List<string> results = new List<string>();
+            string query = "SELECT(EXISTS(SELECT 1 FROM bet_folders WHERE owner = @owner AND folder_name = @folder));";
+            bool value = false;
             SQLiteConnection con = new SQLiteConnection(connectionString);
             con.Open();
 
             SQLiteCommand command = new SQLiteCommand(query, con);
+            command.Parameters.AddWithValue("owner", user_id);
+            command.Parameters.AddWithValue("folder", folder);
             SQLiteDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
             {
-                results.Add(reader.GetString(0));
+                value = reader.GetBoolean(0);
             }
-            con.Close();
-            return results;
-        }
 
-        private static void AddToFolders(string query, string connectionString)
-        {
-            SQLiteConnection con = new SQLiteConnection(connectionString);
-            con.Open();
-            SQLiteCommand command = new SQLiteCommand(query, con);
-            SQLiteDataReader reader = command.ExecuteReader();
             con.Close();
+            return value;
         }
     }
 }
