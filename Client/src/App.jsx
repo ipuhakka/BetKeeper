@@ -97,7 +97,6 @@ class App extends Component {
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) { //user already logged in, switch to homepage.
 					console.log(xmlHttp.status);
-					this.setAlertState("Conflict");
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
 					console.log(xmlHttp.status);
@@ -131,7 +130,7 @@ class App extends Component {
 						</Alert>);
 			case "Conflict":
 				return (<Alert onDismiss={this.dismissAlert} bsStyle={"warning"}>
-							<p>{"Session expired, please login again"}</p>
+							<p>{"Username already in use"}</p>
 							<Button onClick={this.dismissAlert}>{"Hide"}</Button>
 						</Alert>);
 			case "Content-Type":
@@ -177,11 +176,12 @@ class Login extends Component {
 		
 		this.setUsername = this.setUsername.bind(this);
 		this.setPassword = this.setPassword.bind(this);
+		this.checkEnter = this.checkEnter.bind(this);
 	}
 	
 	render(){
 		return (
-			<div className="component">
+			<div className="component" onKeyPress={this.checkEnter}>
 				<div className="form">
 					<h3>Login</h3>
 					<Form>
@@ -217,6 +217,12 @@ class Login extends Component {
 			password: psw
 		});
 	}
+	
+	checkEnter(e){
+		if (e.which === 13){ //login
+			this.props.requestToken(this.state.username, this.state.password);
+		}
+	}
 }
 
 class SignUp extends Component{
@@ -233,11 +239,12 @@ class SignUp extends Component{
 		this.setPassword = this.setPassword.bind(this);
 		this.setConfirmPassword = this.setConfirmPassword.bind(this);
 		this.signup = this.signup.bind(this);
+		this.checkEnter = this.checkEnter.bind(this);
 	}
 	
 	render(){
 		return (
-			<div className="component">
+			<div className="component" onKeyPress={this.checkEnter}>
 				<div className="form">
 					<h3>Sign up</h3>
 					<Form>
@@ -268,6 +275,11 @@ class SignUp extends Component{
 		);
 	}
 	
+	checkEnter(e){
+		if (e.which === 13){ 
+			this.signup();
+		}
+	}
 	setNewUsername(e){
 		this.setState({
 			newUsername: e.target.value
@@ -289,15 +301,15 @@ class SignUp extends Component{
 	//Creates an XMLHttpRequest to post a new user. on success asks for a token from the api.
 	signup(){
 		if (this.state.newUsername === "" || this.state.newPassword === ""){
-			this.props.alert("missing inputs")
+			this.props.alert("missing inputs");
 			return;
 		}
 		
 		if (this.state.newPassword !== this.state.confirmPassword){
-			this.props.alert("invalidMatch");
+			this.props.alert("invalid match");
 			return;
 		}
-					
+	
 		var data = {
 			username: this.state.newUsername,
 			password: this.state.newPassword
@@ -312,10 +324,11 @@ class SignUp extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					console.log(xmlHttp.status);
+					this.props.alert('Bad request');
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) {
 					console.log(xmlHttp.status);
-					window.alert('username already in use');
+					this.props.alert('Conflict');
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
 					console.log(xmlHttp.status);
