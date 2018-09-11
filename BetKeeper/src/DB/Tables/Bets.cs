@@ -188,18 +188,22 @@ namespace BetKeeper.DB.Tables
             if (GetBet(ConnectionString, bet_id) == null)
                 throw new UnknownBetError("Bet with id " + bet_id + " was not found");
 
+            int queryResult;
+
             string query = "";
+            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            SQLiteCommand command = new SQLiteCommand(query, con);
             List<string> user_folders = Folders.GetUsersFolders(ConnectionString, user_id);
             foreach(string folder in folders)
             {
                 if (user_folders.Contains(folder))
-                    query = query + String.Format("INSERT INTO bet_in_bet_folder VALUES ('{0}', @owner, @bet_id);", folder);
+                {
+                    query = query + "INSERT INTO bet_in_bet_folder VALUES (@" + folder + " " + ", @owner, @bet_id);";
+                    command.Parameters.AddWithValue(folder, folder);
+                }
             }
-
-            int queryResult;
-            SQLiteConnection con = new SQLiteConnection(ConnectionString);
+            command.CommandText = query;
             con.Open();
-            SQLiteCommand command = new SQLiteCommand(query, con);
             command.Parameters.AddWithValue("owner", user_id);
             command.Parameters.AddWithValue("bet_id", bet_id);
             try
@@ -312,22 +316,22 @@ namespace BetKeeper.DB.Tables
             if (folders == null || folders.Count == 0)
                 return -1;
 
-            string query = "DELETE FROM bet_in_bet_folder WHERE bet_id = @bet_id AND (";
-
-            for (int i = 0; i < folders.Count; i++)
-            {
-                query = query + String.Format("folder = '{0}' ", folders[i]);
-
-                if (i < folders.Count - 1)
-                    query = query + "OR ";
-            }
-            query = query + ");";
-
             int queryResult;
+            string query = "DELETE FROM bet_in_bet_folder WHERE bet_id = @bet_id AND (";
             SQLiteConnection con = new SQLiteConnection(ConnectionString);
-            con.Open();
             SQLiteCommand command = new SQLiteCommand(query, con);
             command.Parameters.AddWithValue("bet_id", bet_id);
+            for (int i = 0; i < folders.Count; i++)
+            {
+                query = query + "folder = @folder" + i + " ";
+                command.Parameters.AddWithValue(@"folder" + i, folders[i]);
+                if (i < folders.Count - 1)
+                    query = query + "OR ";
+            } 
+            query = query + ");";
+            command.CommandText = query;
+            
+            con.Open();
             try
             {
                 queryResult = command.ExecuteNonQuery();
