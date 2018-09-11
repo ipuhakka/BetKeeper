@@ -282,7 +282,9 @@ class Folders extends Component {
 		}
 		
 		this.setState({
-			folders: folders
+			folders: folders,
+			deleteDisabled: true,
+			newFolder: ""
 		});
 	}
 	
