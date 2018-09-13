@@ -25,7 +25,7 @@ class AddBets extends Component {
 			betResult: null,
 			updateBetResult: null,
 			alertState: null,
-			bets: [],
+
 			selectedBet: -1
 		};
 
@@ -222,6 +222,12 @@ class AddBets extends Component {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
 					this.setAlertState("OK");
+					this.setState({
+						selected: [],
+						odd: 0.0,
+						bet: 0.0,
+						name: ""
+					});
 					this.props.onUpdate();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
