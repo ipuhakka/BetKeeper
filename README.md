@@ -9,6 +9,11 @@ Client application can be built by opening command prompt in Client folder, and 
 Database, api and tests can be built using visual studio.
 
 # Run
-After building the backend, api can be started by locating the `API\bin\debug` or `API\bin\release` folder and running the API.exe as admin.
 
+## API 
+
+API can be started by locating the `API\bin\debug` or 
+`API\bin\release` folder and running the API.exe as admin.
+
+## Client
 Client can be started by going to `Client` folder on console and typing command `npm start`.
