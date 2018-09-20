@@ -130,11 +130,19 @@ function isOdd(num){
 	return (num % 2) === 1;
 }
 
-function sortByHighest(data, param)
+export function sortByHighest(data, param)
 {
     return data.sort(function (a, b) {
 		return b[param] - a[param];
     });
+}
+
+export function sortAlphabetically(data, param){
+	return data.sort(function(a, b){
+    if(a[param] < b[param]) return -1;
+    if(a[param] > b[param]) return 1;
+    return 0;
+	});
 }
 
 export function roundByTwo(num){

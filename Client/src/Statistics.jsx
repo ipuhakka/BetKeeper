@@ -99,10 +99,10 @@ class Statistics extends Component{
 		return(<Table>
 					<thead>
 						<tr>
-							<th>{"Name"}</th>
-							<th className="clickable">{"Money returned"}</th>
-							<th className="clickable">{"Return percentage"}</th>
-							<th className="clickable">{"Win percentage"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Stats.sortAlphabetically, "name")}>{"Name"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "moneyReturned")}>{"Money returned"}</th>
+							<th className="clickable" onClick={this.sort.bind(this,Stats.sortByHighest, "verifiedReturn")}>{"Return percentage"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "winPercentage")}>{"Win percentage"}</th>
 						</tr>
 					</thead>
 					<tbody>{tableItems}</tbody>
@@ -253,6 +253,14 @@ class Statistics extends Component{
 		});
 	}
 	
+	sort(func, param){
+		var sorted = func(this.state.overviewItems, param);
+		
+		this.setState({
+			overviewItems: sorted
+		});
+	}
+	
 	dismissAlert(){
 		this.setState({
 			alertState: null
@@ -298,7 +306,7 @@ class Statistics extends Component{
         xmlHttp.send();
 	}
 	
-	//gets a list of users bets that have finished. On receiving data, adds data to overvierwItems.
+	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
 	getAllBets(){
 		var xmlHttp = new XMLHttpRequest();	
 		
