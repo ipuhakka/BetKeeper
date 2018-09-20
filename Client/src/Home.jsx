@@ -6,6 +6,7 @@ import Menu from './Menu.jsx';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import TextContainer from './TextContainer.jsx';
+import Info from './Info.jsx';
 import * as Stats from './js/Stats.js';
 import ConstVars from './js/Consts.js';
 
@@ -16,11 +17,14 @@ class Home extends Component{
 		
 		this.state = {
 			menuDisabled: [true, false, false, false, false],
-			textItems: ["Bets won/played:", "Money won/played:", "Last bet played:"]
+			textItems: ["Bets won/played:", "Money won/played:", "Last bet played:"],
+			alertState: null,
+			alertText: ""
 		};
 
 		this.getAllBets = this.getAllBets.bind(this);
 		this.setTextItems = this.setTextItems.bind(this);
+		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 	
 	render() {
@@ -31,6 +35,7 @@ class Home extends Component{
 				<h1 className="App-title">{"Logged in as " + window.sessionStorage.getItem('loggedUser')}</h1>
 			</header>
 			<Menu disable={this.state.menuDisabled}></Menu>
+			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 			<Row className="show-grid">
 				<Col className="col-md-6 col-xs-12">
 					<TextContainer className="textContainer" items={this.state.textItems}></TextContainer>
@@ -52,7 +57,8 @@ class Home extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session error, please login again"
 					});
 				}	
 
@@ -70,6 +76,13 @@ class Home extends Component{
 		
 		this.setState({
 			textItems: textItems
+		});
+	}
+	
+	dismissAlert(){
+		this.setState({
+			alertState: null,
+			alertText: ""
 		});
 	}
 	

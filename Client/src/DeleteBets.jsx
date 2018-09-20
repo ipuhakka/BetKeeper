@@ -5,11 +5,11 @@ import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import Alert from 'react-bootstrap/lib/Alert';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import ConstVars from './js/Consts.js';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
+import Info from './Info.jsx';
 
 class DeleteBets extends Component{
 	constructor(props){
@@ -20,29 +20,28 @@ class DeleteBets extends Component{
 			allFoldersSelected: -1,
 			folders: [], //components own state variable folders[] contains folders for the selected bet.
 			selectedFolders: [], //contains folders for selected bet which have been selected.
-			alertState: null
+			alertState: null,
+			alertText: ""
 		};
 		this.setBetsFolders = this.setBetsFolders.bind(this);
 		this.getBetsFolders = this.getBetsFolders.bind(this);
 		this.onPressedFolder = this.onPressedFolder.bind(this);
 		this.deleteBet = this.deleteBet.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
-		this.getAlert = this.getAlert.bind(this);
 		this.renderDropdown = this.renderDropdown.bind(this);
 		this.renderFolderList = this.renderFolderList.bind(this);
 		this.renderBetsList = this.renderBetsList.bind(this);
 		this.showFromFolder = this.showFromFolder.bind(this);
 	}
 	
-	render(){
-		var	alertState = this.getAlert();
-		
+	render(){		
 		var betItems = this.renderBetsList();	
 		var folderItems = this.renderFolderList();		
 		var menuItems = this.renderDropdown();
 		
 		return(
 			<div className="App">
+				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<div className="dropDownList">
@@ -67,7 +66,6 @@ class DeleteBets extends Component{
 				<Row>
 					<Col className="col-md-6 col-xs-12">
 						<Button disabled={this.state.selectedBet === -1} className="button" onClick={this.deleteBet} bsStyle="warning">Delete</Button>
-						<div>{alertState}</div>
 					</Col>
 				</Row>
 			</div>
@@ -117,30 +115,10 @@ class DeleteBets extends Component{
 		return folderItems;
 	}
 	
-	getAlert(){
-		switch(this.state.alertState){
-			case "OK":
-				return(<Alert bsStyle="success" onDismiss={this.dismissAlert}>
-						<p>{"Deleted successfully"}</p>
-						<Button onClick={this.dismissAlert}>{"Hide"}</Button>
-						</Alert>);
-						
-			case "Not found":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAlert}><p>{"Bet not found"}</p>
-						<Button onClick={this.dismissAlert}>{"Hide"}</Button></Alert>);
-				
-			case "Authorization":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAlert}><p>{"Authorization failed, please login"}</p>
-						<Button onClick={this.dismissAlert}>{"Hide"}</Button></Alert>);
-				
-			default: 
-				return;
-		}
-	}
-	
 	dismissAlert(){
 		this.setState({
-			alertState: null
+			alertState: null,
+			alertText: ""
 		});
 	}
 	
@@ -188,7 +166,8 @@ class DeleteBets extends Component{
 					this.setState({
 						folders: [],
 						selectedFolders: [],
-						alertState: "OK",
+						alertState: xmlHttp.status,
+						alertText: "Bet deleted successfully",
 						selectedBet: -1
 					});
 					this.props.onUpdate();
@@ -196,12 +175,14 @@ class DeleteBets extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "Authorization"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 				}	
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
 					this.setState({
-						alertState: "Not found"
+						alertState: xmlHttp.status,
+						alertText: "Bet trying to be deleted was not found"
 					});
 					console.log(xmlHttp.status);
 				}	

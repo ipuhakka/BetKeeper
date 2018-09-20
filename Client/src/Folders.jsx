@@ -9,7 +9,7 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import FormControl from 'react-bootstrap/lib/FormControl';
-import Alert from 'react-bootstrap/lib/Alert';
+import Info from './Info.jsx';
 import ConstVars from './js/Consts.js';
 
 class Folders extends Component {
@@ -21,25 +21,20 @@ class Folders extends Component {
 			folders: [],
 			deleteDisabled: true,
 			newFolder: "",
-			deleteAlertState: null,
-			addAlertState: null
+			alertState: null,
+			alertText: ""
 		};
 		
 		this.onLoad = this.onLoad.bind(this);
 		this.renderFoldersList = this.renderFoldersList.bind(this);
 		this.deleteFolder = this.deleteFolder.bind(this);
-		this.getDeleteAlertState = this.getDeleteAlertState.bind(this);
-		this.getAddAlertState = this.getAddAlertState.bind(this);
-		this.dismissDeleteAlert = this.dismissDeleteAlert.bind(this);
-		this.dismissAddAlert = this.dismissAddAlert.bind(this);
+		this.dismissAlert = this.dismissAlert.bind(this);
 		this.handleNewFolderChange = this.handleNewFolderChange.bind(this);
 		this.addFolder = this.addFolder.bind(this);
 	}
 	
 	render(){
 		var folders = this.renderFoldersList();
-		var deleteAlertState = this.getDeleteAlertState();
-		var addAlertState = this.getAddAlertState();
 		return(
 			<div className="App" onLoad={this.onLoad}>
 				<header className="App-header">
@@ -47,11 +42,11 @@ class Folders extends Component {
 					<h1 className="App-title">{"Logged in as " + window.sessionStorage.getItem('loggedUser')}</h1>
 				</header>
 				<Menu disable={this.state.disabled}></Menu>
+				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
 						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.deleteFolder} bsStyle="warning">Delete</Button>
-						<div>{deleteAlertState}</div>
 					</Col>
 					<Col className="col-md-6 col-xs-12">
 						<FormControl 
@@ -60,7 +55,6 @@ class Folders extends Component {
 							onChange={this.handleNewFolderChange}
 							placeholder="Add new folder"/>
 						<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} bsStyle="success">{"Create folder"}</Button>
-						<div>{addAlertState}</div>
 					</Col>
 				</Row>
 			</div>
@@ -81,64 +75,11 @@ class Folders extends Component {
 		return items;
 	}
 	
-	dismissAddAlert(){
+	dismissAlert(){
 		this.setState({
-			addAlertState: null
+			alertState: null,
+			alertText: ""
 		});
-	}
-	
-	dismissDeleteAlert(){
-		this.setState({
-			deleteAlertState: null
-		});
-	}
-	
-	getAddAlertState(){
-		switch(this.state.addAlertState){
-			case "OK":
-				return(<Alert bsStyle="success" onDismiss={this.dismissAddAlert}>
-						<p>{"Created successfully"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button>
-						</Alert>);
-			case "Bad Request":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"Something went wrong with the request"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button></Alert>);
-				
-			case "Unauthorized":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"Authorization failed, please login again"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button></Alert>);
-			case "Conflict":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"User already has folder of that name"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button></Alert>);
-			case "Content-Type":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"Missing content-type header in request"}</p>
-						<Button onClick={this.dismissAddAlert}>{"Hide"}</Button></Alert>);
-			default:
-				return;
-		}
-	}
-	
-	getDeleteAlertState(){
-		switch(this.state.deleteAlertState){
-			case "OK":
-				return(<Alert bsStyle="success" onDismiss={this.dismissDeleteAlert}>
-						<p>{"Deleted successfully"}</p>
-						<Button onClick={this.dismissDeleteAlert}>{"Hide"}</Button>
-						</Alert>);
-			case "Bad request":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissDeleteAlert}><p>{"Something went wrong with the request"}</p>
-						<Button onClick={this.dismissDeleteAlert}>{"Hide"}</Button></Alert>);
-			case "Not found":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissDeleteAlert}><p>{"Bet not found"}</p>
-						<Button onClick={this.dismissDeleteAlert}>{"Hide"}</Button></Alert>);
-				
-			case "Unauthorized":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissDeleteAlert}><p>{"Authorization failed, please login again"}</p>
-						<Button onClick={this.dismissDeleteAlert}>{"Hide"}</Button></Alert>);
-				
-			default: 
-				return;
-		}
 	}
 	
 	addFolder(){
@@ -151,31 +92,36 @@ class Folders extends Component {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 201) {
 					console.log(xmlHttp.status);
 					this.setState({
-						addAlertState: "OK"
+						alertState: xmlHttp.status,
+						alertText: "Folder added successfully"
 					});
 					this.onLoad();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					console.log(xmlHttp.status);
 					this.setState({
-						addAlertState: "Bad request"
+						alertState: xmlHttp.status,
+						alertText: "Something went wrong with the request"
 					});
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						addAlertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 					console.log(xmlHttp.status);
 				}	
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) {
 					this.setState({
-						addAlertState: "Conflict"
+						alertState: xmlHttp.status,
+						alertText: "Create failed: User already has a folder of same name"
 					});
 					console.log(xmlHttp.status);
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
 					this.setState({
-						addAlertState: "Content-Type"
+						alertState: xmlHttp.status,
+						alertText: "Missing Content-Type header in request"
 					});
 					console.log(xmlHttp.status);
 				}
@@ -205,25 +151,29 @@ class Folders extends Component {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
 					console.log(xmlHttp.status);
 					this.setState({
-						deleteAlertState: "OK"
+						alertState: xmlHttp.status,
+						alertText: "Folder deleted successfully"
 					});
 					this.onLoad();
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					console.log(xmlHttp.status);
 					this.setState({
-						deleteAlertState: "Bad request"
+						alertState: xmlHttp.status,
+						alertText: "Something went wrong with the request"
 					});
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						deleteAlertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 					console.log(xmlHttp.status);
 				}	
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
 					this.setState({
-						deleteAlertState: "Not found"
+						alertState: xmlHttp.status,
+						alertText: "Delete failed: folder trying to be deleted was not found"
 					});
 					console.log(xmlHttp.status);
 				}	
@@ -263,7 +213,10 @@ class Folders extends Component {
 					this.setFolders(JSON.parse(xmlHttp.responseText));
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
+					this.setState({
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
+					});
 				}		
 
         });

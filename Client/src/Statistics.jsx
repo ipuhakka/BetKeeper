@@ -4,11 +4,10 @@ import './css/App.css';
 import Menu from './Menu.jsx';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
-import Button from 'react-bootstrap/lib/Button';
-import Alert from 'react-bootstrap/lib/Alert';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
+import Info from './Info.jsx';
 import * as Stats from './js/Stats.js';
 import ConstVars from './js/Consts.js';
 
@@ -21,6 +20,7 @@ class Statistics extends Component{
 			allBets: [],
 			folderSelected: -1,
 			alertState: null,
+			alertText: "",
 			moneyPlayed: 0,
 			moneyWon: 0,
 			moneyReturned: 0,
@@ -51,7 +51,6 @@ class Statistics extends Component{
 	}
 	
 	render(){
-		var alert = this.getAlert();
 		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
 		var overview = this.renderOverviewTable();
@@ -63,7 +62,7 @@ class Statistics extends Component{
 					<h1 className="App-title">{"Logged in as " + window.sessionStorage.getItem('loggedUser')}</h1>
 				</header>
 				<Menu disable={this.state.disabled}></Menu>
-				<div>{alert}</div>
+				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<div className="dropDownDiv">
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
@@ -263,23 +262,14 @@ class Statistics extends Component{
 	
 	dismissAlert(){
 		this.setState({
-			alertState: null
+			alertState: null,
+			alertText: ""
 		});
 	}
 	
 	onLoad(){
 		this.getAllBets();
 		this.getFolders();
-	}
-	
-	getAlert(){
-		switch(this.state.alertState){
-			case "Unauthorized":
-				return(<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{"Session expired, please login again"}</p>
-						<Button onClick={this.dismissAlert}>{"Hide"}</Button></Alert>);
-			default:
-				return;
-		}
 	}
 		
 	getFolders(){
@@ -296,7 +286,8 @@ class Statistics extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 				}	
 
@@ -323,7 +314,8 @@ class Statistics extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 				}	
 
@@ -356,7 +348,8 @@ class Statistics extends Component{
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
 					this.setState({
-						alertState: "Unauthorized"
+						alertState: xmlHttp.status,
+						alertText: "Session expired, please login again"
 					});
 				}	
 		});

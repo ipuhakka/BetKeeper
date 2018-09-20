@@ -7,8 +7,7 @@ import Tab from 'react-bootstrap/lib/Tab';
 import AddBets from './AddBets.jsx';
 import DeleteBets from './DeleteBets.jsx';
 import ConstVars from './js/Consts.js';
-import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
+import Info from './Info.jsx';
 
 class Bets extends Component{
 	constructor(props){
@@ -19,7 +18,8 @@ class Bets extends Component{
 			deleteBetsList: [],
 			folders: [],
 			unresolvedBets: [],
-			alertState: null
+			alertState: null,
+			alertText: ""
 		};
 
 		this.getAllBets = this.getAllBets.bind(this);
@@ -27,13 +27,10 @@ class Bets extends Component{
 		this.getBets = this.getBets.bind(this);
 		this.getUnresolvedBets = this.getUnresolvedBets.bind(this);
 		this.updateData = this.updateData.bind(this);
-		this.renderAlert = this.renderAlert.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 	
-	render(){
-		var alert = this.renderAlert();
-		
+	render(){		
 		return(
 		<div className="App" onLoad={this.updateData}>
 			<header className="App-header">
@@ -41,7 +38,7 @@ class Bets extends Component{
 				<h1 className="App-title">{"Logged in as " + window.sessionStorage.getItem('loggedUser')}</h1>
 			</header>
 			<Menu disable={this.state.menuDisabled}></Menu>
-			<div>{alert}</div>
+			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 			<Tabs defaultActiveKey={1} id="bet-tab">
 				<Tab eventKey={1} title={"Add bets"}>
 					<AddBets folders={this.state.folders} bets={this.state.unresolvedBets} onUpdate={this.updateData}></AddBets>
@@ -52,22 +49,11 @@ class Bets extends Component{
 			</Tabs>
 		</div>);
 	}
-	
-	renderAlert(){
-		switch(this.state.alertState){
-
-			case "Authorization":
-				return (<Alert bsStyle="danger" onDismiss={this.dismissAlert}><p>{"Authorization failed, please login"}</p>
-						<Button onClick={this.dismissAlert}>{"Hide"}</Button></Alert>);
-				
-			default: 
-				return;
-		}
-	}
-	
+		
 	dismissAlert(){
 		this.setState({
-			alertState: null
+			alertState: null,
+			alertText: ""
 		});
 	}
 	
@@ -97,7 +83,8 @@ class Bets extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						alertState: "Authorization"
+						alertState: xmlHttp.status,
+						alertText: "Authorization failed, please login again"
 					});
 					console.log(xmlHttp.status);
 				}		
@@ -121,7 +108,8 @@ class Bets extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						alertState: "Authorization"
+						alertState: xmlHttp.status,
+						alertText: "Authorization failed, please login again"
 					});
 					console.log(xmlHttp.status);
 				}		
@@ -145,7 +133,8 @@ class Bets extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						alertState: "Authorization"
+						alertState: xmlHttp.status,
+						alertText: "Authorization failed, please login again"
 					});
 					console.log(xmlHttp.status);
 				}		
@@ -168,7 +157,8 @@ class Bets extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setState({
-						alertState: "Authorization"
+						alertState: xmlHttp.status,
+						alertText: "Authorization failed, please login again"
 					});
 					console.log(xmlHttp.status);
 				}		
