@@ -58,13 +58,9 @@ class DeleteBets extends Component{
 					</Col>
 					<Col className="col-md-6 col-xs-12">
 						<div className="list">
-							<ControlLabel>{"Delete only from selected folders"}</ControlLabel>
+							<ControlLabel className={this.state.selectedFolders.length !== 0 ? null:'hide'}>{"Delete only from selected folders"}</ControlLabel>
 							<ListGroup>{folderItems}</ListGroup>
 						</div>
-					</Col>
-				</Row>
-				<Row>
-					<Col className="col-md-6 col-xs-12">
 						<Button disabled={this.state.selectedBet === -1} className="button" onClick={this.deleteBet} bsStyle="warning">Delete</Button>
 					</Col>
 				</Row>
