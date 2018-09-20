@@ -1,0 +1,10 @@
+.textContainer{
+	width: 33%;
+	float:left;
+}
+
+@media screen and (max-width: 600px) {
+	.textContainer{
+		width: 100%;
+	}
+}
