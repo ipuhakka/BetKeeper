@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import './css/App.css';
 import Button from 'react-bootstrap/lib/Button';
+import Col from 'react-bootstrap/lib/Grid';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Radio from 'react-bootstrap/lib/Radio';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import Info from './Info.jsx';
+import Radio from 'react-bootstrap/lib/Radio';
 import Row from 'react-bootstrap/lib/Grid';
-import Col from 'react-bootstrap/lib/Grid';
-import ConstVars from './js/Consts.js';
+import Info from '../../../Info/Info.jsx';
+import ConstVars from '../../../../js/Consts.js';
+import './AddBets.css';
 
 class AddBets extends Component {
 	constructor(props){
@@ -41,38 +41,38 @@ class AddBets extends Component {
 		this.updateResult = this.updateResult.bind(this);
 		this.setAlertState = this.setAlertState.bind(this);
 	}
-	
-	render(){		
+
+	render(){
 		var items = [];
-	
+
 		for (var i = 0; i < this.props.folders.length; i++){
 			items.push(<ListGroupItem bsStyle={this.state.selected[i] ?  'info': null} onClick={this.pressedListItem.bind(this, i)} key={i}>{this.props.folders[i]}</ListGroupItem>)
 		}
 		var unResolved = this.renderBetsList();
-		
+
 		return(
-			<div className="App">
+			<div className="content">
 				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<Form>
 							<FormGroup className = "formMargins">
 								<ControlLabel>{"Bet"}</ControlLabel>
-								<FormControl 
+								<FormControl
 									type="number"
 									value={this.state.bet}
 									onChange={this.setBet}
 									/>
 								<ControlLabel>{"Odd"}</ControlLabel>
-								<FormControl 
+								<FormControl
 									type="number"
 									value={this.state.odd}
 									onChange={this.setOdd}/>
 								<ControlLabel>{"Name"}</ControlLabel>
-								<FormControl 
+								<FormControl
 									type="text"
 									value={this.state.name}
-									onChange={this.setName}/>			
+									onChange={this.setName}/>
 							</FormGroup>
 							<FormGroup type="radio" className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
 								<Radio name="radioGroup" value={0} inline>Unresolved</Radio>{' '}
@@ -96,7 +96,7 @@ class AddBets extends Component {
 			</div>
 		);
 	}
-	
+
 	renderBetsList(){
 		var items = [];
 		for (var i = this.props.bets.length - 1; i >= 0; i--){
@@ -105,7 +105,7 @@ class AddBets extends Component {
 		}
 		return items;
 	}
-	
+
 	handleBetListClick(key){
 		if (key === this.state.selectedBet){
 			this.setState({
@@ -118,34 +118,34 @@ class AddBets extends Component {
 			});
 		}
 	}
-	
+
 	dismissAlert(){
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
-	
+
 	setAlertState(text, state){
 		this.setState({
 			alertText: text,
 			alertState: state
 		});
 	}
-	
-	//Creates an XMLHttpRequest to add a new bet to database, if bet and odd values are valid. 
-	addBet(){		
+
+	//Creates an XMLHttpRequest to add a new bet to database, if bet and odd values are valid.
+	addBet(){
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
 			this.setAlertState("Decimal given were in invalid format", "Invalid input");
 			return;
 		}
-		
+
 		var selectedFolders = []
 		for (var i = 0; i < this.props.folders.length; i++){
 			if (this.state.selected[i])
 				selectedFolders.push(this.props.folders[i]);
 		}
-		
+
 		var bet_won = "null";
 		var date = new Date();
 		if (this.state.betResult === -1 || this.state.betResult === '-1'){
@@ -162,9 +162,9 @@ class AddBets extends Component {
 			datetime: date,
 			folders: selectedFolders
 		}
-		
+
 		var xmlHttp = new XMLHttpRequest();
-		
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
@@ -181,67 +181,67 @@ class AddBets extends Component {
 					this.setAlertState("Something went wrong with the request, server responded with code 400", xmlHttp.status);
 					console.log(xmlHttp.status);
 					console.log(xmlHttp.responseText);
-				}			
+				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setAlertState("Session expired, please login again", xmlHttp.status);
 					console.log(xmlHttp.status);
-				}		
+				}
 
         });
 		xmlHttp.open("POST", ConstVars.URI + "bets/");
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send(JSON.stringify(data));
 	}
-	
+
 	setOdd(e){
 		this.setState({
 			odd: e.target.value
 		});
 	}
-	
+
 	setBet(e){
 		this.setState({
 			bet: e.target.value
 		});
 	}
-	
+
 	setName(e){
 		this.setState({
 			name: e.target.value
 		});
 	}
-	
-	setBetResult(e){			
+
+	setBetResult(e){
 		this.setState({
 			betResult: e.target.value
 		});
 	}
-	
+
 	setUpdateBetResult(e){
 		this.setState({
 			updateBetResult: e.target.value
 		});
 	}
-	
-	//Changes unresolved bet to solved. 
+
+	//Changes unresolved bet to solved.
 	updateResult(){
 		if (this.state.selectedBet === -1){
 			this.setAlertState("No bet selected", "Invalid input");
 			return;
 		}
-	
+
 		var data = {
 			bet_won: this.state.updateBetResult
 		}
-		
+
 		var xmlHttp = new XMLHttpRequest();
-		
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
 					console.log(xmlHttp.status);
 					this.setAlertState("Result updated successfully", xmlHttp.status); //null selections
 					this.setFoldersList();
-					this.setState({ 
+					this.setState({
 						selectedBet: -1
 					});
 					this.props.onUpdate();
@@ -250,50 +250,50 @@ class AddBets extends Component {
 					this.setAlertState("Something went wrong with the request, server responded with code 400", xmlHttp.status);
 					console.log(xmlHttp.status);
 					console.log(xmlHttp.responseText);
-				}			
+				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					this.setAlertState("Session expired, please login", xmlHttp.status);
 					console.log(xmlHttp.status);
-				}	
+				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
 					this.setAlertState("Bet trying to be updated was not found", xmlHttp.status);
 					console.log(xmlHttp.status);
-				}		
+				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) {
 					this.setAlertState("Conflict happened while updating bet", xmlHttp.status);
 					console.log(xmlHttp.status);
-				}		
+				}
         });
 		xmlHttp.open("PUT", ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id);
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send(JSON.stringify(data));
 	}
-	
+
 	///init an array of booleans to keep track of selected list items and set the state.
 	setFoldersList(){
 		var selected = []
-		
+
 		for (var i = 0; i < this.props.folders.length; i++){
 			selected.push(false);
 		}
-		
+
 		this.setState({
 			selected: selected
 		});
 	}
-	
+
 	setBetsList(){
 		this.props.onUpdate();
 	}
-	
+
 	pressedListItem(i){
-		var selected = this.state.selected;		
+		var selected = this.state.selected;
 		selected[i] = !selected[i];
-		
+
 		this.setState({
 			selected: selected
 		});
-	}		
+	}
 }
 
 export default AddBets;

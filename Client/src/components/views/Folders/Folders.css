@@ -1,0 +1,14 @@
+.margins{
+	margin-top:10px;
+	margin-bottom: 10px;
+}
+
+.content{
+	text-align: center;
+	overflow-x: scroll;
+}
+
+.list{
+	max-height:400px;
+	overflow-x: scroll;
+}

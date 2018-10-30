@@ -1,4 +1,6 @@
-.textContainer{
+.content{
+	text-align: center;
+	overflow-x: scroll;
 }
 
 @media screen and (max-width: 600px) {

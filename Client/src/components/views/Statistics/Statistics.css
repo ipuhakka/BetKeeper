@@ -1,0 +1,20 @@
+.content {
+  text-align: center;
+  overflow-x: scroll;
+}
+
+.tableGreen{
+	color: springgreen;
+}
+
+.tableRed{
+	color: salmon;
+}
+
+th{
+	text-align:center;
+}
+
+th.clickable{
+	cursor:pointer;
+}

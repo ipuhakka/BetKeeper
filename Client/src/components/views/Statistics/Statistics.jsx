@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import logo from './icon.svg';
-import './css/App.css';
-import Menu from './Menu.jsx';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
-import Info from './Info.jsx';
-import * as Stats from './js/Stats.js';
-import ConstVars from './js/Consts.js';
+import Header from '../../Header/Header.jsx';
+import Info from '../../Info/Info.jsx';
+import Menu from '../../Menu/Menu.jsx';
+import * as Stats from '../../../js/Stats.js';
+import ConstVars from '../../../js/Consts.js';
+import './Statistics.css';
 
 class Statistics extends Component{
 	constructor(props){
 		super(props);
-		
+
 		this.state = {
 			disabled: [false, false, true, false, false],
 			allBets: [],
@@ -37,7 +37,7 @@ class Statistics extends Component{
 			betFolders: [],
 			overviewItems: []
 		};
-		
+
 		this.onLoad = this.onLoad.bind(this);
 		this.getAllBets = this.getAllBets.bind(this);
 		this.getFolders = this.getFolders.bind(this);
@@ -49,27 +49,24 @@ class Statistics extends Component{
 		this.renderOverviewTable = this.renderOverviewTable.bind(this);
 		this.calculateOverviewValues = this.calculateOverviewValues.bind(this);
 	}
-	
+
 	render(){
 		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
 		var overview = this.renderOverviewTable();
-		
+
 		return(
-			<div className="App" onLoad={this.onLoad}>
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo"/>
-					<h1 className="App-title">{"Logged in as " + window.sessionStorage.getItem('loggedUser')}</h1>
-				</header>
+			<div className="content" onLoad={this.onLoad}>
+				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
 				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
-				<div className="dropDownDiv">
+				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
 							{overview}
 						</Col>
 						<Col className="col-md-6 col-xs-12">
-							<DropdownButton 
+							<DropdownButton
 								bsStyle="info"
 								title={"Show folder"}
 								id={1}>
@@ -82,9 +79,9 @@ class Statistics extends Component{
 			</div>
 		);
 	}
-	
+
 	renderOverviewTable(){
-		var tableItems = []; 
+		var tableItems = [];
 		var overviewItems = this.state.overviewItems;
 		for (var i = 0; i < this.state.overviewItems.length; i++){
 			tableItems.push(<tr key={i}>
@@ -94,7 +91,7 @@ class Statistics extends Component{
 								<td>{overviewItems[i]["winPercentage"]}</td>
 							</tr>)
 		}
-		
+
 		return(<Table>
 					<thead>
 						<tr>
@@ -107,13 +104,13 @@ class Statistics extends Component{
 					<tbody>{tableItems}</tbody>
 				</Table>);
 	}
-	
+
 	renderTable(){
 		var title = "Overview";
-		
+
 		if (this.state.folderSelected !== -1)
 			title = this.state.betFolders[this.state.folderSelected]["name"];
-		
+
 		return (
 		<Table>
 			<thead>
@@ -170,7 +167,7 @@ class Statistics extends Component{
 		</Table>
 		);
 	}
-	
+
 	renderDropdown(){
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.folderSelected === -1} eventKey={-1}>{"Overview"}</MenuItem>);
@@ -180,23 +177,23 @@ class Statistics extends Component{
 			if (k === this.state.folderSelected)
 				active = true;
 			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.state.betFolders[k]["name"]}</MenuItem>);
-		}			
+		}
 		return menuItems;
 	}
-	
-	showFromFolder(key){	
+
+	showFromFolder(key){
 		this.setState({
 			folderSelected: key
 		}, () => {this.updateTable()});
 	}
-	
+
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
 	calculateOverviewValues(betFolder){
 		var name = betFolder.name;
 		var moneyReturned = Stats.roundByTwo(Stats.moneyReturned(betFolder.bets));
 		var verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
 		var winPercentage = Stats.roundByTwo(Stats.winPercentage(betFolder.bets));
-		
+
 		var overviewItems = this.state.overviewItems;
 		overviewItems.push({
 			name: name,
@@ -204,23 +201,23 @@ class Statistics extends Component{
 			verifiedReturn: verifiedReturn,
 			winPercentage: winPercentage
 		});
-		
+
 		this.setState({
 			overviewItems: overviewItems
 		});
 	}
-	
-	updateTable(){	
-		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn, oddMedian, oddMean, 
+
+	updateTable(){
+		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn, oddMedian, oddMean,
 		betMedian, betMean;
 		var param;
-		
+
 		if (this.state.folderSelected === -1)
 			param = this.state.allBets;
-		
-		else 
+
+		else
 			param = this.state.betFolders[this.state.folderSelected]["bets"];
-		
+
 		moneyWon = Stats.roundByTwo(Stats.moneyWon(param));
 		moneyPlayed = Stats.roundByTwo(Stats.moneyPlayed(param));
 		moneyReturned = Stats.roundByTwo(Stats.moneyReturned(param));
@@ -234,7 +231,7 @@ class Statistics extends Component{
 		oddMean = Stats.roundByTwo(Stats.mean(param, "odd"));
 		betMedian = Stats.roundByTwo(Stats.median(param, "bet"));
 		betMean = Stats.roundByTwo(Stats.mean(param, "bet"));
-		
+
 		this.setState({
 			moneyWon: moneyWon,
 			moneyPlayed: moneyPlayed,
@@ -251,30 +248,30 @@ class Statistics extends Component{
 			betMean: betMean
 		});
 	}
-	
+
 	sort(func, param){
 		var sorted = func(this.state.overviewItems, param);
-		
+
 		this.setState({
 			overviewItems: sorted
 		});
 	}
-	
+
 	dismissAlert(){
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
-	
+
 	onLoad(){
 		this.getAllBets();
 		this.getFolders();
 	}
-		
+
 	getFolders(){
-		var xmlHttp = new XMLHttpRequest();	
-		
+		var xmlHttp = new XMLHttpRequest();
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
@@ -289,18 +286,18 @@ class Statistics extends Component{
 						alertState: xmlHttp.status,
 						alertText: "Session expired, please login again"
 					});
-				}	
+				}
 
         });
 		xmlHttp.open("GET", ConstVars.URI + 'folders/');
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send();
 	}
-	
+
 	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
 	getAllBets(){
-		var xmlHttp = new XMLHttpRequest();	
-		
+		var xmlHttp = new XMLHttpRequest();
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
@@ -317,19 +314,19 @@ class Statistics extends Component{
 						alertState: xmlHttp.status,
 						alertText: "Session expired, please login again"
 					});
-				}	
+				}
 
         });
 		xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send();
 	}
-	
+
 	/*getBets is performed after folder names has been received in a loop for each folder name.
 	after data has been received, pushes an object with bets array and name of the folder into betFolders array.*/
-	getBets(folderName){	
-		var xmlHttp = new XMLHttpRequest();	
-		
+	getBets(folderName){
+		var xmlHttp = new XMLHttpRequest();
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
@@ -351,7 +348,7 @@ class Statistics extends Component{
 						alertState: xmlHttp.status,
 						alertText: "Session expired, please login again"
 					});
-				}	
+				}
 		});
 		xmlHttp.open("GET", ConstVars.URI + 'bets?folder=' + folderName + "&finished=true");
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));

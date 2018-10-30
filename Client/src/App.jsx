@@ -1,40 +1,37 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import logo from './icon.svg';
-import Home from './Home.jsx';
-import './css/App.css';
+import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Header from './components/Header/Header.jsx';
+import Home from './components/views/Home/Home.jsx';
+import MaskedInput from './components/MaskedInput/MaskedInput.jsx';
 import ConstVars from './js/Consts.js';
-import MaskedInput from './MaskedInput.jsx';
-import Alert from 'react-bootstrap/lib/Alert';
+import './App.css';
 
 class App extends Component {
 	constructor(props){
-		super(props);		
-		
-		this.state = { 
+		super(props);
+
+		this.state = {
 			alertState: null
 		};
-		
+
 		this.requestToken = this.requestToken.bind(this);
 		this.checkToken = this.checkToken.bind(this);
 		this.getAlert = this.getAlert.bind(this);
 		this.setAlertState = this.setAlertState.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 	}
-	
+
 	render() {
 		var alert = this.getAlert();
-		
+
 		return (
 		<div className="App" onLoad={this.checkToken}>
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
-				<h1 className="App-title">Welcome to Betkeeper</h1>
-			</header>
+			<Header title={"Welcome to Betkeeper"}></Header>
 			<div>{alert}</div>
 			<Login requestToken={this.requestToken}></Login>
 			<p>Or</p>
@@ -42,7 +39,7 @@ class App extends Component {
 		</div>
 		);
 	}
-  
+
     //Checks if sessionStorage contains a valid token. If does, goes to user main page as logged user.
 	checkToken(){
 		if (sessionStorage.getItem('token') != null && sessionStorage.getItem('token').toString() !== 'null'){
@@ -50,7 +47,7 @@ class App extends Component {
 			xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
-					ReactDOM.render(<Home />, document.getElementById('root'));		
+					ReactDOM.render(<Home />, document.getElementById('root'));
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
 					console.log(xmlHttp.status);
@@ -64,7 +61,7 @@ class App extends Component {
 			xmlHttp.send();
 		}
 	}
-  
+
 	//Makes a post request to resource at URI/token. On success, sets the token from response, and user inputted username
 	//to sessionStorage and changes html page.
 	requestToken(user, passwd){
@@ -72,20 +69,20 @@ class App extends Component {
 			this.setAlertState("missing inputs");
 			return;
 		}
-		
+
 		var data = {
 			username: user,
 			password: passwd
 		};
-		
+
 		var xmlHttp = new XMLHttpRequest();
-		
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
 					window.sessionStorage.setItem('token', JSON.parse(xmlHttp.responseText).token);
 					window.sessionStorage.setItem('loggedUser', user);
-					ReactDOM.render(<Home />, document.getElementById('root'));		
+					ReactDOM.render(<Home />, document.getElementById('root'));
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
 					console.log(xmlHttp.status);
@@ -101,7 +98,7 @@ class App extends Component {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
 					console.log(xmlHttp.status);
 					this.setAlertState("Content-Type");
-				}			
+				}
 
         });
 		xmlHttp.open("POST", ConstVars.URI + "token");
@@ -109,13 +106,13 @@ class App extends Component {
 		xmlHttp.setRequestHeader('Content-Type', 'application/json');
         xmlHttp.send(JSON.stringify(data));
 	}
-	
+
 	dismissAlert(){
 		this.setState({
 			alertState: null
 		});
 	}
-	
+
 	getAlert(){
 		switch(this.state.alertState){
 			case "Bad request":
@@ -157,7 +154,7 @@ class App extends Component {
 				return;
 		}
 	}
-	
+
 	setAlertState(state){
 		this.setState({
 			alertState: state
@@ -168,17 +165,17 @@ class App extends Component {
 class Login extends Component {
 	constructor(props){
 		super(props);
-		
+
 		this.state = {
 			username: "",
 			password: ""
 		};
-		
+
 		this.setUsername = this.setUsername.bind(this);
 		this.setPassword = this.setPassword.bind(this);
 		this.checkEnter = this.checkEnter.bind(this);
 	}
-	
+
 	render(){
 		return (
 			<div className="component" onKeyPress={this.checkEnter}>
@@ -193,8 +190,8 @@ class Login extends Component {
 								className = "formMargins"
 								onChange={this.setUsername}
 							/>
-							<MaskedInput 
-								onChange={this.setPassword}	
+							<MaskedInput
+								onChange={this.setPassword}
 								type="text"
 								placeholder="Enter password">
 							</MaskedInput>
@@ -205,19 +202,19 @@ class Login extends Component {
 			</div>
 		);
 	}
-	
+
 	setUsername(e){
 		this.setState({
 			username: e.target.value
 		});
 	}
-	
+
 	setPassword(psw){
 		this.setState({
 			password: psw
 		});
 	}
-	
+
 	checkEnter(e){
 		if (e.which === 13){ //login
 			this.props.requestToken(this.state.username, this.state.password);
@@ -228,20 +225,20 @@ class Login extends Component {
 class SignUp extends Component{
 	constructor(props){
 		super(props);
-		
+
 		this.state = {
 			newUsername: "",
 			newPassword: "",
 			confirmPassword: "",
 		};
-			
+
 		this.setNewUsername = this.setNewUsername.bind(this);
 		this.setPassword = this.setPassword.bind(this);
 		this.setConfirmPassword = this.setConfirmPassword.bind(this);
 		this.signup = this.signup.bind(this);
 		this.checkEnter = this.checkEnter.bind(this);
 	}
-	
+
 	render(){
 		return (
 			<div className="component" onKeyPress={this.checkEnter}>
@@ -256,9 +253,9 @@ class SignUp extends Component{
 								className="formMargins"
 								onChange={this.setNewUsername}
 							/>
-							<MaskedInput	
+							<MaskedInput
 								type="text"
-								placeholder="Enter new password"							
+								placeholder="Enter new password"
 								className="formMargins"
 								onChange={this.setPassword}
 							/>
@@ -274,9 +271,9 @@ class SignUp extends Component{
 			</div>
 		);
 	}
-	
+
 	checkEnter(e){
-		if (e.which === 13){ 
+		if (e.which === 13){
 			this.signup();
 		}
 	}
@@ -285,38 +282,38 @@ class SignUp extends Component{
 			newUsername: e.target.value
 		});
 	}
-	
+
 	setPassword(psw) {
 		this.setState({
 			newPassword: psw
 		});
 	}
-	
+
 	setConfirmPassword(psw){
 		this.setState({
 			confirmPassword: psw
 		});
 	}
-	
+
 	//Creates an XMLHttpRequest to post a new user. on success asks for a token from the api.
 	signup(){
 		if (this.state.newUsername === "" || this.state.newPassword === ""){
 			this.props.alert("missing inputs");
 			return;
 		}
-		
+
 		if (this.state.newPassword !== this.state.confirmPassword){
 			this.props.alert("invalid match");
 			return;
 		}
-	
+
 		var data = {
 			username: this.state.newUsername,
 			password: this.state.newPassword
 		};
-		
+
 		var xmlHttp = new XMLHttpRequest();
-		
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 201) {
 					console.log(xmlHttp.status);
@@ -332,7 +329,7 @@ class SignUp extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
 					console.log(xmlHttp.status);
-				}			
+				}
 
         });
 		xmlHttp.open("POST", ConstVars.URI + "user/");

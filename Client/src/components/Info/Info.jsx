@@ -5,16 +5,16 @@ import Button from 'react-bootstrap/lib/Button';
 class Info extends Component{
 	constructor(props){
 		super(props);
-		
+
 		this.renderAlert = this.renderAlert.bind(this);
 	}
-	
+
 	render(){
 		var alert = this.renderAlert();
 		return(<div>{alert}</div>);
 	}
-	
-	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of 
+
+	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of
 	//http-requests. Any other value returns no alert element.
 	renderAlert(){
 		switch(this.props.alertState){
@@ -54,7 +54,7 @@ class Info extends Component{
 				return;
 		}
 	}
-	
+
 }
 
 export default Info

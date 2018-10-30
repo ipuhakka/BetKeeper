@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import './css/App.css';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import ConstVars from './js/Consts.js';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
-import Info from './Info.jsx';
+import Info from '../../../Info/Info.jsx';
+import ConstVars from '../../../../js/Consts.js';
+import './DeleteBets.css';
 
 class DeleteBets extends Component{
 	constructor(props){
@@ -33,24 +33,24 @@ class DeleteBets extends Component{
 		this.renderBetsList = this.renderBetsList.bind(this);
 		this.showFromFolder = this.showFromFolder.bind(this);
 	}
-	
-	render(){		
-		var betItems = this.renderBetsList();	
-		var folderItems = this.renderFolderList();		
+
+	render(){
+		var betItems = this.renderBetsList();
+		var folderItems = this.renderFolderList();
 		var menuItems = this.renderDropdown();
-		
+
 		return(
-			<div className="App">
+			<div className="content">
 				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
-						<div className="dropDownList">
-						<DropdownButton 
-							bsStyle="info"
-							title={"Show from folder"}
-							id={1}>
-							{menuItems}
-						</DropdownButton>
+						<div>
+							<DropdownButton
+								bsStyle="info"
+								title={"Show from folder"}
+								id={1}>
+								{menuItems}
+								</DropdownButton>
 						</div>
 						<div className="list">
 							<ListGroup>{betItems}</ListGroup>
@@ -67,7 +67,7 @@ class DeleteBets extends Component{
 			</div>
 		);
 	}
-	
+
 	renderBetsList(){
 		var betItems = [];
 		var isSelected = false;
@@ -76,7 +76,7 @@ class DeleteBets extends Component{
 				isSelected = true;
 			else
 				isSelected = false;
-			
+
 			var result = "Unresolved";
 			if (this.props.bets[i].bet_won)
 				result = "Won";
@@ -88,7 +88,7 @@ class DeleteBets extends Component{
 		}
 		return betItems;
 	}
-	
+
 	renderDropdown(){
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</MenuItem>);
@@ -99,10 +99,10 @@ class DeleteBets extends Component{
 				active = true;
 			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
 		}
-			
+
 		return menuItems;
 	}
-	
+
 	renderFolderList(){
 		var folderItems = [];
 		for (var j = 0; j < this.state.folders.length; j++){
@@ -110,14 +110,14 @@ class DeleteBets extends Component{
 		}
 		return folderItems;
 	}
-	
+
 	dismissAlert(){
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
-	
+
 	//Get bets from selected folder.
 	showFromFolder(key){
 		this.setState({
@@ -126,26 +126,26 @@ class DeleteBets extends Component{
 			allFoldersSelected: key,
 			selectedBet: -1
 		});
-		
+
 		if (key !== '-1' && key !== -1)
 			this.props.onUpdate(this.props.folders[key]);
-		else 
+		else
 			this.props.onUpdate();
 
 	}
-	
+
 	//Creates a request to delete the selected bet. If any folders are selected, bet is only deleted from selected folders.
 	deleteBet(){
 		if (this.state.selectedBet === -1 || this.state.selectedBet === '-1')
 			return;
-		
+
 		var folders = [];
 		for (var i = 0; i < this.state.folders.length; i++){
 			if (this.state.selectedFolders[i])
 				folders.push(this.state.folders[i]);
-		}		
+		}
 		var uri = ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id;
-		
+
 		if (folders.length > 0){
 			uri = uri + "?";
 			for (var j = 0; j < folders.length; j++){
@@ -154,8 +154,8 @@ class DeleteBets extends Component{
 					uri = uri + "&";
 			}
 		}
-		var xmlHttp = new XMLHttpRequest();	
-		
+		var xmlHttp = new XMLHttpRequest();
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
 					console.log(xmlHttp.status);
@@ -174,21 +174,21 @@ class DeleteBets extends Component{
 						alertState: xmlHttp.status,
 						alertText: "Session expired, please login again"
 					});
-				}	
+				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
 					this.setState({
 						alertState: xmlHttp.status,
 						alertText: "Bet trying to be deleted was not found"
 					});
 					console.log(xmlHttp.status);
-				}	
+				}
 
         });
 		xmlHttp.open("DELETE", uri);
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send();
 	}
-	
+
 	///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet(key){
 		var value = -1;
@@ -199,26 +199,26 @@ class DeleteBets extends Component{
 		else {
 			this.setState({
 				folders: [],
-				selectedFolders: []			
+				selectedFolders: []
 			});
 		}
 		this.setState({
 			selectedBet: value
 		});
 	}
-	
+
 	onPressedFolder(key){
-		var selected = this.state.selectedFolders;		
+		var selected = this.state.selectedFolders;
 		selected[key] = !selected[key];
-		
+
 		this.setState({
 			selectedFolders: selected
 		});
 	}
-	
+
 	getBetsFolders(id){
 		var xmlHttp = new XMLHttpRequest();
-		
+
 		xmlHttp.onreadystatechange =( () => {
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
 					console.log(xmlHttp.status);
@@ -226,20 +226,20 @@ class DeleteBets extends Component{
 				}
 				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
 					console.log(xmlHttp.status);
-				}		
+				}
 
         });
 		xmlHttp.open("GET", ConstVars.URI + "folders?bet_id=" + id);
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
         xmlHttp.send();
 	}
-	
+
 	setBetsFolders(data){
 		var sel = [];
 		for (var i = 0; i < data.length; i++){
 			sel.push(false);
 		}
-		
+
 		this.setState({
 			selectedFolders: sel,
 			folders: data
