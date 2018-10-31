@@ -218,7 +218,7 @@ class Folders extends Component {
         });
 		xmlHttp.open("GET", ConstVars.URI + "folders/");
 		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+    xmlHttp.send();
 	}
 
 	setFolders(data){

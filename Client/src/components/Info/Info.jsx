@@ -10,6 +10,7 @@ class Info extends Component{
 	}
 
 	render(){
+		console.log("rendering alert..");
 		var alert = this.renderAlert();
 		return(<div>{alert}</div>);
 	}
@@ -28,6 +29,11 @@ class Info extends Component{
 						<p>{this.props.alertText}</p>
 						<Button onClick={this.props.dismiss}>{"Hide"}</Button>
 						</Alert>);
+			case 204:
+				return(<Alert bsStyle="success" onDismiss={this.props.dismiss}>
+					<p>{this.props.alertText}</p>
+					<Button onClick={this.props.dismiss}>{"Hide"}</Button>
+					</Alert>);
 			case 400:
 				return(<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{this.props.alertText}</p>
 						<Button onClick={this.props.dismiss}>{"Hide"}</Button></Alert>);
