@@ -12,7 +12,7 @@ export function postFolder(folder, callback){
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
       let status = xmlHttp.status;
-      if (status === 201 || status === 400 || status === 401 || status === 409)
+      if ([201, 400, 401, 409].includes(status))
         callback(xmlHttp.status);
     }
   });

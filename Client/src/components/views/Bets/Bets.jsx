@@ -6,7 +6,8 @@ import DeleteBets from './DeleteBets/DeleteBets.jsx';
 import Header from '../../Header/Header.jsx';
 import Info from '../../Info/Info.jsx';
 import Menu from '../../Menu/Menu.jsx';
-import ConstVars from '../../../js/Consts.js';
+import {getFolders} from '../../../js/Requests/Folders.js';
+import {getUnresolvedBets, getAllBetsByUser, getBetsFromFolder} from '../../../js/Requests/Bets.js';
 import './Bets.css';
 
 class Bets extends Component{
@@ -22,10 +23,10 @@ class Bets extends Component{
 			alertText: ""
 		};
 
-		this.getAllBets = this.getAllBets.bind(this);
-		this.getFolders = this.getFolders.bind(this);
-		this.getBets = this.getBets.bind(this);
-		this.getUnresolvedBets = this.getUnresolvedBets.bind(this);
+		this.handleGetAllBets = this.handleGetAllBets.bind(this);
+		this.handleGetBetsFromFolder = this.handleGetBetsFromFolder.bind(this);
+		this.handleGetFolders = this.handleGetFolders.bind(this);
+		this.handleUnresolvedBets = this.handleUnresolvedBets.bind(this);
 		this.updateData = this.updateData.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 	}
@@ -58,112 +59,70 @@ class Bets extends Component{
 	//gets bets in that folder.
 	updateData(folder){
 		if (typeof folder === "string"){
-			this.getBets(folder);
+			getBetsFromFolder(folder);
 		}
 		else {
-			this.getAllBets();
+			getAllBetsByUser(this.handleGetAllBets);
 		}
-		this.getUnresolvedBets();
-		this.getFolders();
+		getUnresolvedBets(this.handleUnresolvedBets);
+		getFolders(this.handleGetFolders);
 	}
 
 	//gets all bets, and sets allBets state variable accordingly.
-	getAllBets(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setState({
-						deleteBetsList: JSON.parse(xmlHttp.responseText)
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Authorization failed, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "bets/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	handleGetAllBets(status, data){
+		if (status === 200){
+			this.setState({
+        deleteBetsList: JSON.parse(data)
+      });
+		}
+		if (status === 401){
+			this.setState({
+        alertState: status,
+        alertText: "Authorization failed, please login again"
+      });
+		}
 	}
 
 	//gets bets from selected folder and changes bets state variable accordingly.
-	getBets(folder){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setState({
-						deleteBetsList: JSON.parse(xmlHttp.responseText)
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Authorization failed, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "bets?folder=" + folder);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	handleGetBetsFromFolder(status, data){
+		if (status === 200){
+			this.setState({
+				deleteBetsList: JSON.parse(data)
+			});
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Authorization failed, please login again"
+			});
+		}
 	}
 
-	// gets a list of unresolved bets and sets the unresolvedBets list.
-	getUnresolvedBets(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setState({
-						unresolvedBets: JSON.parse(xmlHttp.responseText)
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Authorization failed, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "bets?finished=false");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	handleUnresolvedBets(status, data){
+		if (status === 200) {
+			this.setState({
+				unresolvedBets: JSON.parse(data)
+			});
+		}
+		else if (status === 401) {
+			this.setState({
+				alertState: status,
+				alertText: "Authorization failed, please login again"
+			});
 	}
-
-	getFolders(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setState({
-						folders: JSON.parse(xmlHttp.responseText)
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Authorization failed, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "folders/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+}
+	handleGetFolders(status, data){
+		if (status === 200){
+			this.setState({
+				folders: JSON.parse(data)
+			});
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Authorization failed, please login again"
+			});
+		}
 	}
 }
 
