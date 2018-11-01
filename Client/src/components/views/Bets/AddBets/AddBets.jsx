@@ -11,6 +11,7 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Row from 'react-bootstrap/lib/Grid';
 import Info from '../../../Info/Info.jsx';
 import ConstVars from '../../../../js/Consts.js';
+import {postBet} from '../../../../js/Requests/Bets.js';
 import './AddBets.css';
 
 class AddBets extends Component {
@@ -38,6 +39,7 @@ class AddBets extends Component {
 		this.setFoldersList = this.setFoldersList.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 		this.handleBetListClick = this.handleBetListClick.bind(this);
+		this.handleAddedBet = this.handleAddedBet.bind(this);
 		this.updateResult = this.updateResult.bind(this);
 		this.setAlertState = this.setAlertState.bind(this);
 	}
@@ -133,7 +135,7 @@ class AddBets extends Component {
 		});
 	}
 
-	//Creates an XMLHttpRequest to add a new bet to database, if bet and odd values are valid.
+	//Creates  a new bet to database, if bet and odd values are valid and a result for a bet is set.
 	addBet(){
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
 			this.setAlertState("Decimal given were in invalid format", "Invalid input");
@@ -162,35 +164,26 @@ class AddBets extends Component {
 			datetime: date,
 			folders: selectedFolders
 		}
+		postBet(data, this.handleAddedBet);
+	}
 
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setAlertState("Bet added successfully", xmlHttp.status);
-					this.setState({
-						selected: [],
-						odd: 0.0,
-						bet: 0.0,
-						name: ""
-					});
-					this.props.onUpdate();
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
-					this.setAlertState("Something went wrong with the request, server responded with code 400", xmlHttp.status);
-					console.log(xmlHttp.status);
-					console.log(xmlHttp.responseText);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setAlertState("Session expired, please login again", xmlHttp.status);
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("POST", ConstVars.URI + "bets/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send(JSON.stringify(data));
+	handleAddedBet(status){
+		if (status === 201) {
+      this.setAlertState("Bet added successfully", status);
+      this.setState({
+        selected: [],
+        odd: 0.0,
+        bet: 0.0,
+        name: ""
+      });
+      this.props.onUpdate();
+    }
+    if (status === 400) {
+      this.setAlertState("Something went wrong with the request, server responded with code 400", status);
+    }
+    if (status === 401) {
+      this.setAlertState("Session expired, please login again", status);
+    }
 	}
 
 	setOdd(e){

@@ -46,7 +46,7 @@ namespace API.Controllers
         /// table 'bets'. 
         /// 
         /// Responses:
-        ///     204 OK
+        ///     204 Deleted
         ///     401 Unauthorized
         ///     404 Not found: When folders are specified, 404 will be sent back if bet is not found at all, or from any of the 
         ///         specified folders.
@@ -153,7 +153,7 @@ namespace API.Controllers
         /// Creates a new Bet into bets-table.
         /// 
         /// Responses:
-        ///     200 OK
+        ///     201 Created
         ///     400 Bad request (Invalid request body or missing arguments)
         ///     401 Unauthorized 
         /// </summary>
@@ -185,7 +185,7 @@ namespace API.Controllers
                 odd = Convert.ToDouble(data["odd"].ToString());
                 BetsModel model = new BetsModel();
                 int id = model.CreateBet(Request.Headers.Authorization.ToString(), data["datetime"].ToString(), Conversions.ToNullableBool(data["bet_won"].ToString()), odd, bet, data["name"].ToString(), JsonConvert.DeserializeObject<List<string>>(data["folders"].ToString()));
-                return HttpMessage.ResponseMessage(JsonConvert.SerializeObject(id), HttpStatusCode.OK, "application/json");
+                return HttpMessage.ResponseMessage(JsonConvert.SerializeObject(id), HttpStatusCode.Created, "application/json");
             }
             catch (JsonReaderException)
             {

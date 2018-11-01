@@ -59,7 +59,7 @@ class Bets extends Component{
 	//gets bets in that folder.
 	updateData(folder){
 		if (typeof folder === "string"){
-			getBetsFromFolder(folder);
+			getBetsFromFolder(folder, this.handleGetBetsFromFolder);
 		}
 		else {
 			getAllBetsByUser(this.handleGetAllBets);

@@ -13,4 +13,7 @@ C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\bin\Debug\EntityFramework
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\bin\Debug\System.Data.SQLite.xml
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\bin\Debug\Newtonsoft.Json.dll
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\bin\Debug\Newtonsoft.Json.xml
-C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\obj\Debug\BetKeeper.csprojResolveAssemblyReference.cache
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\bin\Debug\System.Data.SQLite.dll.config
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\obj\Debug\BetKeeper.csprojAssemblyReference.cache
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\obj\Debug\BetKeeper.csproj.CoreCompileInputs.cache
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\BetKeeper\obj\Debug\BetKeeper.csproj.CopyComplete
