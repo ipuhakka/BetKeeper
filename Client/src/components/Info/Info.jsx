@@ -10,7 +10,6 @@ class Info extends Component{
 	}
 
 	render(){
-		console.log("rendering alert..");
 		var alert = this.renderAlert();
 		return(<div>{alert}</div>);
 	}

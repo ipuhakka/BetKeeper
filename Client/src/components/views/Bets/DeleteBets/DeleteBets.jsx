@@ -8,7 +8,8 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import Info from '../../../Info/Info.jsx';
-import ConstVars from '../../../../js/Consts.js';
+import {getFoldersOfBet} from '../../../../js/Requests/Folders.js';
+import {deleteBet} from '../../../../js/Requests/Bets.js';
 import './DeleteBets.css';
 
 class DeleteBets extends Component{
@@ -27,6 +28,8 @@ class DeleteBets extends Component{
 		this.getBetsFolders = this.getBetsFolders.bind(this);
 		this.onPressedFolder = this.onPressedFolder.bind(this);
 		this.deleteBet = this.deleteBet.bind(this);
+		this.handleDeletedBet = this.handleDeletedBet.bind(this);
+		this.handleGetBetsFolders = this.handleGetBetsFolders.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 		this.renderDropdown = this.renderDropdown.bind(this);
 		this.renderFolderList = this.renderFolderList.bind(this);
@@ -144,51 +147,38 @@ class DeleteBets extends Component{
 			if (this.state.selectedFolders[i])
 				folders.push(this.state.folders[i]);
 		}
-		var uri = ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id;
-
-		if (folders.length > 0){
-			uri = uri + "?";
-			for (var j = 0; j < folders.length; j++){
-				uri = uri + "folders=" + folders[j];
-				if (j < folders.length - 1)
-					uri = uri + "&";
-			}
-		}
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
-					console.log(xmlHttp.status);
-					this.setState({
-						folders: [],
-						selectedFolders: [],
-						alertState: xmlHttp.status,
-						alertText: "Bet deleted successfully",
-						selectedBet: -1
-					});
-					this.props.onUpdate();
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Bet trying to be deleted was not found"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("DELETE", uri);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+		deleteBet(this.props.bets[this.state.selectedBet].bet_id, folders, this.handleDeletedBet);
 	}
 
+	/*
+	Callback function for delete bet request.
+	*/
+	handleDeletedBet(status){
+		let text;
+
+		if (status === 204) {
+      this.setState({
+        folders: [],
+        selectedFolders: [],
+        alertState: status,
+        alertText: "Bet deleted successfully",
+        selectedBet: -1
+      });
+      this.props.onUpdate();
+			return;
+    }
+    else if (status === 401) {
+			text = "Session expired, please login again";
+    }
+    else if (status === 404) {
+      text = "Bet trying to be deleted was not found";
+    }
+
+		this.setState({
+			alertState: status,
+			alertText: text
+		});
+	}
 	///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet(key){
 		var value = -1;
@@ -217,21 +207,19 @@ class DeleteBets extends Component{
 	}
 
 	getBetsFolders(id){
-		var xmlHttp = new XMLHttpRequest();
+		getFoldersOfBet(id, this.handleGetBetsFolders);
+	}
 
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setBetsFolders(JSON.parse(xmlHttp.responseText));
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "folders?bet_id=" + id);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	handleGetBetsFolders(status, data){
+		if (status === 200) {
+			this.setBetsFolders(JSON.parse(data));
+		}
+		else if (status === 401) {
+			this.setState({
+				alertState: status,
+				alertText: "Session expired, please login again"
+			});
+		}
 	}
 
 	setBetsFolders(data){

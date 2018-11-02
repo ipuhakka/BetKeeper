@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Info from '../../Info/Info.jsx';
 import Header from '../../Header/Header.jsx';
 import Menu from '../../Menu/Menu.jsx';
-import ConstVars from '../../../js/Consts.js';
+import {deleteFolder, postFolder, getFolders} from '../../../js/Requests/Folders.js';
 import './Folders.css';
 
 class Folders extends Component {
@@ -26,10 +26,13 @@ class Folders extends Component {
 
 		this.onLoad = this.onLoad.bind(this);
 		this.renderFoldersList = this.renderFoldersList.bind(this);
-		this.deleteFolder = this.deleteFolder.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 		this.handleNewFolderChange = this.handleNewFolderChange.bind(this);
 		this.addFolder = this.addFolder.bind(this);
+		this.deleteFolder = this.deleteFolder.bind(this);
+		this.handleDelete = this.handleDelete.bind(this);
+		this.handlePost = this.handlePost.bind(this);
+		this.handleGet = this.handleGet.bind(this);
 	}
 
 	render(){
@@ -71,116 +74,6 @@ class Folders extends Component {
 		return items;
 	}
 
-	dismissAlert(){
-		this.setState({
-			alertState: null,
-			alertText: ""
-		});
-	}
-
-	addFolder(){
-		var data = {
-			folder: this.state.newFolder
-		};
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 201) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Folder added successfully"
-					});
-					this.onLoad();
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Something went wrong with the request"
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Create failed: User already has a folder of same name"
-					});
-					console.log(xmlHttp.status);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 415) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Missing Content-Type header in request"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		console.log(ConstVars.URI + "folders");
-		xmlHttp.open("POST", ConstVars.URI + "folders");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send(JSON.stringify(data));
-	}
-
-	deleteFolder(){
-		var folder = null;
-		for (var i = 0; i < this.state.folders.length; i++){
-			if (this.state.folders[i].selected)
-				folder = this.state.folders[i].name;
-		}
-
-		if (folder === null){
-			console.log("no folder selected");
-			return;
-		}
-
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Folder deleted successfully"
-					});
-					this.onLoad();
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Something went wrong with the request"
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-					console.log(xmlHttp.status);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Delete failed: folder trying to be deleted was not found"
-					});
-					console.log(xmlHttp.status);
-				}
-
-        });
-		console.log(ConstVars.URI + "folders?folder=" + folder);
-		xmlHttp.open("DELETE", ConstVars.URI + "folders?folder=" + folder);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
-	}
-
 	clickedListItem(key){
 		var folders = this.state.folders;
 		var anySelected = false;
@@ -199,28 +92,6 @@ class Folders extends Component {
 		});
 	}
 
-	//get folders and set the state.
-	onLoad(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setFolders(JSON.parse(xmlHttp.responseText));
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + "folders/");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-	}
-
 	setFolders(data){
 		var folders = [];
 		for (var i = 0; i < data.length; i++){
@@ -237,6 +108,93 @@ class Folders extends Component {
 		});
 	}
 
+	dismissAlert(){
+		this.setState({
+			alertState: null,
+			alertText: ""
+		});
+	}
+
+	addFolder(){
+		postFolder(this.state.newFolder, this.handlePost);
+	}
+
+	/* Callback function for posting a request.*/
+	handlePost(status){
+		var text;
+		if (status === 201) {
+				text = "Folder added successfully";
+				this.onLoad();
+		}
+		if (status === 400) {
+				text = "Something went wrong with the request";
+		}
+		if (status === 401) {
+				text = "Session expired, please login again";
+		}
+		if (status === 409) {
+				text = "Create failed: User already has a folder of same name";
+		}
+
+		this.setState({
+			alertState: status,
+			alertText: text
+		});
+	}
+
+	deleteFolder(){
+		var folder = null;
+		for (var i = 0; i < this.state.folders.length; i++){
+			if (this.state.folders[i].selected)
+				folder = this.state.folders[i].name;
+		}
+		if (folder === null){
+			console.log("no folder selected");
+			return;
+		}
+		deleteFolder(folder, this.handleDelete);
+	}
+
+  /* Callback function for deleting a folder.*/
+	handleDelete(status){
+		var text;
+		if (status === 204) {
+				text = "Folder deleted successfully";
+				this.onLoad();
+		}
+		if (status === 400) {
+				text = "Something went wrong with the request";
+		}
+		if (status === 401) {
+				text = "Session expired, please login again";
+		}
+		if (status === 404) {
+				text = "Delete failed: folder trying to be deleted was not found";
+		}
+
+		this.setState({
+			alertState: status,
+			alertText: text
+		});
+	}
+
+	//get folders and set the state.
+	onLoad(){
+		getFolders(this.handleGet);
+	}
+
+	///Callback function that handles state after receiving folders data from api.
+	handleGet(status, data){
+		if (status === 200) {
+      this.setFolders(JSON.parse(data));
+    }
+    if (status === 401) {
+      this.setState({
+        alertState: status,
+        alertText: "Session expired, please login again"
+      });
+    }
+	}
 }
 
 export default Folders;

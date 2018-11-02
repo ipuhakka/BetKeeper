@@ -6,7 +6,7 @@ import Info from '../../Info/Info.jsx';
 import Menu from '../../Menu/Menu.jsx';
 import TextContainer from '../../TextContainer/TextContainer.jsx';
 import * as Stats from '../../../js/Stats.js';
-import ConstVars from '../../../js/Consts.js';
+import {getFinishedBets} from '../../../js/Requests/Bets.js';
 import './Home.css';
 
 class Home extends Component{
@@ -21,14 +21,14 @@ class Home extends Component{
 			alertText: ""
 		};
 
-		this.getAllBets = this.getAllBets.bind(this);
+		this.handleGetAllBets = this.handleGetAllBets.bind(this);
 		this.setTextItems = this.setTextItems.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 
 	render() {
 		return (
-		<div className="content" onLoad={this.getAllBets}>
+		<div className="content" onLoad={() => {getFinishedBets(this.handleGetAllBets);}}>
 			<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disable={this.state.menuDisabled}></Menu>
 			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
@@ -41,27 +41,16 @@ class Home extends Component{
 		);
 	}
 
-	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
-	getAllBets(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setTextItems(JSON.parse(xmlHttp.responseText));
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session error, please login again"
-					});
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	handleGetAllBets(status, data){
+		if (status === 200){
+			this.setTextItems(JSON.parse(data));
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Session error, please login again"
+			});
+		}
 	}
 
 	setTextItems(betData){

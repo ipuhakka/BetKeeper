@@ -15,7 +15,6 @@ C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Web.Http.Cors.
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Web.Http.SelfHost.xml
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.exe
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.pdb
-C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.csprojResolveAssemblyReference.cache
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\BetKeeper.dll
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Data.SQLite.dll
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\BetKeeper.pdb
@@ -26,3 +25,8 @@ C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Data.SQLite.EF
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\EntityFramework.xml
 C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\BetKeeper.dll.config
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\bin\Debug\System.Data.SQLite.dll.config
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.csprojAssemblyReference.cache
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.csproj.CoreCompileInputs.cache
+C:\Users\iirop\Documents\BetKeeper\BetKeeper\API\obj\Debug\API.csproj.CopyComplete
