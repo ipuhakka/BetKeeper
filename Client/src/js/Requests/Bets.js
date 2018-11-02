@@ -99,3 +99,23 @@ export function postBet(data, callback){
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
   xmlHttp.send(JSON.stringify(data));
 }
+
+/*
+PUT-request to create a new bet to the database.
+  var data = {
+    bet_won: boolean, false=bet lost, true=bet won
+  }
+*/
+export function putBet(bet_id, data, callback){
+  var xmlHttp = new XMLHttpRequest();
+
+  xmlHttp.onreadystatechange =( () => {
+    if (xmlHttp.readyState === 4){
+      if ([204, 400, 401, 404, 409].includes(xmlHttp.status))
+        callback(xmlHttp.status);
+    }
+  });
+  xmlHttp.open("PUT", ConstVars.URI + "bets/" + bet_id);
+  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+  xmlHttp.send(JSON.stringify(data));
+}

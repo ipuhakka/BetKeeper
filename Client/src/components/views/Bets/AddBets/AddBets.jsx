@@ -10,8 +10,7 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Radio from 'react-bootstrap/lib/Radio';
 import Row from 'react-bootstrap/lib/Grid';
 import Info from '../../../Info/Info.jsx';
-import ConstVars from '../../../../js/Consts.js';
-import {postBet} from '../../../../js/Requests/Bets.js';
+import {postBet, putBet} from '../../../../js/Requests/Bets.js';
 import './AddBets.css';
 
 class AddBets extends Component {
@@ -40,6 +39,7 @@ class AddBets extends Component {
 		this.dismissAlert = this.dismissAlert.bind(this);
 		this.handleBetListClick = this.handleBetListClick.bind(this);
 		this.handleAddedBet = this.handleAddedBet.bind(this);
+		this.handleUpdatedBetResult = this.handleUpdatedBetResult.bind(this);
 		this.updateResult = this.updateResult.bind(this);
 		this.setAlertState = this.setAlertState.bind(this);
 	}
@@ -135,7 +135,63 @@ class AddBets extends Component {
 		});
 	}
 
-	//Creates  a new bet to database, if bet and odd values are valid and a result for a bet is set.
+	setOdd(e){
+		this.setState({
+			odd: e.target.value
+		});
+	}
+
+	setBet(e){
+		this.setState({
+			bet: e.target.value
+		});
+	}
+
+	setName(e){
+		this.setState({
+			name: e.target.value
+		});
+	}
+
+	setBetResult(e){
+		this.setState({
+			betResult: e.target.value
+		});
+	}
+
+	setUpdateBetResult(e){
+		this.setState({
+			updateBetResult: e.target.value
+		});
+	}
+
+	///init an array of booleans to keep track of selected list items and set the state.
+	setFoldersList(){
+		var selected = []
+
+		for (var i = 0; i < this.props.folders.length; i++){
+			selected.push(false);
+		}
+
+		this.setState({
+			selected: selected
+		});
+	}
+
+	setBetsList(){
+		this.props.onUpdate();
+	}
+
+	pressedListItem(i){
+		var selected = this.state.selected;
+		selected[i] = !selected[i];
+
+		this.setState({
+			selected: selected
+		});
+	}
+
+	//Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
 	addBet(){
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
 			this.setAlertState("Decimal given were in invalid format", "Invalid input");
@@ -186,35 +242,6 @@ class AddBets extends Component {
     }
 	}
 
-	setOdd(e){
-		this.setState({
-			odd: e.target.value
-		});
-	}
-
-	setBet(e){
-		this.setState({
-			bet: e.target.value
-		});
-	}
-
-	setName(e){
-		this.setState({
-			name: e.target.value
-		});
-	}
-
-	setBetResult(e){
-		this.setState({
-			betResult: e.target.value
-		});
-	}
-
-	setUpdateBetResult(e){
-		this.setState({
-			updateBetResult: e.target.value
-		});
-	}
 
 	//Changes unresolved bet to solved.
 	updateResult(){
@@ -226,66 +253,30 @@ class AddBets extends Component {
 		var data = {
 			bet_won: this.state.updateBetResult
 		}
-
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 204) {
-					console.log(xmlHttp.status);
-					this.setAlertState("Result updated successfully", xmlHttp.status); //null selections
-					this.setFoldersList();
-					this.setState({
-						selectedBet: -1
-					});
-					this.props.onUpdate();
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 400) {
-					this.setAlertState("Something went wrong with the request, server responded with code 400", xmlHttp.status);
-					console.log(xmlHttp.status);
-					console.log(xmlHttp.responseText);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					this.setAlertState("Session expired, please login", xmlHttp.status);
-					console.log(xmlHttp.status);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 404) {
-					this.setAlertState("Bet trying to be updated was not found", xmlHttp.status);
-					console.log(xmlHttp.status);
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 409) {
-					this.setAlertState("Conflict happened while updating bet", xmlHttp.status);
-					console.log(xmlHttp.status);
-				}
-        });
-		xmlHttp.open("PUT", ConstVars.URI + "bets/" + this.props.bets[this.state.selectedBet].bet_id);
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send(JSON.stringify(data));
+		putBet(this.props.bets[this.state.selectedBet].bet_id, data, this.handleUpdatedBetResult);
 	}
 
-	///init an array of booleans to keep track of selected list items and set the state.
-	setFoldersList(){
-		var selected = []
-
-		for (var i = 0; i < this.props.folders.length; i++){
-			selected.push(false);
+	handleUpdatedBetResult(status){
+		if (status === 204) {
+			this.setAlertState("Result updated successfully", status);
+			this.setFoldersList();
+			this.setState({
+				selectedBet: -1
+			});
+			this.props.onUpdate();
 		}
-
-		this.setState({
-			selected: selected
-		});
-	}
-
-	setBetsList(){
-		this.props.onUpdate();
-	}
-
-	pressedListItem(i){
-		var selected = this.state.selected;
-		selected[i] = !selected[i];
-
-		this.setState({
-			selected: selected
-		});
+		if (status === 400) {
+			this.setAlertState("Something went wrong with the request, server responded with code 400", status);
+		}
+		if (status === 401) {
+			this.setAlertState("Session expired, please login", status);
+		}
+		if (status === 404) {
+			this.setAlertState("Bet trying to be updated was not found", status);
+		}
+		if (status === 409) {
+			this.setAlertState("Conflict happened while updating bet", status);
+		}
 	}
 }
 
