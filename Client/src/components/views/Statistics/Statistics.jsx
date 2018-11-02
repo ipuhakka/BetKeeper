@@ -8,7 +8,8 @@ import Header from '../../Header/Header.jsx';
 import Info from '../../Info/Info.jsx';
 import Menu from '../../Menu/Menu.jsx';
 import * as Stats from '../../../js/Stats.js';
-import ConstVars from '../../../js/Consts.js';
+import {getFolders} from '../../../js/Requests/Folders.js';
+import {getBetsFromFolder, getFinishedBets} from '../../../js/Requests/Bets.js';
 import './Statistics.css';
 
 class Statistics extends Component{
@@ -39,8 +40,7 @@ class Statistics extends Component{
 		};
 
 		this.onLoad = this.onLoad.bind(this);
-		this.getAllBets = this.getAllBets.bind(this);
-		this.getFolders = this.getFolders.bind(this);
+		this.getAllFinishedBets = this.getAllFinishedBets.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 		this.renderDropdown = this.renderDropdown.bind(this);
 		this.renderTable = this.renderTable.bind(this);
@@ -48,6 +48,9 @@ class Statistics extends Component{
 		this.updateTable = this.updateTable.bind(this);
 		this.renderOverviewTable = this.renderOverviewTable.bind(this);
 		this.calculateOverviewValues = this.calculateOverviewValues.bind(this);
+		this.handleGetFolders = this.handleGetFolders.bind(this);
+		this.handleGetBetsFromFolder = this.handleGetBetsFromFolder.bind(this);
+		this.handleGetAllFinishedBets = this.handleGetAllFinishedBets.bind(this);
 	}
 
 	render(){
@@ -265,94 +268,77 @@ class Statistics extends Component{
 	}
 
 	onLoad(){
-		this.getAllBets();
-		this.getFolders();
+		this.getAllFinishedBets();
+		getFolders(this.handleGetFolders);
 	}
 
-	getFolders(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					var folderNames = JSON.parse(xmlHttp.responseText);
-					for (var i = 0; i < folderNames.length; i++){ /* Loops through folderNames array to get bets for each of the folders.*/
-						this.getBets(folderNames[i]);
-					}
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + 'folders/');
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	/*
+	Callback for GET-folders request.
+	For every folder, get-request is made to get bets
+	in that folder.
+	*/
+	handleGetFolders(status, folders){
+		folders = JSON.parse(folders);
+		if (status === 200){
+			for (var i = 0; i < folders.length; i++){ /* Loops through folderNames array to get bets for each of the folders.*/
+				getBetsFromFolder(folders[i], this.handleGetBetsFromFolder);
+			}
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Session expired, please login again"
+			});
+		}
 	}
 
 	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
-	getAllBets(){
-		var xmlHttp = new XMLHttpRequest();
-
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					this.setState({
-						allBets: JSON.parse(xmlHttp.responseText)
-					},() => {
-						this.updateTable();
-						this.calculateOverviewValues({name: "", bets: this.state.allBets});
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-				}
-
-        });
-		xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.send();
+	getAllFinishedBets(){
+		getFinishedBets(this.handleGetAllFinishedBets);
 	}
 
-	/*getBets is performed after folder names has been received in a loop for each folder name.
-	after data has been received, pushes an object with bets array and name of the folder into betFolders array.*/
-	getBets(folderName){
-		var xmlHttp = new XMLHttpRequest();
+	handleGetAllFinishedBets(status, data){
+		if (status === 200){
+			this.setState({
+				allBets: JSON.parse(data)
+			},() => {
+				this.updateTable();
+				this.calculateOverviewValues({name: "", bets: this.state.allBets});
+			});
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Session expired, please login again"
+			});
+		}
+	}
 
-		xmlHttp.onreadystatechange =( () => {
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
-					console.log(xmlHttp.status);
-					var betFolders = this.state.betFolders;
-					var bets = JSON.parse(xmlHttp.responseText);
-					var item = {
-						name: folderName,
-						bets: bets
-					}
-					betFolders.push(item);
-					this.calculateOverviewValues(item);
-					this.setState({
-						betFolders: betFolders
-					});
-				}
-				if (xmlHttp.readyState === 4 && xmlHttp.status === 401) {
-					console.log(xmlHttp.status);
-					this.setState({
-						alertState: xmlHttp.status,
-						alertText: "Session expired, please login again"
-					});
-				}
-		});
-		xmlHttp.open("GET", ConstVars.URI + 'bets?folder=' + folderName + "&finished=true");
-		xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-		xmlHttp.send();
+	/*
+	Callback function, done after receiving bets from a specific folder.
+	After data has been received, pushes an object with bets array and
+	name of the folder into betFolders array.
+	*/
+	handleGetBetsFromFolder(status, data, folderName){
+		if (status === 200){
+			var betFolders = this.state.betFolders;
+			var bets = JSON.parse(data);
+			var item = {
+				name: folderName,
+				bets: bets
+			}
+			betFolders.push(item);
+			this.calculateOverviewValues(item);
+			this.setState({
+				betFolders: betFolders
+			});
+		}
+		else if (status === 401){
+			this.setState({
+				alertState: status,
+				alertText: "Session expired, please login again"
+			});
+		}
 	}
 }
 

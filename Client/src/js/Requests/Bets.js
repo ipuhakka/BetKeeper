@@ -1,6 +1,24 @@
 import ConstVars from '../Consts.js';
 
 /*
+GET-request to uri/bets?finished=true.
+Gets unfinished bets by logged user.
+*/
+export function getFinishedBets(callback){
+  var xmlHttp = new XMLHttpRequest();
+
+  xmlHttp.onreadystatechange =( () => {
+    if (xmlHttp.readyState === 4){
+      if ([200, 401].includes(xmlHttp.status))
+        callback(xmlHttp.status, xmlHttp.responseText);
+    }
+  });
+  xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
+  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+  xmlHttp.send();
+}
+
+/*
   GET-request to uri/bets?finished=false.
   Gets unfinished bets by logged user.
 */
@@ -24,7 +42,7 @@ export function getBetsFromFolder(folder, callback){
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
       if ([200, 401].includes(xmlHttp.status))
-        callback(xmlHttp.status, xmlHttp.responseText);
+        callback(xmlHttp.status, xmlHttp.responseText, folder);
     }
   });
   xmlHttp.open("GET", ConstVars.URI + "bets?folder=" + folder);
