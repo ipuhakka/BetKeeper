@@ -8,3 +8,8 @@
 		width: 100%;
 	}
 }
+
+.grid{
+  display: table-cell;
+  width: 50%;
+}
