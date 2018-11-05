@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-/*import Row from 'react-bootstrap/lib/Grid';
-import Col from 'react-bootstrap/lib/Grid';*/
 import Bets from '../Bets/Bets.jsx';
 import Folders from '../Folders/Folders.jsx';
 import Statistics from '../Statistics/Statistics.jsx';
@@ -9,9 +7,6 @@ import Card from '../../Card/Card.jsx';
 import Header from '../../Header/Header.jsx';
 import Info from '../../Info/Info.jsx';
 import Menu from '../../Menu/Menu.jsx';
-//import TextContainer from '../../TextContainer/TextContainer.jsx';
-import * as Stats from '../../../js/Stats.js';
-import {getFinishedBets} from '../../../js/Requests/Bets.js';
 import './Home.css';
 
 class Home extends Component{
@@ -21,13 +16,10 @@ class Home extends Component{
 
 		this.state = {
 			menuDisabled: [true, false, false, false, false],
-			textItems: ["Bets won/played:", "Money won/played:", "Last bet played:"],
 			alertState: null,
 			alertText: ""
 		};
 
-		this.handleGetAllBets = this.handleGetAllBets.bind(this);
-		this.setTextItems = this.setTextItems.bind(this);
 		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 
@@ -59,36 +51,13 @@ class Home extends Component{
 
 	render() {
 		return (
-		<div className="content" onLoad={() => {getFinishedBets(this.handleGetAllBets);}}>
+		<div className="content">
 			<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disable={this.state.menuDisabled}></Menu>
 			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
-			<div>{this.cardGrid()}</div>
+			<div className="content">{this.cardGrid()}</div>
 		</div>
 		);
-	}
-
-	handleGetAllBets(status, data){
-		if (status === 200){
-			this.setTextItems(JSON.parse(data));
-		}
-		else if (status === 401){
-			this.setState({
-				alertState: status,
-				alertText: "Session error, please login again"
-			});
-		}
-	}
-
-	setTextItems(betData){
-		var textItems = [];
-		textItems.push("Won bets: " + Stats.wonBets(betData) + "/" + Stats.playedBets(betData));
-		textItems.push("Money won/played: " + Stats.moneyWon(betData) + "/" + Stats.moneyPlayed(betData));
-		textItems.push("Last played bet: " + betData[betData.length - 1]["datetime"]);
-
-		this.setState({
-			textItems: textItems
-		});
 	}
 
 	dismissAlert(){

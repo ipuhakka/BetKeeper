@@ -3,30 +3,6 @@
   overflow-x: scroll;
 }
 
-.component{
-	width:100%;
-	display:inline-block;
-}
-
-.form{
-	width:30%;
-	display:inline-block;
-}
-
-@media screen and (max-width: 600px) {
-  .form{
-	  margin-left:2px;
-	  margin-right:2px;
-	  width:100%;
-  }
-
-  .button{
-	  width:100%;
-	  margin-left:2px;
-	  margin-right:2px;
-  }
-}
-
 ::-webkit-scrollbar {
     width: 10px;
 }

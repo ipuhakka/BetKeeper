@@ -15,9 +15,14 @@ class Info extends Component{
 	}
 
 	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of
-	//http-requests. Any other value returns no alert element.
+	//http-requests. Other alert types use code -1. Any other value returns no alert element.
 	renderAlert(){
 		switch(this.props.alertState){
+			case -1:
+			return(<Alert bsStyle="success" onDismiss={this.props.dismiss}>
+					<p>{this.props.alertText}</p>
+					<Button onClick={this.props.dismiss}>{"Hide"}</Button>
+					</Alert>);
 			case 200:
 				return(<Alert bsStyle="success" onDismiss={this.props.dismiss}>
 						<p>{this.props.alertText}</p>
