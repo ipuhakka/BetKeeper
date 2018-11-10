@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "prop-types": "^15.6.2",
-    "react": "^16.4.2",
-    "react-bootstrap": "^0.32.3",
-    "react-dom": "^16.4.2",
+    "react": "^16.6.0",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "^16.6.0",
     "react-scripts": "^1.1.5"
   },
   "scripts": {
