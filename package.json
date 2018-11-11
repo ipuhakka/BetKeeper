@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "better-sqlite3": "^5.0.1",
     "prop-types": "^15.6.2",
     "react": "^16.6.0",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.6.0",
-    "react-scripts": "^1.1.5",
-    "sqlite3": "^4.0.3"
+    "react-scripts": "^1.1.5"
   },
   "scripts": {
     "start": "set PORT=3001 && react-scripts start",

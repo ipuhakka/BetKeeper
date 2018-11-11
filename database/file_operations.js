@@ -1,4 +1,3 @@
-const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 
 module.exports = {
@@ -7,12 +6,7 @@ module.exports = {
   If {database_path} does not exist, it is created.
   */
   run_script: function(database_path, script_path, callback){
-    let db = new sqlite3.Database(database_path, (err) => {
-      if (err) {
-        console.error(err.message);
-        throw err;
-      }
-    });
+    const db = require('better-sqlite3')(database_path);
 
     fs.readFile(script_path, 'utf-8', function read(err, data) {
       if (err) {
@@ -20,21 +14,15 @@ module.exports = {
       }
       db.exec(data);
 
-      db.close((err) => {
-        if (err) {
-          console.error(err.message);
-          throw err;
-        }
-        callback();
-      });
+      db.close();
+      callback();
     });
   },
 
-
-  delete_database: function(path){
-
+  delete_database: function(path, callback){
     fs.unlink(path, (err) => {
       if (err) throw err;
+      callback();
     });
   }
 }
