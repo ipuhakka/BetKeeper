@@ -108,3 +108,40 @@ describe('get_user_id', function(){
     done();
   });
 });
+
+describe('add_user', function(){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('returns -1 when database does not exist', function(done){
+    fo.delete_database(testDB, function(){
+      var res = users.add_user(testDB, 'jannu27', 'salasana');
+      expect(res).to.equal(-1);
+      fo.run_script(testDB, test_init, function(){
+        done();
+      });
+    });
+  });
+
+  it('returns 0 when username already exists', function(done){
+    var res = users.add_user(testDB, 'jannu27', 'password');
+    expect(res).to.equal(0);
+    done();
+  });
+
+  it('returns 1 when username does not exist', function(done){
+    var res = users.add_user(testDB, 'new_user', 'password');
+    expect(res).to.equal(1);
+    done();
+  });
+});

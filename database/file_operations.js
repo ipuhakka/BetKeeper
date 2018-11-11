@@ -13,7 +13,6 @@ module.exports = {
         throw err;
       }
       db.exec(data);
-
       db.close();
       callback();
     });

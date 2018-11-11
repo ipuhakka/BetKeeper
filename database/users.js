@@ -67,5 +67,35 @@ module.exports = {
       db.close();
     }
     return result;
+  },
+
+  /*
+  adds a user to table users.
+  Returns 1 if insertion was successfull,
+  0 if user already exists,
+  and -1 if something went wrong with the request.
+  */
+  add_user: function(db_path, username, password){
+    const db = require('better-sqlite3')(db_path);
+    let result = -1;
+    try {
+      var stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');
+      var res = stmt.run(username, password);
+      if (res != null){
+        result = res.changes;
+      }
+    }
+    catch(err){
+      if (err.message.indexOf('UNIQUE') === -1){
+      result = -1;
+      }
+      else {
+        result = 0;
+      }
+    }
+    finally{
+      db.close();
+    }
+    return result;
   }
 }
