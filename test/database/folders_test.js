@@ -83,3 +83,79 @@ describe('get_users_folders', function(){
     done();
   });
 });
+
+describe('delete_folder', function(){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('lets user delete their own folder', function(done){
+    let res = folders.delete_folder(testDB, 1, 'valioliiga');
+    expect(res).to.equal(true);
+    done();
+  });
+
+  it('returns null on error in statement', function(done){
+    fo.delete_database(testDB, function(){
+      let res = folders.delete_folder(testDB, 1, 'valioliiga');
+      expect(res).to.equal(null);
+      fo.run_script(testDB, test_init, function(){
+        done();
+      });
+    });
+  });
+
+  it('returns false on deleting folder which user does not have', function(done){
+    let res = folders.delete_folder(testDB, 1, 'tuplat');
+    expect(res).to.equal(false);
+    done();
+  });
+
+});
+
+describe('add_folder', function(done){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('returns true when folder name is not in use by user', function(done){
+    let res = folders.add_folder(testDB, 1, 'tuplat');
+    expect(res).to.equal(true);
+    folders.delete_folder(testDB, 1, 'tuplat');
+    done();
+  });
+
+  it('returns false when user already has folder of that name', function(done){
+    let res = folders.add_folder(testDB, 1, 'valioliiga');
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('returns null on error in statement', function(done){
+    fo.delete_database(testDB, function(){
+      let res = folders.add_folder(testDB, 1, 'valioliiga');
+      expect(res).to.equal(null);
+      fo.run_script(testDB, test_init, function(){
+        done();
+      });
+    });
+  })
+});

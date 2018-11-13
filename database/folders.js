@@ -53,6 +53,63 @@ module.exports = {
       db.close();
     }
     return result;
+  },
+
+  /*
+  Deletes a folder {folder_name} from user, if user has that
+  folder.
+
+  Returns:
+    true if successfully deleted,
+    false if no deletion was done,
+    null on error.
+  */
+  delete_folder: function(db_path, user_id, folder_name){
+    const db = require('better-sqlite3')(db_path);
+    let query = 'DELETE FROM bet_folders WHERE owner = ? AND folder_name = ?';
+    let result = false;
+    try {
+      var res = db.prepare(query).run(user_id, folder_name);
+      if (res.changes === 1){
+        result = true;
+      }
+    }
+    catch (err){
+      result = null;
+    }
+    finally{
+      db.close();
+    }
+    return result;
+  },
+
+  /*
+  Adds a folder if user does not have a folder of that name.
+  Returns true on success, false if already exists, null on
+  error in statement.
+  */
+  add_folder: function(db_path, user_id, folder_name){
+    if (this.user_has_folder(db_path, user_id, folder_name)){
+      return false;
+    }
+
+    const db = require('better-sqlite3')(db_path);
+    let query = 'INSERT INTO bet_folders VALUES (?, ?)';
+    let result = false;
+    try {
+      var res = db.prepare(query).run(folder_name, user_id);
+      if (res.changes === 1){
+        result = true;
+      }
+    }
+    catch (err){
+      console.log(err);
+      result = null;
+    }
+    finally{
+      db.close();
+    }
+    return result;
   }
 
 }
