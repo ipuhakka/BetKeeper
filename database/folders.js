@@ -103,7 +103,6 @@ module.exports = {
       }
     }
     catch (err){
-      console.log(err);
       result = null;
     }
     finally{
