@@ -19,7 +19,7 @@ describe('user_has_folder', function(){
       done();
     });
   });
-
+  
   it('returns false when folder exists but not for specified user', function(done){
     var res = folders.user_has_folder(testDB, 1, 'tuplat');
     expect(res).to.equal(false);
