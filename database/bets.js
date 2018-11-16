@@ -1,3 +1,6 @@
+var moment = require('moment');
+const isNumber = require('is-number');
+
 module.exports = {
   /*
   Returns bets from selected user. Returns only finished betsi
@@ -119,6 +122,63 @@ module.exports = {
     }
     catch (err){
       result = null;
+    }
+    finally{
+      db.close();
+    }
+    return result;
+  },
+
+  /*
+  Creates a new bet.
+
+  parameters:
+    db_path: Path to database file_operations.
+    user_id: Id for the user who played the bet.
+    datetime: Datetime when the bet was played.
+    odd: Odd for the bet.
+    bet: Stake for the bet.
+    name: Name for the bet.
+    bet_won: true if bet was correct, false if not,
+      null if bet has not resolved yet.
+
+  Returns true on success,
+  false if user does not exist, or if datetime is in
+  invalid format, and null if request fails because
+  of database and connection issues.
+  */
+  create_bet: function(db_path, user_id, datetime, odd, bet, name, bet_won){
+    datetime = moment(datetime, 'YYYY-MM-DD HH:MM:SS').format('YYYY-MM-DD HH:MM:SS');
+    if(!moment(datetime, 'YYYY-MM-DD HH:MM:SS', true).isValid()){
+      return false;
+    }
+
+    if(!isNumber(odd) || !isNumber(bet)){
+      return false;
+    }
+
+    let bet_result = -1;
+    if (bet_won !== null){
+      bet_result = bet_won ? 1 : 0;
+    }
+
+    const db = require('better-sqlite3')(db_path);
+    let query = 'INSERT INTO bets (bet_won, name, odd, bet, date_time, owner) values (?, ?, ?, ?, ?, ?)';
+    let result = false;
+    try {
+      var res = db.prepare(query).run(bet_result, name, odd, bet, datetime, user_id);
+
+      if (res.changes === 1){
+        result = true;
+      }
+    }
+    catch (err){
+      if (err.message.indexOf('no such table') === -1){
+        result = false;
+      }
+      else {
+        result = null;
+      }
     }
     finally{
       db.close();

@@ -140,5 +140,53 @@ describe('delete_bet', function(done){
     expect(res).to.equal(true);
     done();
   });
+});
 
+describe('create_bet', function(done){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('returns true on success', function(done){
+    var res = bets.create_bet(testDB, 1, new Date().toString(), 4.8, 4.7, "", false);
+    expect(res).to.equal(true);
+    done();
+  });
+
+  it('returns false on invalid date', function(done){
+    var res = bets.create_bet(testDB, 1, "2018-084-05 14:524:40" , 4.8, 4.7, "", false);
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('returns false when user does not exist', function(done){
+    var res = bets.create_bet(testDB, -1, new Date().toString() , 4.8, 4.7, "", false);
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('returns null when database is empty', function(done){
+    fo.delete_database(testDB, function(){
+      var res = bets.create_bet(testDB, -1, new Date().toString() , 4.8, 4.7, "", false);
+      expect(res).to.equal(null);
+      fo.run_script(testDB, test_init, function(){
+        done();
+      });
+    });
+  });
+
+  it('returns false on invalid decimal values', function(done){
+    var res = bets.create_bet(testDB, 1, new Date().toString() , 'not decimal', 4.7, "", false);
+    expect(res).to.equal(false);
+    done();
+  })
 });
