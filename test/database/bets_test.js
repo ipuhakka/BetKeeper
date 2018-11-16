@@ -81,3 +81,64 @@ describe('get_bets_from_folder', function(done){
     done();
   });
 });
+
+describe('get_bet', function(){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('returns null when bet_id does not exist', function(done){
+    expect(bets.get_bet(testDB, 12)).to.equal(null);
+    done();
+  });
+
+  it('returns correct bet', function(done){
+    let bet = bets.get_bet(testDB, 7);
+    expect(bet.owner).to.equal(5);
+    expect(bet.bet_id).to.equal(7);
+    done();
+  });
+});
+
+describe('delete_bet', function(done){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('return false when trying to delete a bet from other user', function(done){
+    var res = bets.delete_bet(testDB, 7, 1);
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('returns false when trying to delete an unexisting bet', function(done){
+    var res = bets.delete_bet(testDB, 12, 1);
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('true on deleting users own bet successfully', function(done){
+    var res = bets.delete_bet(testDB, 1, 1);
+    expect(res).to.equal(true);
+    done();
+  });
+
+});

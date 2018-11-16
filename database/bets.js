@@ -44,6 +44,22 @@ module.exports = {
     return result;
   },
 
+  get_bet: function(db_path, bet_id){
+    const db = require('better-sqlite3')(db_path);
+    let bet;
+    try {
+      let res = db.prepare('SELECT * FROM bets WHERE bet_id=?').get(bet_id);
+      bet = create_bet_object(res);
+    }
+    catch (err){
+      bet = null;
+    }
+    finally{
+      db.close();
+    }
+    return bet;
+  },
+
   /*
   Returns bets from specific folder by user. If finished argument
   is not given, all bets from folder are returned. If it is true,
@@ -71,6 +87,35 @@ module.exports = {
       }
       res = stmt.all(user_id, folder);
       result = res.map((item) => { return create_bet_object(item); });
+    }
+    catch (err){
+      result = null;
+    }
+    finally{
+      db.close();
+    }
+    return result;
+  },
+
+  /*
+  Delete's a bet from all folders of user.
+  Returns true on success, false on failure & null
+  on error in request.
+  */
+  delete_bet: function(db_path, bet_id, user_id){
+    let bet_to_delete = this.get_bet(db_path, bet_id);
+    if (bet_to_delete === null || bet_to_delete.owner !== user_id){
+      return false;
+    }
+
+    const db = require('better-sqlite3')(db_path);
+    let query = 'DELETE FROM bets WHERE bet_id = ?';
+    let result = false;
+    try {
+      var res = db.prepare(query).run(bet_id);
+      if (res.changes === 1){
+        result = true;
+      }
     }
     catch (err){
       result = null;
