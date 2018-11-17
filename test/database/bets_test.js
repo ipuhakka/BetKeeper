@@ -175,12 +175,10 @@ describe('create_bet', function(done){
   });
 
   it('returns null when database is empty', function(done){
-    fo.delete_database(testDB, function(){
-      var res = bets.create_bet(testDB, -1, new Date().toString() , 4.8, 4.7, "", false);
-      expect(res).to.equal(null);
-      fo.run_script("testDB", test_init, function(){
-        done();
-      });
+    var res = bets.create_bet("testDB", -1, new Date().toString() , 4.8, 4.7, "", false);
+    expect(res).to.equal(null);
+    fo.delete_database("testDB", function(){
+      done();
     });
   });
 
@@ -225,4 +223,45 @@ describe('add_bet_to_folders', function(done){
     expect(res.length).to.equal(0);
     done();
   });
+
+  it('does not add other users bet', function(done){
+    var res = bets.add_bet_to_folders(testDB, ["triplat"], 4, 1);
+    expect(res.length).to.equal(0);
+    done();
+  });
 })
+
+describe('delete_bet_from_folders', function(){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('returns 2 when deletes from two folders', function(done){
+    bets.add_bet_to_folders(testDB, ["triplat"], 1, 1);
+    var res = bets.delete_bet_from_folders(testDB, ["valioliiga", "triplat"], 1, 1);
+    expect(res.length).to.equal(2);
+    bets.add_bet_to_folders(testDB, ["valioliiga"], 1, 1);
+    done();
+  });
+
+  it('does not delete from folders where bet does not exist', function(done){
+    var res = bets.delete_bet_from_folders(testDB, ["valioliiga", "triplat"], 1, 1);
+    expect(res.length).to.equal(1);
+    done();
+  });
+
+  it('does not delete other users bet', function(done){
+    var res = bets.delete_bet_from_folders(testDB, ["tuplat"], 1, 4);
+    expect(res.length).to.equal(0);
+    done();
+  });
+});

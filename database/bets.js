@@ -130,6 +130,40 @@ module.exports = {
   },
 
   /*
+  Deletes a bet from selected folders. Returns an array
+  with names of folders from which bet was successfully deleted.
+
+  Returns null when a connection related error happens.
+  */
+  delete_bet_from_folders: function(db_path, folders, bet_id, user_id){
+    if (this.get_bet(db_path, bet_id).owner !== user_id){
+      return [];
+    }
+
+    const db = require('better-sqlite3')(db_path);
+    let query = 'DELETE FROM bet_in_bet_folder WHERE bet_id = ? AND folder = ? ';
+    let deletedFrom = [];
+    let stmt = db.prepare(query);
+    for (var i = 0; i < folders.length; i++){
+      try {
+        let res = stmt.run(bet_id, folders[i]);
+        if (res.changes === 1){
+          deletedFrom.push(folders[i]);
+        }
+      }
+      catch(err){
+        if (err.message.indexOf('no such table') !== -1){
+          deletedFrom = null;
+          break;
+        }
+      }
+    }
+    db.close();
+
+    return deletedFrom;
+  },
+
+  /*
   Creates a new bet.
 
   parameters:
@@ -190,8 +224,14 @@ module.exports = {
   Add's an already existing bet into folders.
   Returns an array of folder names, to which bet
   was successfully added.
+
+  Returns null when an error regarding connection is found.
   */
   add_bet_to_folders: function(db_path, folders, bet_id, user_id){
+    if (this.get_bet(db_path, bet_id).owner !== user_id){
+      return [];
+    }
+
     const db = require('better-sqlite3')(db_path);
     let query = 'INSERT INTO bet_in_bet_folder VALUES (?, ?, ?)';
     let addedTo = [];
@@ -205,7 +245,7 @@ module.exports = {
       }
       catch(err){
         if (err.message.indexOf('no such table') !== -1){
-          result = null;
+          addedTo = null;
           break;
         }
       }
