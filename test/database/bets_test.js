@@ -178,7 +178,7 @@ describe('create_bet', function(done){
     fo.delete_database(testDB, function(){
       var res = bets.create_bet(testDB, -1, new Date().toString() , 4.8, 4.7, "", false);
       expect(res).to.equal(null);
-      fo.run_script(testDB, test_init, function(){
+      fo.run_script("testDB", test_init, function(){
         done();
       });
     });
@@ -190,3 +190,39 @@ describe('create_bet', function(done){
     done();
   })
 });
+
+describe('add_bet_to_folders', function(done){
+  before(function(done){
+    this.timeout(10000);
+    fo.run_script(testDB, test_init, function(){
+      done();
+    });
+  });
+
+  after(function(done){
+    fo.delete_database(testDB, function(){
+      done();
+    });
+  });
+
+  it('adds bet to folders when it does not exist in folder already', function(done){
+    var bet = bets.get_bet(testDB, 1);
+    var res = bets.add_bet_to_folders(testDB, ["liiga", "triplat"], bet.bet_id, 1);
+    expect(res.length).to.equal(2);
+    done();
+  });
+
+  it('does not add to folder where bet is already', function(done){
+    var bet = bets.get_bet(testDB, 2);
+    var res = bets.add_bet_to_folders(testDB, ["liiga", "valioliiga"], bet.bet_id, 1);
+    expect(res.length).to.equal(1);
+    done();
+  });
+
+  it('does not add bet to other users folders', function(done){
+    var bet = bets.get_bet(testDB, 2);
+    var res = bets.add_bet_to_folders(testDB, ["tuplat"], bet.bet_id, 1);
+    expect(res.length).to.equal(0);
+    done();
+  });
+})

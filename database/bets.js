@@ -184,6 +184,35 @@ module.exports = {
       db.close();
     }
     return result;
+  },
+
+  /*
+  Add's an already existing bet into folders.
+  Returns an array of folder names, to which bet
+  was successfully added.
+  */
+  add_bet_to_folders: function(db_path, folders, bet_id, user_id){
+    const db = require('better-sqlite3')(db_path);
+    let query = 'INSERT INTO bet_in_bet_folder VALUES (?, ?, ?)';
+    let addedTo = [];
+    let stmt = db.prepare(query);
+    for (var i = 0; i < folders.length; i++){
+      try {
+        let res = stmt.run(folders[i], user_id, bet_id);
+        if (res.changes === 1){
+          addedTo.push(folders[i]);
+        }
+      }
+      catch(err){
+        if (err.message.indexOf('no such table') !== -1){
+          result = null;
+          break;
+        }
+      }
+    }
+    db.close();
+
+    return addedTo;
   }
 }
 
