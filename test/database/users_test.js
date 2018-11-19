@@ -3,23 +3,10 @@ var expect = chai.expect;
 var fo = require('../../database/file_operations');
 var users = require('../../database/users');
 
-const test_init = 'database/scripts/test_init.sql';
-const testDB = 'database/data/testi.sqlite3';
+const test_init = require('../test_files').test_init;
+const testDB = require('../test_files').testDB;
 
 describe('check_password', function() {
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
-
   it('true when username and password match', function(done){
     var res = users.check_password(testDB, 1, 'salasana');
     expect(res).to.equal(true);
@@ -46,19 +33,6 @@ describe('check_password', function() {
 });
 
 describe('username_exists', function() {
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
-
   it('true when username exists', function(done){
     var res = users.username_exists(testDB, 'jannu27');
     expect(res).to.equal(true);
@@ -83,19 +57,6 @@ describe('username_exists', function() {
 });
 
 describe('get_user_id', function(){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
-
   it('returns -1 when user does not exist', function(done){
     var res = users.get_user_id(testDB, 'unexisting user');
     expect(res).to.equal(-1);
@@ -110,19 +71,6 @@ describe('get_user_id', function(){
 });
 
 describe('add_user', function(){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
-
   it('returns -1 when database does not exist', function(done){
     fo.delete_database(testDB, function(){
       var res = users.add_user(testDB, 'jannu27', 'salasana');

@@ -3,22 +3,10 @@ var expect = chai.expect;
 var fo = require('../../database/file_operations');
 var bets = require('../../database/bets');
 
-const test_init = 'database/scripts/test_init.sql';
-const testDB = 'database/data/testi.sqlite3';
+const test_init = require('../test_files').test_init;
+const testDB = require('../test_files').testDB;
 
 describe('get_bets', function(){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('returns 4 bets by user 1', function(done){
     let results = bets.get_bets(testDB, 1);
@@ -50,18 +38,6 @@ describe('get_bets', function(){
 });
 
 describe('get_bets_from_folder', function(done){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('returns 3 bets from jannu27 folder valioliiga', function(done){
     let results = bets.get_bets_from_folder(testDB, 1, 'valioliiga');
@@ -83,18 +59,6 @@ describe('get_bets_from_folder', function(done){
 });
 
 describe('get_bet', function(){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('returns null when bet_id does not exist', function(done){
     expect(bets.get_bet(testDB, 12)).to.equal(null);
@@ -110,18 +74,6 @@ describe('get_bet', function(){
 });
 
 describe('delete_bet', function(done){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('return false when trying to delete a bet from other user', function(done){
     var res = bets.delete_bet(testDB, 7, 1);
@@ -143,18 +95,6 @@ describe('delete_bet', function(done){
 });
 
 describe('create_bet', function(done){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('returns true on success', function(done){
     var res = bets.create_bet(testDB, 1, new Date().toString(), 4.8, 4.7, "", false);
@@ -264,4 +204,8 @@ describe('delete_bet_from_folders', function(){
     expect(res.length).to.equal(0);
     done();
   });
+});
+
+describe('modify_bet', function(){
+
 });
