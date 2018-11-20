@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS bet_in_bet_folder(
 	FOREIGN KEY(folder, owner) REFERENCES bet_folders(folder_name, owner) ON DELETE CASCADE
 );
 
+PRAGMA foreign_keys=ON;
+
 INSERT OR REPLACE INTO users (username, password) VALUES("jannu27", "salasana");
 INSERT OR REPLACE INTO users (username, password) VALUES("käyttäjä", "salasana2");
 INSERT OR REPLACE INTO users (username, password) VALUES("käyttäjä2", "salasana3");
@@ -66,4 +68,3 @@ INSERT OR REPLACE INTO bet_in_bet_folder VALUES("rooneynBetsit", 5, 7);
 INSERT OR REPLACE INTO bet_in_bet_folder VALUES("rooneynBetsit", 5, 9);
 
 COMMIT;
-PRAGMA foreign_keys=ON;

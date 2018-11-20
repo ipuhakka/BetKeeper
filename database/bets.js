@@ -3,7 +3,7 @@ const isNumber = require('is-number');
 
 module.exports = {
   /*
-  Returns bets from selected user. Returns only finished betsi
+  Returns bets from selected user. Returns only finished bets
   if {bets_finished} is true, unfinished bets if it is false,
   and all if {bets_finished} is not given at all.
 
@@ -253,6 +253,74 @@ module.exports = {
     db.close();
 
     return addedTo;
+  },
+
+  /*
+  Modifies a bet. Primarily used to change bets result from unresolved
+  to won/lost. Can be used also to modify bet data: name, odd, and bet.
+  Parameters bet, odd, and name are inputted as null, if they are
+  not to be changed.
+
+  bet_won is null if bet is still not resolved, otherwise it's a boolean.
+
+  Returns true when bet was successfully modified, false when not, NULL
+  on catching error in request.
+  */
+  modify_bet: function(db_path, bet_id, user_id, bet_won, bet, odd, name){
+    let old_bet = this.get_bet(db_path, bet_id);
+
+    if(old_bet === null || old_bet.owner !== user_id){
+      return false;
+    }
+
+    const db = require('better-sqlite3')(db_path);
+    let bet_result = -1;
+    if (bet_won !== null){
+      bet_result = bet_won ? 1 : 0;
+    }
+
+    let params = [bet_result];
+    let query = 'UPDATE bets SET bet_won = ?';
+
+    if (bet !== null){
+      query = query + ', bet = ?';
+      params.push(bet);
+    }
+
+    if(odd !== null){
+      query = query + ', odd = ?';
+      params.push(odd);
+    }
+
+    if(name !== null){
+      query = query + ', name = ?';
+      params.push(name);
+    }
+
+    query = query + ' WHERE bet_id = ?'
+    params.push(bet_id);
+
+    let result = false;
+    try {
+      var res = db.prepare(query).run(params);
+
+      if (res.changes === 1){
+        result = true;
+      }
+    }
+    catch (err){
+      console.log(err);
+      if (err.message.indexOf('no such table') === -1){
+        result = false;
+      }
+      else {
+        result = null;
+      }
+    }
+    finally{
+      db.close();
+    }
+    return result;
   }
 }
 

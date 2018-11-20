@@ -7,7 +7,6 @@ const test_init = require('../test_files').test_init;
 const testDB = require('../test_files').testDB;
 
 describe('get_bets', function(){
-
   it('returns 4 bets by user 1', function(done){
     let results = bets.get_bets(testDB, 1);
     expect(results.length).to.equal(4);
@@ -38,7 +37,6 @@ describe('get_bets', function(){
 });
 
 describe('get_bets_from_folder', function(done){
-
   it('returns 3 bets from jannu27 folder valioliiga', function(done){
     let results = bets.get_bets_from_folder(testDB, 1, 'valioliiga');
     expect(results.length).to.equal(3);
@@ -59,7 +57,6 @@ describe('get_bets_from_folder', function(done){
 });
 
 describe('get_bet', function(){
-
   it('returns null when bet_id does not exist', function(done){
     expect(bets.get_bet(testDB, 12)).to.equal(null);
     done();
@@ -74,7 +71,6 @@ describe('get_bet', function(){
 });
 
 describe('delete_bet', function(done){
-
   it('return false when trying to delete a bet from other user', function(done){
     var res = bets.delete_bet(testDB, 7, 1);
     expect(res).to.equal(false);
@@ -95,7 +91,6 @@ describe('delete_bet', function(done){
 });
 
 describe('create_bet', function(done){
-
   it('returns true on success', function(done){
     var res = bets.create_bet(testDB, 1, new Date().toString(), 4.8, 4.7, "", false);
     expect(res).to.equal(true);
@@ -139,7 +134,9 @@ describe('add_bet_to_folders', function(done){
 
   after(function(done){
     fo.delete_database(testDB, function(){
-      done();
+      fo.run_script(testDB, test_init, function(){
+        done();
+      });
     });
   });
 
@@ -172,18 +169,6 @@ describe('add_bet_to_folders', function(done){
 })
 
 describe('delete_bet_from_folders', function(){
-  before(function(done){
-    this.timeout(10000);
-    fo.run_script(testDB, test_init, function(){
-      done();
-    });
-  });
-
-  after(function(done){
-    fo.delete_database(testDB, function(){
-      done();
-    });
-  });
 
   it('returns 2 when deletes from two folders', function(done){
     bets.add_bet_to_folders(testDB, ["triplat"], 1, 1);
@@ -207,5 +192,30 @@ describe('delete_bet_from_folders', function(){
 });
 
 describe('modify_bet', function(){
+  it('returns true on success', function(done){
+    let res = bets.modify_bet(testDB, 5, 1, true, 100, 2, "test name");
+    expect(res).to.equal(true);
+    done();
+  });
 
+  it('does not modify null bet, odd & name', function(done){
+    let res = bets.modify_bet(testDB, 5, 1, false, 500, null, null);
+    let bet = bets.get_bet(testDB, 5);
+    expect(bet.bet).to.equal(500);
+    expect(bet.name).to.equal('test name');
+    expect(bet.odd).to.equal(2);
+    done();
+  });
+
+  it('returns false on modifying unknown bet', function(done){
+    let res = bets.modify_bet(testDB, 19, 1, true, 100, 2, "");
+    expect(res).to.equal(false);
+    done();
+  });
+
+  it('returns false on modifying another users bet', function(done){
+    let res = bets.modify_bet(testDB, 4, 1, true, 100, 2, "");
+    expect(res).to.equal(false);
+    done();
+  });
 });
