@@ -9,7 +9,7 @@ describe('users_post', function(){
   const uri = '/api/users';
 
   after(function(done){
-    //require('../../api/index').close();
+    require('../../api/index').close();
     done();
   });
 

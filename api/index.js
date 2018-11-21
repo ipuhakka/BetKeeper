@@ -11,7 +11,7 @@ server.listen(port, () => console.log('Listening on port ' + port));
 
 function close(){
   console.log("Shutting down server");
-  app.close();
+  server.close();
 }
 
 module.exports = app;
