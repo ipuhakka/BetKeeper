@@ -1,5 +1,4 @@
 const users = require('../../database/users');
-const config = require('../config');
 
 module.exports = {
   /*
@@ -28,8 +27,7 @@ module.exports = {
       return res.status(400).send(JSON.stringify({error: "Request had missing parameters"}));
     }
 
-    console.log("post: config.db_path: " + config.getConfig().db_path);
-    var result = users.add_user(config.getConfig().db_path, req.body.username, req.get('authorization'));
+    var result = users.add_user(req.body.username, req.get('authorization'));
 
     if (result === 1){
       return res.status(201).send();

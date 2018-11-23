@@ -1,5 +1,6 @@
 var moment = require('moment');
 const isNumber = require('is-number');
+const config = require('../api/config');
 
 module.exports = {
   /*
@@ -20,8 +21,8 @@ module.exports = {
     bet_id: integer
   }
   */
-  get_bets: function(db_path, user_id, bets_finished){
-    const db = require('better-sqlite3')(db_path);
+  get_bets: function(user_id, bets_finished){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let result = [];
     try {
       let stmt;
@@ -47,8 +48,8 @@ module.exports = {
     return result;
   },
 
-  get_bet: function(db_path, bet_id){
-    const db = require('better-sqlite3')(db_path);
+  get_bet: function(bet_id){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let bet;
     try {
       let res = db.prepare('SELECT * FROM bets WHERE bet_id=?').get(bet_id);
@@ -71,8 +72,8 @@ module.exports = {
 
   Returns null on error in request.
   */
-  get_bets_from_folder: function(db_path, user_id, folder, bets_finished){
-    const db = require('better-sqlite3')(db_path);
+  get_bets_from_folder: function(user_id, folder, bets_finished){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let result = [];
     try {
       let stmt;
@@ -105,13 +106,13 @@ module.exports = {
   Returns true on success, false on failure & null
   on error in request.
   */
-  delete_bet: function(db_path, bet_id, user_id){
-    let bet_to_delete = this.get_bet(db_path, bet_id);
+  delete_bet: function(bet_id, user_id){
+    let bet_to_delete = this.get_bet(bet_id);
     if (bet_to_delete === null || bet_to_delete.owner !== user_id){
       return false;
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'DELETE FROM bets WHERE bet_id = ?';
     let result = false;
     try {
@@ -135,12 +136,12 @@ module.exports = {
 
   Returns null when a connection related error happens.
   */
-  delete_bet_from_folders: function(db_path, folders, bet_id, user_id){
-    if (this.get_bet(db_path, bet_id).owner !== user_id){
+  delete_bet_from_folders: function(folders, bet_id, user_id){
+    if (this.get_bet(bet_id).owner !== user_id){
       return [];
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'DELETE FROM bet_in_bet_folder WHERE bet_id = ? AND folder = ? ';
     let deletedFrom = [];
     let stmt = db.prepare(query);
@@ -181,7 +182,7 @@ module.exports = {
   invalid format, and null if request fails because
   of database and connection issues.
   */
-  create_bet: function(db_path, user_id, datetime, odd, bet, name, bet_won){
+  create_bet: function(user_id, datetime, odd, bet, name, bet_won){
     datetime = moment(datetime, 'YYYY-MM-DD HH:MM:SS').format('YYYY-MM-DD HH:MM:SS');
     if(!moment(datetime, 'YYYY-MM-DD HH:MM:SS', true).isValid()){
       return false;
@@ -196,7 +197,7 @@ module.exports = {
       bet_result = bet_won ? 1 : 0;
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'INSERT INTO bets (bet_won, name, odd, bet, date_time, owner) values (?, ?, ?, ?, ?, ?)';
     let result = false;
     try {
@@ -227,12 +228,12 @@ module.exports = {
 
   Returns null when an error regarding connection is found.
   */
-  add_bet_to_folders: function(db_path, folders, bet_id, user_id){
-    if (this.get_bet(db_path, bet_id).owner !== user_id){
+  add_bet_to_folders: function(folders, bet_id, user_id){
+    if (this.get_bet(bet_id).owner !== user_id){
       return [];
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'INSERT INTO bet_in_bet_folder VALUES (?, ?, ?)';
     let addedTo = [];
     let stmt = db.prepare(query);
@@ -266,14 +267,14 @@ module.exports = {
   Returns true when bet was successfully modified, false when not, NULL
   on catching error in request.
   */
-  modify_bet: function(db_path, bet_id, user_id, bet_won, bet, odd, name){
-    let old_bet = this.get_bet(db_path, bet_id);
+  modify_bet: function(bet_id, user_id, bet_won, bet, odd, name){
+    let old_bet = this.get_bet(bet_id);
 
     if(old_bet === null || old_bet.owner !== user_id){
       return false;
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let bet_result = -1;
     if (bet_won !== null){
       bet_result = bet_won ? 1 : 0;

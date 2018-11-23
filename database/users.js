@@ -1,9 +1,11 @@
+const config = require('../api/config');
+
 module.exports = {
   /* Returns true if username and password match a user, false if not.
     Returns null if query fails.
   */
-  check_password: function(db_path, user_id, password){
-    const db = require('better-sqlite3')(db_path);
+  check_password: function(user_id, password){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'SELECT(EXISTS(SELECT 1 FROM users WHERE user_id = ? AND password = ?))';
     let result = false;
     try {
@@ -26,8 +28,8 @@ module.exports = {
   Checks whether a username exists. If an error occurs while making the query,
   returns null.
   */
-  username_exists: function(db_path, username){
-    const db = require('better-sqlite3')(db_path);
+  username_exists: function(username){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'SELECT(EXISTS(SELECT 1 FROM users WHERE username = ?))';
     let result = false;
     try {
@@ -50,8 +52,8 @@ module.exports = {
   Returns -1 if user does not exist,
   and null if query fails.
   */
-  get_user_id: function(db_path, username){
-    const db = require('better-sqlite3')(db_path);
+  get_user_id: function(username){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'SELECT user_id FROM users WHERE username = ?';
     let result = -1;
     try {
@@ -76,8 +78,8 @@ module.exports = {
   0 if user already exists,
   and -1 if something went wrong with the request.
   */
-  add_user: function(db_path, username, password){
-    const db = require('better-sqlite3')(db_path);
+  add_user: function(username, password){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let result = -1;
     try {
       var stmt = db.prepare('INSERT INTO users (username, password) VALUES (?, ?)');

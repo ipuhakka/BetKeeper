@@ -1,3 +1,5 @@
+const config = require('../api/config');
+
 module.exports = {
 
   /*
@@ -6,8 +8,8 @@ module.exports = {
 
   Returns null if an error is raised during the query.
   */
-  user_has_folder: function(db_path, user_id, folder_name){
-    const db = require('better-sqlite3')(db_path);
+  user_has_folder: function(user_id, folder_name){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'SELECT(EXISTS(SELECT 1 FROM bet_folders WHERE owner = ? AND folder_name = ?))';
     let result = false;
     try {
@@ -29,8 +31,8 @@ module.exports = {
   Gets folders for user. If bet_id is given a value,
   returns folders which contain selected bet.
   */
-  get_users_folders: function(db_path, user_id, bet_id){
-    const db = require('better-sqlite3')(db_path);
+  get_users_folders: function(user_id, bet_id){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let result = [];
     try {
       let stmt;
@@ -64,8 +66,8 @@ module.exports = {
     false if no deletion was done,
     null on error.
   */
-  delete_folder: function(db_path, user_id, folder_name){
-    const db = require('better-sqlite3')(db_path);
+  delete_folder: function(user_id, folder_name){
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'DELETE FROM bet_folders WHERE owner = ? AND folder_name = ?';
     let result = false;
     try {
@@ -88,12 +90,12 @@ module.exports = {
   Returns true on success, false if already exists, null on
   error in statement.
   */
-  add_folder: function(db_path, user_id, folder_name){
-    if (this.user_has_folder(db_path, user_id, folder_name)){
+  add_folder: function(user_id, folder_name){
+    if (this.user_has_folder(user_id, folder_name)){
       return false;
     }
 
-    const db = require('better-sqlite3')(db_path);
+    const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'INSERT INTO bet_folders VALUES (?, ?)';
     let result = false;
     try {
