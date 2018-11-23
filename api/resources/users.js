@@ -1,3 +1,6 @@
+const users = require('../../database/users');
+const config = require('../config');
+
 module.exports = {
   /*
   POST-request to /api/users  create a new user to the database.
@@ -17,6 +20,24 @@ module.exports = {
     415 Unsupported media type, on invalid media type header value.
   */
   post: function(req, res){
+    if (req.get('content-type') !== 'application/json'){
+      return res.status(415).send(JSON.stringify({error: "Request didn't containg application/json header"}));
+    }
+
+    if (req.body.username == null || req.get('authorization') == null){
+      return res.status(400).send(JSON.stringify({error: "Request had missing parameters"}));
+    }
+
+    console.log("post: config.db_path: " + config.getConfig().db_path);
+    var result = users.add_user(config.getConfig().db_path, req.body.username, req.get('authorization'));
+
+    if (result === 1){
+      return res.status(201).send();
+    }
+    else if (result === 0){
+      return res.status(409).send();
+    }
+
     return res.status(500).send();
   }
 };
