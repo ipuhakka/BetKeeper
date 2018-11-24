@@ -1,6 +1,6 @@
 var moment = require('moment');
 const isNumber = require('is-number');
-const config = require('../api/config');
+const config = require('../config');
 
 module.exports = {
   /*

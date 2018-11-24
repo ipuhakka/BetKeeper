@@ -1,4 +1,4 @@
-const config = require('../api/config');
+const config = require('../config');
 
 module.exports = {
   /* Returns true if username and password match a user, false if not.

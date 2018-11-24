@@ -2,7 +2,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var fo = require('../../database/file_operations');
 var folders = require('../../database/folders');
-var config = require('../../api/config');
+var config = require('../../config');
 
 const test_init = require('../test_files').test_init;
 const testDB = require('../test_files').testDB;

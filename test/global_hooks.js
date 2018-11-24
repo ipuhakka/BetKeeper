@@ -2,7 +2,7 @@ var chai = require('chai');
 var fo = require('../database/file_operations');
 const test_init = require('./test_files').test_init;
 const testDB = require('./test_files').testDB;
-var config = require('../api/config');
+var config = require('../config');
 
 before(function(done){
   this.timeout(10000);
