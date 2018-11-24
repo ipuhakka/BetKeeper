@@ -1,4 +1,5 @@
 const users = require('./resources/users');
+const token = require('./resources/token');
 const bodyParser = require('body-parser');
 
 module.exports = function(app){
@@ -16,5 +17,13 @@ module.exports = function(app){
 
   app.post('/api/users', function(req, res){
     users.post(req, res);
+  });
+
+  app.post('/api/token', function(req, res){
+    token.post(req, res);
+  });
+
+  app.get('/api/token/:user_id', function(req, res){
+    token.get(req, res, parseInt(req.params.user_id));
   });
 }

@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS bet_in_bet_folder(
 
 PRAGMA foreign_keys=ON;
 
-INSERT OR REPLACE INTO users (username, password) VALUES("jannu27", "salasana");
+INSERT OR REPLACE INTO users (username, password) VALUES("testi", "salasana");
 INSERT OR REPLACE INTO users (username, password) VALUES("käyttäjä", "salasana2");
 INSERT OR REPLACE INTO users (username, password) VALUES("käyttäjä2", "salasana3");
 INSERT OR REPLACE INTO users (username, password) VALUES("gaborik", "salainensalasana");

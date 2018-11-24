@@ -37,7 +37,7 @@ class App extends Component {
     //Checks if sessionStorage contains a valid token. If does, goes to user main page as logged user.
 	checkToken(){
 		if (sessionStorage.getItem('token') != null && sessionStorage.getItem('token').toString() !== 'null'){
-			getToken(sessionStorage.getItem('token'), this.handleGetToken);
+			getToken(sessionStorage.getItem('token'), sessionStorage.getItem('loggedUserID'), this.handleGetToken);
 		}
 	}
 
@@ -62,11 +62,12 @@ class App extends Component {
 		postToken(data, this.handleReceiveToken);
 	}
 
-	handleReceiveToken = (status, token, user) => {
+	handleReceiveToken = (status, token, user_id, user) => {
 		switch(status){
 			case 200:
 				window.sessionStorage.setItem('token', token);
 				window.sessionStorage.setItem('loggedUser', user);
+				window.sessionStorage.setItem('loggedUserID', user_id);
 				ReactDOM.render(<Home />, document.getElementById('root'));
 				break;
 			case 401:

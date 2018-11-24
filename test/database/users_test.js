@@ -35,20 +35,20 @@ describe('check_password', function() {
 
 describe('username_exists', function() {
   it('true when username exists', function(done){
-    var res = users.username_exists('jannu27');
+    var res = users.username_exists('testi');
     expect(res).to.equal(true);
     done();
   });
 
   it('false when username does not exist', function(done){
-    var res = users.username_exists('jannu28');
+    var res = users.username_exists('testi2');
     expect(res).to.equal(false);
     done();
   });
 
   it('returns null when database is deleted before querying', function(done){
     config.setConfig({db_path: 'notexisting'});
-    var res = users.username_exists('jannu27');
+    var res = users.username_exists('testi');
     expect(res).to.equal(null);
     config.setConfig({db_path: 'database/data/testi.sqlite3'});
     fo.delete_database('notexisting', function(){
@@ -74,7 +74,7 @@ describe('get_user_id', function(){
 describe('add_user', function(){
   it('returns -1 when database does not exist', function(done){
     config.setConfig({db_path: 'notexisting'});
-    var res = users.add_user('jannu27', 'salasana');
+    var res = users.add_user('testi', 'salasana');
     expect(res).to.equal(-1);
     config.setConfig({db_path: 'database/data/testi.sqlite3'});
     fo.delete_database('notexisting', function(){
@@ -83,7 +83,7 @@ describe('add_user', function(){
   });
 
   it('returns 0 when username already exists', function(done){
-    var res = users.add_user('jannu27', 'password');
+    var res = users.add_user('testi', 'password');
     expect(res).to.equal(0);
     done();
   });

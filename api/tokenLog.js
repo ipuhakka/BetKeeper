@@ -26,19 +26,20 @@ function add_token(token){
 }
 
 function clear(){
-  tokenlog = [];
+  tokenLog = [];
 }
 
-function contains_token(token){
-  if (tokenLog.includes(token)){
-    return true;
-  }
-  return false;
+function contains_token(tokenString){
+  var contains = tokenLog.some(function (t) {
+    return t.token === tokenString;
+  });
+  return contains;
 }
 
-function get_token_owner(token){
+/*returns owner of the token, if token is present in tokenLog.*/
+function get_token_owner(tokenString){
   for (var i = 0; i < tokenLog.length; i++){
-    if (tokenLog[i].token === token.token){
+    if (tokenLog[i].token === tokenString){
       return tokenLog[i].owner;
     }
   }

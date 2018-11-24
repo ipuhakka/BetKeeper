@@ -14,7 +14,7 @@ export function postToken(data, callback){
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
       if (xmlHttp.status === 200){
-        callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, data.username);
+        callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, JSON.parse(xmlHttp.responseText).owner, data.username);
       }
       else {
         callback(xmlHttp.status, null, null);
@@ -29,7 +29,7 @@ export function postToken(data, callback){
 /*GET-request to check if token is already in use. If it is, it means user
 is logged in, and is redirected to home page. Returns 404 if user hasn't got a token,
 and a new one must be requested.*/
-export function getToken(token, callback){
+export function getToken(token, user_id, callback){
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
@@ -38,7 +38,8 @@ export function getToken(token, callback){
       }
     }
   });
-  xmlHttp.open("GET", ConstVars.URI + "token/?token=" + token);
+  xmlHttp.open("GET", ConstVars.URI + "token?user_id=" + user_id);
   xmlHttp.setRequestHeader('Content-Type', 'application/json');
+  xmlHttp.setRequestHeader('Authorization', token);
   xmlHttp.send();
 }

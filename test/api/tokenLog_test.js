@@ -13,14 +13,14 @@ describe('contains_token', function(){
   it('returns true when tokenLog contains token', async function(){
     token = await tokenLog.create_token(1);
     tokenLog.add_token(token);
-    return expect(tokenLog.contains_token(token)).to.equal(true);
+    return expect(tokenLog.contains_token(token.token)).to.equal(true);
   });
 
   it('returns false when tokenLog does not contain token', async function(){
     token = await tokenLog.create_token(1);
     tokenLog.add_token(token);
     token2 = await tokenLog.create_token(2);
-    return expect(tokenLog.contains_token(token2)).to.equal(false);
+    return expect(tokenLog.contains_token(token2.token)).to.equal(false);
   });
 });
 
@@ -35,13 +35,18 @@ describe('get_token_owner', function(){
     return;
   });
 
+  afterEach(function(done){
+    tokenLog.clear();
+    done();
+  });
+
   it('returns 1', function(done){
-    expect(tokenLog.get_token_owner(token)).to.equal(1);
+    expect(tokenLog.get_token_owner(token.token)).to.equal(1);
     done();
   });
 
   it('returns -1 when token does not exist', function(done){
-    expect(tokenLog.get_token_owner(token3)).to.equal(-1);
+    expect(tokenLog.get_token_owner(token3.token)).to.equal(-1);
     done();
   });
 });

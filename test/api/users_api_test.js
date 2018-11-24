@@ -30,7 +30,7 @@ describe('users_post', function(){
     .post(uri)
     .set('content-type', 'application/json')
     .set('authorization', 'password')
-    .send(JSON.stringify({username: 'jannu27'}))
+    .send(JSON.stringify({username: 'testi'}))
     .end(function(err, res){
       res.should.have.status(409);
       done();
