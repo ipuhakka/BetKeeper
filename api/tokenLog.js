@@ -30,10 +30,9 @@ function clear(){
 }
 
 function contains_token(tokenString){
-  var contains = tokenLog.some(function (t) {
+  return tokenLog.some(function (t) {
     return t.token === tokenString;
   });
-  return contains;
 }
 
 /*returns owner of the token, if token is present in tokenLog.*/

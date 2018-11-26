@@ -21,7 +21,7 @@ describe('user_has_folder', function(){
   });
 
   it('returns true when user owns specified folder', function(done){
-    var res = folders.user_has_folder(1, 'triplat');
+    var res = folders.user_has_folder(3, 'tuplat');
     expect(res).to.equal(true);
     done();
   });

@@ -1,4 +1,5 @@
 const users = require('./resources/users');
+const folders = require('./resources/folders');
 const token = require('./resources/token');
 const bodyParser = require('body-parser');
 
@@ -25,5 +26,13 @@ module.exports = function(app){
 
   app.get('/api/token/:user_id', function(req, res){
     token.get(req, res, parseInt(req.params.user_id));
+  });
+
+  app.get('/api/folders', function(req, res){
+    folders.get(req, res, req.query.bet_id);
+  });
+
+  app.post('/api/folders', function(req, res){
+    folders.post(req, res);
   });
 }
