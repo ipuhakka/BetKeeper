@@ -33,7 +33,7 @@ export function deleteFolder(folder, callback){
         callback(xmlHttp.status);
     }
   });
-  xmlHttp.open("DELETE", ConstVars.URI + "folders?folder=" + folder);
+  xmlHttp.open("DELETE", ConstVars.URI + "folders/" + folder);
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
   xmlHttp.send();
 }

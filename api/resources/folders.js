@@ -65,5 +65,35 @@ module.exports = {
     } else {
       return res.status(409).send();
     }
+  },
+
+  /*
+  DELETE-request to /api/folders/:folder. Deletes a folder from database,
+  if user has a folder of specified name.
+
+  Request:
+    headers:
+      "authorization": "token string"
+
+  Response:
+    204 No content, on successfull deletion,
+    401 Unauthorized, if token is not in use.
+    404 Not found when user doesn't have a folder of specified name.
+
+  */
+  delete: function(req, res, folderToDelete){
+    if (req.get('authorization') === undefined || !tokenLog.contains_token(req.get('authorization'))){
+      return res.status(401).send();
+    }
+
+    let owner = tokenLog.get_token_owner(req.get('authorization'));
+    let result = folders.delete_folder(owner, folderToDelete);
+
+    if (result){
+      return res.status(204).send();
+    }
+    else {
+      return res.status(404).send();  
+    }
   }
 }

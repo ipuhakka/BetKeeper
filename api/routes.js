@@ -35,4 +35,8 @@ module.exports = function(app){
   app.post('/api/folders', function(req, res){
     folders.post(req, res);
   });
+
+  app.delete('/api/folders/:folder', function(req, res){
+    folders.delete(req, res, req.params.folder);
+  });
 }

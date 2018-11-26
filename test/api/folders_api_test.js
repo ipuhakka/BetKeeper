@@ -5,6 +5,7 @@ var should = chai.should();
 var server = require('../../api/index');
 var tokenLog = require('../../api/tokenLog');
 var expect = chai.expect;
+var folders = require('../../database/folders');
 
 const uri = '/api/folders';
 
@@ -143,6 +144,57 @@ describe('post_folders', function(){
     .send(JSON.stringify({folder: 'new folder name'}))
     .end(function(err, res){
       res.should.have.status(201);
+      folders.delete_folder(3, 'new folder name');
+      done();
+    });
+  });
+});
+
+describe('delete_folder', function(){
+  let token1, token2;
+
+  before(async function(){
+    token1 = await tokenLog.create_token(3);
+    token2 = await tokenLog.create_token(2);
+    tokenLog.add_token(token1);
+    return;
+  });
+
+  after(function(done){
+    tokenLog.clear();
+    done();
+  });
+
+  it('responds with 204 on successful delete', function(done){
+    chai.request(server)
+    .delete(uri + '/tuplat')
+    .set('authorization', token1.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(204);
+      folders.add_folder(3, 'tuplat');
+      done();
+    });
+  });
+
+  it('responds with 404 on user not having folder of specified name', function(done){
+    chai.request(server)
+    .delete(uri + '/valioliiga')
+    .set('authorization', token1.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(404);
+      done();
+    });
+  });
+
+  it('responds with 401 on invalid authorization', function(done){
+    chai.request(server)
+    .delete(uri + '/tuplat')
+    .set('authorization', token2.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(401);
       done();
     });
   });
