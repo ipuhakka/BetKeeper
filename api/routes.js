@@ -1,5 +1,6 @@
 const users = require('./resources/users');
 const folders = require('./resources/folders');
+const bets = require('./resources/bets');
 const token = require('./resources/token');
 const bodyParser = require('body-parser');
 
@@ -38,5 +39,9 @@ module.exports = function(app){
 
   app.delete('/api/folders/:folder', function(req, res){
     folders.delete(req, res, req.params.folder);
+  });
+
+  app.get('/api/bets', function(req, res){
+    bets.get(req, res, req.query.finished, req.query.folder);
   });
 }
