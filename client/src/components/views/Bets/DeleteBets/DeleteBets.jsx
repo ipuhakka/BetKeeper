@@ -79,7 +79,6 @@ class DeleteBets extends Component{
 				isSelected = true;
 			else
 				isSelected = false;
-
 			var result = "Unresolved";
 			if (this.props.bets[i].bet_won)
 				result = "Won";

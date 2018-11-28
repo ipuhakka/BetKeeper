@@ -32,7 +32,7 @@ describe('get_bets', function(){
 
   it('has all bet item keys', function(done){
     let results = bets.get_bets(1, false);
-    expect(results[0]).to.have.all.keys('bet_won', 'name', 'odd', 'bet', 'date_time', 'owner', 'bet_id');
+    expect(results[0]).to.have.all.keys('bet_won', 'name', 'odd', 'bet', 'datetime', 'owner', 'bet_id');
     done();
   });
 });
@@ -93,26 +93,20 @@ describe('delete_bet', function(done){
 
 describe('create_bet', function(done){
   it('returns true on success', function(done){
-    var res = bets.create_bet(1, new Date().toString(), 4.8, 4.7, "", false);
-    expect(res).to.equal(true);
-    done();
-  });
-
-  it('returns false on invalid date', function(done){
-    var res = bets.create_bet(1, "2018-084-05 14:524:40" , 4.8, 4.7, "", false);
-    expect(res).to.equal(false);
+    var res = bets.create_bet(1, 4.8, 4.7, "", false);
+    expect(res).to.equal(10);
     done();
   });
 
   it('returns false when user does not exist', function(done){
-    var res = bets.create_bet(-1, new Date().toString() , 4.8, 4.7, "", false);
-    expect(res).to.equal(false);
+    var res = bets.create_bet(-1, 4.8, 4.7, "", false);
+    expect(res).to.equal(-1);
     done();
   });
 
   it('returns null when database is empty', function(done){
     config.setConfig({db_path: 'notexisting'});
-    var res = bets.create_bet(-1, new Date().toString() , 4.8, 4.7, "", false);
+    var res = bets.create_bet(-1, 4.8, 4.7, "", false);
     expect(res).to.equal(null);
     config.setConfig({db_path: 'database/data/testi.sqlite3'});
     fo.delete_database("notexisting", function(){
@@ -121,10 +115,16 @@ describe('create_bet', function(done){
   });
 
   it('returns false on invalid decimal values', function(done){
-    var res = bets.create_bet(1, new Date().toString() , 'not decimal', 4.7, "", false);
-    expect(res).to.equal(false);
+    var res = bets.create_bet(1, 'not decimal', 4.7, "", false);
+    expect(res).to.equal(-1);
     done();
-  })
+  });
+
+  it('returns false on string decimal value', function(done){
+    var res = bets.create_bet(1, '4.7', 4.7, "", false);
+    expect(res).to.equal(-1);
+    done();
+  });
 });
 
 describe('add_bet_to_folders', function(done){

@@ -77,9 +77,9 @@ class AddBets extends Component {
 									onChange={this.setName}/>
 							</FormGroup>
 							<FormGroup type="radio" className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
-								<Radio name="radioGroup" value={0} inline>Unresolved</Radio>{' '}
+								<Radio name="radioGroup" value={-1} inline>Unresolved</Radio>{' '}
 								<Radio name="radioGroup" value={1} inline>Won</Radio>{' '}
-								<Radio name="radioGroup" value={-1} inline>Lost</Radio>
+								<Radio name="radioGroup" value={0} inline>Lost</Radio>
 							</FormGroup>
 							<ListGroup className='list'>{items}</ListGroup>
 							<Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
@@ -204,20 +204,11 @@ class AddBets extends Component {
 				selectedFolders.push(this.props.folders[i]);
 		}
 
-		var bet_won = "null";
-		var date = new Date();
-		if (this.state.betResult === -1 || this.state.betResult === '-1'){
-			bet_won = false;
-		}
-		else if (this.state.betResult === 1 || this.state.betResult === '1'){
-			bet_won = true;
-		}
 		var data = {
-			bet_won: bet_won,
-			odd: this.state.odd,
-			bet: this.state.bet,
+			bet_won: parseInt(this.state.betResult, 10),
+			odd: parseFloat(this.state.odd),
+			bet: parseFloat(this.state.bet),
 			name: this.state.name,
-			datetime: date,
 			folders: selectedFolders
 		}
 		postBet(data, this.handleAddedBet);

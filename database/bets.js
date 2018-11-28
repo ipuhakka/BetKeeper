@@ -168,7 +168,6 @@ module.exports = {
   Creates a new bet.
 
   parameters:
-    db_path: Path to database file_operations.
     user_id: Id for the user who played the bet.
     datetime: Datetime when the bet was played.
     odd: Odd for the bet.
@@ -177,21 +176,17 @@ module.exports = {
     bet_won: true if bet was correct, false if not,
       null if bet has not resolved yet.
 
-  Returns true on success,
-  false if user does not exist, or if datetime is in
-  invalid format, and null if request fails because
+  Returns last inserted row id on success,
+  -1 if user does not exist,
+  and null if request fails because
   of database and connection issues.
   */
-  create_bet: function(user_id, datetime, odd, bet, name, bet_won){
-    datetime = moment(datetime, 'YYYY-MM-DD HH:MM:SS').format('YYYY-MM-DD HH:MM:SS');
-    if(!moment(datetime, 'YYYY-MM-DD HH:MM:SS', true).isValid()){
-      return false;
-    }
+  create_bet: function(user_id, odd, bet, name, bet_won){
+    let datetime = moment().format('YYYY-MM-DD HH:mm:ss');
 
-    if(!isNumber(odd) || !isNumber(bet)){
-      return false;
+    if(!isNumber(odd) || !isNumber(bet) || typeof odd === "string" || typeof bet === "string"){
+      return -1;
     }
-
     let bet_result = -1;
     if (bet_won !== null){
       bet_result = bet_won ? 1 : 0;
@@ -199,17 +194,16 @@ module.exports = {
 
     const db = require('better-sqlite3')(config.getConfig().db_path);
     let query = 'INSERT INTO bets (bet_won, name, odd, bet, date_time, owner) values (?, ?, ?, ?, ?, ?)';
-    let result = false;
+    let result = -1;
     try {
       var res = db.prepare(query).run(bet_result, name, odd, bet, datetime, user_id);
-
       if (res.changes === 1){
-        result = true;
+        result = res.lastInsertRowid;
       }
     }
     catch (err){
       if (err.message.indexOf('no such table') === -1){
-        result = false;
+        result = -1;
       }
       else {
         result = null;
@@ -310,7 +304,6 @@ module.exports = {
       }
     }
     catch (err){
-      console.log(err);
       if (err.message.indexOf('no such table') === -1){
         result = false;
       }
@@ -326,8 +319,15 @@ module.exports = {
 }
 
 function create_bet_object(item){
+  let result = null;
+  if (item.bet_won === 1){
+    result = true;
+  } else if (item.bet_won === 0){
+    result = false;
+  }
+
   var bet = {
-    bet_won: item.bet_won,
+    bet_won: result,
     name: item.name,
     odd: item.odd,
     bet: item.bet,

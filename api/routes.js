@@ -47,7 +47,10 @@ module.exports = function(app){
   });
 
   app.delete('/api/bets/:bet_id', function(req, res){
-    console.log("folders: " + req.query.folders);
     bets.delete(req, res, req.params.bet_id, req.query.folders);
+  });
+
+  app.post('/api/bets', function(req, res){
+    bets.post(req, res);
   });
 }

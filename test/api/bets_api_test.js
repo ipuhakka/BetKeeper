@@ -32,7 +32,7 @@ describe('get_bets', function(){
     .end(function(err, res){
       res.should.have.status(200);
       res.body.map(bet => {
-        expect(bet.bet_won).to.not.equal(-1);
+        expect(bet.bet_won).to.not.equal(null);
       });
       done();
     });
@@ -46,7 +46,7 @@ describe('get_bets', function(){
     .end(function(err, res){
       res.should.have.status(200);
       res.body.map(bet => {
-        expect(bet.bet_won).to.equal(-1);
+        expect(bet.bet_won).to.equal(null);
       });
       done();
     });
@@ -155,10 +155,123 @@ describe('delete_bets', function(){
     .send()
     .end(function(err, res){
       res.should.have.status(200)
-      console.log("response: " + JSON.stringify(res.body))
       expect(res.body).to.deep.equal(["rooneynBetsit"]);
       tokenLog.clear();
       tokenLog.add_token(token1);
+      done();
+    });
+  });
+});
+
+describe('post_bets', function(){
+  let token1, token2;
+  var bet = {
+    bet_won: -1, //-1 = not finished, 0=lost, 1=won
+    name: 'string', //optional name for the bet
+    odd: 3.12,
+    bet: 2.21,
+    folders: ["rooneynBetsit", "unexistingFolder"]
+  };
+
+  before(async function(){
+    token1 = await tokenLog.create_token(5);
+    token2 = await tokenLog.create_token(4);
+    tokenLog.add_token(token1);
+    return;
+  });
+
+  after(function(done){
+    tokenLog.clear();
+    done();
+  });
+
+  it('responds 201 on success', function(done){
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(201);
+      bets.delete_bet(10, 5);
+      done();
+    });
+  });
+
+  it('tells to which folders bet was added on success and bet id', function(done){
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(bet)
+    .end(function(err, res){
+      res.should.have.status(201);
+      expect(res.body.addedToFolders).to.deep.equal(["rooneynBetsit"]);
+      expect(res.body.bet_id).to.equal(10);
+      bets.delete_bet(10, 5);
+      done();
+    });
+  });
+
+  it('responds 401 on unused token', function(done){
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/json')
+    .set('authorization', token2.token)
+    .send(bet)
+    .end(function(err, res){
+      res.should.have.status(401)
+      done();
+    });
+  });
+
+  it('responds 400 on invalid odd or bet value', function(done){
+    var invalidBet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: '3.12',
+      bet: 2.21,
+      folders: []
+    };
+
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(invalidBet)
+    .end(function(err, res){
+      res.should.have.status(400)
+      done();
+    });
+  });
+
+  it('responds 400 on missing any argument', function(done){
+    var invalidBet = {
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21,
+      folders: []
+    };
+
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(invalidBet)
+    .end(function(err, res){
+      res.should.have.status(400)
+      done();
+    });
+  });
+
+  it('responds 415 on invalid content-type', function(done){
+    chai.request(server)
+    .post(uri)
+    .set('content-type', 'application/text')
+    .set('authorization', token1.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(415)
       done();
     });
   });

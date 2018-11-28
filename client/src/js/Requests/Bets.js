@@ -100,7 +100,6 @@ POST-request to create a new bet to the database.
     odd: decimal value indicating odd for the bet.
     bet: decimal, stake for the bet.
     name: string, optional name to identify the bet.
-    datetime: date, in standard JavScript Date()-object format "2018-08-31T08:47:25.236Z" .
     folders: optional array, names of folders to which bet is added.
   }
 */
@@ -109,12 +108,12 @@ export function postBet(data, callback){
 
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
-      console.log(xmlHttp.status);
       if ([201, 400, 401].includes(xmlHttp.status))
         callback(xmlHttp.status);
     }
   });
   xmlHttp.open("POST", ConstVars.URI + "bets/");
+  xmlHttp.setRequestHeader('Content-type', 'application/json');
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
   xmlHttp.send(JSON.stringify(data));
 }
