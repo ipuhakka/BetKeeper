@@ -8,13 +8,14 @@ data:{
   password: 'password'
 }
 */
-export function postToken(data, callback){
+export function postToken(username, password, callback){
   var xmlHttp = new XMLHttpRequest();
 
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
       if (xmlHttp.status === 200){
-        callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, JSON.parse(xmlHttp.responseText).owner, data.username);
+        console.log("got response: " + xmlHttp.responseText);
+        callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, JSON.parse(xmlHttp.responseText).owner, username);
       }
       else {
         callback(xmlHttp.status, null, null);
@@ -23,7 +24,8 @@ export function postToken(data, callback){
   });
   xmlHttp.open("POST", ConstVars.URI + "token");
   xmlHttp.setRequestHeader('Content-Type', 'application/json');
-  xmlHttp.send(JSON.stringify(data));
+  xmlHttp.setRequestHeader('Authorization', password);
+  xmlHttp.send(JSON.stringify({username: username}));
 }
 
 /*GET-request to check if token is already in use. If it is, it means user

@@ -26,7 +26,7 @@ module.exports = {
     400 Bad request,
     401 Unauthorized
   */
-  post: function(req, res){
+  post: async function(req, res){
     let body = req.body;
     if(body.username === undefined || req.get('authorization') === undefined){
       return res.status(400).send();
@@ -39,9 +39,10 @@ module.exports = {
       return res.status(401).send();
     }
     if (authorized){
-      token = tokenLog.create_token(id);
+      token = await tokenLog.create_token(id);
       tokenLog.add_token(token);
       res.set('content-type', 'application/json');
+      console.log("sending token: " + JSON.stringify(token));
       return res.status(200).send(token);
     }
     return res.status(500).send();

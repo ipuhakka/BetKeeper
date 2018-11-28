@@ -15,6 +15,7 @@ module.exports = {
   in authorization header.
   */
   get: function(req, res, bet_id){
+    console.log("folders get: " + req.get('authorization'));
     if (req.get('authorization') === undefined){
       return res.status(401).send();
     }
@@ -93,7 +94,7 @@ module.exports = {
       return res.status(204).send();
     }
     else {
-      return res.status(404).send();  
+      return res.status(404).send();
     }
   }
 }

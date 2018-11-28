@@ -1,5 +1,5 @@
 var config = {
-  db_path: 'default filename'
+  db_path: '../database/data/data.sqlite3'
 };
 
 module.exports = {
