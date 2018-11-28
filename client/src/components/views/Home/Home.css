@@ -1,0 +1,15 @@
+.content{
+	text-align: center;
+	overflow-x: scroll;
+}
+
+@media screen and (max-width: 600px) {
+	.textContainer{
+		width: 100%;
+	}
+}
+
+.grid{
+  display: table-cell;
+  width: 50%;
+}
