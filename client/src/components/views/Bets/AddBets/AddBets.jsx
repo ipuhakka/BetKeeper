@@ -240,9 +240,15 @@ class AddBets extends Component {
 			this.setAlertState("No bet selected", "Invalid input");
 			return;
 		}
+		let result = -1;
+		if (this.state.updateBetResult){
+			result = 1;
+		} else if (!this.state.updateBetResult){
+			result = 0;
+		}
 
 		var data = {
-			bet_won: this.state.updateBetResult
+			bet_won: result
 		}
 		putBet(this.props.bets[this.state.selectedBet].bet_id, data, this.handleUpdatedBetResult);
 	}

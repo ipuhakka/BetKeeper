@@ -135,6 +135,60 @@ module.exports = {
         return res.status(201).send({bet_id: id});
       }
     }
+  },
+
+  /*
+  PUT-request to modify bet. url = /api/bets/{bet_id}.
+
+  Request:
+    headers:
+      'content-type': 'application/json',
+      'authorization': 'token string'
+    body: {
+      odd: 2.14,
+      bet: 2.00,
+      name: 'name for the modified bet',
+      bet_won: 0 // -1 = unresolved, 0 = lost, 1 = won
+    }
+
+    If a parameter is missing in body or its value is null,
+    parameter is not modified in the bet.
+
+    Responses:
+      204 No content,
+      400 Bad request, if decimals arent numeric,
+      401 Unauthorized, on trying to modify other users bet or if
+        authorization token is invalid,
+      404 Not found, if bet to be modified does not exist.
+  */
+  put: function(req, res, bet_id){
+    if (req.get('content-type') !== 'application/json'){
+      return res.status(415).send();
+    }
+    let owner = tokenLog.get_token_owner(req.get('authorization'));
+    if (owner === -1){
+      return res.status(401).send();
+    }
+    let body = req.body;
+    if (!areDecimalsValidForModify([body.odd, body.bet]) || body.bet_won === undefined){
+      return res.status(400).send();
+    }
+
+    if (bets.get_bet(bet_id) === null){
+      return res.status(404).send();
+    }
+    let bet = create_modified_bet(body);
+    let modified = bets.modify_bet(bet_id, owner, bet.bet_won, bet.bet, bet.odd, bet.name);
+
+    if (modified){
+      return res.status(204).send();
+    }
+    else if (!modified){
+      return res.status(401).send();
+    }
+    else {
+      return res.status(500).send();
+    }
   }
 }
 
@@ -147,5 +201,32 @@ function isValidBetRequest(bet){
     return false;
   }
 
+  return true;
+}
+
+function create_modified_bet(data){
+  let bet = null;
+  let odd = null;
+  let name = null;
+
+  if (data.bet !== undefined && data.bet !== null){
+    bet = data.bet;
+  }
+  if (data.odd !== undefined && data.odd !== null){
+    odd = data.odd;
+  }
+  if (data.name !== undefined && data.name !== null){
+    name = data.name;
+  }
+
+  return {bet_won: data.bet_won, bet: bet, odd: odd, name: name};
+}
+
+function areDecimalsValidForModify(doubles){
+  for (var i = 0; i < doubles.length; i++){
+    if (doubles[i] !== undefined && !isNumber(doubles[i])){
+      return false;
+    }
+  }
   return true;
 }

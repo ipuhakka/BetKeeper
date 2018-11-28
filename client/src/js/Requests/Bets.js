@@ -121,7 +121,7 @@ export function postBet(data, callback){
 /*
 PUT-request to create a new bet to the database.
   var data = {
-    bet_won: boolean, false=bet lost, true=bet won
+    bet_won: number, -1: bet not resolved, 0: bet lost, 1: bet won
   }
 */
 export function putBet(bet_id, data, callback){
@@ -135,5 +135,6 @@ export function putBet(bet_id, data, callback){
   });
   xmlHttp.open("PUT", ConstVars.URI + "bets/" + bet_id);
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+  xmlHttp.setRequestHeader('Content-type', 'application/json');
   xmlHttp.send(JSON.stringify(data));
 }

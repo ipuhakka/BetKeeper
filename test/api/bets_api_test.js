@@ -276,3 +276,140 @@ describe('post_bets', function(){
     });
   });
 });
+
+describe('put_bets', function(){
+  let token1, token2;
+
+
+  before(async function(){
+    token1 = await tokenLog.create_token(5);
+    token2 = await tokenLog.create_token(4);
+    tokenLog.add_token(token1);
+    return;
+  });
+
+  it('responds with 204 on successful modification', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/7")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(204);
+      done();
+    });
+  });
+
+  it('responds with 400 if decimals are invalid', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: '3,12',
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/7")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(400);
+      done();
+    });
+  });
+
+  it('responds with 400 if bet_won is not given in request', function(done){
+    var bet = {
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/7")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(400);
+      done();
+    });
+  });
+
+  it('responds with 401 on invalid token', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/7")
+    .set('content-type', 'application/json')
+    .set('authorization', token2.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(401);
+      done();
+    });
+  });
+
+  it('responds with 401 on modifying other users bet', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/1")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(401);
+      done();
+    });
+  });
+
+  it('responds with 404 on modifying unexisting bet', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21
+    };
+
+    chai.request(server)
+    .put(uri + "/100")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(JSON.stringify(bet))
+    .end(function(err, res){
+      res.should.have.status(404);
+      done();
+    });
+  });
+
+  it('responds with 415 on invalid content-type header', function(done){
+    chai.request(server)
+    .put(uri + "/1")
+    .set('content-type', 'application/text')
+    .set('authorization', token1.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(415);
+      done();
+    });
+  });
+});

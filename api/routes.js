@@ -11,7 +11,7 @@ module.exports = function(app){
 
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,MODIFY,DELETE');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,PUT,DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
   });
@@ -52,5 +52,9 @@ module.exports = function(app){
 
   app.post('/api/bets', function(req, res){
     bets.post(req, res);
+  });
+
+  app.put('/api/bets/:bet_id', function(req, res){
+    bets.put(req, res, req.params.bet_id);
   });
 }

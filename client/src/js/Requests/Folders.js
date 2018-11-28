@@ -18,6 +18,7 @@ export function postFolder(folder, callback){
   });
   xmlHttp.open("POST", ConstVars.URI + "folders");
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+  xmlHttp.setRequestHeader('Content-Type', 'application/json');
   xmlHttp.send(JSON.stringify(data));
 }
 
