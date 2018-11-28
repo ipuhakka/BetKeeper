@@ -42,7 +42,6 @@ module.exports = {
       token = await tokenLog.create_token(id);
       tokenLog.add_token(token);
       res.set('content-type', 'application/json');
-      console.log("sending token: " + JSON.stringify(token));
       return res.status(200).send(token);
     }
     return res.status(500).send();

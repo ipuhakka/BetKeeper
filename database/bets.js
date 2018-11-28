@@ -16,7 +16,7 @@ module.exports = {
     name: string, //optional name for the bet
     odd: double,
     bet: double,
-    date_time: string, //
+    datetime: string, //
     owner: integer, //id of the user who owns the bet
     bet_id: integer
   }
@@ -331,7 +331,7 @@ function create_bet_object(item){
     name: item.name,
     odd: item.odd,
     bet: item.bet,
-    date_time: item.date_time,
+    datetime: item.date_time,
     owner: item.owner,
     bet_id: item.bet_id
   }

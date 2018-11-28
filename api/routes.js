@@ -45,4 +45,9 @@ module.exports = function(app){
   app.get('/api/bets', function(req, res){
     bets.get(req, res, req.query.finished, req.query.folder);
   });
+
+  app.delete('/api/bets/:bet_id', function(req, res){
+    console.log("folders: " + req.query.folders);
+    bets.delete(req, res, req.params.bet_id, req.query.folders);
+  });
 }

@@ -61,7 +61,6 @@ class App extends Component {
 	handleReceiveToken = (status, token, user_id, user) => {
 		switch(status){
 			case 200:
-			console.log("st token as: " + token);
 				window.sessionStorage.setItem('token', token);
 				window.sessionStorage.setItem('loggedUser', user);
 				window.sessionStorage.setItem('loggedUserID', user_id);

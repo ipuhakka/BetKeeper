@@ -153,7 +153,7 @@ class DeleteBets extends Component{
 	/*
 	Callback function for delete bet request.
 	*/
-	handleDeletedBet(status){
+	handleDeletedBet(status, data){
 		let text;
 
 		if (status === 204) {
@@ -167,6 +167,19 @@ class DeleteBets extends Component{
       this.props.onUpdate();
 			return;
     }
+
+		if (status === 200){
+			this.setState({
+        folders: [],
+        selectedFolders: [],
+        alertState: status,
+        alertText: "Bet deleted successfully",
+        selectedBet: -1
+      });
+      this.props.onUpdate();
+			text = "Deleted bet from folders: " + data;
+		}
+
     else if (status === 401) {
 			text = "Session expired, please login again";
     }

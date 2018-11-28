@@ -67,17 +67,15 @@ export function getAllBetsByUser(callback){
 /*
 DELETE-request. Deletes bet only from selected folders if there are any,
 otherwise deletes the bet completely.
+
+If bet is deleted only from selected folders, application
+returns a list of folder names from which bet was deleted.
 */
 export function deleteBet(bet_id, folders, callback){
   var uri = ConstVars.URI + "bets/" + bet_id;
 
   if (folders.length > 0){
-    uri = uri + "?";
-    for (var j = 0; j < folders.length; j++){
-      uri = uri + "folders=" + folders[j];
-      if (j < folders.length - 1)
-        uri = uri + "&";
-    }
+    uri = uri + '?folders=' + JSON.stringify(folders);
   }
   var xmlHttp = new XMLHttpRequest();
 
@@ -85,6 +83,9 @@ export function deleteBet(bet_id, folders, callback){
     if (xmlHttp.readyState === 4){
       if ([204, 401, 404].includes(xmlHttp.status))
         callback(xmlHttp.status);
+      else if (xmlHttp.status === 200){
+        callback(xmlHttp.status, xmlHttp.responseText);
+      }
     }
   });
   xmlHttp.open("DELETE", uri);

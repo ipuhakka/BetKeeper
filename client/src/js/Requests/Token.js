@@ -14,7 +14,6 @@ export function postToken(username, password, callback){
   xmlHttp.onreadystatechange =( () => {
     if (xmlHttp.readyState === 4){
       if (xmlHttp.status === 200){
-        console.log("got response: " + xmlHttp.responseText);
         callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, JSON.parse(xmlHttp.responseText).owner, username);
       }
       else {
@@ -40,8 +39,7 @@ export function getToken(token, user_id, callback){
       }
     }
   });
-  xmlHttp.open("GET", ConstVars.URI + "token?user_id=" + user_id);
-  xmlHttp.setRequestHeader('Content-Type', 'application/json');
+  xmlHttp.open("GET", ConstVars.URI + "token/" + user_id);
   xmlHttp.setRequestHeader('Authorization', token);
   xmlHttp.send();
 }

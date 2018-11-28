@@ -54,7 +54,6 @@ export function getFolders(callback){
 
   });
   xmlHttp.open("GET", ConstVars.URI + "folders/");
-  console.log("get folders: " + sessionStorage.getItem('token'));
   xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
   xmlHttp.send();
 }
