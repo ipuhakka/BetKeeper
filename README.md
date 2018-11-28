@@ -14,7 +14,7 @@ This installs all dependencies for the project.
 # Run
 
 ## API
-Start instructions here
+Run with command `node api/index.js`.
 
 ## Client
-Client can be started by going to `Client` folder on console and typing command `npm start`.
+Client can be started by typing command `npm start`.
