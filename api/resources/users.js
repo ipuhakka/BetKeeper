@@ -23,7 +23,7 @@ module.exports = {
       return res.status(415).send(JSON.stringify({error: "Request didn't containg application/json header"}));
     }
 
-    if (req.body.username == null || req.get('authorization') == null){
+    if (req.body.username === undefined || req.get('authorization') === undefined){
       return res.status(400).send(JSON.stringify({error: "Request had missing parameters"}));
     }
 

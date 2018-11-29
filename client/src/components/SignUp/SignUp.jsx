@@ -90,11 +90,7 @@ class SignUp extends Component{
 			return;
 		}
 
-		var data = {
-			username: this.state.newUsername,
-			password: this.state.newPassword
-		};
-    postUser(data, this.handleSignUp);
+    postUser(this.state.newUsername, this.state.newPassword, this.handleSignUp);
 	}
 
   handleSignUp = (status, data) => {
