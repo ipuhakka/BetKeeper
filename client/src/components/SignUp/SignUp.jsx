@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import MaskedInput from '../MaskedInput/MaskedInput.jsx';
 import {postUser} from '../../js/Requests/Users.js';
 import './SignUp.css';
 
@@ -38,14 +37,14 @@ class SignUp extends Component{
 								className="formMargins"
 								onChange={this.setNewUsername}
 							/>
-							<MaskedInput
-								type="text"
+							<FormControl
+								type="password"
 								placeholder="Enter new password"
 								className="formMargins"
 								onChange={this.setPassword}
 							/>
-							<MaskedInput
-								type="text"
+							<FormControl
+								type="password"
 								placeholder="Confirm new password"
 								onChange={this.setConfirmPassword}
 							/>
@@ -68,15 +67,15 @@ class SignUp extends Component{
 		});
 	}
 
-	setPassword(psw) {
+	setPassword(e) {
 		this.setState({
-			newPassword: psw
+			newPassword: e.target.value
 		});
 	}
 
-	setConfirmPassword(psw){
+	setConfirmPassword(e){
 		this.setState({
-			confirmPassword: psw
+			confirmPassword: e.target.value
 		});
 	}
 

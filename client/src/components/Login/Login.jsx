@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import MaskedInput from '../MaskedInput/MaskedInput.jsx';
 import './Login.css';
 
 class Login extends Component {
@@ -34,11 +33,11 @@ class Login extends Component {
 								className = "formMargins"
 								onChange={this.setUsername}
 							/>
-							<MaskedInput
+							<FormControl
 								onChange={this.setPassword}
-								type="text"
+								type="password"
 								placeholder="Enter password">
-							</MaskedInput>
+							</FormControl>
 						</FormGroup>
 					</Form>
 					<Button bsStyle="primary" className="button" type="submit" onClick={() => this.props.requestToken(this.state.username, this.state.password)}>Login</Button>
@@ -53,9 +52,9 @@ class Login extends Component {
 		});
 	}
 
-	setPassword(psw){
+	setPassword(e){
 		this.setState({
-			password: psw
+			password: e.target.value
 		});
 	}
 
