@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
@@ -71,7 +72,11 @@ class Folders extends Component {
 		for (var i = 0; i < this.state.folders.length; i++){
 			items.push(<ListGroupItem onClick={this.clickedListItem.bind(this, i)} key={i} bsStyle={this.state.folders[i].selected ? 'info': null}>{this.state.folders[i].name}</ListGroupItem>)
 		}
-		return items;
+		if (items.length > 0){
+			return items;
+		} else {
+			return <Alert>You don't have any folders: perhaps start by adding some?</Alert>;
+		}
 	}
 
 	clickedListItem(key){
