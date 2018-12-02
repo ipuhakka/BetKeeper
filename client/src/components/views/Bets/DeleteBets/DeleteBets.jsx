@@ -24,17 +24,6 @@ class DeleteBets extends Component{
 			alertState: null,
 			alertText: ""
 		};
-		this.setBetsFolders = this.setBetsFolders.bind(this);
-		this.getBetsFolders = this.getBetsFolders.bind(this);
-		this.onPressedFolder = this.onPressedFolder.bind(this);
-		this.deleteBet = this.deleteBet.bind(this);
-		this.handleDeletedBet = this.handleDeletedBet.bind(this);
-		this.handleGetBetsFolders = this.handleGetBetsFolders.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
-		this.renderDropdown = this.renderDropdown.bind(this);
-		this.renderFolderList = this.renderFolderList.bind(this);
-		this.renderBetsList = this.renderBetsList.bind(this);
-		this.showFromFolder = this.showFromFolder.bind(this);
 	}
 
 	render(){
@@ -71,7 +60,7 @@ class DeleteBets extends Component{
 		);
 	}
 
-	renderBetsList(){
+	renderBetsList = () => {
 		var betItems = [];
 		var isSelected = false;
 		for (var i = this.props.bets.length -1; i >= 0; i--){
@@ -91,7 +80,7 @@ class DeleteBets extends Component{
 		return betItems;
 	}
 
-	renderDropdown(){
+	renderDropdown = () => {
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</MenuItem>);
 		var active = false;
@@ -105,7 +94,7 @@ class DeleteBets extends Component{
 		return menuItems;
 	}
 
-	renderFolderList(){
+	renderFolderList = () => {
 		var folderItems = [];
 		for (var j = 0; j < this.state.folders.length; j++){
 			folderItems.push(<ListGroupItem onClick={this.onPressedFolder.bind(this, j)} bsStyle={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroupItem>)
@@ -113,7 +102,7 @@ class DeleteBets extends Component{
 		return folderItems;
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""
@@ -121,7 +110,7 @@ class DeleteBets extends Component{
 	}
 
 	//Get bets from selected folder.
-	showFromFolder(key){
+	showFromFolder = (key) => {
 		this.setState({
 			folders: [],
 			selectedFolders: [],
@@ -137,7 +126,7 @@ class DeleteBets extends Component{
 	}
 
 	//Creates a request to delete the selected bet. If any folders are selected, bet is only deleted from selected folders.
-	deleteBet(){
+	deleteBet = () => {
 		if (this.state.selectedBet === -1 || this.state.selectedBet === '-1')
 			return;
 
@@ -152,7 +141,7 @@ class DeleteBets extends Component{
 	/*
 	Callback function for delete bet request.
 	*/
-	handleDeletedBet(status, data){
+	handleDeletedBet = (status, data) => {
 		let text;
 
 		if (status === 204) {
@@ -192,7 +181,7 @@ class DeleteBets extends Component{
 		});
 	}
 	///set new selectedBet, if one is chosen get folders in which bet belongs to.
-	onPressedBet(key){
+	onPressedBet = (key) => {
 		var value = -1;
 		if (this.state.selectedBet !== key){ //set key and get folders.
 			value = key;
@@ -209,7 +198,7 @@ class DeleteBets extends Component{
 		});
 	}
 
-	onPressedFolder(key){
+	onPressedFolder = (key) => {
 		var selected = this.state.selectedFolders;
 		selected[key] = !selected[key];
 
@@ -218,11 +207,11 @@ class DeleteBets extends Component{
 		});
 	}
 
-	getBetsFolders(id){
+	getBetsFolders = (id) => {
 		getFoldersOfBet(id, this.handleGetBetsFolders);
 	}
 
-	handleGetBetsFolders(status, data){
+	handleGetBetsFolders = (status, data) => {
 		if (status === 200) {
 			this.setBetsFolders(JSON.parse(data));
 		}
@@ -234,7 +223,7 @@ class DeleteBets extends Component{
 		}
 	}
 
-	setBetsFolders(data){
+	setBetsFolders = (data) => {
 		var sel = [];
 		for (var i = 0; i < data.length; i++){
 			sel.push(false);

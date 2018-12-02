@@ -24,16 +24,6 @@ class Folders extends Component {
 			alertState: null,
 			alertText: ""
 		};
-
-		this.onLoad = this.onLoad.bind(this);
-		this.renderFoldersList = this.renderFoldersList.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
-		this.handleNewFolderChange = this.handleNewFolderChange.bind(this);
-		this.addFolder = this.addFolder.bind(this);
-		this.deleteFolder = this.deleteFolder.bind(this);
-		this.handleDelete = this.handleDelete.bind(this);
-		this.handlePost = this.handlePost.bind(this);
-		this.handleGet = this.handleGet.bind(this);
 	}
 
 	render(){
@@ -61,13 +51,13 @@ class Folders extends Component {
 		);
 	}
 
-	handleNewFolderChange(e){
+	handleNewFolderChange = (e) => {
 		this.setState({
 			newFolder: e.target.value
 		});
 	}
 
-	renderFoldersList(){
+	renderFoldersList = () => {
 		var items = [];
 		for (var i = 0; i < this.state.folders.length; i++){
 			items.push(<ListGroupItem onClick={this.clickedListItem.bind(this, i)} key={i} bsStyle={this.state.folders[i].selected ? 'info': null}>{this.state.folders[i].name}</ListGroupItem>)
@@ -79,7 +69,7 @@ class Folders extends Component {
 		}
 	}
 
-	clickedListItem(key){
+	clickedListItem = (key) => {
 		var folders = this.state.folders;
 		var anySelected = false;
 		for (var i = 0; i < folders.length; i++){
@@ -97,7 +87,7 @@ class Folders extends Component {
 		});
 	}
 
-	setFolders(data){
+	setFolders = (data) => {
 		var folders = [];
 		for (var i = 0; i < data.length; i++){
 			folders.push({
@@ -113,19 +103,19 @@ class Folders extends Component {
 		});
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
 
-	addFolder(){
+	addFolder = () => {
 		postFolder(this.state.newFolder, this.handlePost);
 	}
 
 	/* Callback function for posting a request.*/
-	handlePost(status){
+	handlePost = (status) => {
 		var text;
 		if (status === 201) {
 				text = "Folder added successfully";
@@ -147,7 +137,7 @@ class Folders extends Component {
 		});
 	}
 
-	deleteFolder(){
+	deleteFolder = () => {
 		var folder = null;
 		for (var i = 0; i < this.state.folders.length; i++){
 			if (this.state.folders[i].selected)
@@ -161,7 +151,7 @@ class Folders extends Component {
 	}
 
   /* Callback function for deleting a folder.*/
-	handleDelete(status){
+	handleDelete = (status) => {
 		var text;
 		if (status === 204) {
 				text = "Folder deleted successfully";
@@ -184,12 +174,12 @@ class Folders extends Component {
 	}
 
 	//get folders and set the state.
-	onLoad(){
+	onLoad = () => {
 		getFolders(this.handleGet);
 	}
 
 	///Callback function that handles state after receiving folders data from api.
-	handleGet(status, data){
+	handleGet = (status, data) => {
 		if (status === 200) {
       this.setFolders(JSON.parse(data));
     }

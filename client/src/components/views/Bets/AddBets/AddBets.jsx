@@ -28,20 +28,6 @@ class AddBets extends Component {
 			alertText: "",
 			selectedBet: -1
 		};
-
-		this.setOdd = this.setOdd.bind(this);
-		this.setBet = this.setBet.bind(this);
-		this.setName = this.setName.bind(this);
-		this.setBetResult = this.setBetResult.bind(this);
-		this.setUpdateBetResult = this.setUpdateBetResult.bind(this);
-		this.addBet = this.addBet.bind(this);
-		this.setFoldersList = this.setFoldersList.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
-		this.handleBetListClick = this.handleBetListClick.bind(this);
-		this.handleAddedBet = this.handleAddedBet.bind(this);
-		this.handleUpdatedBetResult = this.handleUpdatedBetResult.bind(this);
-		this.updateResult = this.updateResult.bind(this);
-		this.setAlertState = this.setAlertState.bind(this);
 	}
 
 	render(){
@@ -99,7 +85,7 @@ class AddBets extends Component {
 		);
 	}
 
-	renderBetsList(){
+	renderBetsList = () => {
 		var items = [];
 		for (var i = this.props.bets.length - 1; i >= 0; i--){
 			items.push(<ListGroupItem header={this.props.bets[i].name + " " + this.props.bets[i].datetime} key={i} onClick={this.handleBetListClick.bind(this, i)} bsStyle={this.state.selectedBet === i ? 'info' : null}>
@@ -108,7 +94,7 @@ class AddBets extends Component {
 		return items;
 	}
 
-	handleBetListClick(key){
+	handleBetListClick = (key) => {
 		if (key === this.state.selectedBet){
 			this.setState({
 				selectedBet: -1
@@ -121,52 +107,52 @@ class AddBets extends Component {
 		}
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
 
-	setAlertState(text, state){
+	setAlertState = (text, state) => {
 		this.setState({
 			alertText: text,
 			alertState: state
 		});
 	}
 
-	setOdd(e){
+	setOdd = (e) => {
 		this.setState({
 			odd: e.target.value
 		});
 	}
 
-	setBet(e){
+	setBet = (e) => {
 		this.setState({
 			bet: e.target.value
 		});
 	}
 
-	setName(e){
+	setName = (e) => {
 		this.setState({
 			name: e.target.value
 		});
 	}
 
-	setBetResult(e){
+	setBetResult = (e) => {
 		this.setState({
 			betResult: e.target.value
 		});
 	}
 
-	setUpdateBetResult(e){
+	setUpdateBetResult = (e) => {
 		this.setState({
 			updateBetResult: e.target.value
 		});
 	}
 
 	///init an array of booleans to keep track of selected list items and set the state.
-	setFoldersList(){
+	setFoldersList = () => {
 		var selected = []
 
 		for (var i = 0; i < this.props.folders.length; i++){
@@ -178,11 +164,11 @@ class AddBets extends Component {
 		});
 	}
 
-	setBetsList(){
+	setBetsList = () => {
 		this.props.onUpdate();
 	}
 
-	pressedListItem(i){
+	pressedListItem = (i) => {
 		var selected = this.state.selected;
 		selected[i] = !selected[i];
 
@@ -192,7 +178,7 @@ class AddBets extends Component {
 	}
 
 	//Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
-	addBet(){
+	addBet = () => {
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
 			this.setAlertState("Decimal given were in invalid format", "Invalid input");
 			return;
@@ -214,7 +200,7 @@ class AddBets extends Component {
 		postBet(data, this.handleAddedBet);
 	}
 
-	handleAddedBet(status){
+	handleAddedBet = (status) => {
 		if (status === 201) {
       this.setAlertState("Bet added successfully", status);
       this.setState({
@@ -235,7 +221,7 @@ class AddBets extends Component {
 
 
 	//Changes unresolved bet to solved.
-	updateResult(){
+	updateResult = () => {
 		if (this.state.selectedBet === -1){
 			this.setAlertState("No bet selected", "Invalid input");
 			return;
@@ -253,7 +239,7 @@ class AddBets extends Component {
 		putBet(this.props.bets[this.state.selectedBet].bet_id, data, this.handleUpdatedBetResult);
 	}
 
-	handleUpdatedBetResult(status){
+	handleUpdatedBetResult = (status) => {
 		if (status === 204) {
 			this.setAlertState("Result updated successfully", status);
 			this.setFoldersList();

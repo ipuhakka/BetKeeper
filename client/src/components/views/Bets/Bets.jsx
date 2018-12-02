@@ -22,13 +22,6 @@ class Bets extends Component{
 			alertState: null,
 			alertText: ""
 		};
-
-		this.handleGetAllBets = this.handleGetAllBets.bind(this);
-		this.handleGetBetsFromFolder = this.handleGetBetsFromFolder.bind(this);
-		this.handleGetFolders = this.handleGetFolders.bind(this);
-		this.handleUnresolvedBets = this.handleUnresolvedBets.bind(this);
-		this.updateData = this.updateData.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 
 	render(){
@@ -48,7 +41,7 @@ class Bets extends Component{
 		</div>);
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""
@@ -57,7 +50,7 @@ class Bets extends Component{
 
 	//updates data. Gets bets, folders and unresolved bets from the api. If folder parameter is not specified, gets all users bets, otherwise
 	//gets bets in that folder.
-	updateData(folder){
+	updateData = (folder) => {
 		if (typeof folder === "string"){
 			getBetsFromFolder(folder, this.handleGetBetsFromFolder);
 		}
@@ -69,7 +62,7 @@ class Bets extends Component{
 	}
 
 	//gets all bets, and sets allBets state variable accordingly.
-	handleGetAllBets(status, data){
+	handleGetAllBets = (status, data) => {
 		if (status === 200){
 			this.setState({
         deleteBetsList: JSON.parse(data)
@@ -84,7 +77,7 @@ class Bets extends Component{
 	}
 
 	//gets bets from selected folder and changes bets state variable accordingly.
-	handleGetBetsFromFolder(status, data){
+	handleGetBetsFromFolder = (status, data) => {
 		if (status === 200){
 			this.setState({
 				deleteBetsList: JSON.parse(data)
@@ -98,7 +91,7 @@ class Bets extends Component{
 		}
 	}
 
-	handleUnresolvedBets(status, data){
+	handleUnresolvedBets = (status, data) => {
 		if (status === 200) {
 			this.setState({
 				unresolvedBets: JSON.parse(data)
@@ -111,7 +104,7 @@ class Bets extends Component{
 			});
 	}
 }
-	handleGetFolders(status, data){
+	handleGetFolders = (status, data) => {
 		if (status === 200){
 			this.setState({
 				folders: JSON.parse(data)

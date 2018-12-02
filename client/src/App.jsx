@@ -15,11 +15,6 @@ class App extends Component {
 		this.state = {
 			alertState: null
 		};
-
-		this.requestToken = this.requestToken.bind(this);
-		this.checkToken = this.checkToken.bind(this);
-		this.setAlertState = this.setAlertState.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 
 	render() {
@@ -35,7 +30,7 @@ class App extends Component {
 	}
 
     //Checks if sessionStorage contains a valid token. If does, goes to user main page as logged user.
-	checkToken(){
+	checkToken = () => {
 		if (sessionStorage.getItem('token') != null && sessionStorage.getItem('token').toString() !== 'null'){
 			getToken(sessionStorage.getItem('token'), sessionStorage.getItem('loggedUserID'), this.handleGetToken);
 		}
@@ -49,7 +44,7 @@ class App extends Component {
 
 	//Makes a post request to resource at URI/token. On success, sets the token from response, and user inputted username
 	//to sessionStorage and changes html page.
-	requestToken(user, passwd){
+	requestToken = (user, passwd) => {
 		if (user === "" || passwd === ""){
 			this.setAlertState("missing inputs");
 			return;
@@ -75,13 +70,13 @@ class App extends Component {
 		}
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null
 		});
 	}
 
-	setAlertState(state, text){
+	setAlertState = (state, text) => {
 		this.setState({
 			alertState: state,
 			alertText: text

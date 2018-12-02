@@ -3,11 +3,6 @@ import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 
 class Info extends Component{
-	constructor(props){
-		super(props);
-
-		this.renderAlert = this.renderAlert.bind(this);
-	}
 
 	render(){
 		var alert = this.renderAlert();
@@ -16,7 +11,7 @@ class Info extends Component{
 
 	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of
 	//http-requests. Other alert types use code -1. Any other value returns no alert element.
-	renderAlert(){
+	renderAlert = () => {
 		switch(this.props.alertState){
 			case -1:
 			return(<Alert bsStyle="success" onDismiss={this.props.dismiss}>

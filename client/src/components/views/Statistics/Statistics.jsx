@@ -38,19 +38,6 @@ class Statistics extends Component{
 			betFolders: [],
 			overviewItems: []
 		};
-
-		this.onLoad = this.onLoad.bind(this);
-		this.getAllFinishedBets = this.getAllFinishedBets.bind(this);
-		this.dismissAlert = this.dismissAlert.bind(this);
-		this.renderDropdown = this.renderDropdown.bind(this);
-		this.renderTable = this.renderTable.bind(this);
-		this.showFromFolder = this.showFromFolder.bind(this);
-		this.updateTable = this.updateTable.bind(this);
-		this.renderOverviewTable = this.renderOverviewTable.bind(this);
-		this.calculateOverviewValues = this.calculateOverviewValues.bind(this);
-		this.handleGetFolders = this.handleGetFolders.bind(this);
-		this.handleGetBetsFromFolder = this.handleGetBetsFromFolder.bind(this);
-		this.handleGetAllFinishedBets = this.handleGetAllFinishedBets.bind(this);
 	}
 
 	render(){
@@ -83,7 +70,7 @@ class Statistics extends Component{
 		);
 	}
 
-	renderOverviewTable(){
+	renderOverviewTable = () => {
 		var tableItems = [];
 		var overviewItems = this.state.overviewItems;
 		for (var i = 0; i < this.state.overviewItems.length; i++){
@@ -108,7 +95,7 @@ class Statistics extends Component{
 				</Table>);
 	}
 
-	renderTable(){
+	renderTable = () => {
 		var title = "Overview";
 
 		if (this.state.folderSelected !== -1)
@@ -171,7 +158,7 @@ class Statistics extends Component{
 		);
 	}
 
-	renderDropdown(){
+	renderDropdown = () => {
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.folderSelected === -1} eventKey={-1}>{"Overview"}</MenuItem>);
 		var active = false;
@@ -184,14 +171,14 @@ class Statistics extends Component{
 		return menuItems;
 	}
 
-	showFromFolder(key){
+	showFromFolder = (key) => {
 		this.setState({
 			folderSelected: key
 		}, () => {this.updateTable()});
 	}
 
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
-	calculateOverviewValues(betFolder){
+	calculateOverviewValues = (betFolder) => {
 		var name = betFolder.name;
 		var moneyReturned = Stats.roundByTwo(Stats.moneyReturned(betFolder.bets));
 		var verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
@@ -210,7 +197,7 @@ class Statistics extends Component{
 		});
 	}
 
-	updateTable(){
+	updateTable = () => {
 		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn, oddMedian, oddMean,
 		betMedian, betMean;
 		var param;
@@ -252,7 +239,7 @@ class Statistics extends Component{
 		});
 	}
 
-	sort(func, param){
+	sort = (func, param) => {
 		var sorted = func(this.state.overviewItems, param);
 
 		this.setState({
@@ -260,14 +247,14 @@ class Statistics extends Component{
 		});
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""
 		});
 	}
 
-	onLoad(){
+	onLoad = () => {
 		this.getAllFinishedBets();
 		getFolders(this.handleGetFolders);
 	}
@@ -277,7 +264,7 @@ class Statistics extends Component{
 	For every folder, get-request is made to get bets
 	in that folder.
 	*/
-	handleGetFolders(status, folders){
+	handleGetFolders = (status, folders) => {
 		folders = JSON.parse(folders);
 		if (status === 200){
 			for (var i = 0; i < folders.length; i++){ /* Loops through folderNames array to get bets for each of the folders.*/
@@ -293,11 +280,11 @@ class Statistics extends Component{
 	}
 
 	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
-	getAllFinishedBets(){
+	getAllFinishedBets = () => {
 		getFinishedBets(this.handleGetAllFinishedBets);
 	}
 
-	handleGetAllFinishedBets(status, data){
+	handleGetAllFinishedBets = (status, data) => {
 		if (status === 200){
 			this.setState({
 				allBets: JSON.parse(data)
@@ -319,7 +306,7 @@ class Statistics extends Component{
 	After data has been received, pushes an object with bets array and
 	name of the folder into betFolders array.
 	*/
-	handleGetBetsFromFolder(status, data, folderName){
+	handleGetBetsFromFolder = (status, data, folderName) => {
 		if (status === 200){
 			var betFolders = this.state.betFolders;
 			var bets = JSON.parse(data);

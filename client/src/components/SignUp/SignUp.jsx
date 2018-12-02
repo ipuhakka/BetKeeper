@@ -15,12 +15,6 @@ class SignUp extends Component{
 			newPassword: "",
 			confirmPassword: "",
 		};
-
-		this.setNewUsername = this.setNewUsername.bind(this);
-		this.setPassword = this.setPassword.bind(this);
-		this.setConfirmPassword = this.setConfirmPassword.bind(this);
-		this.signup = this.signup.bind(this);
-		this.checkEnter = this.checkEnter.bind(this);
 	}
 
 	render(){
@@ -56,30 +50,30 @@ class SignUp extends Component{
 		);
 	}
 
-	checkEnter(e){
+	checkEnter = (e) => {
 		if (e.which === 13){
 			this.signup();
 		}
 	}
-	setNewUsername(e){
+	setNewUsername = (e) => {
 		this.setState({
 			newUsername: e.target.value
 		});
 	}
 
-	setPassword(e) {
+	setPassword = (e) => {
 		this.setState({
 			newPassword: e.target.value
 		});
 	}
 
-	setConfirmPassword(e){
+	setConfirmPassword = (e) => {
 		this.setState({
 			confirmPassword: e.target.value
 		});
 	}
 
-	signup(){
+	signup = () => {
 		if (this.state.newUsername === "" || this.state.newPassword === ""){
 			this.props.alert(-1, "Please input user name, password and confirm password");
 			return;

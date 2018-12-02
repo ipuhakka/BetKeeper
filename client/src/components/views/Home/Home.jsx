@@ -19,8 +19,6 @@ class Home extends Component{
 			alertState: null,
 			alertText: ""
 		};
-
-		this.dismissAlert = this.dismissAlert.bind(this);
 	}
 
 	changePage = (key) => {
@@ -60,7 +58,7 @@ class Home extends Component{
 		);
 	}
 
-	dismissAlert(){
+	dismissAlert = () => {
 		this.setState({
 			alertState: null,
 			alertText: ""

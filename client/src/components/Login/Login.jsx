@@ -13,10 +13,6 @@ class Login extends Component {
 			username: "",
 			password: ""
 		};
-
-		this.setUsername = this.setUsername.bind(this);
-		this.setPassword = this.setPassword.bind(this);
-		this.checkEnter = this.checkEnter.bind(this);
 	}
 
 	render(){
@@ -46,19 +42,19 @@ class Login extends Component {
 		);
 	}
 
-	setUsername(e){
+	setUsername = (e) => {
 		this.setState({
 			username: e.target.value
 		});
 	}
 
-	setPassword(e){
+	setPassword = (e) => {
 		this.setState({
 			password: e.target.value
 		});
 	}
 
-	checkEnter(e){
+	checkEnter = (e) => {
 		if (e.which === 13){ //login
 			this.props.requestToken(this.state.username, this.state.password);
 		}

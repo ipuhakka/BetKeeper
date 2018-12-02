@@ -10,12 +10,6 @@ import Home from '../views/Home/Home.jsx';
 import Statistics from '../views/Statistics/Statistics.jsx';
 
 class Menu extends Component{
-	constructor(props){
-		super(props);
-
-		this.handleSelect = this.handleSelect.bind(this);
-	}
-
 	render(){
 		return(
 			<Nav bsStyle="tabs" onSelect={this.handleSelect}>
@@ -27,7 +21,7 @@ class Menu extends Component{
 			</Nav>);
 	}
 
-	handleSelect(key){
+	handleSelect = (key) => {
 		switch(key){
 			case 0:
 				ReactDOM.render(<Home />, document.getElementById('root'));
