@@ -6,10 +6,10 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import FormControl from 'react-bootstrap/lib/FormControl';
-import Info from '../../Info/Info.jsx';
-import Header from '../../Header/Header.jsx';
-import Menu from '../../Menu/Menu.jsx';
-import {deleteFolder, postFolder, getFolders} from '../../../js/Requests/Folders.js';
+import Info from '../../components/Info/Info.jsx';
+import Header from '../../components/Header/Header.jsx';
+import Menu from '../../components/Menu/Menu.jsx';
+import {deleteFolder, postFolder, getFolders} from '../../js/Requests/Folders.js';
 import './Folders.css';
 
 class Folders extends Component {

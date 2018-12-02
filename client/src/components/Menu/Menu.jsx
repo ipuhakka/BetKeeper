@@ -4,10 +4,10 @@ import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import PropTypes from 'prop-types';
 import App from '../../App.jsx';
-import Bets from '../views/Bets/Bets.jsx';
-import Folders from '../views/Folders/Folders.jsx';
-import Home from '../views/Home/Home.jsx';
-import Statistics from '../views/Statistics/Statistics.jsx';
+import Bets from '../../views/Bets/Bets.jsx';
+import Folders from '../../views/Folders/Folders.jsx';
+import Home from '../../views/Home/Home.jsx';
+import Statistics from '../../views/Statistics/Statistics.jsx';
 
 class Menu extends Component{
 	render(){

@@ -3,11 +3,11 @@ import Tab from 'react-bootstrap/lib/Tab';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import AddBets from './AddBets/AddBets.jsx';
 import DeleteBets from './DeleteBets/DeleteBets.jsx';
-import Header from '../../Header/Header.jsx';
-import Info from '../../Info/Info.jsx';
-import Menu from '../../Menu/Menu.jsx';
-import {getFolders} from '../../../js/Requests/Folders.js';
-import {getUnresolvedBets, getAllBetsByUser, getBetsFromFolder} from '../../../js/Requests/Bets.js';
+import Header from '../../components/Header/Header.jsx';
+import Info from '../../components/Info/Info.jsx';
+import Menu from '../../components/Menu/Menu.jsx';
+import {getFolders} from '../../js/Requests/Folders.js';
+import {getUnresolvedBets, getAllBetsByUser, getBetsFromFolder} from '../../js/Requests/Bets.js';
 import './Bets.css';
 
 class Bets extends Component{

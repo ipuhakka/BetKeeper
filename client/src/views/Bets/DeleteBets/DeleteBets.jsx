@@ -7,9 +7,9 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
-import Info from '../../../Info/Info.jsx';
-import {getFoldersOfBet} from '../../../../js/Requests/Folders.js';
-import {deleteBet} from '../../../../js/Requests/Bets.js';
+import Info from '../../../components/Info/Info.jsx';
+import {getFoldersOfBet} from '../../../js/Requests/Folders.js';
+import {deleteBet} from '../../../js/Requests/Bets.js';
 import './DeleteBets.css';
 
 class DeleteBets extends Component{

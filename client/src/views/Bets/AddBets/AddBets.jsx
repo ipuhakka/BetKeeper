@@ -9,8 +9,8 @@ import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Radio from 'react-bootstrap/lib/Radio';
 import Row from 'react-bootstrap/lib/Grid';
-import Info from '../../../Info/Info.jsx';
-import {postBet, putBet} from '../../../../js/Requests/Bets.js';
+import Info from '../../../components/Info/Info.jsx';
+import {postBet, putBet} from '../../../js/Requests/Bets.js';
 import './AddBets.css';
 
 class AddBets extends Component {

@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import Bets from '../Bets/Bets.jsx';
 import Folders from '../Folders/Folders.jsx';
 import Statistics from '../Statistics/Statistics.jsx';
-import Card from '../../Card/Card.jsx';
-import Header from '../../Header/Header.jsx';
-import Info from '../../Info/Info.jsx';
-import Menu from '../../Menu/Menu.jsx';
+import Card from '../../components/Card/Card.jsx';
+import Header from '../../components/Header/Header.jsx';
+import Info from '../../components/Info/Info.jsx';
+import Menu from '../../components/Menu/Menu.jsx';
 import './Home.css';
 
 class Home extends Component{

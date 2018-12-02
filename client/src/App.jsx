@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Header from './components/Header/Header.jsx';
-import Home from './components/views/Home/Home.jsx';
+import Home from './views/Home/Home.jsx';
 import Info from './components/Info/Info.jsx';
 import Login from './components/Login/Login.jsx';
 import SignUp from './components/SignUp/SignUp.jsx';
