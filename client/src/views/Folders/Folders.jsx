@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import store from '../../store';
+import {fetchFolders} from '../../actions/foldersActions';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
@@ -26,6 +26,12 @@ class Folders extends Component {
 			alertState: null,
 			alertText: ""
 		};
+	}
+
+	componentWillReceiveProps(nextProps){
+		if (nextProps.folders.length !== this.state.folders.length){
+			this.setFolders(nextProps.folders);
+		}
 	}
 
 	render(){
@@ -89,12 +95,12 @@ class Folders extends Component {
 		});
 	}
 
-	setFolders = () => {
+	setFolders = (data) => {
 		var folders = [];
-		for (var i = 0; i < this.props.folders.length; i++){
+		for (var i = 0; i < data.length; i++){
 			folders.push({
 				selected: false,
-				name: this.props.folders[i]
+				name: data[i]
 			});
 		}
 
@@ -175,15 +181,12 @@ class Folders extends Component {
 		});
 	}
 
-	//get folders and set the state.
-	onLoad = async () => {
-		store.dispatch({type: 'FETCH_FOLDERS', payload: {
-    },
-    callback: this.setFolders
-  });
+	//get folders.
+	onLoad = () => {
+		this.props.fetchFolders();
 	}
 
-	///Callback function that handles state after receiving folders data from api.
+	///REMOVE THIS WHEN IMPLEMENTING ERROR HANDLING TO REDUX
 	handleGet = (status, data) => {
 		if (status === 200) {
       this.setFolders(JSON.parse(data));
@@ -201,4 +204,8 @@ const mapStateToProps = (state, ownProps) => {
   return { ...state.folders}
 };
 
-export default connect(mapStateToProps)(Folders);
+const mapDispatchToProps = (dispatch) => ({
+  fetchFolders: () => dispatch(fetchFolders())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Folders);

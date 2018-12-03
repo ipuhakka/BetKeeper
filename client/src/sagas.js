@@ -6,7 +6,6 @@ import {getFolders} from './js/Requests/Folders.js';
 function* fetchFolders(action){
   let folders = yield call(getFolders);
   yield put(fetchFoldersSuccess(folders));
-  action.callback();
 }
 
 function* watchFolders(){
