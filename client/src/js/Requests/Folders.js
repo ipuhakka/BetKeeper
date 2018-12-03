@@ -43,20 +43,22 @@ export function deleteFolder(folder, callback){
   GET-request for getting folders for logged user.
 */
 export function getFolders(callback){
-  var xmlHttp = new XMLHttpRequest();
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if (xmlHttp.status === 200)
-        callback(xmlHttp.status, xmlHttp.responseText);
-      else if (xmlHttp.status === 401)
-        callback(xmlHttp.status, null);
-    }
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200)
+          resolve(JSON.parse(xmlHttp.responseText));
+        else if (xmlHttp.status === 401)
+          reject(xmlHttp.status);
+      }
 
+    });
+    xmlHttp.open("GET", ConstVars.URI + "folders/");
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
   });
-  xmlHttp.open("GET", ConstVars.URI + "folders/");
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send();
 }
 
 /*

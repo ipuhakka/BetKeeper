@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import store from '../../store';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
@@ -9,7 +11,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
-import {deleteFolder, postFolder, getFolders} from '../../js/Requests/Folders.js';
+import {deleteFolder, postFolder} from '../../js/Requests/Folders.js';
 import './Folders.css';
 
 class Folders extends Component {
@@ -87,12 +89,12 @@ class Folders extends Component {
 		});
 	}
 
-	setFolders = (data) => {
+	setFolders = () => {
 		var folders = [];
-		for (var i = 0; i < data.length; i++){
+		for (var i = 0; i < this.props.folders.length; i++){
 			folders.push({
 				selected: false,
-				name: data[i]
+				name: this.props.folders[i]
 			});
 		}
 
@@ -174,8 +176,11 @@ class Folders extends Component {
 	}
 
 	//get folders and set the state.
-	onLoad = () => {
-		getFolders(this.handleGet);
+	onLoad = async () => {
+		store.dispatch({type: 'FETCH_FOLDERS', payload: {
+    },
+    callback: this.setFolders
+  });
 	}
 
 	///Callback function that handles state after receiving folders data from api.
@@ -192,4 +197,8 @@ class Folders extends Component {
 	}
 }
 
-export default Folders;
+const mapStateToProps = (state, ownProps) => {
+  return { ...state.folders}
+};
+
+export default connect(mapStateToProps)(Folders);

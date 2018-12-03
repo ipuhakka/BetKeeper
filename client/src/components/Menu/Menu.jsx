@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import store from '../../store';
+import { Provider } from 'react-redux';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import PropTypes from 'prop-types';
@@ -33,7 +35,9 @@ class Menu extends Component{
 				ReactDOM.render(<Statistics />, document.getElementById('root'));
 				break;
 			case 3:
-				ReactDOM.render(<Folders />, document.getElementById('root'));
+				ReactDOM.render(<Provider store={store}>
+													<Folders />
+												</Provider>, document.getElementById('root'));
 				break;
 			case 4:
 				window.sessionStorage.setItem('loggedUser', null);
