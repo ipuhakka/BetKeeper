@@ -18,6 +18,9 @@ class Info extends Component{
 					<p>{this.props.alertText}</p>
 					<Button onClick={this.props.dismiss}>{"Hide"}</Button>
 					</Alert>);
+			case 0:
+				return(<Alert bsStyle="danger" onDismiss={this.dismissAddAlert}><p>{this.props.alertText}</p>
+					<Button onClick={this.props.dismiss}>{"Hide"}</Button></Alert>);
 			case 200:
 				return(<Alert bsStyle="success" onDismiss={this.props.dismiss}>
 						<p>{this.props.alertText}</p>

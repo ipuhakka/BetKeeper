@@ -1,6 +1,6 @@
 import * as foldersActions from '../actions/foldersActions';
 
-const FoldersReducer = (state = { folders: [] }, action ) => {
+const FoldersReducer = (state = { folders: []}, action ) => {
   switch (action.type) {
     case foldersActions.FETCH_FOLDERS:
       return {

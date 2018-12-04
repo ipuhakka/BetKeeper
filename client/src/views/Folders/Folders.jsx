@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
+import {clearAlert} from '../../actions/alertActions';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
@@ -11,7 +13,6 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
-import {deleteFolder, postFolder} from '../../js/Requests/Folders.js';
 import './Folders.css';
 
 class Folders extends Component {
@@ -22,9 +23,7 @@ class Folders extends Component {
 			disabled: [false, false, false, true, false],
 			folders: [],
 			deleteDisabled: true,
-			newFolder: "",
-			alertState: null,
-			alertText: ""
+			newFolder: ""
 		};
 	}
 
@@ -40,7 +39,7 @@ class Folders extends Component {
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
-				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
+				<Info alertState={this.props.status} alertText={this.props.statusMessage} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
@@ -112,37 +111,14 @@ class Folders extends Component {
 	}
 
 	dismissAlert = () => {
-		this.setState({
-			alertState: null,
-			alertText: ""
-		});
+		this.props.clearAlert();
 	}
 
 	addFolder = () => {
-		postFolder(this.state.newFolder, this.handlePost);
-	}
-
-	/* Callback function for posting a request.*/
-	handlePost = (status) => {
-		var text;
-		if (status === 201) {
-				text = "Folder added successfully";
-				this.onLoad();
-		}
-		if (status === 400) {
-				text = "Something went wrong with the request";
-		}
-		if (status === 401) {
-				text = "Session expired, please login again";
-		}
-		if (status === 409) {
-				text = "Create failed: User already has a folder of same name";
-		}
-
-		this.setState({
-			alertState: status,
-			alertText: text
-		});
+		store.dispatch({type: 'POST_FOLDER', payload: {
+      newFolderName: this.state.newFolder
+    	}
+  	});
 	}
 
 	deleteFolder = () => {
@@ -155,7 +131,10 @@ class Folders extends Component {
 			console.log("no folder selected");
 			return;
 		}
-		deleteFolder(folder, this.handleDelete);
+		store.dispatch({type: 'DELETE_FOLDER', payload: {
+      folderToDelete: folder
+    	}
+  	});
 	}
 
   /* Callback function for deleting a folder.*/
@@ -185,27 +164,15 @@ class Folders extends Component {
 	onLoad = () => {
 		this.props.fetchFolders();
 	}
-
-	///REMOVE THIS WHEN IMPLEMENTING ERROR HANDLING TO REDUX
-	handleGet = (status, data) => {
-		if (status === 200) {
-      this.setFolders(JSON.parse(data));
-    }
-    if (status === 401) {
-      this.setState({
-        alertState: status,
-        alertText: "Session expired, please login again"
-      });
-    }
-	}
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { ...state.folders}
+  return { ...state.folders, ...state.alert}
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchFolders: () => dispatch(fetchFolders())
+  fetchFolders: () => dispatch(fetchFolders()),
+	clearAlert: () => dispatch(clearAlert())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Folders);

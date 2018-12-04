@@ -1,0 +1,2 @@
+1. alertReducer should also set style for the alert, so Info component does not have to contain switch to
+decide the style: it should come as a prop.
