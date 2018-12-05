@@ -30,7 +30,7 @@ class DeleteBets extends Component{
 		var betItems = this.renderBetsList();
 		var folderItems = this.renderFolderList();
 		var menuItems = this.renderDropdown();
-
+		//console.log("rendering delete with " + JSON.stringify(this.props.bets));
 		return(
 			<div className="content">
 				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
