@@ -1,7 +1,9 @@
 import { all, takeLatest, call, put } from 'redux-saga/effects';
 import {FETCH_FOLDERS, fetchFoldersSuccess, POST_FOLDER, DELETE_FOLDER} from './actions/foldersActions';
+import {FETCH_BETS, fetchBetsSuccess} from './actions/betsActions';
 import {setAlertStatus, clearAlert} from './actions/alertActions';
 import {getFolders, postFolder, deleteFolder} from './js/Requests/Folders.js';
+import {getAllBetsByUser} from './js/Requests/Bets.js';
 
 
 
@@ -67,6 +69,24 @@ function* removeFolder(action){
   }
 }
 
+function* fetchAllBets(){
+  try {
+    let bets = yield call(getAllBetsByUser);
+    yield put(fetchBetsSuccess(bets));
+  } catch(error){
+    switch(error){
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
+  }
+}
 function* watchFolders(){
   yield takeLatest(FETCH_FOLDERS, fetchFolders);
 }
@@ -79,6 +99,10 @@ function* watchDeleteFolder(){
   yield takeLatest(DELETE_FOLDER, removeFolder);
 }
 
+function* watchAllBets(){
+  yield takeLatest(FETCH_BETS, fetchAllBets);
+}
+
 function* watchClearAlert(){
   yield call(clearAlert);
 }
@@ -88,6 +112,7 @@ export default function* rootSaga() {
     watchFolders(),
     watchPostFolder(),
     watchDeleteFolder(),
+    watchAllBets(),
     watchClearAlert()
   ]);
 }

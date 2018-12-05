@@ -29,7 +29,9 @@ class Menu extends Component{
 				ReactDOM.render(<Home />, document.getElementById('root'));
 				break;
 			case 1:
-				ReactDOM.render(<Bets/>, document.getElementById('root'));
+				ReactDOM.render(<Provider store={store}>
+													<Bets/>
+												</Provider>, document.getElementById('root'));
 				break;
 			case 2:
 				ReactDOM.render(<Statistics />, document.getElementById('root'));

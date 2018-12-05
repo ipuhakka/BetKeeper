@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import {fetchBets} from '../../actions/betsActions';
+import {clearAlert} from '../../actions/alertActions';
 import Tab from 'react-bootstrap/lib/Tab';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import AddBets from './AddBets/AddBets.jsx';
@@ -7,7 +10,7 @@ import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import {getFolders} from '../../js/Requests/Folders.js';
-import {getUnresolvedBets, getAllBetsByUser, getBetsFromFolder} from '../../js/Requests/Bets.js';
+import {getUnresolvedBets, getBetsFromFolder} from '../../js/Requests/Bets.js';
 import './Bets.css';
 
 class Bets extends Component{
@@ -16,6 +19,7 @@ class Bets extends Component{
 
 		this.state = {
 			menuDisabled: [false, true, false, false, false],
+			deleteListFromFolder: false, //Tells whether all bets are open in delete list, or bets from a folder.
 			deleteBetsList: [],
 			folders: [],
 			unresolvedBets: [],
@@ -35,7 +39,7 @@ class Bets extends Component{
 					<AddBets folders={this.state.folders} bets={this.state.unresolvedBets} onUpdate={this.updateData}></AddBets>
 				</Tab>
 				<Tab eventKey={2} title={"Delete bets"}>
-					<DeleteBets folders={this.state.folders} bets={this.state.deleteBetsList} onUpdate={this.updateData}></DeleteBets>
+					<DeleteBets folders={this.state.folders} bets={this.state.deleteListFromFolder ? this.state.deleteBetsList : this.props.allBets} onUpdate={this.updateData}></DeleteBets>
 				</Tab>
 			</Tabs>
 		</div>);
@@ -52,10 +56,16 @@ class Bets extends Component{
 	//gets bets in that folder.
 	updateData = (folder) => {
 		if (typeof folder === "string"){
+			this.setState({
+				deleteListFromFolder: true
+			});
 			getBetsFromFolder(folder, this.handleGetBetsFromFolder);
 		}
 		else {
-			getAllBetsByUser(this.handleGetAllBets);
+			this.setState({
+				deleteListFromFolder: false
+			});
+			this.props.fetchBets();
 		}
 		getUnresolvedBets(this.handleUnresolvedBets);
 		getFolders(this.handleGetFolders);
@@ -119,4 +129,13 @@ class Bets extends Component{
 	}
 }
 
-export default Bets;
+const mapStateToProps = (state, ownProps) => {
+  return { ...state.bets, ...state.alert}
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchBets: () => dispatch(fetchBets()),
+	clearAlert: () => dispatch(clearAlert())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Bets);
