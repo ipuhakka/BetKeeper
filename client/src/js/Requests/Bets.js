@@ -103,27 +103,38 @@ otherwise deletes the bet completely.
 
 If bet is deleted only from selected folders, application
 returns a list of folder names from which bet was deleted.
+
+Resolved on response with status 204 No content,
+and with 200 OK if bet was only deleted from specified folders.
+In such a case, returns array of folders from which bet was deleted.
+Rejects on any other response, with response status as parameter.
 */
-export function deleteBet(bet_id, folders, callback){
-  var uri = ConstVars.URI + "bets/" + bet_id;
+export function deleteBet(bet_id, folders){
+  return new Promise(function(resolve, reject){
+    var uri = ConstVars.URI + "bets/" + bet_id;
 
-  if (folders.length > 0){
-    uri = uri + '?folders=' + JSON.stringify(folders);
-  }
-  var xmlHttp = new XMLHttpRequest();
-
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if ([204, 401, 404].includes(xmlHttp.status))
-        callback(xmlHttp.status);
-      else if (xmlHttp.status === 200){
-        callback(xmlHttp.status, xmlHttp.responseText);
-      }
+    if (folders.length > 0){
+      uri = uri + '?folders=' + JSON.stringify(folders);
     }
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 204){
+          resolve();
+        }
+        else if (xmlHttp.status === 200){
+          resolve(JSON.parse(xmlHttp.responseText));
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("DELETE", uri);
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
   });
-  xmlHttp.open("DELETE", uri);
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send();
 }
 
 /*

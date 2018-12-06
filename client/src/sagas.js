@@ -1,10 +1,10 @@
 import { all, takeLatest, call, put, select } from 'redux-saga/effects';
-import {FETCH_FOLDERS, fetchFoldersSuccess, POST_FOLDER, DELETE_FOLDER} from './actions/foldersActions';
+import {FETCH_FOLDERS, fetchFoldersSuccess, POST_FOLDER, DELETE_FOLDER, FETCH_FOLDERS_OF_BET, fetchFoldersOfBetSuccess} from './actions/foldersActions';
 import {FETCH_BETS, fetchBetsSuccess, FETCH_BETS_FROM_FOLDER, fetchBetsFromFolderSuccess,
-  FETCH_UNRESOLVED_BETS, fetchUnresolvedBetsSuccess, POST_BET, PUT_BET} from './actions/betsActions';
+  FETCH_UNRESOLVED_BETS, fetchUnresolvedBetsSuccess, POST_BET, PUT_BET, DELETE_BET} from './actions/betsActions';
 import {setAlertStatus, clearAlert} from './actions/alertActions';
-import {getFolders, postFolder, deleteFolder} from './js/Requests/Folders.js';
-import {getAllBetsByUser, getBetsFromFolder, getUnresolvedBets, postBet, putBet} from './js/Requests/Bets.js';
+import {getFolders, getFoldersOfBet, postFolder, deleteFolder} from './js/Requests/Folders.js';
+import {getAllBetsByUser, getBetsFromFolder, getUnresolvedBets, postBet, putBet, deleteBet} from './js/Requests/Bets.js';
 
 
 
@@ -12,6 +12,25 @@ function* fetchFolders(){
   try {
     let folders = yield call(getFolders);
     yield put(fetchFoldersSuccess(folders));
+  } catch(error){
+    switch(error){
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
+  }
+}
+
+function* fetchFoldersOfBet(action){
+  try {
+    let folders = yield call(getFoldersOfBet, action.payload.bet_id);
+    yield put(fetchFoldersOfBetSuccess(folders));
   } catch(error){
     switch(error){
       case 401:
@@ -182,8 +201,46 @@ function* modifyBet(action){
   }
 }
 
+function* removeBet(action){
+  try {
+    let res = yield call(deleteBet, action.payload.bet_id, action.payload.folders);
+    yield put(fetchFoldersOfBetSuccess([]));
+    if (res === undefined){
+      yield put(setAlertStatus(204, "Bet deleted successfully"));
+    } else {
+      yield put(setAlertStatus(200, "Bet deleted successfully from folders: " + JSON.stringify(res)));
+    }
+    yield call(fetchAllBets);
+    let usedFolder = yield select(getUsedFolder);
+    if (usedFolder !== ""){
+      yield call(fetchBetsFromFolder, usedFolder);
+    }
+    yield call(fetchUnresolvedBets);
+  } catch(error){
+    console.log("received " + error);
+    switch(error){
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      case 404:
+        yield put(setAlertStatus(error, "Bet trying to be deleted was not found in the database"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
+  }
+}
+
 function* watchFolders(){
   yield takeLatest(FETCH_FOLDERS, fetchFolders);
+}
+
+function* watchFoldersOfBet(){
+  yield takeLatest(FETCH_FOLDERS_OF_BET, fetchFoldersOfBet);
 }
 
 function* watchPostFolder(){
@@ -214,6 +271,10 @@ function* watchPutBet(){
   yield takeLatest(PUT_BET, modifyBet);
 }
 
+function* watchDeleteBet(){
+  yield takeLatest(DELETE_BET, removeBet);
+}
+
 function* watchClearAlert(){
   yield call(clearAlert);
 }
@@ -221,6 +282,7 @@ function* watchClearAlert(){
 export default function* rootSaga() {
   yield all([
     watchFolders(),
+    watchFoldersOfBet(),
     watchPostFolder(),
     watchDeleteFolder(),
     watchAllBets(),
@@ -228,6 +290,7 @@ export default function* rootSaga() {
     watchUnresolvedBets(),
     watchPostBet(),
     watchPutBet(),
+    watchDeleteBet(),
     watchClearAlert()
   ]);
 }

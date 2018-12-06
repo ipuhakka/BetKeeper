@@ -66,7 +66,7 @@ class Bets extends Component{
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { ...state.bets, ...state.alert, ...state.folders}
+  return { ...state.bets, ...state.folders}
 };
 
 const mapDispatchToProps = (dispatch) => ({

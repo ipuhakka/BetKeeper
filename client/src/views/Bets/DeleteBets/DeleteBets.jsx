@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import store from '../../../store';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Button from 'react-bootstrap/lib/Button';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -7,9 +9,6 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
-import Info from '../../../components/Info/Info.jsx';
-import {getFoldersOfBet} from '../../../js/Requests/Folders.js';
-import {deleteBet} from '../../../js/Requests/Bets.js';
 import './DeleteBets.css';
 
 class DeleteBets extends Component{
@@ -20,20 +19,23 @@ class DeleteBets extends Component{
 			selectedBet: -1,
 			allFoldersSelected: -1,
 			folders: [], //components own state variable folders[] contains folders for the selected bet.
-			selectedFolders: [], //contains folders for selected bet which have been selected.
-			alertState: null,
-			alertText: ""
+			selectedFolders: [] //contains folders for selected bet which have been selected.
 		};
+	}
+
+	componentWillReceiveProps(nextProps){
+		if (nextProps.foldersOfBet){
+			this.setBetsFolders(nextProps.foldersOfBet);
+		}
 	}
 
 	render(){
 		var betItems = this.renderBetsList();
 		var folderItems = this.renderFolderList();
 		var menuItems = this.renderDropdown();
-		//console.log("rendering delete with " + JSON.stringify(this.props.bets));
+
 		return(
 			<div className="content">
-				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<div>
@@ -96,17 +98,10 @@ class DeleteBets extends Component{
 
 	renderFolderList = () => {
 		var folderItems = [];
-		for (var j = 0; j < this.state.folders.length; j++){
+		for (var j = 0; j < this.props.foldersOfBet.length; j++){
 			folderItems.push(<ListGroupItem onClick={this.onPressedFolder.bind(this, j)} bsStyle={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroupItem>)
 		}
 		return folderItems;
-	}
-
-	dismissAlert = () => {
-		this.setState({
-			alertState: null,
-			alertText: ""
-		});
 	}
 
 	//Get bets from selected folder.
@@ -135,51 +130,18 @@ class DeleteBets extends Component{
 			if (this.state.selectedFolders[i])
 				folders.push(this.state.folders[i]);
 		}
-		deleteBet(this.props.bets[this.state.selectedBet].bet_id, folders, this.handleDeletedBet);
-	}
-
-	/*
-	Callback function for delete bet request.
-	*/
-	handleDeletedBet = (status, data) => {
-		let text;
-
-		if (status === 204) {
-      this.setState({
-        folders: [],
-        selectedFolders: [],
-        alertState: status,
-        alertText: "Bet deleted successfully",
-        selectedBet: -1
-      });
-      this.props.onUpdate();
-			return;
-    }
-
-		if (status === 200){
-			this.setState({
-        folders: [],
-        selectedFolders: [],
-        alertState: status,
-        alertText: "Bet deleted successfully",
-        selectedBet: -1
-      });
-      this.props.onUpdate();
-			text = "Deleted bet from folders: " + data;
-		}
-
-    else if (status === 401) {
-			text = "Session expired, please login again";
-    }
-    else if (status === 404) {
-      text = "Bet trying to be deleted was not found";
-    }
-
+		store.dispatch({type: 'DELETE_BET', payload: {
+				bet_id: this.props.bets[this.state.selectedBet].bet_id,
+				folders: folders
+			}
+		});
 		this.setState({
-			alertState: status,
-			alertText: text
+			folders: [],
+			selectedFolders: [],
+			selectedBet: -1
 		});
 	}
+
 	///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet = (key) => {
 		var value = -1;
@@ -208,19 +170,10 @@ class DeleteBets extends Component{
 	}
 
 	getBetsFolders = (id) => {
-		getFoldersOfBet(id, this.handleGetBetsFolders);
-	}
-
-	handleGetBetsFolders = (status, data) => {
-		if (status === 200) {
-			this.setBetsFolders(JSON.parse(data));
-		}
-		else if (status === 401) {
-			this.setState({
-				alertState: status,
-				alertText: "Session expired, please login again"
-			});
-		}
+		store.dispatch({type: 'FETCH_FOLDERS_OF_BET', payload: {
+				bet_id: id
+			}
+		});
 	}
 
 	setBetsFolders = (data) => {
@@ -228,7 +181,6 @@ class DeleteBets extends Component{
 		for (var i = 0; i < data.length; i++){
 			sel.push(false);
 		}
-
 		this.setState({
 			selectedFolders: sel,
 			folders: data
@@ -236,4 +188,8 @@ class DeleteBets extends Component{
 	}
 }
 
-export default DeleteBets;
+const mapStateToProps = (state, ownProps) => {
+  return { ...state.folders}
+};
+
+export default connect(mapStateToProps)(DeleteBets);

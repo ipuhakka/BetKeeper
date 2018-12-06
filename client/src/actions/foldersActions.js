@@ -2,6 +2,8 @@ export const FETCH_FOLDERS = "FETCH_FOLDERS";
 export const FETCH_FOLDERS_SUCCESS = "FETCH_FOLDERS_SUCCESS";
 export const POST_FOLDER = "POST_FOLDER";
 export const DELETE_FOLDER = "DELETE_FOLDER";
+export const FETCH_FOLDERS_OF_BET = "FETCH_FOLDERS_OF_BET";
+export const FETCH_FOLDERS_OF_BET_SUCCESS = "FETCH_FOLDERS_OF_BET_SUCCESS";
 
 export const fetchFolders = () => ({
   type: "FETCH_FOLDERS"
@@ -20,4 +22,14 @@ export const postFolder = (newFolderName) => ({
 export const deleteFolder = (folderToDelete) => ({
   type: "DELETE_FOLDER",
   folderToDelete
+});
+
+export const fetchFoldersOfBet = (bet_id) => ({
+  type: "FETCH_FOLDERS_OF_BET",
+  bet_id
+});
+
+export const fetchFoldersOfBetSuccess = (folders) => ({
+  type: "FETCH_FOLDERS_OF_BET_SUCCESS",
+  folders
 });

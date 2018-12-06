@@ -81,19 +81,26 @@ export function getFolders(){
 
 /*
 GET-request to get folders of selected bet.
+Resolves on 200 OK response,
+rejects on any other response status, with given status.
 */
-export function getFoldersOfBet(id, callback){
-  var xmlHttp = new XMLHttpRequest();
+export function getFoldersOfBet(id){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if (xmlHttp.status === 200)
-        callback(xmlHttp.status, xmlHttp.responseText);
-      else if (xmlHttp.status === 401)
-        callback(xmlHttp.status, null);
-    }
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200){
+          resolve(JSON.parse(xmlHttp.responseText));
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+
+    });
+    xmlHttp.open("GET", ConstVars.URI + "folders?bet_id=" + id);
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
   });
-  xmlHttp.open("GET", ConstVars.URI + "folders?bet_id=" + id);
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send();
 }

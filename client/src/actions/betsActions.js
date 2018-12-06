@@ -6,6 +6,7 @@ export const FETCH_UNRESOLVED_BETS = "FETCH_UNRESOLVED_BETS";
 export const FETCH_UNRESOLVED_BETS_SUCCESS = "FETCH_UNRESOLVED_BETS_SUCCESS";
 export const POST_BET = "POST_BET";
 export const PUT_BET = "PUT_BET";
+export const DELETE_BET = "DELETE_BET";
 
 export const fetchBets = () => ({
   type: "FETCH_BETS"
@@ -42,4 +43,9 @@ export const postBet = (bet) => ({
 export const putBet = (data) => ({
   type: "PUT_BET",
   data
+});
+
+export const deleteBet = (bet_id, folders) => ({
+  type: "DELETE_BET",
+  bet_id, folders
 });
