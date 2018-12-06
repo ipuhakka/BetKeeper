@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Header from '../../components/Header/Header.jsx';
 import Home from '../Home/Home.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Login from '../../components/Login/Login.jsx';
 import SignUp from '../../components/SignUp/SignUp.jsx';
 import {postToken, getToken} from '../../js/Requests/Token.js';
+import {changeToComponent} from '../../changeView';
 
 class LoginView extends Component {
   constructor(props){
@@ -37,7 +37,7 @@ class LoginView extends Component {
 
   handleGetToken = (status) => {
     if (status === 200){
-      ReactDOM.render(<Home />, document.getElementById('root'));
+      changeToComponent(<Home/>);
     }
   }
 
@@ -58,7 +58,7 @@ class LoginView extends Component {
         window.sessionStorage.setItem('token', token);
         window.sessionStorage.setItem('loggedUser', user);
         window.sessionStorage.setItem('loggedUserID', user_id);
-        ReactDOM.render(<Home />, document.getElementById('root'));
+        changeToComponent(<Home/>);
         break;
       case 401:
         this.setAlertState(401, "Username and password don't match");

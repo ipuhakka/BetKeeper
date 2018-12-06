@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import store from '../../../store';
 import Button from 'react-bootstrap/lib/Button';
 import Col from 'react-bootstrap/lib/Grid';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
@@ -9,8 +10,6 @@ import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Radio from 'react-bootstrap/lib/Radio';
 import Row from 'react-bootstrap/lib/Grid';
-import Info from '../../../components/Info/Info.jsx';
-import {postBet, putBet} from '../../../js/Requests/Bets.js';
 import './AddBets.css';
 
 class AddBets extends Component {
@@ -40,7 +39,6 @@ class AddBets extends Component {
 
 		return(
 			<div className="content">
-				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<Form>
@@ -75,8 +73,8 @@ class AddBets extends Component {
 						<ControlLabel>{"Unresolved bets"}</ControlLabel>
 						<ListGroup className='list'>{unResolved}</ListGroup>
 						<FormGroup type="radio" className="formMargins" onChange={this.setUpdateBetResult} value={this.state.updateBetResult}>
-								<Radio name="radioGroup" value={true} inline>Won</Radio>{' '}
-								<Radio name="radioGroup" value={false} inline>Lost</Radio>
+								<Radio name="radioGroup" value={1} inline>Won</Radio>{' '}
+								<Radio name="radioGroup" value={0} inline>Lost</Radio>
 						</FormGroup>
 						<Button disabled={this.state.updateBetResult === null || this.state.selectedBet === -1} bsStyle="primary" className="button" onClick={this.updateResult}>Update result</Button>
 					</Col>
@@ -197,28 +195,11 @@ class AddBets extends Component {
 			name: this.state.name,
 			folders: selectedFolders
 		}
-		postBet(data, this.handleAddedBet);
+		store.dispatch({type: 'POST_BET', payload: {
+				bet: data
+			}
+		});
 	}
-
-	handleAddedBet = (status) => {
-		if (status === 201) {
-      this.setAlertState("Bet added successfully", status);
-      this.setState({
-        selected: [],
-        odd: 0.0,
-        bet: 0.0,
-        name: ""
-      });
-      this.props.onUpdate();
-    }
-    if (status === 400) {
-      this.setAlertState("Something went wrong with the request, server responded with code 400", status);
-    }
-    if (status === 401) {
-      this.setAlertState("Session expired, please login again", status);
-    }
-	}
-
 
 	//Changes unresolved bet to solved.
 	updateResult = () => {
@@ -227,39 +208,19 @@ class AddBets extends Component {
 			return;
 		}
 		let result = -1;
-		if (this.state.updateBetResult){
-			result = 1;
-		} else if (!this.state.updateBetResult){
-			result = 0;
-		}
+	  result = parseInt(this.state.updateBetResult, 10);
 
 		var data = {
 			bet_won: result
 		}
-		putBet(this.props.bets[this.state.selectedBet].bet_id, data, this.handleUpdatedBetResult);
-	}
-
-	handleUpdatedBetResult = (status) => {
-		if (status === 204) {
-			this.setAlertState("Result updated successfully", status);
-			this.setFoldersList();
-			this.setState({
-				selectedBet: -1
-			});
-			this.props.onUpdate();
-		}
-		if (status === 400) {
-			this.setAlertState("Something went wrong with the request, server responded with code 400", status);
-		}
-		if (status === 401) {
-			this.setAlertState("Session expired, please login", status);
-		}
-		if (status === 404) {
-			this.setAlertState("Bet trying to be updated was not found", status);
-		}
-		if (status === 409) {
-			this.setAlertState("Conflict happened while updating bet", status);
-		}
+		store.dispatch({type: 'PUT_BET', payload: {
+				data: data,
+				bet_id: this.props.bets[this.state.selectedBet].bet_id
+			}
+		});
+		this.setState({
+			selectedBet: -1
+		});
 	}
 }
 

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
-import {clearAlert} from '../../actions/alertActions';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
 import ListGroup from 'react-bootstrap/lib/ListGroup';
@@ -39,7 +38,7 @@ class Folders extends Component {
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
-				<Info alertState={this.props.status} alertText={this.props.statusMessage} dismiss={this.dismissAlert}></Info>
+				<Info></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
@@ -110,10 +109,6 @@ class Folders extends Component {
 		});
 	}
 
-	dismissAlert = () => {
-		this.props.clearAlert();
-	}
-
 	addFolder = () => {
 		store.dispatch({type: 'POST_FOLDER', payload: {
       newFolderName: this.state.newFolder
@@ -137,29 +132,6 @@ class Folders extends Component {
   	});
 	}
 
-  /* Callback function for deleting a folder.*/
-	handleDelete = (status) => {
-		var text;
-		if (status === 204) {
-				text = "Folder deleted successfully";
-				this.onLoad();
-		}
-		if (status === 400) {
-				text = "Something went wrong with the request";
-		}
-		if (status === 401) {
-				text = "Session expired, please login again";
-		}
-		if (status === 404) {
-				text = "Delete failed: folder trying to be deleted was not found";
-		}
-
-		this.setState({
-			alertState: status,
-			alertText: text
-		});
-	}
-
 	//get folders.
 	onLoad = () => {
 		this.props.fetchFolders();
@@ -167,12 +139,11 @@ class Folders extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { ...state.folders, ...state.alert}
+  return { ...state.folders}
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchFolders: () => dispatch(fetchFolders()),
-	clearAlert: () => dispatch(clearAlert())
+  fetchFolders: () => dispatch(fetchFolders())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Folders);

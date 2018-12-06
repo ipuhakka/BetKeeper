@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Bets from '../Bets/Bets.jsx';
 import Folders from '../Folders/Folders.jsx';
 import Statistics from '../Statistics/Statistics.jsx';
@@ -7,6 +6,7 @@ import Card from '../../components/Card/Card.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import {changeToComponent} from '../../changeView';
 import './Home.css';
 
 class Home extends Component{
@@ -24,13 +24,13 @@ class Home extends Component{
 	changePage = (key) => {
 		switch (key){
 			case 0:
-				ReactDOM.render(<Statistics />, document.getElementById('root'));
+				changeToComponent(<Statistics/>);
 				break;
 			case 1:
-				ReactDOM.render(<Bets/>, document.getElementById('root'));
+				changeToComponent(<Bets/>);
 				break;
 			case 2:
-				ReactDOM.render(<Folders />, document.getElementById('root'));
+				changeToComponent(<Folders/>);
 				break;
 			default:
 				break;

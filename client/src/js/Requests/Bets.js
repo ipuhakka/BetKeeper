@@ -21,19 +21,28 @@ export function getFinishedBets(callback){
 /*
   GET-request to uri/bets?finished=false.
   Gets unfinished bets by logged user.
+  Resolved on response with status 200 OK with bets array as parameter,
+  rejects on any other response, with response
+  status as parameter.
 */
-export function getUnresolvedBets(callback){
-  var xmlHttp = new XMLHttpRequest();
+export function getUnresolvedBets(){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if ([200, 401].includes(xmlHttp.status))
-        callback(xmlHttp.status, xmlHttp.responseText);
-    }
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200){
+          resolve(JSON.parse(xmlHttp.responseText));
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("GET", ConstVars.URI + "bets?finished=false");
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
   });
-  xmlHttp.open("GET", ConstVars.URI + "bets?finished=false");
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send();
 }
 
 /*
@@ -126,20 +135,30 @@ POST-request to create a new bet to the database.
     name: string, optional name to identify the bet.
     folders: optional array, names of folders to which bet is added.
   }
-*/
-export function postBet(data, callback){
-  var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if ([201, 400, 401].includes(xmlHttp.status))
-        callback(xmlHttp.status);
-    }
+  Resolved on response with status 201 Created,
+  rejects on any other response, with response
+  status as parameter.
+*/
+export function postBet(data){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 201){
+          resolve();
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("POST", ConstVars.URI + "bets/");
+    xmlHttp.setRequestHeader('Content-type', 'application/json');
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send(JSON.stringify(data));
   });
-  xmlHttp.open("POST", ConstVars.URI + "bets/");
-  xmlHttp.setRequestHeader('Content-type', 'application/json');
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send(JSON.stringify(data));
 }
 
 /*
@@ -147,18 +166,28 @@ PUT-request to create a new bet to the database.
   var data = {
     bet_won: number, -1: bet not resolved, 0: bet lost, 1: bet won
   }
-*/
-export function putBet(bet_id, data, callback){
-  var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if ([204, 400, 401, 404, 409].includes(xmlHttp.status))
-        callback(xmlHttp.status);
-    }
+  Resolved on response with status 204 No content,
+  rejects on any other response, with response
+  status as parameter.
+*/
+export function putBet(bet_id, data){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 204){
+          resolve();
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("PUT", ConstVars.URI + "bets/" + bet_id);
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.setRequestHeader('Content-type', 'application/json');
+    xmlHttp.send(JSON.stringify(data));
   });
-  xmlHttp.open("PUT", ConstVars.URI + "bets/" + bet_id);
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.setRequestHeader('Content-type', 'application/json');
-  xmlHttp.send(JSON.stringify(data));
 }

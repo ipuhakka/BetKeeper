@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import store from '../../store';
-import { Provider } from 'react-redux';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import PropTypes from 'prop-types';
@@ -10,6 +7,7 @@ import Bets from '../../views/Bets/Bets.jsx';
 import Folders from '../../views/Folders/Folders.jsx';
 import Home from '../../views/Home/Home.jsx';
 import Statistics from '../../views/Statistics/Statistics.jsx';
+import {changeToComponent} from '../../changeView';
 
 class Menu extends Component{
 	render(){
@@ -26,25 +24,21 @@ class Menu extends Component{
 	handleSelect = (key) => {
 		switch(key){
 			case 0:
-				ReactDOM.render(<Home />, document.getElementById('root'));
+				changeToComponent(<Home/>);
 				break;
 			case 1:
-				ReactDOM.render(<Provider store={store}>
-													<Bets/>
-												</Provider>, document.getElementById('root'));
+				changeToComponent(<Bets/>);
 				break;
 			case 2:
-				ReactDOM.render(<Statistics />, document.getElementById('root'));
+				changeToComponent(<Statistics/>);
 				break;
 			case 3:
-				ReactDOM.render(<Provider store={store}>
-													<Folders />
-												</Provider>, document.getElementById('root'));
+				changeToComponent(<Folders/>);
 				break;
 			case 4:
 				window.sessionStorage.setItem('loggedUser', null);
 				window.sessionStorage.setItem('token', null);
-				ReactDOM.render(<App />, document.getElementById('root'));
+				changeToComponent(<App/>);
 				break;
 			default:
 				console.log("clicked item " + key);
