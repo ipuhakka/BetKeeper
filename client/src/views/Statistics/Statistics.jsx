@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
+import {fetchFinishedBets} from '../../actions/betsActions';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
@@ -11,7 +12,6 @@ import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import * as Stats from '../../js/Stats.js';
-import {getFinishedBets} from '../../js/Requests/Bets.js';
 import './Statistics.css';
 
 class Statistics extends Component{
@@ -49,6 +49,10 @@ class Statistics extends Component{
 			nextProps.betsFromAllFolders.forEach(folder => {
 				this.calculateOverviewValues(folder);
 			});
+		}
+
+		if (this.props.finishedBets !== nextProps.finishedBets){
+			this.handleGetAllFinishedBets(nextProps.finishedBets);
 		}
 	}
 
@@ -186,7 +190,7 @@ class Statistics extends Component{
 	showFromFolder = (key) => {
 		this.setState({
 			folderSelected: key
-		}, () => {this.updateTable()});
+		}, () => {this.updateTable(this.props.finishedBets)});
 	}
 
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
@@ -215,14 +219,12 @@ class Statistics extends Component{
 		});
 	}
 
-	updateTable = () => {
+	updateTable = (allBets) => {
 		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn, oddMedian, oddMean,
 		betMedian, betMean;
 		var param;
-
 		if (this.state.folderSelected === -1)
-			param = this.state.allBets;
-
+			param = allBets;
 		else
 			param = this.props.betsFromAllFolders[this.state.folderSelected]["bets"];
 
@@ -266,7 +268,7 @@ class Statistics extends Component{
 	}
 
 	onLoad = () => {
-		this.getAllFinishedBets();
+		this.props.fetchFinishedBets();
 		this.props.fetchFolders();
 	}
 
@@ -282,26 +284,9 @@ class Statistics extends Component{
 		});
 	}
 
-	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
-	getAllFinishedBets = () => {
-		getFinishedBets(this.handleGetAllFinishedBets);
-	}
-
-	handleGetAllFinishedBets = (status, data) => {
-		if (status === 200){
-			this.setState({
-				allBets: JSON.parse(data)
-			},() => {
-				this.updateTable();
-				this.calculateOverviewValues({name: "", bets: this.state.allBets});
-			});
-		}
-		else if (status === 401){
-			this.setState({
-				alertState: status,
-				alertText: "Session expired, please login again"
-			});
-		}
+	handleGetAllFinishedBets = (data) => {
+			this.updateTable(data);
+			this.calculateOverviewValues({name: "", bets: data});
 	}
 }
 
@@ -311,7 +296,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchFolders: () => dispatch(fetchFolders())
+  fetchFolders: () => dispatch(fetchFolders()),
+	fetchFinishedBets: () => dispatch(fetchFinishedBets())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Statistics);

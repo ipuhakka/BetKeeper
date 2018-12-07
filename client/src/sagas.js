@@ -2,10 +2,10 @@ import { all, takeLatest, call, put, select } from 'redux-saga/effects';
 import {FETCH_FOLDERS, fetchFoldersSuccess, POST_FOLDER, DELETE_FOLDER, FETCH_FOLDERS_OF_BET, fetchFoldersOfBetSuccess} from './actions/foldersActions';
 import {FETCH_BETS, fetchBetsSuccess, FETCH_BETS_FROM_FOLDER, fetchBetsFromFolderSuccess,
   FETCH_UNRESOLVED_BETS, fetchUnresolvedBetsSuccess, POST_BET, PUT_BET, DELETE_BET,
-FETCH_BETS_FROM_ALL_FOLDERS, fetchBetsFromAllFoldersSuccess} from './actions/betsActions';
+FETCH_BETS_FROM_ALL_FOLDERS, fetchBetsFromAllFoldersSuccess, FETCH_FINISHED_BETS, fetchFinishedBetsSuccess} from './actions/betsActions';
 import {setAlertStatus, clearAlert} from './actions/alertActions';
 import {getFolders, getFoldersOfBet, postFolder, deleteFolder} from './js/Requests/Folders.js';
-import {getAllBetsByUser, getBetsFromFolder, getUnresolvedBets, postBet, putBet, deleteBet} from './js/Requests/Bets.js';
+import {getAllBetsByUser, getBetsFromFolder, getFinishedBets, getUnresolvedBets, postBet, putBet, deleteBet} from './js/Requests/Bets.js';
 
 
 
@@ -163,6 +163,25 @@ function* fetchBetsFromAllFolders(action){
   }
 }
 
+function* fetchFinishedBets(){
+  try {
+    let bets = yield call(getFinishedBets);
+    yield put(fetchFinishedBetsSuccess(bets));
+  } catch(error){
+    switch(error){
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
+  }
+}
+
 function* fetchUnresolvedBets(){
   try {
     let bets = yield call(getUnresolvedBets);
@@ -297,6 +316,10 @@ function* watchBetsFromAllFolders(){
   yield takeLatest(FETCH_BETS_FROM_ALL_FOLDERS, fetchBetsFromAllFolders);
 }
 
+function* watchFinishedBets(){
+  yield takeLatest(FETCH_FINISHED_BETS, fetchFinishedBets);
+}
+
 function* watchUnresolvedBets(){
   yield takeLatest(FETCH_UNRESOLVED_BETS, fetchUnresolvedBets);
 }
@@ -327,6 +350,7 @@ export default function* rootSaga() {
     watchBetsFromFolder(),
     watchBetsFromAllFolders(),
     watchUnresolvedBets(),
+    watchFinishedBets(),
     watchPostBet(),
     watchPutBet(),
     watchDeleteBet(),

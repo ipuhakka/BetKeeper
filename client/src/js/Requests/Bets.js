@@ -3,19 +3,29 @@ import ConstVars from '../Consts.js';
 /*
 GET-request to uri/bets?finished=true.
 Gets unfinished bets by logged user.
-*/
-export function getFinishedBets(callback){
-  var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if ([200, 401].includes(xmlHttp.status))
-        callback(xmlHttp.status, xmlHttp.responseText);
-    }
+Resolved on response with status 200 OK with bets array as parameter,
+rejects on any other response, with response
+status as parameter.
+*/
+export function getFinishedBets(){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200){
+          resolve(JSON.parse(xmlHttp.responseText));
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
   });
-  xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.send();
 }
 
 /*

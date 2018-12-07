@@ -1,6 +1,6 @@
 import * as betsActions from '../actions/betsActions';
 
-const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]}, betsFromAllFolders:[], unresolvedBets: []}, action ) => {
+const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]}, betsFromAllFolders:[], finishedBets: [], unresolvedBets: []}, action ) => {
   switch (action.type) {
     case betsActions.FETCH_BETS:
       return {
@@ -46,6 +46,17 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
         loading: false,
         unresolvedBets: action.bets
       }
+    case betsActions.FETCH_FINISHED_BETS:
+      return {
+        ...state,
+        loading: true
+      }
+      case betsActions.FETCH_FINISHED_BETS_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          finishedBets: action.bets
+        }
     default:
       return state;
   }

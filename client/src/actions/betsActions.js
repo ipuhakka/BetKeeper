@@ -6,6 +6,8 @@ export const FETCH_BETS_FROM_ALL_FOLDERS = "FETCH_BETS_FROM_ALL_FOLDERS";
 export const FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS = "FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS";
 export const FETCH_UNRESOLVED_BETS = "FETCH_UNRESOLVED_BETS";
 export const FETCH_UNRESOLVED_BETS_SUCCESS = "FETCH_UNRESOLVED_BETS_SUCCESS";
+export const FETCH_FINISHED_BETS = "FETCH_FINISHED_BETS";
+export const FETCH_FINISHED_BETS_SUCCESS = "FETCH_FINISHED_BETS_SUCCESS";
 export const POST_BET = "POST_BET";
 export const PUT_BET = "PUT_BET";
 export const DELETE_BET = "DELETE_BET";
@@ -44,6 +46,15 @@ export const fetchUnresolvedBets = () => ({
 
 export const fetchUnresolvedBetsSuccess = (bets) => ({
   type: "FETCH_UNRESOLVED_BETS_SUCCESS",
+  bets
+});
+
+export const fetchFinishedBets = () => ({
+  type: "FETCH_FINISHED_BETS"
+});
+
+export const fetchFinishedBetsSuccess = (bets) => ({
+  type: "FETCH_FINISHED_BETS_SUCCESS",
   bets
 });
 
