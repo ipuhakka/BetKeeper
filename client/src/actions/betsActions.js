@@ -2,6 +2,8 @@ export const FETCH_BETS = "FETCH_BETS";
 export const FETCH_BETS_SUCCESS = "FETCH_BETS_SUCCESS";
 export const FETCH_BETS_FROM_FOLDER = "FETCH_BETS_FROM_FOLDER";
 export const FETCH_BETS_FROM_FOLDER_SUCCESS = "FETCH_BETS_FROM_FOLDER_SUCCESS";
+export const FETCH_BETS_FROM_ALL_FOLDERS = "FETCH_BETS_FROM_ALL_FOLDERS";
+export const FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS = "FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS";
 export const FETCH_UNRESOLVED_BETS = "FETCH_UNRESOLVED_BETS";
 export const FETCH_UNRESOLVED_BETS_SUCCESS = "FETCH_UNRESOLVED_BETS_SUCCESS";
 export const POST_BET = "POST_BET";
@@ -17,13 +19,23 @@ export const fetchBetsSuccess = (bets) => ({
   bets
 });
 
-export const fetchBetsFromFolder = () => ({
-  type: "FETCH_BETS_FROM_FOLDER"
+export const fetchBetsFromFolder = (folder) => ({
+  type: "FETCH_BETS_FROM_FOLDER",
+  folder
 });
 
 export const fetchBetsFromFolderSuccess = (bets) => ({
   type: "FETCH_BETS_FROM_FOLDER_SUCCESS",
   bets
+});
+
+export const fetchBetsFromAllFolders = () => ({
+  type: "FETCH_BETS_FROM_ALL_FOLDERS"
+});
+
+export const fetchBetsFromAllFoldersSuccess = (betFolders) => ({
+  type: "FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS",
+  betFolders
 });
 
 export const fetchUnresolvedBets = () => ({

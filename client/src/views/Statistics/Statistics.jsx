@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import store from '../../store';
+import {fetchFolders} from '../../actions/foldersActions';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
@@ -8,8 +11,7 @@ import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import * as Stats from '../../js/Stats.js';
-import {getFolders} from '../../js/Requests/Folders.js';
-import {getBetsFromFolder, getFinishedBets} from '../../js/Requests/Bets.js';
+import {getFinishedBets} from '../../js/Requests/Bets.js';
 import './Statistics.css';
 
 class Statistics extends Component{
@@ -20,8 +22,6 @@ class Statistics extends Component{
 			disabled: [false, false, true, false, false],
 			allBets: [],
 			folderSelected: -1,
-			alertState: null,
-			alertText: "",
 			moneyPlayed: 0,
 			moneyWon: 0,
 			moneyReturned: 0,
@@ -38,6 +38,18 @@ class Statistics extends Component{
 			betFolders: [],
 			overviewItems: []
 		};
+	}
+
+	componentWillReceiveProps(nextProps){
+		if (this.props.folders !== nextProps.folders){
+			this.getBetsFromFolders(nextProps.folders);
+		}
+
+		if (this.props.betsFromAllFolders !== nextProps.betsFromAllFolders){
+			nextProps.betsFromAllFolders.forEach(folder => {
+				this.calculateOverviewValues(folder);
+			});
+		}
 	}
 
 	render(){
@@ -99,7 +111,7 @@ class Statistics extends Component{
 		var title = "Overview";
 
 		if (this.state.folderSelected !== -1)
-			title = this.state.betFolders[this.state.folderSelected]["name"];
+			title = this.props.betsFromAllFolders[this.state.folderSelected]["folder"];
 
 		return (
 		<Table>
@@ -162,11 +174,11 @@ class Statistics extends Component{
 		var menuItems = [];
 		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.folderSelected === -1} eventKey={-1}>{"Overview"}</MenuItem>);
 		var active = false;
-		for (var k = 0; k < this.state.betFolders.length; k++){
+		for (var k = 0; k < this.props.folders.length; k++){
 			active = false;
 			if (k === this.state.folderSelected)
 				active = true;
-			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.state.betFolders[k]["name"]}</MenuItem>);
+			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
 		}
 		return menuItems;
 	}
@@ -179,12 +191,18 @@ class Statistics extends Component{
 
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
 	calculateOverviewValues = (betFolder) => {
-		var name = betFolder.name;
+		var overviewItems = this.state.overviewItems;
+		for (var i = 0; i < overviewItems.length; i++){
+			if (overviewItems[i].name === betFolder.folder){
+				return;
+			}
+		}
+
+		var name = betFolder.folder;
 		var moneyReturned = Stats.roundByTwo(Stats.moneyReturned(betFolder.bets));
 		var verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
 		var winPercentage = Stats.roundByTwo(Stats.winPercentage(betFolder.bets));
 
-		var overviewItems = this.state.overviewItems;
 		overviewItems.push({
 			name: name,
 			moneyReturned: moneyReturned,
@@ -206,7 +224,7 @@ class Statistics extends Component{
 			param = this.state.allBets;
 
 		else
-			param = this.state.betFolders[this.state.folderSelected]["bets"];
+			param = this.props.betsFromAllFolders[this.state.folderSelected]["bets"];
 
 		moneyWon = Stats.roundByTwo(Stats.moneyWon(param));
 		moneyPlayed = Stats.roundByTwo(Stats.moneyPlayed(param));
@@ -247,16 +265,9 @@ class Statistics extends Component{
 		});
 	}
 
-	dismissAlert = () => {
-		this.setState({
-			alertState: null,
-			alertText: ""
-		});
-	}
-
 	onLoad = () => {
 		this.getAllFinishedBets();
-		getFolders(this.handleGetFolders);
+		this.props.fetchFolders();
 	}
 
 	/*
@@ -264,19 +275,11 @@ class Statistics extends Component{
 	For every folder, get-request is made to get bets
 	in that folder.
 	*/
-	handleGetFolders = (status, folders) => {
-		folders = JSON.parse(folders);
-		if (status === 200){
-			for (var i = 0; i < folders.length; i++){ /* Loops through folderNames array to get bets for each of the folders.*/
-				getBetsFromFolder(folders[i], this.handleGetBetsFromFolder);
-			}
-		}
-		else if (status === 401){
-			this.setState({
-				alertState: status,
-				alertText: "Session expired, please login again"
-			});
-		}
+	getBetsFromFolders = (folders) => {
+		store.dispatch({type: 'FETCH_BETS_FROM_ALL_FOLDERS', payload: {
+				folders: folders
+			},
+		});
 	}
 
 	//gets a list of users bets that have finished. On receiving data, adds data to overviewItems.
@@ -300,33 +303,15 @@ class Statistics extends Component{
 			});
 		}
 	}
-
-	/*
-	Callback function, done after receiving bets from a specific folder.
-	After data has been received, pushes an object with bets array and
-	name of the folder into betFolders array.
-	*/
-	handleGetBetsFromFolder = (status, data, folderName) => {
-		if (status === 200){
-			var betFolders = this.state.betFolders;
-			var bets = JSON.parse(data);
-			var item = {
-				name: folderName,
-				bets: bets
-			}
-			betFolders.push(item);
-			this.calculateOverviewValues(item);
-			this.setState({
-				betFolders: betFolders
-			});
-		}
-		else if (status === 401){
-			this.setState({
-				alertState: status,
-				alertText: "Session expired, please login again"
-			});
-		}
-	}
 }
 
-export default Statistics;
+
+const mapStateToProps = (state, ownProps) => {
+  return { ...state.folders, ...state.bets}
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchFolders: () => dispatch(fetchFolders())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Statistics);

@@ -1,7 +1,8 @@
 import { all, takeLatest, call, put, select } from 'redux-saga/effects';
 import {FETCH_FOLDERS, fetchFoldersSuccess, POST_FOLDER, DELETE_FOLDER, FETCH_FOLDERS_OF_BET, fetchFoldersOfBetSuccess} from './actions/foldersActions';
 import {FETCH_BETS, fetchBetsSuccess, FETCH_BETS_FROM_FOLDER, fetchBetsFromFolderSuccess,
-  FETCH_UNRESOLVED_BETS, fetchUnresolvedBetsSuccess, POST_BET, PUT_BET, DELETE_BET} from './actions/betsActions';
+  FETCH_UNRESOLVED_BETS, fetchUnresolvedBetsSuccess, POST_BET, PUT_BET, DELETE_BET,
+FETCH_BETS_FROM_ALL_FOLDERS, fetchBetsFromAllFoldersSuccess} from './actions/betsActions';
 import {setAlertStatus, clearAlert} from './actions/alertActions';
 import {getFolders, getFoldersOfBet, postFolder, deleteFolder} from './js/Requests/Folders.js';
 import {getAllBetsByUser, getBetsFromFolder, getUnresolvedBets, postBet, putBet, deleteBet} from './js/Requests/Bets.js';
@@ -114,6 +115,9 @@ function* fetchBetsFromFolder(action){
   try {
     let bets = yield call(getBetsFromFolder, action.payload.folder);
     yield put(fetchBetsFromFolderSuccess({folder: action.payload.folder, bets: bets}));
+    if (action.callback !== undefined){
+      action.callback({folder: action.payload.folder, bets: bets});
+    }
   } catch(error){
     switch(error){
       case 401:
@@ -125,6 +129,36 @@ function* fetchBetsFromFolder(action){
       default:
         yield put(setAlertStatus(error, "Unexpected error occurred"));
         break;
+    }
+  }
+}
+
+function* fetchBetsFromAllFolders(action){
+  if (action.payload !== undefined){
+    let folders = action.payload.folders;
+    let betFolders = [];
+    try {
+      let promises = folders.map((folder) => {
+        return getBetsFromFolder(folder);
+      });
+      yield Promise.all(promises).then(function(results){
+        for (var i = 0; i < results.length; i++){
+          betFolders.push({folder: folders[i], bets: results[i]});
+        }
+      });
+      yield put(fetchBetsFromAllFoldersSuccess(betFolders));
+    } catch(error){
+      switch(error){
+        case 401:
+          yield put(setAlertStatus(error, "Session expired, please login again"));
+          break;
+        case 0:
+          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+          break;
+        default:
+          yield put(setAlertStatus(error, "Unexpected error occurred"));
+          break;
+      }
     }
   }
 }
@@ -259,6 +293,10 @@ function* watchBetsFromFolder(){
   yield takeLatest(FETCH_BETS_FROM_FOLDER, fetchBetsFromFolder);
 }
 
+function* watchBetsFromAllFolders(){
+  yield takeLatest(FETCH_BETS_FROM_ALL_FOLDERS, fetchBetsFromAllFolders);
+}
+
 function* watchUnresolvedBets(){
   yield takeLatest(FETCH_UNRESOLVED_BETS, fetchUnresolvedBets);
 }
@@ -287,6 +325,7 @@ export default function* rootSaga() {
     watchDeleteFolder(),
     watchAllBets(),
     watchBetsFromFolder(),
+    watchBetsFromAllFolders(),
     watchUnresolvedBets(),
     watchPostBet(),
     watchPutBet(),
