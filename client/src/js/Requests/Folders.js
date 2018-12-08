@@ -6,25 +6,25 @@ import ConstVars from '../Consts.js';
 */
 export function postFolder(folder){
   return new Promise(function(resolve, reject){
-  var data = {
-    folder: folder
-  };
-  var xmlHttp = new XMLHttpRequest();
+    var data = {
+      folder: folder
+    };
+    var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if (xmlHttp.status === 201){
-        resolve();
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 201){
+          resolve();
+        }
+        else {
+          reject(xmlHttp.status);
+        }
       }
-      else {
-        reject(xmlHttp.status);
-      }
-    }
-  });
-  xmlHttp.open("POST", ConstVars.URI + "folders");
-  xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-  xmlHttp.setRequestHeader('Content-Type', 'application/json');
-  xmlHttp.send(JSON.stringify(data));
+    });
+    xmlHttp.open("POST", ConstVars.URI + "folders");
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    xmlHttp.send(JSON.stringify(data));
   });
 }
 

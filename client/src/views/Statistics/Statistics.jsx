@@ -20,7 +20,6 @@ class Statistics extends Component{
 
 		this.state = {
 			disabled: [false, false, true, false, false],
-			allBets: [],
 			folderSelected: -1,
 			moneyPlayed: 0,
 			moneyWon: 0,
@@ -35,7 +34,6 @@ class Statistics extends Component{
 			oddMedian: 0,
 			betMean: 0,
 			betMedian: 0,
-			betFolders: [],
 			overviewItems: []
 		};
 	}
@@ -65,7 +63,7 @@ class Statistics extends Component{
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
-				<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
+				<Info></Info>
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">

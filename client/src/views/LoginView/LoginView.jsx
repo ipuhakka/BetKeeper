@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import store from '../../store';
 import Header from '../../components/Header/Header.jsx';
 import Home from '../Home/Home.jsx';
 import Info from '../../components/Info/Info.jsx';
@@ -8,78 +9,75 @@ import {postToken, getToken} from '../../js/Requests/Token.js';
 import {changeToComponent} from '../../changeView';
 
 class LoginView extends Component {
-  constructor(props){
-    super(props);
-
-    this.state = {
-      alertState: null
-    };
-  }
 
   render() {
     return (
     <div onLoad={this.checkToken}>
       <Header title={"Welcome to Betkeeper"}></Header>
-      <Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
+      <Info></Info>
       <Login requestToken={this.requestToken}></Login>
       <p>Or</p>
-      <SignUp requestToken={this.requestToken} alert={this.setAlertState}></SignUp>
+      <SignUp requestToken={this.requestToken}></SignUp>
     </div>
     );
   }
 
     //Checks if sessionStorage contains a valid token. If does, goes to user main page as logged user.
-  checkToken = () => {
+    //On error, set's alertStatus and proper message.
+  checkToken = async () => {
     if (sessionStorage.getItem('token') != null && sessionStorage.getItem('token').toString() !== 'null'){
-      getToken(sessionStorage.getItem('token'), sessionStorage.getItem('loggedUserID'), this.handleGetToken);
-    }
-  }
-
-  handleGetToken = (status) => {
-    if (status === 200){
-      changeToComponent(<Home/>);
+      try {
+        await getToken(sessionStorage.getItem('token'), sessionStorage.getItem('loggedUserID'));
+        changeToComponent(<Home/>);
+      } catch (err){
+        switch(err){
+          case 404:
+            store.dispatch({type: 'SET_ALERT_STATUS',
+              status: err,
+              message: "Login expired"
+            });
+            break;
+          default:
+            store.dispatch({type: 'SET_ALERT_STATUS', payload: {
+                status: err,
+                message: "Unexpected error occurred"
+              }
+            });
+        }
+      }
     }
   }
 
   //Makes a post request to resource at URI/token. On success, sets the token from response, and user inputted username
   //to sessionStorage and changes html page.
-  requestToken = (user, passwd) => {
+  requestToken = async (user, passwd) => {
     if (user === "" || passwd === ""){
-      this.setAlertState("missing inputs");
       return;
     }
 
-    postToken(user, passwd, this.handleReceiveToken);
-  }
-
-  handleReceiveToken = (status, token, user_id, user) => {
-    switch(status){
-      case 200:
-        window.sessionStorage.setItem('token', token);
-        window.sessionStorage.setItem('loggedUser', user);
-        window.sessionStorage.setItem('loggedUserID', user_id);
-        changeToComponent(<Home/>);
-        break;
-      case 401:
-        this.setAlertState(401, "Username and password don't match");
-        break;
-      default:
-        this.setAlertState(-1, "Something went wrong with the request");
-        break;
+    try {
+      let res = await postToken(user, passwd, this.handleReceiveToken);
+      window.sessionStorage.setItem('token', res.token);
+      window.sessionStorage.setItem('loggedUser', res.username);
+      window.sessionStorage.setItem('loggedUserID', res.owner);
+      changeToComponent(<Home/>);
+    } catch (err){
+      switch(err){
+        case 401:
+          store.dispatch({type: 'SET_ALERT_STATUS',
+            status: err,
+            message: "Username or password given was incorrect"
+          });
+          break;
+        default:
+          store.dispatch({type: 'SET_ALERT_STATUS', payload: {
+              status: err,
+              message: "Unexpected error occurred"
+            }
+          });
+          break;
+      }
     }
-  }
-
-  dismissAlert = () => {
-    this.setState({
-      alertState: null
-    });
-  }
-
-  setAlertState = (state, text) => {
-    this.setState({
-      alertState: state,
-      alertText: text
-    });
   }
 };
 

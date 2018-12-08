@@ -7,39 +7,52 @@ data:{
   username: 'username',
   password: 'password'
 }
+
+On success, resolved with parsed token, user-id and username as parameters.
+Rejects with status of received http-response.
 */
 export function postToken(username, password, callback){
-  var xmlHttp = new XMLHttpRequest();
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
 
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if (xmlHttp.status === 200){
-        callback(xmlHttp.status, JSON.parse(xmlHttp.responseText).token, JSON.parse(xmlHttp.responseText).owner, username);
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200){
+          resolve({token:JSON.parse(xmlHttp.responseText).token, owner: JSON.parse(xmlHttp.responseText).owner, username: username});
+        }
+        else {
+          reject(xmlHttp.status);
+        }
       }
-      else {
-        callback(xmlHttp.status, null, null);
-      }
-    }
+    });
+    xmlHttp.open("POST", ConstVars.URI + "token");
+    xmlHttp.setRequestHeader('Content-Type', 'application/json');
+    xmlHttp.setRequestHeader('Authorization', password);
+    xmlHttp.send(JSON.stringify({username: username}));
   });
-  xmlHttp.open("POST", ConstVars.URI + "token");
-  xmlHttp.setRequestHeader('Content-Type', 'application/json');
-  xmlHttp.setRequestHeader('Authorization', password);
-  xmlHttp.send(JSON.stringify({username: username}));
 }
 
 /*GET-request to check if token is already in use. If it is, it means user
 is logged in, and is redirected to home page. Returns 404 if user hasn't got a token,
-and a new one must be requested.*/
-export function getToken(token, user_id, callback){
-  var xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange =( () => {
-    if (xmlHttp.readyState === 4){
-      if (xmlHttp.status === 200){
-        callback(xmlHttp.status);
+and a new one must be requested.
+
+Resolves on 200 OK, rejects on any other response status*/
+export function getToken(token, user_id){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 200){
+          resolve();
+        }
+        else {
+          reject(xmlHttp.status);
+        }
       }
-    }
+    });
+    xmlHttp.open("GET", ConstVars.URI + "token/" + user_id);
+    xmlHttp.setRequestHeader('Authorization', token);
+    xmlHttp.send();
   });
-  xmlHttp.open("GET", ConstVars.URI + "token/" + user_id);
-  xmlHttp.setRequestHeader('Authorization', token);
-  xmlHttp.send();
 }

@@ -1,9 +1,0 @@
-1. alertReducer should also set style for the alert, so Info component does not have to contain switch to
-decide the style: it should come as a prop.
-
-2. Implement SelectableList-component.
-
-3. Alert clearing should be handled in Info-componennt, not views.
-
-4. Find out why sagas.js- fetchBetsFromAllFolders gives cannot read property undefined
-when action.payload is not checked.

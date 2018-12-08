@@ -15,7 +15,7 @@ class Info extends Component{
 	//http-requests. Other alert types use code -1. Any other value returns no alert element.
 	renderAlert = () => {
 		let style = "success";
-		if (this.props.status >= 400){
+		if (this.props.status >= 400 || this.props.status === -1){
 			style = "warning";
 		}
 		if (this.props.status >= 500 || this.props.status === 0){

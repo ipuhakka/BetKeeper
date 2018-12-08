@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import store from '../../store';
 import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
@@ -73,33 +74,43 @@ class SignUp extends Component{
 		});
 	}
 
-	signup = () => {
+	signup = async () => {
 		if (this.state.newUsername === "" || this.state.newPassword === ""){
-			this.props.alert(-1, "Please input user name, password and confirm password");
+			store.dispatch({type: 'SET_ALERT_STATUS',
+				status: -1,
+				message: "Please input user name, password and confirm password"
+			});
 			return;
 		}
 
 		if (this.state.newPassword !== this.state.confirmPassword){
-			this.props.alert(-1, "Passwords given do not match");
+			store.dispatch({type: 'SET_ALERT_STATUS',
+				status: -1,
+				message: "Passwords given do not match"
+			});
 			return;
 		}
 
-    postUser(this.state.newUsername, this.state.newPassword, this.handleSignUp);
+    try {
+			let user = await postUser(this.state.newUsername, this.state.newPassword);
+			this.props.requestToken(user.username, user.password);
+		} catch (err){
+			switch(err){
+				case 409:
+					store.dispatch({type: 'SET_ALERT_STATUS',
+						status: err,
+						message: "User with same username already exists"
+					});
+					break;
+				default:
+					store.dispatch({type: 'SET_ALERT_STATUS',
+						status: err,
+						message: "Something went wrong with the request"
+					});
+					break;
+			}
+		}
 	}
-
-  handleSignUp = (status, data) => {
-    switch(status){
-      case 201:
-        this.props.requestToken(data.username, data.password);
-        break;
-      case 409:
-        this.props.alert(status, "User with same username already exists");
-        break;
-      default:
-        this.props.alert(status, "Something went wrong with the request");
-        break;
-    }
-  }
 }
 
 export default SignUp;

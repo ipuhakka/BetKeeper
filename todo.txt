@@ -1,0 +1,4 @@
+1. Implement SelectableList-component.
+
+2. Find out why sagas.js- fetchBetsFromAllFolders gives cannot read property undefined
+when action.payload is not checked (something to do with watch function).
