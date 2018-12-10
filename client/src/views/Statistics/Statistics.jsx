@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
@@ -54,6 +55,24 @@ class Statistics extends Component{
 		}
 	}
 
+	barGraph = () => {
+		let data = this.state.overviewItems;
+
+		return(
+			<div className="chart">
+			<ResponsiveContainer>
+				<BarChart data={data}>
+					<CartesianGrid strokeDasharray="3 3" />
+					<XAxis dataKey="name" />
+					<YAxis />
+					<Legend />
+					<Bar barSize={20} dataKey="moneyReturned" fill="#8884d8" />
+				</BarChart>
+			</ResponsiveContainer>
+			</div>
+		);
+	}
+
 	render(){
 		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
@@ -67,7 +86,10 @@ class Statistics extends Component{
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
-							{overview}
+							<div>
+								{overview}
+							</div>
+							{this.barGraph()}
 						</Col>
 						<Col className="col-md-6 col-xs-12">
 							<DropdownButton
@@ -192,8 +214,11 @@ class Statistics extends Component{
 	}
 
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
-	calculateOverviewValues = (betFolder) => {
+	calculateOverviewValues = async (betFolder) => {
 		var overviewItems = this.state.overviewItems;
+	  await	this.setState({
+			overviewItems: []
+		})
 		for (var i = 0; i < overviewItems.length; i++){
 			if (overviewItems[i].name === betFolder.folder){
 				return;
@@ -211,8 +236,7 @@ class Statistics extends Component{
 			verifiedReturn: verifiedReturn,
 			winPercentage: winPercentage
 		});
-
-		this.setState({
+		await this.setState({
 			overviewItems: overviewItems
 		});
 	}
@@ -284,7 +308,7 @@ class Statistics extends Component{
 
 	handleGetAllFinishedBets = (data) => {
 			this.updateTable(data);
-			this.calculateOverviewValues({name: "", bets: data});
+			this.calculateOverviewValues({folder: "", bets: data});
 	}
 }
 
