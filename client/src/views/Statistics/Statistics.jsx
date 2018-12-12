@@ -19,9 +19,15 @@ class Statistics extends Component{
 	constructor(props){
 		super(props);
 
+		let graphOptions = [{labelName:"Money returned", variableName: "moneyReturned", key: 0},
+			{labelName:"Return coefficient", variableName: "verifiedReturn", key: 1},
+			{labelName:"Win percentage", variableName: "winPercentage", key: 2}];
+
 		this.state = {
 			disabled: [false, false, true, false, false],
 			folderSelected: -1,
+			graphOptions: graphOptions,
+			selectedGraphVariable: 0,
 			moneyPlayed: 0,
 			moneyWon: 0,
 			moneyReturned: 0,
@@ -55,23 +61,6 @@ class Statistics extends Component{
 		}
 	}
 
- 	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
-	barGraph = () => {
-		return(
-			<div className="chart">
-				<ResponsiveContainer>
-					<BarChart barSize={20} barGap={2} data={this.state.overviewItems.slice()}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
-						<YAxis />
-						<Legend />
-						<Bar dataKey="moneyReturned" fill="#8884d8" />
-					</BarChart>
-				</ResponsiveContainer>
-			</div>
-		);
-	}
-
 	render(){
 		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
@@ -85,6 +74,12 @@ class Statistics extends Component{
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
+							<DropdownButton
+								bsStyle="primary"
+								title={"Overview"}
+								id={1}>
+								{this.graphDropDown()}
+							</DropdownButton>
 							{this.barGraph()}
 							<div>
 								{overview}
@@ -204,6 +199,37 @@ class Statistics extends Component{
 			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
 		}
 		return menuItems;
+	}
+
+	graphDropDown = () => {
+		var menuItems = [];
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 0)} key={0} active={this.state.selectedGraphVariable === 0} eventKey={0}>{"Money returned"}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 1)} key={1} active={this.state.selectedGraphVariable === 1} eventKey={1}>{"Return coefficient"}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 2)} key={2} active={this.state.selectedGraphVariable === 2} eventKey={2}>{"Win percentage"}</MenuItem>);
+		return menuItems;
+	}
+
+	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
+	barGraph = () => {
+		return(
+			<div className="chart">
+				<ResponsiveContainer>
+					<BarChart barSize={20} barGap={2} data={this.state.overviewItems.slice()}>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey="name" />
+						<YAxis />
+						<Legend />
+						<Bar name={this.state.graphOptions[this.state.selectedGraphVariable].labelName} dataKey={this.state.graphOptions[this.state.selectedGraphVariable].variableName} fill="#8884d8" />
+					</BarChart>
+				</ResponsiveContainer>
+			</div>
+		);
+	}
+
+	setGraphVariable(key){
+		this.setState({
+			selectedGraphVariable: key
+		});
 	}
 
 	showFromFolder = (key) => {
