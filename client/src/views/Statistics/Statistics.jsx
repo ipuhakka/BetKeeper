@@ -55,20 +55,19 @@ class Statistics extends Component{
 		}
 	}
 
+ 	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
 	barGraph = () => {
-		let data = this.state.overviewItems;
-
 		return(
 			<div className="chart">
-			<ResponsiveContainer>
-				<BarChart data={data}>
-					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis dataKey="name" />
-					<YAxis />
-					<Legend />
-					<Bar barSize={20} dataKey="moneyReturned" fill="#8884d8" />
-				</BarChart>
-			</ResponsiveContainer>
+				<ResponsiveContainer>
+					<BarChart barSize={20} barGap={2} data={this.state.overviewItems.slice()}>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey="name" />
+						<YAxis />
+						<Legend />
+						<Bar dataKey="moneyReturned" fill="#8884d8" />
+					</BarChart>
+				</ResponsiveContainer>
 			</div>
 		);
 	}
@@ -86,14 +85,14 @@ class Statistics extends Component{
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
+							{this.barGraph()}
 							<div>
 								{overview}
 							</div>
-							{this.barGraph()}
 						</Col>
 						<Col className="col-md-6 col-xs-12">
 							<DropdownButton
-								bsStyle="info"
+								bsStyle="primary"
 								title={"Show folder"}
 								id={1}>
 								{menuItems}

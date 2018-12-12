@@ -40,7 +40,7 @@ class DeleteBets extends Component{
 					<Col className="col-md-6 col-xs-12">
 						<div>
 							<DropdownButton
-								bsStyle="info"
+								bsStyle="primary"
 								title={"Show from folder"}
 								id={1}>
 								{menuItems}
