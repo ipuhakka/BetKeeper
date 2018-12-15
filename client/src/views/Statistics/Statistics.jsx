@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
+import { Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
@@ -65,6 +65,7 @@ class Statistics extends Component{
 		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
 		var overview = this.renderOverviewTable();
+		var scatter = this.renderScatterPlot();
 
 		return(
 			<div className="content" onLoad={this.onLoad}>
@@ -95,7 +96,26 @@ class Statistics extends Component{
 							{table}
 						</Col>
 					</Row>
+					<Row>
+						<Col>{scatter}</Col>
+					</Row>
 				</div>
+			</div>
+		);
+	}
+
+	renderScatterPlot = () => {
+		console.log("bets from all folders: " + JSON.stringify(this.props.betsFromAllFolders));
+		return (
+			<div className="chart">
+				<ResponsiveContainer>
+					<ScatterChart>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey="name" />
+						<YAxis />
+						<Legend />
+					</ScatterChart>
+				</ResponsiveContainer>
 			</div>
 		);
 	}
@@ -319,15 +339,10 @@ class Statistics extends Component{
 		this.props.fetchFolders();
 	}
 
-	/*
-	Callback for GET-folders request.
-	For every folder, get-request is made to get bets
-	in that folder.
-	*/
 	getBetsFromFolders = (folders) => {
 		store.dispatch({type: 'FETCH_BETS_FROM_ALL_FOLDERS', payload: {
 				folders: folders
-			},
+			}
 		});
 	}
 

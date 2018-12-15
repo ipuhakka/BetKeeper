@@ -23,8 +23,6 @@ class AddBets extends Component {
 			name: "",
 			betResult: null,
 			updateBetResult: null,
-			alertState: null,
-			alertText: "",
 			selectedBet: -1
 		};
 	}
@@ -175,6 +173,18 @@ class AddBets extends Component {
 		});
 	}
 
+	clearWindow = () => {
+		this.setState({
+			selected: [],
+			odd: 0.0,
+			bet: 0.0,
+			name: "",
+			betResult: -1,
+			updateBetResult: -1,
+			selectedBet: -1
+		});
+	}
+
 	//Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
 	addBet = () => {
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
@@ -199,6 +209,7 @@ class AddBets extends Component {
 				bet: data
 			}
 		});
+		this.clearWindow();
 	}
 
 	//Changes unresolved bet to solved.
@@ -218,9 +229,7 @@ class AddBets extends Component {
 				bet_id: this.props.bets[this.state.selectedBet].bet_id
 			}
 		});
-		this.setState({
-			selectedBet: -1
-		});
+		this.clearWindow();
 	}
 }
 
