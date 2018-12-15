@@ -25,7 +25,7 @@ class Statistics extends Component{
 
 		this.state = {
 			disabled: [false, false, true, false, false],
-			folderSelected: -1,
+			folderSelected: 0,
 			graphOptions: graphOptions,
 			selectedGraphVariable: 0,
 			moneyPlayed: 0,
@@ -41,7 +41,8 @@ class Statistics extends Component{
 			oddMedian: 0,
 			betMean: 0,
 			betMedian: 0,
-			overviewItems: []
+			overviewItems: [],
+			betStatistics: []
 		};
 	}
 
@@ -52,6 +53,7 @@ class Statistics extends Component{
 
 		if (this.props.betsFromAllFolders !== nextProps.betsFromAllFolders){
 			nextProps.betsFromAllFolders.forEach(folder => {
+				this.updateTable(folder);
 				this.calculateOverviewValues(folder);
 			});
 		}
@@ -105,7 +107,6 @@ class Statistics extends Component{
 	}
 
 	renderScatterPlot = () => {
-		console.log("bets from all folders: " + JSON.stringify(this.props.betsFromAllFolders));
 		return (
 			<div className="chart">
 				<ResponsiveContainer>
@@ -146,77 +147,76 @@ class Statistics extends Component{
 	}
 
 	renderTable = () => {
-		var title = "Overview";
-
-		if (this.state.folderSelected !== -1)
-			title = this.props.betsFromAllFolders[this.state.folderSelected]["folder"];
-
-		return (
-		<Table>
-			<thead>
-				<tr>
-					<th>{title}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>{"Money played"}</td>
-					<td>{this.state.moneyPlayed}</td>
-				</tr>
-				<tr>
-					<td>{"Money won"}</td>
-					<td>{this.state.moneyWon}</td>
-				</tr>
-					<tr className={this.state.moneyReturned >= 0 ? 'tableGreen' : 'tableRed'}>
-						<td>{"Return"}</td>
-						<td>{this.state.moneyReturned}</td>
+		var index = this.state.folderSelected;
+		if (this.state.betStatistics.length > 0){
+			return (
+			<Table>
+				<thead>
+					<tr>
+						<th>{this.state.betStatistics[index].folder}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{"Money played"}</td>
+						<td>{this.state.betStatistics[index].moneyPlayed}</td>
 					</tr>
 					<tr>
-						<td>{"Won/played"}</td>
-						<td>{this.state.wonBets + "/" + this.state.playedBets + "	" + (Stats.roundByTwo(this.state.winPercentage) * 100) + "%"}</td>
+						<td>{"Money won"}</td>
+						<td>{this.state.betStatistics[index].moneyWon}</td>
 					</tr>
-					<tr className={this.state.avgReturn >= 0 ? 'tableGreen' : 'tableRed'}>
-						<td>{"Average return (cash)"}</td>
-						<td>{this.state.avgReturn}</td>
-					</tr>
-					<tr>
-						<td>{"Expected return"}</td>
-						<td>{this.state.expectedReturn}</td>
-					</tr>
-					<tr className={this.state.verifiedReturn >= 1 ? 'tableGreen' : 'tableRed'}>
-						<td>{"Verified return"}</td>
-						<td>{this.state.verifiedReturn}</td>
-					</tr>
-					<tr>
-						<td>{"Odd median"}</td>
-						<td>{this.state.oddMedian}</td>
-					</tr>
-					<tr>
-						<td>{"Odd mean"}</td>
-						<td>{this.state.oddMean}</td>
-					</tr>
-					<tr>
-						<td>{"Bet median"}</td>
-						<td>{this.state.betMedian}</td>
-					</tr>
-					<tr>
-						<td>{"Bet mean"}</td>
-						<td>{this.state.betMean}</td>
-					</tr>
-			</tbody>
-		</Table>
-		);
+						<tr className={this.state.betStatistics[index].moneyReturned >= 0 ? 'tableGreen' : 'tableRed'}>
+							<td>{"Return"}</td>
+							<td>{this.state.betStatistics[index].moneyReturned}</td>
+						</tr>
+						<tr>
+							<td>{"Won/played"}</td>
+							<td>{this.state.betStatistics[index].wonBets + "/" + this.state.betStatistics[index].playedBets + "	" + (Stats.roundByTwo(this.state.betStatistics[index].winPercentage) * 100) + "%"}</td>
+						</tr>
+						<tr className={this.state.avgReturn >= 0 ? 'tableGreen' : 'tableRed'}>
+							<td>{"Average return (cash)"}</td>
+							<td>{this.state.betStatistics[index].avgReturn}</td>
+						</tr>
+						<tr>
+							<td>{"Expected return"}</td>
+							<td>{this.state.betStatistics[index].expectedReturn}</td>
+						</tr>
+						<tr className={this.state.betStatistics[index].verifiedReturn >= 1 ? 'tableGreen' : 'tableRed'}>
+							<td>{"Verified return"}</td>
+							<td>{this.state.betStatistics[index].verifiedReturn}</td>
+						</tr>
+						<tr>
+							<td>{"Odd median"}</td>
+							<td>{this.state.betStatistics[index].oddMedian}</td>
+						</tr>
+						<tr>
+							<td>{"Odd mean"}</td>
+							<td>{this.state.betStatistics[index].oddMean}</td>
+						</tr>
+						<tr>
+							<td>{"Bet median"}</td>
+							<td>{this.state.betStatistics[index].betMedian}</td>
+						</tr>
+						<tr>
+							<td>{"Bet mean"}</td>
+							<td>{this.state.betStatistics[index].betMean}</td>
+						</tr>
+				</tbody>
+			</Table>
+			);
+		} else {
+			return null;
+		}
 	}
 
 	renderDropdown = () => {
 		var menuItems = [];
-		menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.folderSelected === -1} eventKey={-1}>{"Overview"}</MenuItem>);
 		var active = false;
-		for (var k = 0; k < this.props.folders.length; k++){
+		for (var k = 0; k < this.state.betStatistics.length; k++){
 			active = false;
 			if (k === this.state.folderSelected)
 				active = true;
-			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
+			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.state.betStatistics[k].folder}</MenuItem>);
 		}
 		return menuItems;
 	}
@@ -255,7 +255,7 @@ class Statistics extends Component{
 	showFromFolder = (key) => {
 		this.setState({
 			folderSelected: key
-		}, () => {this.updateTable(this.props.finishedBets)});
+		});
 	}
 
 	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
@@ -286,44 +286,52 @@ class Statistics extends Component{
 		});
 	}
 
-	updateTable = (allBets) => {
-		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn, oddMedian, oddMean,
-		betMedian, betMean;
-		var param;
-		if (this.state.folderSelected === -1)
-			param = allBets;
-		else
-			param = this.props.betsFromAllFolders[this.state.folderSelected]["bets"];
+	/*takes a betFolder as parameter. Folder = {
+		folder: "name",
+		bets: []
+	} */
+	updateTable = (betFolder) => {
+		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn,
+		 oddMedian, oddMean, betMedian, betMean;
+		let name = betFolder.folder;
+		moneyWon = Stats.roundByTwo(Stats.moneyWon(betFolder.bets));
+		moneyPlayed = Stats.roundByTwo(Stats.moneyPlayed(betFolder.bets));
+		moneyReturned = Stats.roundByTwo(Stats.moneyReturned(betFolder.bets));
+		wonBets = Stats.roundByTwo(Stats.wonBets(betFolder.bets));
+		playedBets = Stats.roundByTwo(Stats.playedBets(betFolder.bets));
+		winPercentage = Stats.roundByTwo(Stats.winPercentage(betFolder.bets));
+		avgReturn = Stats.roundByTwo(Stats.avgReturn(betFolder.bets));
+		expectedReturn = Stats.roundByTwo(Stats.expectedReturn(betFolder.bets));
+		verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
+		oddMedian = Stats.roundByTwo(Stats.median(betFolder.bets, "odd"));
+		oddMean = Stats.roundByTwo(Stats.mean(betFolder.bets, "odd"));
+		betMedian = Stats.roundByTwo(Stats.median(betFolder.bets, "bet"));
+		betMean = Stats.roundByTwo(Stats.mean(betFolder.bets, "bet"));
 
-		moneyWon = Stats.roundByTwo(Stats.moneyWon(param));
-		moneyPlayed = Stats.roundByTwo(Stats.moneyPlayed(param));
-		moneyReturned = Stats.roundByTwo(Stats.moneyReturned(param));
-		wonBets = Stats.roundByTwo(Stats.wonBets(param));
-		playedBets = Stats.roundByTwo(Stats.playedBets(param));
-		winPercentage = Stats.roundByTwo(Stats.winPercentage(param));
-		avgReturn = Stats.roundByTwo(Stats.avgReturn(param));
-		expectedReturn = Stats.roundByTwo(Stats.expectedReturn(param));
-		verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(param));
-		oddMedian = Stats.roundByTwo(Stats.median(param, "odd"));
-		oddMean = Stats.roundByTwo(Stats.mean(param, "odd"));
-		betMedian = Stats.roundByTwo(Stats.median(param, "bet"));
-		betMean = Stats.roundByTwo(Stats.mean(param, "bet"));
+		let folderStats = {
+				folder: name,
+				moneyWon: moneyWon,
+				moneyPlayed: moneyPlayed,
+				moneyReturned: moneyReturned,
+				wonBets: wonBets,
+				playedBets: playedBets,
+				winPercentage: winPercentage,
+				avgReturn: avgReturn,
+				expectedReturn: expectedReturn,
+				verifiedReturn: verifiedReturn,
+				oddMedian: oddMedian,
+				oddMean: oddMean,
+				betMedian: betMedian,
+				betMean: betMean
+		}
 
-		this.setState({
-			moneyWon: moneyWon,
-			moneyPlayed: moneyPlayed,
-			moneyReturned: moneyReturned,
-			wonBets: wonBets,
-			playedBets: playedBets,
-			winPercentage: winPercentage,
-			avgReturn: avgReturn,
-			expectedReturn: expectedReturn,
-			verifiedReturn: verifiedReturn,
-			oddMedian: oddMedian,
-			oddMean: oddMean,
-			betMedian: betMedian,
-			betMean: betMean
-		});
+		let stats = this.state.betStatistics;
+		if (!stats.some(e => e.folder === name)){
+			stats.push(folderStats);
+			this.setState({
+				betStatistics: stats
+			});
+		}
 	}
 
 	sort = (func, param) => {
@@ -347,8 +355,14 @@ class Statistics extends Component{
 	}
 
 	handleGetAllFinishedBets = (data) => {
-			this.updateTable(data);
+			this.updateTable({folder: "Overview", bets: data});
 			this.calculateOverviewValues({folder: "", bets: data});
+	}
+
+	updateBetStatistics(betFolders){
+		betFolders.forEach(folder => {
+			this.updateTable(folder);
+		})
 	}
 }
 
