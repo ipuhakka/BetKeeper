@@ -41,7 +41,6 @@ class Statistics extends Component{
 			oddMedian: 0,
 			betMean: 0,
 			betMedian: 0,
-			overviewItems: [],
 			betStatistics: []
 		};
 	}
@@ -54,7 +53,6 @@ class Statistics extends Component{
 		if (this.props.betsFromAllFolders !== nextProps.betsFromAllFolders){
 			nextProps.betsFromAllFolders.forEach(folder => {
 				this.updateTable(folder);
-				this.calculateOverviewValues(folder);
 			});
 		}
 
@@ -123,10 +121,10 @@ class Statistics extends Component{
 
 	renderOverviewTable = () => {
 		var tableItems = [];
-		var overviewItems = this.state.overviewItems;
-		for (var i = 0; i < this.state.overviewItems.length; i++){
+		var overviewItems = this.state.betStatistics;
+		for (var i = 0; i < this.state.betStatistics.length; i++){
 			tableItems.push(<tr key={i}>
-								<td>{overviewItems[i]["name"]}</td>
+								<td>{overviewItems[i]["folder"]}</td>
 								<td className={overviewItems[i]["moneyReturned"] >= 0 ? 'tableGreen' : 'tableRed'}>{overviewItems[i]["moneyReturned"]}</td>
 								<td className={overviewItems[i]["verifiedReturn"] >= 1 ? 'tableGreen' : 'tableRed'}>{overviewItems[i]["verifiedReturn"]}</td>
 								<td>{overviewItems[i]["winPercentage"]}</td>
@@ -136,7 +134,7 @@ class Statistics extends Component{
 		return(<Table>
 					<thead>
 						<tr>
-							<th className="clickable" onClick={this.sort.bind(this, Stats.sortAlphabetically, "name")}>{"Name"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Stats.sortAlphabetically, "folder")}>{"Folder"}</th>
 							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "moneyReturned")}>{"Money returned"}</th>
 							<th className="clickable" onClick={this.sort.bind(this,Stats.sortByHighest, "verifiedReturn")}>{"Return percentage"}</th>
 							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "winPercentage")}>{"Win percentage"}</th>
@@ -234,9 +232,9 @@ class Statistics extends Component{
 		return(
 			<div className="chart">
 				<ResponsiveContainer>
-					<BarChart barSize={20} barGap={2} data={this.state.overviewItems.slice()}>
+					<BarChart barSize={20} barGap={2} data={this.state.betStatistics.slice()}>
 						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
+						<XAxis dataKey="folder" />
 						<YAxis />
 						<Legend />
 						<Bar name={this.state.graphOptions[this.state.selectedGraphVariable].labelName} dataKey={this.state.graphOptions[this.state.selectedGraphVariable].variableName} fill="#8884d8" />
@@ -255,34 +253,6 @@ class Statistics extends Component{
 	showFromFolder = (key) => {
 		this.setState({
 			folderSelected: key
-		});
-	}
-
-	//Calculates the values that are used in the overview table. Function is performed after a bet folder has been received.
-	calculateOverviewValues = async (betFolder) => {
-		var overviewItems = this.state.overviewItems;
-	  await	this.setState({
-			overviewItems: []
-		})
-		for (var i = 0; i < overviewItems.length; i++){
-			if (overviewItems[i].name === betFolder.folder){
-				return;
-			}
-		}
-
-		var name = betFolder.folder;
-		var moneyReturned = Stats.roundByTwo(Stats.moneyReturned(betFolder.bets));
-		var verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
-		var winPercentage = Stats.roundByTwo(Stats.winPercentage(betFolder.bets));
-
-		overviewItems.push({
-			name: name,
-			moneyReturned: moneyReturned,
-			verifiedReturn: verifiedReturn,
-			winPercentage: winPercentage
-		});
-		await this.setState({
-			overviewItems: overviewItems
 		});
 	}
 
@@ -356,7 +326,6 @@ class Statistics extends Component{
 
 	handleGetAllFinishedBets = (data) => {
 			this.updateTable({folder: "Overview", bets: data});
-			this.calculateOverviewValues({folder: "", bets: data});
 	}
 
 	updateBetStatistics(betFolders){
