@@ -4,6 +4,7 @@ import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
 import { Label, Tooltip, Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
+import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import Table from 'react-bootstrap/lib/Table';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
@@ -125,9 +126,9 @@ class Statistics extends Component{
 							<Label offset={0} position="insideBottom" value={this.state.graphOptions[this.state.scatterXVariable].labelName} />
 						</XAxis>
 						<YAxis type="number" name={this.state.graphOptions[this.state.scatterYVariable].labelName} dataKey={this.state.graphOptions[this.state.scatterYVariable].variableName}>
-							<Label angle={-90} position="insideLeft" value={this.state.graphOptions[this.state.scatterYVariable].labelName} />
+							<Label angle={-90} position="insideBottomLeft" value={this.state.graphOptions[this.state.scatterYVariable].labelName} />
 						</YAxis>
-						<Tooltip/>
+						<Tooltip content={this.customTooltip}/>
 						<Scatter data={this.state.betStatistics.slice()} fill="#8884d8" />
 					</ScatterChart>
 				</ResponsiveContainer>
@@ -238,6 +239,20 @@ class Statistics extends Component{
 				</ResponsiveContainer>
 			</div>
 		);
+	}
+
+	customTooltip = (props) => {
+		if (props.payload.length > 0){
+			const newPayload = [
+				{
+					name: "Folder",
+					value: props.payload[0].payload.folder
+				},
+				...props.payload,
+			];
+			return <DefaultTooltipContent {...props} payload={newPayload} />;
+   	}
+   	return <DefaultTooltipContent {...props} />;
 	}
 
 	folders = () => {

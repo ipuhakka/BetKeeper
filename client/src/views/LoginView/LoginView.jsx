@@ -69,6 +69,12 @@ class LoginView extends Component {
             message: "Username or password given was incorrect"
           });
           break;
+        case 0:
+          store.dispatch({type: 'SET_ALERT_STATUS',
+            status: err,
+            message: "Network error"
+          });
+          break;
         default:
           store.dispatch({type: 'SET_ALERT_STATUS', payload: {
               status: err,
