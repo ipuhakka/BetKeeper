@@ -4,11 +4,10 @@ import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
 import { Label, Tooltip, Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
+import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
@@ -55,7 +54,6 @@ class Statistics extends Component{
 	}
 
 	render(){
-		var menuItems = this.renderDropdown();
 		var table = this.renderTable();
 		var overview = this.renderOverviewTable();
 		var scatter = this.renderScatterPlot();
@@ -68,40 +66,48 @@ class Statistics extends Component{
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
-							<DropdownButton
+							<Dropdown
 								bsStyle="primary"
 								title={"Overview"}
-								id={1}>
-								{this.graphDropdown("selectedBarGraphVariable")}
-							</DropdownButton>
+								id={1}
+								data={this.graphOptionLabels()}
+								onUpdate={this.setSelectedDropdownItem.bind(this)}
+								stateKey={"selectedBarGraphVariable"}>
+							</Dropdown>
 							{this.renderBarGraph()}
 							<div>
 								{overview}
 							</div>
 						</Col>
 						<Col className="col-md-6 col-xs-12">
-							<DropdownButton
+							<Dropdown
 								bsStyle="primary"
 								title={"Show folder"}
-								id={2}>
-								{menuItems}
-							</DropdownButton>
+								id={2}
+								data={this.folders()}
+								onUpdate={this.setSelectedDropdownItem.bind(this)}
+								stateKey={"folderSelected"}>
+							</Dropdown>
 							{table}
 						</Col>
 					</Row>
 					<Row>
-						<DropdownButton
-							bsStyle="primary"
-							title={"Y"}
-							id={3}>
-							{this.graphDropdown("scatterYVariable")}
-						</DropdownButton>
-						<DropdownButton
-							bsStyle="primary"
-							title={"X"}
-							id={4}>
-							{this.graphDropdown("scatterXVariable")}
-						</DropdownButton>
+					<Dropdown
+						bsStyle="primary"
+						title={"Y"}
+						id={3}
+						data={this.graphOptionLabels()}
+						onUpdate={this.setSelectedDropdownItem.bind(this)}
+						stateKey={"scatterYVariable"}>
+					</Dropdown>
+					<Dropdown
+						bsStyle="primary"
+						title={"X"}
+						id={4}
+						data={this.graphOptionLabels()}
+						onUpdate={this.setSelectedDropdownItem.bind(this)}
+						stateKey={"scatterXVariable"}>
+					</Dropdown>
 						<Col>{scatter}</Col>
 					</Row>
 				</div>
@@ -217,18 +223,6 @@ class Statistics extends Component{
 		}
 	}
 
-	renderDropdown = () => {
-		var menuItems = [];
-		var active = false;
-		for (var k = 0; k < this.state.betStatistics.length; k++){
-			active = false;
-			if (k === this.state.folderSelected)
-				active = true;
-			menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.state.betStatistics[k].folder}</MenuItem>);
-		}
-		return menuItems;
-	}
-
 	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
 	renderBarGraph = () => {
 		return(
@@ -246,27 +240,21 @@ class Statistics extends Component{
 		);
 	}
 
-	graphDropdown = (stateKey) => {
-		var menuItems = [];
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 0, stateKey)} key={0} active={this.state[stateKey] === 0} eventKey={0}>{this.state.graphOptions[0].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 1, stateKey)} key={1} active={this.state[stateKey] === 1} eventKey={1}>{this.state.graphOptions[1].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 2, stateKey)} key={2} active={this.state[stateKey] === 2} eventKey={2}>{this.state.graphOptions[2].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 3, stateKey)} key={3} active={this.state[stateKey] === 3} eventKey={3}>{this.state.graphOptions[3].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 4, stateKey)} key={4} active={this.state[stateKey] === 4} eventKey={4}>{this.state.graphOptions[4].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 5, stateKey)} key={5} active={this.state[stateKey] === 5} eventKey={5}>{this.state.graphOptions[5].labelName}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 6, stateKey)} key={6} active={this.state[stateKey] === 6} eventKey={6}>{this.state.graphOptions[6].labelName}</MenuItem>);
-		return menuItems;
-	}
+	folders = () => {
+		return this.state.betStatistics.map(folder => {
+			return folder.folder;
+		})
+	};
 
-	setGraphVariable(key, stateKey){
-		this.setState({
-			[stateKey]: key
+	graphOptionLabels = () => {
+		return this.state.graphOptions.map(option => {
+			return option.labelName;
 		});
 	}
 
-	showFromFolder = (key) => {
+	setSelectedDropdownItem(key, stateKey){
 		this.setState({
-			folderSelected: key
+			[stateKey]: key
 		});
 	}
 
