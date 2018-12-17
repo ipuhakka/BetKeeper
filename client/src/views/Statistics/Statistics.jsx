@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
-import { Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
+import { Label, Tooltip, Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Table from 'react-bootstrap/lib/Table';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
@@ -21,26 +21,19 @@ class Statistics extends Component{
 
 		let graphOptions = [{labelName:"Money returned", variableName: "moneyReturned", key: 0},
 			{labelName:"Return coefficient", variableName: "verifiedReturn", key: 1},
-			{labelName:"Win percentage", variableName: "winPercentage", key: 2}];
+			{labelName:"Win percentage", variableName: "winPercentage", key: 2},
+			{labelName:"Money played", variableName: "moneyPlayed", key: 3},
+			{labelName:"Won bets", variableName: "wonBets", key: 4},
+			{labelName:"Played bets", variableName: "playedBets", key: 5},
+			{labelName:"Odd median", variableName: "oddMedian", key: 6}];
 
 		this.state = {
 			disabled: [false, false, true, false, false],
 			folderSelected: 0,
 			graphOptions: graphOptions,
-			selectedGraphVariable: 0,
-			moneyPlayed: 0,
-			moneyWon: 0,
-			moneyReturned: 0,
-			wonBets: 0,
-			playedBets: 0,
-			winPercentage: 0,
-			avgReturn: 0,
-			expectedReturn: 1,
-			verifiedReturn: 1,
-			oddMean: 0,
-			oddMedian: 0,
-			betMean: 0,
-			betMedian: 0,
+			selectedBarGraphVariable: 0,
+			scatterXVariable: 0,
+			scatterYVariable: 1,
 			betStatistics: []
 		};
 	}
@@ -79,9 +72,9 @@ class Statistics extends Component{
 								bsStyle="primary"
 								title={"Overview"}
 								id={1}>
-								{this.graphDropDown()}
+								{this.graphDropdown("selectedBarGraphVariable")}
 							</DropdownButton>
-							{this.barGraph()}
+							{this.renderBarGraph()}
 							<div>
 								{overview}
 							</div>
@@ -90,13 +83,25 @@ class Statistics extends Component{
 							<DropdownButton
 								bsStyle="primary"
 								title={"Show folder"}
-								id={1}>
+								id={2}>
 								{menuItems}
 							</DropdownButton>
 							{table}
 						</Col>
 					</Row>
 					<Row>
+						<DropdownButton
+							bsStyle="primary"
+							title={"Y"}
+							id={3}>
+							{this.graphDropdown("scatterYVariable")}
+						</DropdownButton>
+						<DropdownButton
+							bsStyle="primary"
+							title={"X"}
+							id={4}>
+							{this.graphDropdown("scatterXVariable")}
+						</DropdownButton>
 						<Col>{scatter}</Col>
 					</Row>
 				</div>
@@ -110,9 +115,14 @@ class Statistics extends Component{
 				<ResponsiveContainer>
 					<ScatterChart>
 						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
-						<YAxis />
-						<Legend />
+						<XAxis type="number" name={this.state.graphOptions[this.state.scatterXVariable].labelName} dataKey={this.state.graphOptions[this.state.scatterXVariable].variableName}>
+							<Label offset={0} position="insideBottom" value={this.state.graphOptions[this.state.scatterXVariable].labelName} />
+						</XAxis>
+						<YAxis type="number" name={this.state.graphOptions[this.state.scatterYVariable].labelName} dataKey={this.state.graphOptions[this.state.scatterYVariable].variableName}>
+							<Label angle={-90} position="insideLeft" value={this.state.graphOptions[this.state.scatterYVariable].labelName} />
+						</YAxis>
+						<Tooltip/>
+						<Scatter data={this.state.betStatistics.slice()} fill="#8884d8" />
 					</ScatterChart>
 				</ResponsiveContainer>
 			</div>
@@ -171,7 +181,7 @@ class Statistics extends Component{
 							<td>{"Won/played"}</td>
 							<td>{this.state.betStatistics[index].wonBets + "/" + this.state.betStatistics[index].playedBets + "	" + (Stats.roundByTwo(this.state.betStatistics[index].winPercentage) * 100) + "%"}</td>
 						</tr>
-						<tr className={this.state.avgReturn >= 0 ? 'tableGreen' : 'tableRed'}>
+						<tr className={this.state.betStatistics[index].avgReturn >= 0 ? 'tableGreen' : 'tableRed'}>
 							<td>{"Average return (cash)"}</td>
 							<td>{this.state.betStatistics[index].avgReturn}</td>
 						</tr>
@@ -219,16 +229,8 @@ class Statistics extends Component{
 		return menuItems;
 	}
 
-	graphDropDown = () => {
-		var menuItems = [];
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 0)} key={0} active={this.state.selectedGraphVariable === 0} eventKey={0}>{"Money returned"}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 1)} key={1} active={this.state.selectedGraphVariable === 1} eventKey={1}>{"Return coefficient"}</MenuItem>);
-		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 2)} key={2} active={this.state.selectedGraphVariable === 2} eventKey={2}>{"Win percentage"}</MenuItem>);
-		return menuItems;
-	}
-
 	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
-	barGraph = () => {
+	renderBarGraph = () => {
 		return(
 			<div className="chart">
 				<ResponsiveContainer>
@@ -237,16 +239,28 @@ class Statistics extends Component{
 						<XAxis dataKey="folder" />
 						<YAxis />
 						<Legend />
-						<Bar name={this.state.graphOptions[this.state.selectedGraphVariable].labelName} dataKey={this.state.graphOptions[this.state.selectedGraphVariable].variableName} fill="#8884d8" />
+						<Bar name={this.state.graphOptions[this.state.selectedBarGraphVariable].labelName} dataKey={this.state.graphOptions[this.state.selectedBarGraphVariable].variableName} fill="#8884d8" />
 					</BarChart>
 				</ResponsiveContainer>
 			</div>
 		);
 	}
 
-	setGraphVariable(key){
+	graphDropdown = (stateKey) => {
+		var menuItems = [];
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 0, stateKey)} key={0} active={this.state[stateKey] === 0} eventKey={0}>{this.state.graphOptions[0].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 1, stateKey)} key={1} active={this.state[stateKey] === 1} eventKey={1}>{this.state.graphOptions[1].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 2, stateKey)} key={2} active={this.state[stateKey] === 2} eventKey={2}>{this.state.graphOptions[2].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 3, stateKey)} key={3} active={this.state[stateKey] === 3} eventKey={3}>{this.state.graphOptions[3].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 4, stateKey)} key={4} active={this.state[stateKey] === 4} eventKey={4}>{this.state.graphOptions[4].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 5, stateKey)} key={5} active={this.state[stateKey] === 5} eventKey={5}>{this.state.graphOptions[5].labelName}</MenuItem>);
+		menuItems.push(<MenuItem onClick={this.setGraphVariable.bind(this, 6, stateKey)} key={6} active={this.state[stateKey] === 6} eventKey={6}>{this.state.graphOptions[6].labelName}</MenuItem>);
+		return menuItems;
+	}
+
+	setGraphVariable(key, stateKey){
 		this.setState({
-			selectedGraphVariable: key
+			[stateKey]: key
 		});
 	}
 
