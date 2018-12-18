@@ -99,6 +99,7 @@ class Statistics extends Component{
 						id={3}
 						data={this.graphOptionLabels()}
 						onUpdate={this.setSelectedDropdownItem.bind(this)}
+						defaultKey={1}
 						stateKey={"scatterYVariable"}>
 					</Dropdown>
 					<Dropdown
