@@ -50,3 +50,26 @@ describe('get_token_owner', function(){
     done();
   });
 });
+
+describe('delete_token', function(){
+  let token, token2, token3;
+  before(async function(){
+    token = await tokenLog.create_token(1);
+    tokenLog.add_token(token);
+    token2 = await tokenLog.create_token(2);
+    tokenLog.add_token(token2);
+    token3 = await tokenLog.create_token(3);
+    tokenLog.add_token(token3);
+    return;
+  });
+
+  it('deletes token from list when owner matches a given token string', function(done){
+    expect(tokenLog.delete_token(token.token, token.owner)).to.equal(true);
+    done();
+  });
+
+  it('returns false when trying to delete a token of another user', function(done){
+    expect(tokenLog.delete_token(token2.token, token3.owner)).to.equal(false);
+    done();
+  });
+});

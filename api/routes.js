@@ -26,6 +26,10 @@ module.exports = function(app){
     token.post(req, res);
   });
 
+  app.delete('/api/token/:user_id', function(req, res){
+    token.delete(req, res, parseInt(req.params.user_id));
+  });
+
   app.get('/api/token/:user_id', function(req, res){
     token.get(req, res, parseInt(req.params.user_id));
   });

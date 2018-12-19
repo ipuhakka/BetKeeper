@@ -73,6 +73,59 @@ describe('post_token', function(){
   });
 });
 
+describe('delete_token', function(){
+  let token, token2, token3;
+  before(async function(){
+    token = await tokenLog.create_token(1);
+    tokenLog.add_token(token);
+    token2 = await tokenLog.create_token(2);
+    tokenLog.add_token(token2);
+    token3 = await tokenLog.create_token(3);
+    tokenLog.add_token(token3);
+    return;
+  });
+
+  after(function(done){
+    tokenLog.clear();
+    done();
+  })
+
+  it('responds with 204 on success', function(done){
+    chai.request(server)
+    .delete(uri + '/1')
+    .set('content-type', 'application/json')
+    .set('authorization', token.token)
+    .send(JSON.stringify({owner: 1}))
+    .end(function(err, res){
+      res.should.have.status(204);
+      done();
+    });
+  });
+
+  it('responds 401 when token and owner dont match', function(done){
+    chai.request(server)
+    .delete(uri + '/1')
+    .set('content-type', 'application/json')
+    .set('authorization', token2.token)
+    .send()
+    .end(function(err, res){
+      res.should.have.status(401);
+      done();
+    });
+  });
+
+  it('responds 400 on missing authorization header', function(done){
+    chai.request(server)
+    .delete(uri + '/1')
+    .set('content-type', 'application/json')
+    .send()
+    .end(function(err, res){
+      res.should.have.status(400);
+      done();
+    });
+  });
+});
+
 describe('get_token', function(){
   after(function(done){
     require('../../api/index').close();

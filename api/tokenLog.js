@@ -21,6 +21,23 @@ function create_token(user_id){
   });
 }
 
+/* Returns true and deletes token from log, if owner and tokenString match.
+Otherwise, tokenLog is not touched and function returns false.*/
+function delete_token(tokenString, owner){
+  let index = -1;
+  for (var i = 0; i < tokenLog.length; i++){
+    if (tokenLog[i].token === tokenString && tokenLog[i].owner === owner){
+      index = i;
+      break;
+    }
+  }
+  if (index !== -1){
+    tokenLog.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+
 function add_token(token){
   tokenLog.push(token);
 }
@@ -47,6 +64,7 @@ function get_token_owner(tokenString){
 
 module.exports = {
   create_token: create_token,
+  delete_token: delete_token,
   clear: clear,
   contains_token: contains_token,
   add_token: add_token,

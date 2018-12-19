@@ -75,5 +75,29 @@ module.exports = {
       }
     }
     return res.status(404).send();
+  },
+
+  /*
+  DELETE-request to address /api/token/{user_id} to delete token from log on logout.
+  Request:
+    headers:
+      "authorization":"token string"
+  Responses:
+    200 OK if token is still in use and user_id owns it
+    400 If authorization header is missing
+    401 If user_id does not own token, or token does not exist.
+  */
+  delete: function(req, res, user_id){
+    token = req.get('authorization');
+    if (token === undefined){
+      return res.status(400).send();
+    }
+
+    let result = tokenLog.delete_token(req.get('authorization'), user_id);
+
+    if (result){
+      return res.status(204).send();
+    }
+    return res.status(401).send();
   }
 };
