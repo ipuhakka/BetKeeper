@@ -32,6 +32,30 @@ export function postToken(username, password, callback){
   });
 }
 
+/*
+Logout event. Delete's a token from api. Resolves on 204 No content,
+rejects on other responses.
+*/
+export function deleteToken(){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4){
+        if (xmlHttp.status === 204){
+          resolve();
+        }
+        else {
+          reject(xmlHttp.status);
+        }
+      }
+    });
+    xmlHttp.open("DELETE", ConstVars.URI + "token/" + sessionStorage.getItem("loggedUserID"));
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.send();
+  });
+}
+
 /*GET-request to check if token is already in use. If it is, it means user
 is logged in, and is redirected to home page. Returns 404 if user hasn't got a token,
 and a new one must be requested.

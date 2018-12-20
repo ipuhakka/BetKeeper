@@ -8,6 +8,7 @@ import Folders from '../../views/Folders/Folders.jsx';
 import Home from '../../views/Home/Home.jsx';
 import Statistics from '../../views/Statistics/Statistics.jsx';
 import {changeToComponent} from '../../changeView';
+import {deleteToken} from '../../js/Requests/Token';
 
 class Menu extends Component{
 	render(){
@@ -21,7 +22,7 @@ class Menu extends Component{
 			</Nav>);
 	}
 
-	handleSelect = (key) => {
+	handleSelect = async (key) => {
 		switch(key){
 			case 0:
 				changeToComponent(<Home/>);
@@ -36,8 +37,14 @@ class Menu extends Component{
 				changeToComponent(<Folders/>);
 				break;
 			case 4:
+				try {
+					await deleteToken();
+				} catch (e){
+					console.log("error in deleteToken");
+				}
 				window.sessionStorage.setItem('loggedUser', null);
 				window.sessionStorage.setItem('token', null);
+				window.sessionStorage.setItem('loggedUserID', -1);
 				changeToComponent(<App/>);
 				break;
 			default:
