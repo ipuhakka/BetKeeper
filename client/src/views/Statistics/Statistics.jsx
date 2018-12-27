@@ -3,15 +3,15 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
-import { Label, Tooltip, Scatter, ScatterChart, BarChart, Bar, CartesianGrid, XAxis, YAxis, Legend, ResponsiveContainer } from 'recharts';
-import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import Table from 'react-bootstrap/lib/Table';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
+import BarGraph from '../../components/BarGraph/BarGraph.jsx';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
 import * as Stats from '../../js/Stats.js';
 import './Statistics.css';
 
@@ -37,9 +37,6 @@ class Statistics extends Component{
 			disabled: [false, false, true, false, false],
 			folderSelected: 0,
 			graphOptions: graphOptions,
-			selectedBarGraphVariable: 0,
-			scatterXVariable: 0,
-			scatterYVariable: 1,
 			betStatistics: []
 		};
 	}
@@ -63,7 +60,6 @@ class Statistics extends Component{
 	render(){
 		var table = this.renderTable();
 		var overview = this.renderOverviewTable();
-		var scatter = this.renderScatterPlot();
 
 		return(
 			<div className="content" onLoad={this.onLoad}>
@@ -73,15 +69,7 @@ class Statistics extends Component{
 				<div>
 					<Row className="show-grid">
 						<Col className="col-md-6 col-xs-12">
-							<Dropdown
-								bsStyle="primary"
-								title={"Overview"}
-								id={1}
-								data={this.graphOptionLabels()}
-								onUpdate={this.setSelectedDropdownItem.bind(this)}
-								stateKey={"selectedBarGraphVariable"}>
-							</Dropdown>
-							{this.renderBarGraph()}
+							<BarGraph data={this.state.betStatistics} optionLabels={this.graphOptionLabels()} graphOptions={this.state.graphOptions} />
 							<div>
 								{overview}
 							</div>
@@ -99,46 +87,11 @@ class Statistics extends Component{
 						</Col>
 					</Row>
 					<Row>
-					<Dropdown
-						bsStyle="primary"
-						title={"Y"}
-						id={3}
-						data={this.graphOptionLabels()}
-						onUpdate={this.setSelectedDropdownItem.bind(this)}
-						defaultKey={1}
-						stateKey={"scatterYVariable"}>
-					</Dropdown>
-					<Dropdown
-						bsStyle="primary"
-						title={"X"}
-						id={4}
-						data={this.graphOptionLabels()}
-						onUpdate={this.setSelectedDropdownItem.bind(this)}
-						stateKey={"scatterXVariable"}>
-					</Dropdown>
-						<Col>{scatter}</Col>
+						<Col>
+								<ScatterPlot optionLabels={this.graphOptionLabels()} data={this.state.betStatistics} graphOptions={this.state.graphOptions}></ScatterPlot>
+						</Col>
 					</Row>
 				</div>
-			</div>
-		);
-	}
-
-	renderScatterPlot = () => {
-		return (
-			<div className="chart">
-				<ResponsiveContainer>
-					<ScatterChart>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis type="number" name={this.state.graphOptions[this.state.scatterXVariable].labelName} dataKey={this.state.graphOptions[this.state.scatterXVariable].variableName}>
-							<Label offset={0} position="insideBottom" value={this.state.graphOptions[this.state.scatterXVariable].labelName} />
-						</XAxis>
-						<YAxis type="number" name={this.state.graphOptions[this.state.scatterYVariable].labelName} dataKey={this.state.graphOptions[this.state.scatterYVariable].variableName}>
-							<Label angle={-90} position="insideBottomLeft" value={this.state.graphOptions[this.state.scatterYVariable].labelName} />
-						</YAxis>
-						<Tooltip content={this.customTooltip}/>
-						<Scatter data={this.state.betStatistics.slice()} fill="#8884d8" />
-					</ScatterChart>
-				</ResponsiveContainer>
 			</div>
 		);
 	}
@@ -229,37 +182,6 @@ class Statistics extends Component{
 		} else {
 			return null;
 		}
-	}
-
-	//slicing data prop for BarChart apparently triggers chart redraw, without it fails to render correctly
-	renderBarGraph = () => {
-		return(
-			<div className="chart">
-				<ResponsiveContainer>
-					<BarChart barSize={20} barGap={2} data={this.state.betStatistics.slice()}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="folder" />
-						<YAxis />
-						<Legend />
-						<Bar name={this.state.graphOptions[this.state.selectedBarGraphVariable].labelName} dataKey={this.state.graphOptions[this.state.selectedBarGraphVariable].variableName} fill="#8884d8" />
-					</BarChart>
-				</ResponsiveContainer>
-			</div>
-		);
-	}
-
-	customTooltip = (props) => {
-		if (props.payload.length > 0){
-			const newPayload = [
-				{
-					name: "Folder",
-					value: props.payload[0].payload.folder
-				},
-				...props.payload,
-			];
-			return <DefaultTooltipContent {...props} payload={newPayload} />;
-   	}
-   	return <DefaultTooltipContent {...props} />;
 	}
 
 	folders = () => {
@@ -358,7 +280,6 @@ class Statistics extends Component{
 		})
 	}
 }
-
 
 const mapStateToProps = (state, ownProps) => {
   return { ...state.folders, ...state.bets}
