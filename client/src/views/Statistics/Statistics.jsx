@@ -21,11 +21,17 @@ class Statistics extends Component{
 
 		let graphOptions = [{labelName:"Money returned", variableName: "moneyReturned", key: 0},
 			{labelName:"Return coefficient", variableName: "verifiedReturn", key: 1},
-			{labelName:"Win percentage", variableName: "winPercentage", key: 2},
-			{labelName:"Money played", variableName: "moneyPlayed", key: 3},
-			{labelName:"Won bets", variableName: "wonBets", key: 4},
-			{labelName:"Played bets", variableName: "playedBets", key: 5},
-			{labelName:"Odd median", variableName: "oddMedian", key: 6}];
+			{labelName:"Money played", variableName: "moneyPlayed", key: 2},
+			{labelName: "Money won", variableName: "moneyWon", key: 3},
+			{labelName: "Average return", variableName: "avgReturn", key: 4},
+			{labelName:"Won bets", variableName: "wonBets", key: 5},
+			{labelName:"Played bets", variableName: "playedBets", key: 6},
+			{labelName:"Win percentage", variableName: "winPercentage", key: 7},
+			{labelName: "Expected return", variableName: "expectedReturn", key: 8},
+			{labelName:"Odd median", variableName: "oddMedian", key: 9},
+			{labelName:"Bet median", variableName: "betMedian", key: 10},
+			{labelName: "Odd mean", variableName: "oddMean", key: 11},
+			{labelName: "Bet mean", variableName: "betMean", key: 12}];
 
 		this.state = {
 			disabled: [false, false, true, false, false],
