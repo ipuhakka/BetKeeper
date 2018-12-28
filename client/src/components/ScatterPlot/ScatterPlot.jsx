@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
-import { Label, Tooltip, Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { Legend, Label, Tooltip, Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 
 class ScatterPlot extends Component{
@@ -15,6 +15,14 @@ class ScatterPlot extends Component{
   }
 
   render(){
+    let i = 0;
+    let scatters = this.props.data.map(folder => {
+      let arr = [folder];
+      let scatter = (<Scatter name={folder.folder} key={i} data={arr} fill={'#' + Math.floor(Math.random() * 16777215).toString(16)} />);
+      i = i + 1;
+      return scatter;
+    });
+
     return (
       <div>
         <Dropdown
@@ -45,7 +53,8 @@ class ScatterPlot extends Component{
                 <Label angle={-90} position="insideBottomLeft" value={this.props.graphOptions[this.state.yVariable].labelName} />
               </YAxis>
               <Tooltip content={this.customTooltip}/>
-              <Scatter data={this.props.data.slice()} fill="#8884d8" />
+              {scatters}
+              <Legend />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
