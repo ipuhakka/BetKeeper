@@ -4,6 +4,11 @@ import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent'
 import { Legend, Label, Tooltip, Scatter, ScatterChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 
+const plotColors = [
+  'black', 'blue', 'red', 'green', 'yellow', 'orange', 'purple',
+  'cyan', 'darkRed'
+];
+
 class ScatterPlot extends Component{
   constructor(props){
     super(props);
@@ -18,7 +23,7 @@ class ScatterPlot extends Component{
     let i = 0;
     let scatters = this.props.data.map(folder => {
       let arr = [folder];
-      let scatter = (<Scatter name={folder.folder} key={i} data={arr} fill={'#' + Math.floor(Math.random() * 16777215).toString(16)} />);
+      let scatter = (<Scatter name={folder.folder} key={i} data={arr} fill={i >= plotColors.length ? '#' + Math.floor(Math.random() * 16777215).toString(16) : plotColors[i]} />);
       i = i + 1;
       return scatter;
     });

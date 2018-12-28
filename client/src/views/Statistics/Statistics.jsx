@@ -20,7 +20,7 @@ class Statistics extends Component{
 		super(props);
 
 		let graphOptions = [{labelName:"Money returned", variableName: "moneyReturned", key: 0},
-			{labelName:"Return coefficient", variableName: "verifiedReturn", key: 1},
+			{labelName:"Verified return", variableName: "verifiedReturn", key: 1},
 			{labelName:"Money played", variableName: "moneyPlayed", key: 2},
 			{labelName: "Money won", variableName: "moneyWon", key: 3},
 			{labelName: "Average return", variableName: "avgReturn", key: 4},
