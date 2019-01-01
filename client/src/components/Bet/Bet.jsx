@@ -13,6 +13,7 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import './Bet.css';
 
 class Bet extends Component{
+
   render(){
     let small = "Odd: " + this.props.bet.odd + " Bet: " + this.props.bet.bet;
     let result = "Unresolved";
@@ -41,9 +42,14 @@ class Bet extends Component{
     return this.props.folders.map(item => {
       i = i + 1;
       return <ListGroupItem key={i}>{item}
-              <i className="fas fa-minus-circle fa-2x delete"></i>
+              <i className="fas fa-minus-circle fa-2x delete" onClick={this.onPressedFolder.bind(this, i)}></i>
             </ListGroupItem>;
     });
+  }
+
+  //// TODO: ask confirmation and on receiving one, delete bet from pressed folder.
+  onPressedFolder = (key) => {
+
   }
 };
 
