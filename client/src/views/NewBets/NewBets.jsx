@@ -66,7 +66,7 @@ class NewBets extends Component{
     {
       let key = this.state.selectedBet;
       let bet = this.state.deleteListFromFolder ? this.props.betsFromFolder[key] : this.props.allBets[key];
-      return <Bet bet={bet} folders={this.props.foldersOfBet}></Bet>;
+      return <Bet bet={bet} folders={this.props.foldersOfBet} onDelete={this.betDeleted} updateFolders={this.getBetsFolders}></Bet>;
     }
     else {
       return <UnresolvedBets bets={this.props.unresolvedBets}></UnresolvedBets>;
@@ -115,7 +115,6 @@ class NewBets extends Component{
 
     return menuItems;
   }
-
 
 	//updates data. Gets bets, folders and unresolved bets from the api. If folder parameter is not specified, gets all users bets, otherwise
 	//gets bets in that folder.
@@ -174,14 +173,11 @@ class NewBets extends Component{
 		});
 	}
 
-  onPressedFolder = (key) => {
-		var selected = this.state.selectedFolders;
-		selected[key] = !selected[key];
-
-		this.setState({
-			selectedFolders: selected
-		});
-	}
+  betDeleted = () => {
+    this.setState({
+      selectedBet: -1
+    });
+  };
 
   getBetsFolders = (id) => {
 		store.dispatch({type: 'FETCH_FOLDERS_OF_BET', payload: {

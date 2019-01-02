@@ -1,4 +1,7 @@
 .delete{
-  float: right;
   cursor: pointer;
+}
+
+.listItem{
+  float: right;
 }
