@@ -9,6 +9,7 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
+import AddBet from '../../components/AddBet/AddBet.jsx';
 import Bet from '../../components/Bet/Bet.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
@@ -25,7 +26,8 @@ class NewBets extends Component{
     	deleteListFromFolder: false, //Tells whether all bets are open in delete list, or bets from a folder.
       selectedBet: -1,
       folders: [],
-      selectedFolders: []
+      selectedFolders: [],
+      showModal: false
 		};
 	}
 
@@ -39,7 +41,8 @@ class NewBets extends Component{
     		<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
     		<Menu disable={this.state.menuDisabled}></Menu>
     		<Info></Info>
-        <i className="fas fa-plus-circle fa-2x addButton"></i>
+        <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
+        <AddBet show={this.state.showModal} hide={this.hideModal} folders={this.props.folders}/>
         <Row className="show-grid">
           <Col className="col-md-6 col-xs-12 col-md-push-6">
             <div className="betView">
@@ -153,6 +156,18 @@ class NewBets extends Component{
 			this.updateData();
 
 	}
+
+  showModal = () => {
+    this.setState({
+      showModal: true
+    });
+  }
+
+  hideModal = () => {
+    this.setState({
+      showModal: false
+    });
+  }
 
   ///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet = (key) => {
