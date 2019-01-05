@@ -280,7 +280,6 @@ describe('post_bets', function(){
 describe('put_bets', function(){
   let token1, token2;
 
-
   before(async function(){
     token1 = await tokenLog.create_token(5);
     token2 = await tokenLog.create_token(4);
@@ -288,7 +287,7 @@ describe('put_bets', function(){
     return;
   });
 
-  it('responds with 204 on successful modification', function(done){
+  it('responds with 200 on successful modification', function(done){
     var bet = {
       bet_won: -1, //-1 = not finished, 0=lost, 1=won
       name: 'string', //optional name for the bet
@@ -302,7 +301,30 @@ describe('put_bets', function(){
     .set('authorization', token1.token)
     .send(JSON.stringify(bet))
     .end(function(err, res){
-      res.should.have.status(204);
+      res.should.have.status(200);
+      expect(res.body.bet_id).to.equal(7);
+      done();
+    });
+  });
+
+  it('tells to which folders bet was added on success and bet id', function(done){
+    var bet = {
+      bet_won: -1, //-1 = not finished, 0=lost, 1=won
+      name: 'string', //optional name for the bet
+      odd: 3.12,
+      bet: 2.21,
+      folders: ["another test folder"]
+    };
+
+    chai.request(server)
+    .put(uri + "/7")
+    .set('content-type', 'application/json')
+    .set('authorization', token1.token)
+    .send(bet)
+    .end(function(err, res){
+      res.should.have.status(200);
+      expect(res.body.addedToFolders).to.deep.equal(["another test folder"]);
+      expect(res.body.bet_id).to.equal(7);
       done();
     });
   });

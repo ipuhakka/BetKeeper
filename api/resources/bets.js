@@ -148,6 +148,7 @@ module.exports = {
       odd: 2.14,
       bet: 2.00,
       name: 'name for the modified bet',
+      folders: ["folderToAdd1", "folderToAdd2"],
       bet_won: 0 // -1 = unresolved, 0 = lost, 1 = won
     }
 
@@ -155,7 +156,8 @@ module.exports = {
     parameter is not modified in the bet.
 
     Responses:
-      204 No content,
+      200 OK with bet id for modified bet. Body includes array addedToFolders, if
+        bet was added to folders.
       400 Bad request, if decimals arent numeric,
       401 Unauthorized, on trying to modify other users bet or if
         authorization token is invalid,
@@ -181,7 +183,15 @@ module.exports = {
     let modified = bets.modify_bet(bet_id, owner, bet.bet_won, bet.bet, bet.odd, bet.name);
 
     if (modified){
-      return res.status(204).send();
+      if (body.folders !== undefined && body.folders.length > 0){
+        let addedToFolders = bets.add_bet_to_folders(body.folders, bet_id, owner);
+        if (addedToFolders !== null){
+          res.set('content-type', 'application/json');
+          return res.status(200).send({addedToFolders: addedToFolders, bet_id: parseInt(bet_id)});
+        }
+      } else {
+        return res.status(200).send({bet_id: parseInt(bet_id)});
+      }
     }
     else if (!modified){
       return res.status(401).send();

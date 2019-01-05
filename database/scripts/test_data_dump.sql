@@ -9,6 +9,7 @@ INSERT OR REPLACE INTO bet_folders VALUES("liiga", 1);
 INSERT OR REPLACE INTO bet_folders VALUES("huumoribetsit", 2);
 INSERT OR REPLACE INTO bet_folders VALUES("tuplat", 3);
 INSERT OR REPLACE INTO bet_folders VALUES("rooneynBetsit", 5);
+INSERT OR REPLACE INTO bet_folders VALUES("another test folder", 5);
 INSERT OR REPLACE INTO bet_folders VALUES("triplat", 1);
 
 INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) VALUES (NULL, 2.64, 3, datetime('now', 'localTime'), 1, 0, 1);

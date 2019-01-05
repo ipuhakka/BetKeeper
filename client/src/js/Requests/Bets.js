@@ -188,7 +188,7 @@ PUT-request to create a new bet to the database.
     bet_won: number, -1: bet not resolved, 0: bet lost, 1: bet won
   }
 
-  Resolved on response with status 204 No content,
+  Resolved on response with status 200 OK,
   rejects on any other response, with response
   status as parameter.
 */
@@ -198,7 +198,7 @@ export function putBet(bet_id, data){
 
     xmlHttp.onreadystatechange =( () => {
       if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 204){
+        if (xmlHttp.status === 200){
           resolve();
         }
         else {
