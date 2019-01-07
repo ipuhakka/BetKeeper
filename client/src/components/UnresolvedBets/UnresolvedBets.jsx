@@ -23,8 +23,8 @@ class UnresolvedBets extends Component{
         <h4>Unresolved bets</h4>
         <ListGroup>{this.renderBetsList()}</ListGroup>
         <FormGroup type="radio" className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
-            <Radio name="radioGroup" value={1} inline>Won</Radio>{' '}
-            <Radio name="radioGroup" value={0} inline>Lost</Radio>
+            <Radio name="radioGroup" defaultChecked={this.state.betResult === "1"} value={1} inline>Won</Radio>{' '}
+            <Radio name="radioGroup" defaultChecked={this.state.betResult === "0"} value={0} inline>Lost</Radio>
         </FormGroup>
         <Button disabled={this.state.betResult === null || this.state.selectedBet === -1} bsStyle="primary" className="button" onClick={this.updateResult}>Update result</Button>
       </div>);
@@ -74,10 +74,11 @@ class UnresolvedBets extends Component{
     store.dispatch({type: 'PUT_BET', payload: {
         data: data,
         bet_id: this.props.bets[this.state.selectedBet].bet_id
-      }
+      },
+      showAlert: true
     });
     this.setState({
-      betResult: -1
+      betResult: null
     });
   }
 };

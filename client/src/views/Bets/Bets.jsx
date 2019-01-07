@@ -69,7 +69,7 @@ class Bets extends Component{
     {
       let key = this.state.selectedBet;
       let bet = this.state.deleteListFromFolder ? this.props.betsFromFolder.bets[key] : this.props.allBets[key];
-      return <Bet bet={bet} folders={this.props.foldersOfBet} onDelete={this.betDeleted} updateFolders={this.getBetsFolders}></Bet>;
+      return <Bet bet={bet} allFolders={this.props.folders} foldersOfBet={this.props.foldersOfBet} onDelete={this.betDeleted} updateFolders={this.getBetsFolders}></Bet>;
     }
     else {
       return <UnresolvedBets bets={this.props.unresolvedBets}></UnresolvedBets>;

@@ -42,23 +42,22 @@ class Bet extends Component{
         {this.renderAlert()}
         <div>
           <h4>{result}</h4>
-          <i className="delete fas fa-trash-alt fa-2x" onClick={this.onPressedFolder.bind(this, -1)}></i>
+          <i className="imageB fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, -1)}></i>
         </div>
-          <ListGroup>{this.renderList()}</ListGroup>
+          <ListGroup>{this.renderIsInFoldersList()}</ListGroup>
+          <div>
+            <h4>Add to folders:</h4>
+            <ListGroup>{this.renderIsNotInFoldersList()}</ListGroup>
+          </div>
       </div>
     )
   }
 
   renderAlert = () => {
     if (this.state.showAlert) {
-      let header = "Delete bet?";
-      if (this.state.deleteFromFolder!== null){
-        header = "Delete bet from " + this.state.deleteFromFolder + "?";
-      }
-
       return (
         <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
-          <h4>{header}</h4>
+          <h4>{"Delete bet?"}</h4>
           <p>
             <Button bsStyle="danger" onClick={this.deleteBet}>Delete</Button>
             <span> or </span>
@@ -72,25 +71,56 @@ class Bet extends Component{
     }
   }
 
-  renderList = () => {
+  renderIsInFoldersList = () => {
     let i = -1;
-    return this.props.folders.map(item => {
+    return this.props.foldersOfBet.map(item => {
       i = i + 1;
       return <ListGroupItem key={i}>{item}
-              <i className="fas fa-minus-circle fa-2x delete listItem" onClick={this.onPressedFolder.bind(this, i)}></i>
+              <i className="fas fa-minus-circle fa-2x imageB listItem" onClick={this.onPressedDelete.bind(this, i)}></i>
             </ListGroupItem>;
     });
   }
 
-  onPressedFolder = (key) => {
+  renderIsNotInFoldersList = () => {
+    let folders = [];
+    for (var i = 0; i < this.props.allFolders.length; i++){
+      if (!this.props.foldersOfBet.includes(this.props.allFolders[i])){
+        folders.push(<ListGroupItem key={i}>{this.props.allFolders[i]}
+              <i className="fas fa-plus-circle fa-2x imageB listItem" onClick={this.onPressedAddFolder.bind(this, i)}></i>
+            </ListGroupItem>);
+      }
+    }
+    return folders;
+  }
+
+  onPressedDelete = (key) => {
     let folder = null;
     if (key !== -1){
-      folder = this.props.folders[key];
+      folder = this.props.foldersOfBet[key];
+      this.setState({
+        deleteFromFolder: folder
+      }, () => {this.deleteBet()});
+    } else {
+      this.setState({
+        showAlert: true,
+        deleteFromFolder: folder
+      });
+    }
+  }
+
+  onPressedAddFolder = (key) => {
+    let data = {
+      folders: [this.props.allFolders[key]],
+      bet_won: this.props.bet.bet_won,
+      odd: this.props.bet.odd,
+      bet: this.props.bet.bet
     }
 
-    this.setState({
-      showAlert: true,
-      deleteFromFolder: folder
+    store.dispatch({type: 'PUT_BET', payload: {
+        data: data,
+        bet_id: this.props.bet.bet_id
+      },
+      callback: () => {this.props.updateFolders(this.props.bet.bet_id)}
     });
   }
 
@@ -107,17 +137,21 @@ class Bet extends Component{
     if (this.state.deleteFromFolder !== null){
       folders = [this.state.deleteFromFolder];
     }
+    let callback = undefined;
+
+    if (this.state.deleteFromFolder !== null){
+      callback = () => { this.props.updateFolders(this.props.bet.bet_id)};
+    }
 
     store.dispatch({type: 'DELETE_BET', payload: {
         bet_id: this.props.bet.bet_id,
         folders: folders
-      }
+      },
+      callback: callback
     });
 
-    if (this.state.deleteFromFolder === null){
+    if (callback === undefined){
       this.props.onDelete();
-    } else {
-      this.props.updateFolders(this.props.bet.bet_id);
     }
     this.setState({
       showAlert: false,
@@ -128,7 +162,8 @@ class Bet extends Component{
 
 Bet.propTypes = {
   bet: PropTypes.object.isRequired,
-  folders: PropTypes.array.isRequired,
+  foldersOfBet: PropTypes.array.isRequired,
+  allFolders: PropTypes.array.isRequired,
   onDelete: PropTypes.func.isRequired,
   updateFolders: PropTypes.func.isRequired
 };

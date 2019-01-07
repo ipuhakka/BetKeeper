@@ -229,13 +229,18 @@ function* createBet(action){
 function* modifyBet(action){
   try {
     yield call(putBet, action.payload.bet_id, action.payload.data);
-    yield put(setAlertStatus(204, "Result updated successfully"));
+    if (action.showAlert){
+      yield put(setAlertStatus(204, "Updated successfully"));
+    }
     yield call(fetchAllBets);
     let usedFolder = yield select(getUsedFolder);
     if (usedFolder !== ""){
       yield call(fetchBetsFromFolder, usedFolder);
     }
     yield call(fetchUnresolvedBets);
+    if (action.callback !== undefined){
+      action.callback();
+    }
   } catch(error){
     switch(error){
       case 401:
@@ -260,8 +265,6 @@ function* removeBet(action){
     yield put(fetchFoldersOfBetSuccess([]));
     if (res === undefined){
       yield put(setAlertStatus(204, "Bet deleted successfully"));
-    } else {
-      yield put(setAlertStatus(200, "Bet deleted successfully from folders: " + JSON.stringify(res)));
     }
     yield call(fetchAllBets);
     let usedFolder = yield select(getUsedFolder);
@@ -269,6 +272,11 @@ function* removeBet(action){
       yield call(fetchBetsFromFolder, usedFolder);
     }
     yield call(fetchUnresolvedBets);
+
+    if (action.callback !== undefined){
+      action.callback();
+    }
+
   } catch(error){
     console.log("received " + error);
     switch(error){
