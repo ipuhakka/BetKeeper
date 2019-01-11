@@ -60,6 +60,7 @@ class LoginView extends Component {
       window.sessionStorage.setItem('token', res.token);
       window.sessionStorage.setItem('loggedUser', res.username);
       window.sessionStorage.setItem('loggedUserID', res.owner);
+      store.dispatch({type: 'CLEAR_ALERT'});
       changeToComponent(<Home/>);
     } catch (err){
       switch(err){
