@@ -37,7 +37,8 @@ class Statistics extends Component{
 			disabled: [false, false, true, false, false],
 			folderSelected: 0,
 			graphOptions: graphOptions,
-			betStatistics: []
+			betStatistics: [],
+			sortedBetStatistics: []
 		};
 	}
 
@@ -98,8 +99,8 @@ class Statistics extends Component{
 
 	renderOverviewTable = () => {
 		var tableItems = [];
-		var overviewItems = this.state.betStatistics;
-		for (var i = 0; i < this.state.betStatistics.length; i++){
+		var overviewItems = this.state.sortedBetStatistics;
+		for (var i = 0; i < overviewItems.length; i++){
 			tableItems.push(<tr key={i}>
 								<td>{overviewItems[i]["folder"]}</td>
 								<td className={overviewItems[i]["moneyReturned"] >= 0 ? 'tableGreen' : 'tableRed'}>{overviewItems[i]["moneyReturned"]}</td>
@@ -245,16 +246,18 @@ class Statistics extends Component{
 		if (!stats.some(e => e.folder === name)){
 			stats.push(folderStats);
 			this.setState({
-				betStatistics: stats
+				betStatistics: stats,
+				sortedBetStatistics: stats //initialize sortedBetStatistics with the same list
 			});
 		}
 	}
 
 	sort = (func, param) => {
-		var sorted = func(this.state.overviewItems, param);
+		var previousArray = JSON.parse(JSON.stringify(this.state.sortedBetStatistics));
+		var sorted = func(previousArray, param);
 
 		this.setState({
-			overviewItems: sorted
+			sortedBetStatistics: sorted
 		});
 	}
 
@@ -271,13 +274,13 @@ class Statistics extends Component{
 	}
 
 	handleGetAllFinishedBets = (data) => {
-			this.updateTable({folder: "Overview", bets: data});
+		this.updateTable({folder: "Overview", bets: data});
 	}
 
 	updateBetStatistics(betFolders){
 		betFolders.forEach(folder => {
 			this.updateTable(folder);
-		})
+		});
 	}
 }
 
