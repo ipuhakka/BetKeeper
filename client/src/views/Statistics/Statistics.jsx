@@ -247,14 +247,13 @@ class Statistics extends Component{
 			stats.push(folderStats);
 			this.setState({
 				betStatistics: stats,
-				sortedBetStatistics: stats //initialize sortedBetStatistics with the same list
+				sortedBetStatistics: [...stats] //initialize sortedBetStatistics with the same list
 			});
 		}
 	}
 
 	sort = (func, param) => {
-		var previousArray = JSON.parse(JSON.stringify(this.state.sortedBetStatistics));
-		var sorted = func(previousArray, param);
+		var sorted = func(this.state.sortedBetStatistics, param);
 
 		this.setState({
 			sortedBetStatistics: sorted
