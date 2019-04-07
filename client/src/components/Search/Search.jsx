@@ -25,7 +25,7 @@ class Search extends Component {
           <FormGroup>
             <FormControl
               placeholder={this.props.placeholder}
-              type={this.getInputType()}
+              type="text"
               value={this.state.searchValue}
               onChange={this.updateSearch}/>
             <ListGroup>{this.renderShowedResults()}</ListGroup>
@@ -106,36 +106,12 @@ class Search extends Component {
       return originalWord.toLowerCase();
     }
 
-    return originalWord;
+    return originalWord.toString();
   }
 
   /* Returns true if all data in array can be shown. */
   canShowAll = () => {
     return this.props.showCount >= this.props.data.length;
-  }
-
-  /* Gets appropriate input type for searched type.*/
-  getInputType = () => {
-    let key = this.props.key;
-    let dataType;
-
-    if (key === null){
-      if (this.props.data.length > 0){
-        dataType = typeof(this.props.data[0]);
-      }
-    }
-    else {
-      dataType = typeof(this.props.data[0].key);
-    }
-
-    switch (dataType){
-      case 'number':
-        return 'number';
-      case 'string':
-        return 'text';
-      default:
-        return 'text';
-    }
   }
 }
 
