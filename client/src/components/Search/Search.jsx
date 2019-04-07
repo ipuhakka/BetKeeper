@@ -44,7 +44,7 @@ class Search extends Component {
 
       return this.props.data.map(row => {
         i = i + 1;
-          return <ListGroupItem onClick={this.props.onClickResult.bind(this, this.props.data[i])} key={i}>
+          return <ListGroupItem onClick={this.pressedItem.bind(this, this.props.data[i])} key={i}>
           {key === null ? this.props.data[i] : this.props.data[i].key}</ListGroupItem>;
       });
     }
@@ -57,12 +57,23 @@ class Search extends Component {
         }
 
         listGroupItems.push(
-          <ListGroupItem onClick={this.props.onClickResult.bind(this, this.state.shownData[i])} key={i}>
+          <ListGroupItem onClick={this.pressedItem.bind(this, this.state.shownData[i])} key={i}>
             {key === null ? this.state.shownData[i] : this.state.shownData[i].key}</ListGroupItem>);
       }
 
       return listGroupItems;
     }
+  }
+
+  pressedItem = (data) => {
+    if (this.props.clearOnClick){
+      this.setState({
+        searchValue: "",
+        shownData: []
+      });
+    }
+
+    this.props.onClickResult(data);
   }
 
   /*Updates search result. Sets the shownResults
@@ -117,7 +128,8 @@ class Search extends Component {
 
 Search.defaultProps = {
   showCount: 5,
-  key: null
+  key: null,
+  clearOnClick: false
 };
 
 Search.propTypes = {
@@ -125,7 +137,8 @@ Search.propTypes = {
   onClickResult: PropTypes.func.isRequired,
   key: PropTypes.string,
   showCount: PropTypes.number,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
+  clearOnClick: PropTypes.bool,
 };
 
 export default Search;

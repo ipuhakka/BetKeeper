@@ -6,11 +6,11 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Radio from 'react-bootstrap/lib/Radio';
 import Modal from 'react-bootstrap/lib/Modal';
+import Tag from '../Tag/Tag.jsx';
 import Search from '../Search/Search.jsx';
+import './AddBet.css';
 
 class AddBet extends Component{
   constructor(props){
@@ -26,11 +26,6 @@ class AddBet extends Component{
   }
 
   render(){
-    var items = [];
-		for (var i = 0; i < this.props.folders.length; i++){
-			items.push(<ListGroupItem bsStyle={this.state.selected[i] ?  'info': null} onClick={this.pressedListItem.bind(this, i)} key={i}>{this.props.folders[i]}</ListGroupItem>)
-		}
-
     return (
       <Modal show={this.props.show} onHide={this.props.hide}>
         <Modal.Header closeButton>
@@ -62,24 +57,44 @@ class AddBet extends Component{
               <Radio name="radioGroup" value={0} inline defaultChecked={this.state.betResult === "0"}>Lost</Radio>
             </FormGroup>
           </Form>
-          <Search data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
+          <div className="tagDiv">
+            {this.renderTags()}
+          </div>
+          <Search clearOnClick={true} data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
           <Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
     );
   }
 
-  selectFolder = (folder) => {
-    console.log("Pressed: " + JSON.stringify(folder));
+  renderTags = () => {
+    let i = -1;
+      return this.state.selected.map(folder => {
+        i = i + 1;
+        return (<Tag key={i} value={folder} onClick={this.removeFolderFromSelected}/>);
+      });
   }
 
-  pressedListItem = (i) => {
-    var selected = this.state.selected;
-    selected[i] = !selected[i];
+  removeFolderFromSelected = (folder) => {
+    let selectedFolders = this.state.selected;
+
+    selectedFolders.splice(selectedFolders.indexOf(folder), 1);
 
     this.setState({
-      selected: selected
+      selected: selectedFolders
     });
+  }
+
+  selectFolder = (folder) => {
+    var selectedFolders = this.state.selected;
+
+    if (!this.state.selected.includes(folder)){
+      selectedFolders.push(folder);
+
+      this.setState({
+        selected: selectedFolders
+      });
+    }
   }
 
   setValue = (param, e) => {
@@ -95,11 +110,7 @@ class AddBet extends Component{
 			return;
 		}
 
-		var selectedFolders = []
-		for (var i = 0; i < this.props.folders.length; i++){
-			if (this.state.selected[i])
-				selectedFolders.push(this.props.folders[i]);
-		}
+		var selectedFolders = this.state.selected;
 
 		var data = {
 			bet_won: parseInt(this.state.betResult, 10),
