@@ -10,6 +10,7 @@ import ListGroup from 'react-bootstrap/lib/ListGroup';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Radio from 'react-bootstrap/lib/Radio';
 import Modal from 'react-bootstrap/lib/Modal';
+import Search from '../Search/Search.jsx';
 
 class AddBet extends Component{
   constructor(props){
@@ -60,12 +61,16 @@ class AddBet extends Component{
               <Radio name="radioGroup" value={1} inline defaultChecked={this.state.betResult === "1"}>Won</Radio>{' '}
               <Radio name="radioGroup" value={0} inline defaultChecked={this.state.betResult === "0"}>Lost</Radio>
             </FormGroup>
-            <ListGroup className='list'>{items}</ListGroup>
-            <Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
           </Form>
+          <Search data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
+          <Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
     );
+  }
+
+  selectFolder = (folder) => {
+    console.log("Pressed: " + JSON.stringify(folder));
   }
 
   pressedListItem = (i) => {
