@@ -1,11 +1,3 @@
-/*Bet is a component which is shown when a bet is clicked in Bets window.
-It shows Bet data and folders which it is in. Bet can be deleted from a folder
-by clicking a trash can icon next to folder name. This action needs to be
-confirmed before completing.
-
-// TODO: Once backend has been modified so that it's possible
-to add folders for a bet, a list of folders where bet isn't should
-be displayed as well.*/
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';

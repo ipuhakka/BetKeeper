@@ -21,13 +21,15 @@ class AddBet extends Component{
       bet: 0.0,
       odd: 0.0,
       name: "",
-      betResult: null
+      betResult: null,
+      dragging: false,
+      draggedOutOfModal: false
     };
   }
 
   render(){
     return (
-      <Modal show={this.props.show} onHide={this.props.hide}>
+      <Modal onMouseOut={this.handleMouseOut} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp.bind(this)} show={this.props.show} onHide={this.hideModal}>
         <Modal.Header closeButton>
           <Modal.Title>{"Add bet"}</Modal.Title>
         </Modal.Header>
@@ -73,6 +75,35 @@ class AddBet extends Component{
         i = i + 1;
         return (<Tag key={i} value={folder} onClick={this.removeFolderFromSelected}/>);
       });
+  }
+
+  /* Sets dragging to true to prevent closing modal on dragging */
+  handleMouseDown = (e) => {
+    this.setState({
+      dragging: true,
+      draggedOutOfModal: false
+    });
+  }
+
+  /* Sets dragging to false*/
+  handleMouseUp = () => {
+    this.setState({
+      dragging: false
+    })
+  }
+
+  /* Sets draggedOutOfModal to prevent hiding the modal on drag.*/
+  handleMouseOut = () => {
+    let dragging = this.state.dragging;
+    this.setState({
+      draggedOutOfModal: dragging
+    })
+  }
+
+  hideModal = () => {
+    if (!this.state.draggedOutOfModal){
+      this.props.hide();
+    }
   }
 
   removeFolderFromSelected = (folder) => {
