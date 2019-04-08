@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Tag.css';
 
+/* Presents a value in Tag.
+Calls image onClick with value
+given as a prop.*/
 class Tag extends Component {
   render(){
     return (
@@ -11,8 +14,6 @@ class Tag extends Component {
       </div>
     );
   }
-
-
 }
 
 Tag.propTypes = {

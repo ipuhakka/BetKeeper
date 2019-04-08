@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import store from '../../store';
 import Alert from 'react-bootstrap/lib/Alert';
 import Button from 'react-bootstrap/lib/Button';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
+import Search from '../Search/Search.jsx';
+import Tag from '../Tag/Tag.jsx';
 import './Bet.css';
 
 class Bet extends Component{
@@ -34,12 +34,13 @@ class Bet extends Component{
         {this.renderAlert()}
         <div>
           <h4>{result}</h4>
-          <i className="imageB fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, -1)}></i>
+          <i className="imageB fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
         </div>
-          <ListGroup>{this.renderIsInFoldersList()}</ListGroup>
+          <div className="tagDiv">
+            {this.renderIsInFoldersList()}
+          </div>
           <div>
-            <h4>Add to folders:</h4>
-            <ListGroup>{this.renderIsNotInFoldersList()}</ListGroup>
+            <Search placeholder="Add folders" data={this.getUnselectedFolders()} onClickResult={this.onPressedAddFolder} />
           </div>
       </div>
     )
@@ -67,28 +68,21 @@ class Bet extends Component{
     let i = -1;
     return this.props.foldersOfBet.map(item => {
       i = i + 1;
-      return <ListGroupItem key={i}>{item}
-              <i className="fas fa-minus-circle fa-2x imageB listItem" onClick={this.onPressedDelete.bind(this, i)}></i>
-            </ListGroupItem>;
+      return <Tag key={i} value={item} onClick={this.onPressedDelete}/>;
     });
   }
 
-  renderIsNotInFoldersList = () => {
-    let folders = [];
-    for (var i = 0; i < this.props.allFolders.length; i++){
-      if (!this.props.foldersOfBet.includes(this.props.allFolders[i])){
-        folders.push(<ListGroupItem key={i}>{this.props.allFolders[i]}
-              <i className="fas fa-plus-circle fa-2x imageB listItem" onClick={this.onPressedAddFolder.bind(this, i)}></i>
-            </ListGroupItem>);
-      }
-    }
-    return folders;
+  getUnselectedFolders = () => {
+    return this.props.allFolders.filter(
+      function(e) {
+        return this.indexOf(e) < 0;
+      },
+      this.props.foldersOfBet
+    );
   }
 
-  onPressedDelete = (key) => {
-    let folder = null;
-    if (key !== -1){
-      folder = this.props.foldersOfBet[key];
+  onPressedDelete = (folder) => {
+    if (folder !== null){
       this.setState({
         deleteFromFolder: folder
       }, () => {this.deleteBet()});
@@ -100,9 +94,9 @@ class Bet extends Component{
     }
   }
 
-  onPressedAddFolder = (key) => {
+  onPressedAddFolder = (folder) => {
     let data = {
-      folders: [this.props.allFolders[key]],
+      folders: [folder],
       bet_won: this.props.bet.bet_won,
       odd: this.props.bet.odd,
       bet: this.props.bet.bet
