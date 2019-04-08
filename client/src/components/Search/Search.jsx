@@ -13,7 +13,7 @@ class Search extends Component {
 
     this.state = {
       shownData: [],
-      minimumCharacters: 3,
+      minimumSearchCharacters: 3,
       searchValue: ""
     }
   }
@@ -39,7 +39,7 @@ class Search extends Component {
   renderShowedResults(){
     let key = this.props.key;
 
-    if (this.canShowAll()){
+    if (this.canShowAll() && this.state.searchValue.length < this.state.minimumSearchCharacters){
       let i = -1;
 
       return this.props.data.map(row => {
@@ -86,7 +86,7 @@ class Search extends Component {
       searchValue: inputText
     }, () => {
 
-      if (searchedSubstring.length < this.state.minimumCharacters){
+      if (searchedSubstring.length < this.state.minimumSearchCharacters){
         this.setState({
           shownData: []
         });
