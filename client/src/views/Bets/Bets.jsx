@@ -72,7 +72,9 @@ class Bets extends Component{
       return <Bet bet={bet} allFolders={this.props.folders} foldersOfBet={this.props.foldersOfBet} onDelete={this.betDeleted} updateFolders={this.getBetsFolders}></Bet>;
     }
     else {
-      return <UnresolvedBets bets={this.props.unresolvedBets}></UnresolvedBets>;
+      return this.props.unresolvedBets.length > 0 ?
+        <UnresolvedBets bets={this.props.unresolvedBets}></UnresolvedBets> :
+        null;
     }
   }
 
