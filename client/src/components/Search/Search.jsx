@@ -13,7 +13,6 @@ class Search extends Component {
 
     this.state = {
       shownData: [],
-      minimumSearchCharacters: 3,
       searchValue: ""
     }
   }
@@ -39,7 +38,7 @@ class Search extends Component {
   renderShowedResults(){
     let key = this.props.key;
 
-    if (this.canShowAll() && this.state.searchValue.length < this.state.minimumSearchCharacters){
+    if (this.canShowAll() && this.state.searchValue.length === 0){
       let i = -1;
 
       return this.props.data.map(row => {
@@ -86,28 +85,21 @@ class Search extends Component {
       searchValue: inputText
     }, () => {
 
-      if (searchedSubstring.length < this.state.minimumSearchCharacters){
-        this.setState({
-          shownData: []
-        });
-      }
-      else {
-        let shownResultsArray = [];
-        let searchedKey = this.props.key;
+      let shownResultsArray = [];
+      let searchedKey = this.props.key;
 
-        for (var i = 0; i < this.props.data.length; i++){
-          let compareWord = (searchedKey === null ?
-            this.props.data[i] : this.props.data[i].searchedKey).toLowerCase();
+      for (var i = 0; i < this.props.data.length; i++){
+        let compareWord = (searchedKey === null ?
+          this.props.data[i] : this.props.data[i].searchedKey).toLowerCase();
 
-          if (compareWord.indexOf(searchedSubstring) !== -1){
-            shownResultsArray.push(this.props.data[i]);
-          }
+        if (compareWord.indexOf(searchedSubstring) !== -1){
+          shownResultsArray.push(this.props.data[i]);
         }
-
-        this.setState({
-          shownData: shownResultsArray
-        });
       }
+
+      this.setState({
+        shownData: shownResultsArray
+      });
     });
   }
 

@@ -62,7 +62,7 @@ class AddBet extends Component{
           <div className="tagDiv">
             {this.renderTags()}
           </div>
-          <Search clearOnClick={true} data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
+          <Search showCount={10} clearOnClick={true} data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
           <Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
@@ -102,6 +102,9 @@ class AddBet extends Component{
 
   hideModal = () => {
     if (!this.state.draggedOutOfModal){
+      this.setState({
+        selected: []
+      });
       this.props.hide();
     }
   }
