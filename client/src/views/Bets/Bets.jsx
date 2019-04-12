@@ -35,11 +35,10 @@ class Bets extends Component{
     var betItems = this.renderBetsList();
     var menuItems = this.renderDropdown();
     var betView = this.renderBetView(); //displays either list of unresolved bets, or data of specific bet.
-
     return (
       <div className="content" onLoad={this.updateData}>
     		<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-    		<Menu disable={this.state.menuDisabled}></Menu>
+    		<Menu loading={this.props.loading} disable={this.state.menuDisabled}></Menu>
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={this.state.showModal} hide={this.hideModal} folders={this.props.folders}/>

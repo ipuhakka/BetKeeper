@@ -7,8 +7,10 @@ import Bets from '../../views/Bets/Bets.jsx';
 import Folders from '../../views/Folders/Folders.jsx';
 import Home from '../../views/Home/Home.jsx';
 import Statistics from '../../views/Statistics/Statistics.jsx';
+import Spinner from '../Spinner/Spinner.jsx';
 import {changeToComponent} from '../../changeView';
 import {deleteToken} from '../../js/Requests/Token';
+import './Menu.css';
 
 class Menu extends Component{
 	render(){
@@ -19,6 +21,7 @@ class Menu extends Component{
 				<NavItem eventKey={2} disabled={this.props.disable[2]}>Statistics</NavItem>
 				<NavItem eventKey={3} disabled={this.props.disable[3]}>Folders</NavItem>
 				<NavItem eventKey={4} disabled={this.props.disable[4]}>Logout</NavItem>
+				<Spinner className="spinner" active={this.props.loading}/>
 			</Nav>);
 	}
 
@@ -54,8 +57,13 @@ class Menu extends Component{
 	}
 }
 
+Menu.defaultProps = {
+	loading: false
+};
+
 Menu.propTypes = {
-           disable: PropTypes.array
+  disable: PropTypes.array,
+	loading: PropTypes.bool
 };
 
 export default Menu;
