@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {clearAlert} from '../../actions/alertActions';
 import Alert from 'react-bootstrap/lib/Alert';
@@ -7,8 +8,7 @@ import Button from 'react-bootstrap/lib/Button';
 class Info extends Component{
 
 	render(){
-		var alert = this.renderAlert();
-		return(<div>{alert}</div>);
+		return(<div>{this.renderAlert()}</div>);
 	}
 
 	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of
@@ -23,6 +23,12 @@ class Info extends Component{
 		}
 
 		if (this.props.status !== null){
+			if (this.props.timeout > 0){
+				setTimeout(() => {
+					this.dismiss();
+				}, this.props.timeout);
+			}
+
 			return(<Alert bsStyle={style} onDismiss={this.dismiss}>
 					<p>{this.props.statusMessage}</p>
 					<Button onClick={this.dismiss}>{"Hide"}</Button>
@@ -37,6 +43,14 @@ class Info extends Component{
 	}
 
 }
+
+Info.defaultProps = {
+	timeout: 2000 //number of milliseconds alert is visible. If set to 0 or less, alert is closed only manually
+};
+
+Info.propTypes = {
+	timeout: PropTypes.number
+};
 
 const mapStateToProps = (state, ownProps) => {
   return { ...state.alert}
