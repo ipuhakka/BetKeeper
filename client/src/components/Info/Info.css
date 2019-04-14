@@ -1,0 +1,13 @@
+.visible{
+  opacity: 1;
+  animation: fadeInAndOut 4s;
+}
+
+.hidden{
+  opacity: 0;
+}
+
+@keyframes fadeInAndOut {
+  0%,100% { opacity: 0 }
+  30% { opacity: 1 }
+}
