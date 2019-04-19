@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {clearAlert} from '../../actions/alertActions';
 import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
+import {Transition} from 'react-transition-group';
 import './Info.css';
 
-const TIME_VISIBLE = 4000;
+const TIME_VISIBLE = 1600;
 
 class Info extends Component{
 
@@ -25,10 +25,20 @@ class Info extends Component{
 			}, TIME_VISIBLE);
 		}
 
-		return(<Alert className={this.props.status !== null ? 'visible' : 'hidden'} bsStyle={style} onDismiss={this.dismiss}>
-					<p>{this.props.statusMessage}</p>
-					<Button onClick={this.dismiss}>{"Hide"}</Button>
-				</Alert>);
+		const transitionStyles = {
+			entering: {opacity: 1, display: 'inherit'},
+			exited: {opacity: 0, display: 'none'}
+		}
+
+		return(
+				<Transition in={this.props.status !== null}
+					timeout={700}>
+					{status => (
+						<Alert className="info" style={{...transitionStyles[status]}} bsStyle={style} onDismiss={this.dismiss}>
+							<p>{this.props.statusMessage}</p>
+						</Alert>
+					)}
+			</Transition>);
 	}
 
 	dismiss = () => {

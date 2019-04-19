@@ -1,13 +1,4 @@
-.visible{
-  opacity: 1;
-  animation: fadeInAndOut 4s;
-}
-
-.hidden{
+.info{
   opacity: 0;
-}
-
-@keyframes fadeInAndOut {
-  0%,100% { opacity: 0 }
-  30% { opacity: 1 }
+  transition: opacity 400ms;
 }
