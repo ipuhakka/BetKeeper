@@ -5,7 +5,7 @@ import Alert from 'react-bootstrap/lib/Alert';
 import {Transition} from 'react-transition-group';
 import './Info.css';
 
-const TIME_VISIBLE = 1600;
+const TIME_VISIBLE = 2500;
 
 class Info extends Component{
 
@@ -26,13 +26,14 @@ class Info extends Component{
 		}
 
 		const transitionStyles = {
-			entering: {opacity: 1, display: 'inherit'},
+			entering: {opacity: 0.7, display: 'inherit'},
+			entered: {opacity: 1},
 			exited: {opacity: 0, display: 'none'}
 		}
 
 		return(
 				<Transition in={this.props.status !== null}
-					timeout={700}>
+					timeout={{enter:300, exit: 500}}>
 					{status => (
 						<Alert className="info" style={{...transitionStyles[status]}} bsStyle={style} onDismiss={this.dismiss}>
 							<p>{this.props.statusMessage}</p>
