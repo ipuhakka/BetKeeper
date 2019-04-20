@@ -2,18 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {clearAlert} from '../../actions/alertActions';
 import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
+import {Transition} from 'react-transition-group';
+import './Info.css';
+
+const TIME_VISIBLE = 2500;
 
 class Info extends Component{
 
 	render(){
-		var alert = this.renderAlert();
-		return(<div>{alert}</div>);
-	}
 
-	//This function uses a switch to return a type of alert or null. Switch is prop 'alertState'. Its values are statuscodes of
-	//http-requests. Other alert types use code -1. Any other value returns no alert element.
-	renderAlert = () => {
 		let style = "success";
 		if (this.props.status >= 400 || this.props.status === -1){
 			style = "warning";
@@ -23,19 +20,31 @@ class Info extends Component{
 		}
 
 		if (this.props.status !== null){
-			return(<Alert bsStyle={style} onDismiss={this.dismiss}>
-					<p>{this.props.statusMessage}</p>
-					<Button onClick={this.dismiss}>{"Hide"}</Button>
-					</Alert>);
-		} else {
-			return null;
+			setTimeout(() => {
+				this.dismiss();
+			}, TIME_VISIBLE);
 		}
+
+		const transitionStyles = {
+			entering: {opacity: 1, display: 'inherit'},
+			entered: {opacity: 1},
+			exited: {opacity: 0, display: 'none'}
+		}
+
+		return(
+				<Transition in={this.props.status !== null}
+					timeout={{enter:300, exit: 500}}>
+					{status => (
+						<Alert className="info" style={{...transitionStyles[status]}} bsStyle={style} onDismiss={this.dismiss}>
+							<p>{this.props.statusMessage}</p>
+						</Alert>
+					)}
+			</Transition>);
 	}
 
 	dismiss = () => {
 		this.props.clearAlert();
 	}
-
 }
 
 const mapStateToProps = (state, ownProps) => {

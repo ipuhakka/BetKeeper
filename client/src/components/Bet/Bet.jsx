@@ -20,9 +20,11 @@ class Bet extends Component{
   render(){
     let small = "Odd: " + this.props.bet.odd + " Bet: " + this.props.bet.bet;
     let result = "Unresolved";
+
     if (this.props.bet.bet_won){
       result = "Won";
-    } else if (!this.props.bet.bet_won && this.props.bet.bet_won !== null){
+    }
+    else if (!this.props.bet.bet_won && this.props.bet.bet_won !== null){
       result = "Lost";
     }
 
@@ -47,6 +49,7 @@ class Bet extends Component{
   }
 
   renderAlert = () => {
+
     if (this.state.showAlert) {
       return (
         <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
@@ -66,6 +69,7 @@ class Bet extends Component{
 
   renderIsInFoldersList = () => {
     let i = -1;
+    
     return this.props.foldersOfBet.map(item => {
       i = i + 1;
       return <Tag key={i} value={item} onClick={this.onPressedDelete}/>;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import PropTypes from 'prop-types';
@@ -57,13 +58,12 @@ class Menu extends Component{
 	}
 }
 
-Menu.defaultProps = {
-	loading: false
-};
-
 Menu.propTypes = {
-  disable: PropTypes.array,
-	loading: PropTypes.bool
+  disable: PropTypes.array
 };
 
-export default Menu;
+const mapStateToProps = (state, ownProps) => {
+  return { ...state.loading};
+};
+
+export default connect(mapStateToProps)(Menu);
