@@ -26,7 +26,7 @@ class Info extends Component{
 		}
 
 		const transitionStyles = {
-			entering: {opacity: 0.7, display: 'inherit'},
+			entering: {opacity: 1, display: 'inherit'},
 			entered: {opacity: 1},
 			exited: {opacity: 0, display: 'none'}
 		}
