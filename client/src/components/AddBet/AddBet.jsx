@@ -139,6 +139,7 @@ class AddBet extends Component{
 
   //Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
 	addBet = () => {
+
 		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
 			this.setAlertState("Decimal given were in invalid format", "Invalid input");
 			return;
