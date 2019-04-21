@@ -256,7 +256,7 @@ module.exports = {
   Parameters bet, odd, and name are inputted as null, if they are
   not to be changed.
 
-  bet_won is null if bet is still not resolved, otherwise it's a boolean.
+  bet_won: -1 = unresolved, 0 = lost, 1 = won
 
   Returns true when bet was successfully modified, false when not, NULL
   on catching error in request.
@@ -269,12 +269,8 @@ module.exports = {
     }
 
     const db = require('better-sqlite3')(config.getConfig().db_path);
-    let bet_result = -1;
-    if (bet_won !== null){
-      bet_result = bet_won ? 1 : 0;
-    }
 
-    let params = [bet_result];
+    let params = [bet_won];
     let query = 'UPDATE bets SET bet_won = ?';
 
     if (bet !== null){

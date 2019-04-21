@@ -196,13 +196,13 @@ describe('delete_bet_from_folders', function(){
 
 describe('modify_bet', function(){
   it('returns true on success', function(done){
-    let res = bets.modify_bet(5, 1, true, 100, 2, "test name");
+    let res = bets.modify_bet(5, 1, 1, 100, 2, "test name");
     expect(res).to.equal(true);
     done();
   });
 
   it('does not modify null bet, odd & name', function(done){
-    let res = bets.modify_bet(5, 1, false, 500, null, null);
+    let res = bets.modify_bet(5, 1, 0, 500, null, null);
     let bet = bets.get_bet(5);
     expect(bet.bet).to.equal(500);
     expect(bet.name).to.equal('test name');
@@ -211,13 +211,13 @@ describe('modify_bet', function(){
   });
 
   it('returns false on modifying unknown bet', function(done){
-    let res = bets.modify_bet(19, 1, true, 100, 2, "");
+    let res = bets.modify_bet(19, 1, 1, 100, 2, "");
     expect(res).to.equal(false);
     done();
   });
 
   it('returns false on modifying another users bet', function(done){
-    let res = bets.modify_bet(4, 1, true, 100, 2, "");
+    let res = bets.modify_bet(4, 1, 1, 100, 2, "");
     expect(res).to.equal(false);
     done();
   });
