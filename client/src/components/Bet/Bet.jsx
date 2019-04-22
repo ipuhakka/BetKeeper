@@ -10,7 +10,7 @@ import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Radio from 'react-bootstrap/lib/Radio';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
-import {betResultToRadioButtonValue} from '../../js/utils.js';
+import {betResultToRadioButtonValue, isValidDouble, isValidString} from '../../js/utils.js';
 import './Bet.css';
 
 class Bet extends Component{
@@ -143,6 +143,24 @@ class Bet extends Component{
   */
   updateBet = () => {
     const state = this.state;
+
+    if (!isValidString(state.name)){
+      store.dispatch({type: 'SET_ALERT_STATUS',
+        status: -1,
+        message: "Name contains invalid characters"
+      });
+
+      return;
+    }
+
+    if (!isValidDouble(state.bet) || !isValidDouble(state.odd)){
+      store.dispatch({type: 'SET_ALERT_STATUS',
+				status: -1,
+				message: "Invalid decimal values given"
+			});
+
+			return;
+    }
 
     let modifiedBet = {
       name: state.name,
