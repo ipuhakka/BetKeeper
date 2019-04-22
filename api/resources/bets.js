@@ -158,7 +158,7 @@ module.exports = {
     Responses:
       200 OK with bet id for modified bet. Body includes array addedToFolders, if
         bet was added to folders.
-      400 Bad request, if decimals arent numeric,
+      400 Bad request, if decimals arent numeric, or bet is missing bet_won attribute.
       401 Unauthorized, on trying to modify other users bet or if
         authorization token is invalid,
       404 Not found, if bet to be modified does not exist.

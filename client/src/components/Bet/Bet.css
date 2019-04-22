@@ -1,5 +1,18 @@
 .imageB{
   cursor: pointer;
+  margin-left: 3px;
+}
+
+.actionsDiv{
+  float: right;
+}
+
+.trash{
+  color: red;
+}
+
+.save{
+  color:green;
 }
 
 .listItem{

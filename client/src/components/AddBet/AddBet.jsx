@@ -10,6 +10,7 @@ import Radio from 'react-bootstrap/lib/Radio';
 import Modal from 'react-bootstrap/lib/Modal';
 import Tag from '../Tag/Tag.jsx';
 import Search from '../Search/Search.jsx';
+import {isValidDouble, isValidString} from '../../js/utils.js';
 import './AddBet.css';
 
 class AddBet extends Component{
@@ -139,10 +140,24 @@ class AddBet extends Component{
 
   //Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
 	addBet = () => {
-		if (Number.isNaN(this.state.bet) || Number.isNaN(this.state.odd)){
-			this.setAlertState("Decimal given were in invalid format", "Invalid input");
-			return;
-		}
+
+    if (!isValidString(this.state.name)){
+      store.dispatch({type: 'SET_ALERT_STATUS',
+        status: -1,
+        message: "Name contains invalid characters"
+      });
+
+      return;
+    }
+
+    if (!isValidDouble(this.state.bet) || !isValidDouble(this.state.odd)){
+      store.dispatch({type: 'SET_ALERT_STATUS',
+        status: -1,
+        message: "Invalid decimal values given"
+      });
+
+      return;
+    }
 
 		var selectedFolders = this.state.selected;
 
