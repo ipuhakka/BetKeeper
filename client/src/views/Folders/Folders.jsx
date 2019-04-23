@@ -12,6 +12,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import {isValidString} from '../../js/utils.js';
 import './Folders.css';
 
 class Folders extends Component {
@@ -110,6 +111,15 @@ class Folders extends Component {
 	}
 
 	addFolder = () => {
+		if (!isValidString(this.state.newFolder)){
+			store.dispatch({type: 'SET_ALERT_STATUS',
+				status: -1,
+				message: "Name contains invalid characters"
+			});
+
+			return;
+		}
+
 		store.dispatch({type: 'POST_FOLDER', payload: {
       newFolderName: this.state.newFolder
     	}
