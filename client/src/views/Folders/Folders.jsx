@@ -41,12 +41,12 @@ class Folders extends Component {
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
+				<Confirm bsStyle="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
 						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} bsStyle="warning">Delete</Button>
-						<Confirm headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 					</Col>
 					<Col className="col-md-6 col-xs-12">
 						<FormControl
