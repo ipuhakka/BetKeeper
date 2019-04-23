@@ -169,8 +169,6 @@ class Bet extends Component{
       bet_won: parseInt(state.betResult, 10)
     }
 
-    //TODO: Handlaa epäkelvot arvot
-
     store.dispatch({type: 'PUT_BET', payload: {
         data: modifiedBet,
         bet_id: this.props.bet.bet_id

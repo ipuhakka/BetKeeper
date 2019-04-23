@@ -9,6 +9,7 @@ import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
 import Row from 'react-bootstrap/lib/Grid';
 import Col from 'react-bootstrap/lib/Grid';
 import FormControl from 'react-bootstrap/lib/FormControl';
+import Confirm from '../../components/Confirm/Confirm.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
@@ -23,7 +24,8 @@ class Folders extends Component {
 			disabled: [false, false, false, true, false],
 			folders: [],
 			deleteDisabled: true,
-			newFolder: ""
+			newFolder: "",
+			showConfirm: false
 		};
 	}
 
@@ -43,7 +45,8 @@ class Folders extends Component {
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
-						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.deleteFolder} bsStyle="warning">Delete</Button>
+						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} bsStyle="warning">Delete</Button>
+						<Confirm headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 					</Col>
 					<Col className="col-md-6 col-xs-12">
 						<FormControl
@@ -127,6 +130,8 @@ class Folders extends Component {
 	}
 
 	deleteFolder = () => {
+		this.toggleConfirm();
+
 		var folder = null;
 		for (var i = 0; i < this.state.folders.length; i++){
 			if (this.state.folders[i].selected)
@@ -142,6 +147,11 @@ class Folders extends Component {
   	});
 	}
 
+	toggleConfirm = () => {
+		this.setState({
+			showConfirm: !this.state.showConfirm
+		});
+	}
 	//get folders.
 	onLoad = () => {
 		this.props.fetchFolders();
