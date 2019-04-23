@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';
-import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
 import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Radio from 'react-bootstrap/lib/Radio';
+import Confirm from '../Confirm/Confirm.jsx';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
 import {betResultToRadioButtonValue, isValidDouble, isValidString} from '../../js/utils.js';
@@ -33,6 +32,7 @@ class Bet extends Component{
 
     return (
       <div>
+        <Confirm visible={this.state.showAlert} bsStyle="warning" headerText="Delete bet?" confirmAction={this.deleteBet} cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
           <i className="imageB trash fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
           <i className="imageB save fas fa-save fa-2x" onClick={this.updateBet.bind(this, null)}></i>
@@ -54,7 +54,6 @@ class Bet extends Component{
             </FormGroup>
           </FormGroup>
         </Form>
-        {this.renderAlert()}
         <div className="tagDiv">
           {this.renderIsInFoldersList()}
         </div>
@@ -63,25 +62,6 @@ class Bet extends Component{
         </div>
       </div>
     )
-  }
-
-  renderAlert = () => {
-
-    if (this.state.showAlert) {
-      return (
-        <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
-          <h4>{"Delete bet?"}</h4>
-          <p>
-            <Button bsStyle="danger" onClick={this.deleteBet}>Delete</Button>
-            <span> or </span>
-            <Button onClick={this.handleDismiss}>Cancel</Button>
-          </p>
-        </Alert>
-      );
-    }
-    else {
-      return null;
-    }
   }
 
   renderIsInFoldersList = () => {
@@ -168,8 +148,6 @@ class Bet extends Component{
       odd: parseFloat(state.odd),
       bet_won: parseInt(state.betResult, 10)
     }
-
-    //TODO: Handlaa epäkelvot arvot
 
     store.dispatch({type: 'PUT_BET', payload: {
         data: modifiedBet,
