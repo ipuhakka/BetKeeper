@@ -12,17 +12,11 @@ class Confirm extends Component{
     if (props.visible){
 
       return (
-          <Alert bsStyle="danger">
-            <h4>
-              { props.headerText !== undefined ?
-               props.headerText : 'Confirm action'}
-            </h4>
+          <Alert bsStyle={props.bsStyle}>
+            <h4>{props.headerText}</h4>
             <p>
-              <Button onClick={props.cancelAction} bsStyle="danger">{props.cancelText !== undefined ?
-                props.cancelText : "Cancel"}
-              </Button>
-              <Button onClick={props.confirmAction} bsStyle="success">{props.confirmText !== undefined ?
-                props.confirmText : "Confirm"}
+              <Button onClick={props.cancelAction} bsStyle="danger">{props.cancelText}</Button>
+              <Button onClick={props.confirmAction} bsStyle="success">{props.confirmText}
               </Button>
             </p>
           </Alert>
@@ -33,13 +27,21 @@ class Confirm extends Component{
   }
 }
 
+Confirm.defaultProps = {
+  confirmText: 'Confirm',
+  cancelText: 'Cancel',
+  headerText: 'Confirm action',
+  bsStyle: 'danger'
+}
+
 Confirm.propTypes = {
   visible: PropTypes.bool.isRequired,
   confirmAction: PropTypes.func.isRequired,
   cancelAction: PropTypes.func.isRequired,
   confirmText: PropTypes.string,
   cancelText: PropTypes.string,
-  headerText: PropTypes.string
+  headerText: PropTypes.string,
+  bsStyle: PropTypes.string
 };
 
 export default Confirm;
