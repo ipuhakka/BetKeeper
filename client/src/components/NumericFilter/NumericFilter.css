@@ -1,0 +1,19 @@
+.numericFilter{
+  background-color: #F9F9F9;
+  width: 100%;
+  display: inline-block;
+}
+
+.filterSmall{
+  float: left;
+  width: 25%;
+}
+
+.filterLarge{
+  width: 50%;
+}
+
+.selectOption{
+  float: left;
+  width: 50%;
+}
