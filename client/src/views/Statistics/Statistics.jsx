@@ -11,7 +11,7 @@ import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
-import NumericFilter from '../../components/NumericFilter/NumericFilter.jsx';
+import Filter from '../../components/Filter/Filter.jsx';
 import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
 import * as Stats from '../../js/Stats.js';
 import './Statistics.css';
@@ -85,7 +85,7 @@ class Statistics extends Component{
 								onUpdate={this.setSelectedDropdownItem.bind(this)}
 								stateKey={"folderSelected"}>
 							</Dropdown>
-							<NumericFilter/>
+							<Filter type="number"/>
 							{table}
 						</Col>
 					</Row>

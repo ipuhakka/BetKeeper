@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Dropdown from '../Dropdown/Dropdown.jsx';
-import './NumericFilter.css';
+import './Filter.css';
 
 const selections =
   [
@@ -14,7 +14,7 @@ const selections =
     'Under'
   ];
 
-class NumericFilter extends Component{
+class Filter extends Component{
   constructor(props){
     super(props);
 
@@ -22,11 +22,25 @@ class NumericFilter extends Component{
       selectedfilterOptionKey: 1,
       higherThan: 0,
       lowerThan: 100,
-      singleFilterValue: 0
+      singleNumericFilterValue: 0,
+      stringFilter: ''
     }
   }
 
   render(){
+    const {props} = this;
+
+    if (props.type === "number"){
+      return this.renderNumericFilter();
+    }
+    else if (props.type === "text"){
+      return this.renderTextFilter();
+    }
+
+    return null;
+  }
+
+  renderNumericFilter = () => {
     const {state} = this;
 
     let form;
@@ -39,18 +53,29 @@ class NumericFilter extends Component{
     }
     else {
       form = <Form>
-              <FormControl className="filterLarge" type="number" value={state.singleFilterValue}
-                onChange={this.setValue.bind(this, "singleFilterValue")}/>
+              <FormControl className="filterLarge" type="number" value={state.singleNumericFilterValue}
+                onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>
             </Form>;
     }
 
-    return(<FormGroup className="numericFilter">
+    return(<FormGroup className="filter">
             <div className="selectOption">
               <Dropdown className="selectOption" defaultKey={1} stateKey={"selectedfilterOptionKey"} id={999}
                 data={selections} title="Bet" onUpdate={this.updateSelection}/>
               </div>
             {form}
           </FormGroup>);
+  }
+
+  renderTextFilter = () => {
+    const {props, state} = this;
+
+    return(
+      <Form>
+          <ControlLabel className="filterSmall">{props.label}</ControlLabel>
+          <FormControl className="filterLarge" type="text" value={state.stringFilter}
+           onChange={this.setValue.bind(this, "stringFilter")}/>
+        </Form>);
   }
 
   /*
@@ -69,9 +94,14 @@ class NumericFilter extends Component{
   }
 }
 
-/*NumericFilter.propTypes = {
+/*Filter.propTypes = {
   arrayToFilter: PropTypes.array.isRequired,
   filteredKey: PropTypes.string.isRequired
 };*/
 
-export default NumericFilter;
+Filter.propTypes = {
+  label: PropTypes.string,
+  type: PropTypes.string.isRequired //'text', 'number'
+};
+
+export default Filter;
