@@ -4,16 +4,12 @@
   display: inline-block;
 }
 
-.filterSmall{
-  float: left;
+.small{
   width: 25%;
-}
-
-.filterLarge{
-  width: 50%;
-}
-
-.selectOption{
   float: left;
+}
+
+.large{
   width: 50%;
+  float: left;
 }

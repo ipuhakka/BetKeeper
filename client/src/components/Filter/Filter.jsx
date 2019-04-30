@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Form from 'react-bootstrap/lib/Form';
 import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
 
@@ -23,59 +21,63 @@ class Filter extends Component{
       higherThan: 0,
       lowerThan: 100,
       singleNumericFilterValue: 0,
-      stringFilter: ''
+      stringFilter: '',
+      filterOn: false
     }
   }
 
   render(){
     const {props} = this;
+    let filterControls;
 
     if (props.type === "number"){
-      return this.renderNumericFilter();
+      filterControls = this.renderNumericFilter();
     }
     else if (props.type === "text"){
-      return this.renderTextFilter();
+      filterControls = this.renderTextFilter();
+    }
+    else {
+      return null;
     }
 
-    return null;
+    return(
+        <div className="filter">
+            <FormControl className="small" type="checkbox" onChange={this.toggleChecked}/>
+            <div className="small">
+            <Dropdown defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1}
+                data={selections} title="Bet" onUpdate={this.updateSelection}/>
+            </div>
+            {filterControls}
+        </div>);
   }
 
   renderNumericFilter = () => {
     const {state} = this;
 
-    let form;
-
     if (state.selectedfilterOptionKey === 0){
-      form = <Form>
-              <FormControl className="filterSmall" type="number" value={state.higherThan} onChange={this.setValue.bind(this, "higherThan")}/>
-              <FormControl className="filterSmall" type="number" value={state.lowerThan} onChange={this.setValue.bind(this, "lowerThan")}/>
-            </Form>;
+      return <div>
+                <FormControl disabled={!state.filterOn} className="small" type="number" value={state.higherThan}
+                  onChange={this.setValue.bind(this, "higherThan")}/>
+                <FormControl disabled={!state.filterOn} className="small" type="number" value={state.lowerThan}
+                  onChange={this.setValue.bind(this, "lowerThan")}/>
+              </div>;
     }
     else {
-      form = <Form>
-              <FormControl className="filterLarge" type="number" value={state.singleNumericFilterValue}
-                onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>
-            </Form>;
+      return <FormControl disabled={!state.filterOn} className="large" type="number" value={state.singleNumericFilterValue}
+                onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>;
     }
 
-    return(<FormGroup className="filter">
-            <div className="selectOption">
-              <Dropdown className="selectOption" defaultKey={1} stateKey={"selectedfilterOptionKey"} id={999}
-                data={selections} title="Bet" onUpdate={this.updateSelection}/>
-              </div>
-            {form}
-          </FormGroup>);
   }
 
   renderTextFilter = () => {
     const {props, state} = this;
 
     return(
-      <Form>
-          <ControlLabel className="filterSmall">{props.label}</ControlLabel>
-          <FormControl className="filterLarge" type="text" value={state.stringFilter}
+        <div>
+          <ControlLabel className="small">{props.label}</ControlLabel>
+          <FormControl disabled={!state.filterOn} className="large" type="text" value={state.stringFilter}
            onChange={this.setValue.bind(this, "stringFilter")}/>
-        </Form>);
+        </div>);
   }
 
   /*
@@ -85,6 +87,12 @@ class Filter extends Component{
     this.setState({
       [key]: value
     })
+  }
+
+  toggleChecked = () => {
+    this.setState({
+      filterOn: !this.state.filterOn
+    });
   }
 
   setValue = (param, e) => {
