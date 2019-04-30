@@ -1,4 +1,53 @@
 
+/*
+  Filters a list. FilterOption is created
+  per filter: When filtering number between values,
+  options are created for both under and over values.
+
+  filterOptions:
+  [
+    {
+      key: filtered field key
+      option: 'over', 'under', 'contains', 'is'. Contains only for string type, is for bool. Over and under
+      exclude searched value.
+      value: //filtered value.
+    }
+  ]
+*/
+export function filterList(betList, filterOptions){
+
+  filterOptions.forEach(filterOption => {
+
+    switch (filterOption.option){
+
+      case 'over':
+        betList = betList.filter(bet =>
+          bet[filterOption.key] > filterOption.value);
+        break;
+
+      case 'under':
+        betList = betList.filter(bet =>
+          bet[filterOption.key] < filterOption.value);
+        break;
+
+      case 'is':
+        betList = betList.filter(bet =>
+          bet[filterOption.key] === filterOption.value);
+        break;
+
+      case 'contains':
+        betList = betList.filter(bet =>
+          bet[filterOption.key].includes(filterOption.value))
+        break;
+        
+      default:
+        break;
+    }
+  });
+
+  return betList;
+}
+
 export function betResultToRadioButtonValue(betResult){
   switch(betResult){
     case false:
