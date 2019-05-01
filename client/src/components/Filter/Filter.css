@@ -1,7 +1,14 @@
 .filter{
-  background-color: #F9F9F9;
   width: 100%;
   display: inline-block;
+}
+
+.checked{
+  background-color: #FFFFFF;
+}
+
+.unchecked{
+  background-color: #F9F9F9;
 }
 
 .small{

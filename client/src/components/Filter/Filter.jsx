@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import FormControl from 'react-bootstrap/lib/FormControl';
+import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
 
@@ -27,7 +28,7 @@ class Filter extends Component{
   }
 
   render(){
-    const {props} = this;
+    const {props, state} = this;
     let filterControls;
 
     if (props.type === "number"){
@@ -41,8 +42,8 @@ class Filter extends Component{
     }
 
     return(
-        <div className="filter">
-            <FormControl className="small" type="checkbox" onChange={this.toggleChecked}/>
+        <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
+            <Checkbox className="small" onChange={this.toggleChecked}/>
             <div className="small">
             <Dropdown defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1}
                 data={selections} title="Bet" onUpdate={this.updateSelection}/>
@@ -81,6 +82,16 @@ class Filter extends Component{
   }
 
   /*
+  * Returns an array of filterOptions with key on which filter is applied,
+  * value used in filter and filter option ('over', 'under', 'is', 'contains').
+  */
+  onUpdate = () => {
+    {state, props} = this;
+
+    //TODO: create and return filters to parent component
+  }
+
+  /*
     Updates state key with new value.
   */
   updateSelection = (value, key) => {
@@ -99,6 +110,8 @@ class Filter extends Component{
     this.setState({
       [param]: e.target.value
     });
+
+    //TODO: onupdate must be called here
   }
 }
 
@@ -109,7 +122,7 @@ class Filter extends Component{
 
 Filter.propTypes = {
   label: PropTypes.string,
-  type: PropTypes.string.isRequired //'text', 'number'
+  type: PropTypes.string.isRequired //'text', 'number', 'bool'
 };
 
 export default Filter;
