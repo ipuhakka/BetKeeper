@@ -5,6 +5,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
+import {getFilterOptions} from '../../js/filter.js';
 
 const selections =
   [
@@ -86,9 +87,16 @@ class Filter extends Component{
   * value used in filter and filter option ('over', 'under', 'is', 'contains').
   */
   onUpdate = () => {
-    {state, props} = this;
+    const {state, props} = this;
 
-    //TODO: create and return filters to parent component
+    props.onUpdate(
+      getFilterOptions(
+        props.type,
+        this.getFilteredValues(),
+        props.filteredKey,
+        props.type === 'number' ?
+          selections[state.selectedfilterOptionKey] : null
+      ));
   }
 
   /*
@@ -111,18 +119,33 @@ class Filter extends Component{
       [param]: e.target.value
     });
 
-    //TODO: onupdate must be called here
+    this.onUpdate();
+  }
+
+  getFilteredValues = () => {
+    const {state, props} = this;
+
+    if (props.type === 'number'){
+      if (state.selectedfilterOptionKey[0]){ //between numbers
+        return [state.lowerThan, state.higherThan];
+      } else{
+        return [state.singleNumericFilterValue];
+      }
+    }
+
+    else if (props.type === 'text'){
+      return [state.stringFilter];
+    }
+
+    //TODO: add boolean handling
   }
 }
 
-/*Filter.propTypes = {
-  arrayToFilter: PropTypes.array.isRequired,
-  filteredKey: PropTypes.string.isRequired
-};*/
-
 Filter.propTypes = {
   label: PropTypes.string,
-  type: PropTypes.string.isRequired //'text', 'number', 'bool'
+  type: PropTypes.string.isRequired, //'text', 'number', 'bool'
+  filteredKey: PropTypes.string.isRequired,
+  onUpdate: PropTypes.func.isRequired
 };
 
 export default Filter;
