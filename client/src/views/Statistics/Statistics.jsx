@@ -17,6 +17,12 @@ import * as Stats from '../../js/Stats.js';
 import './Statistics.css';
 
 class Statistics extends Component{
+
+	onLoad = () => {
+		this.props.fetchFinishedBets();
+		this.props.fetchFolders();
+	}
+
 	constructor(props){
 		super(props);
 
@@ -210,6 +216,7 @@ class Statistics extends Component{
 		bets: []
 	} */
 	updateTable = (betFolder) => {
+
 		var moneyWon, moneyPlayed, moneyReturned, wonBets, playedBets, winPercentage, avgReturn, expectedReturn, verifiedReturn,
 		 oddMedian, oddMean, betMedian, betMean;
 		let name = betFolder.folder;
@@ -260,11 +267,6 @@ class Statistics extends Component{
 		this.setState({
 			sortedBetStatistics: sorted
 		});
-	}
-
-	onLoad = () => {
-		this.props.fetchFinishedBets();
-		this.props.fetchFolders();
 	}
 
 	getBetsFromFolders = (folders) => {

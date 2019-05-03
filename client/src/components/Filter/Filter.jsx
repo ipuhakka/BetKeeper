@@ -5,7 +5,7 @@ import FormControl from 'react-bootstrap/lib/FormControl';
 import Checkbox from 'react-bootstrap/lib/Checkbox';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
-import {getFilterOptions} from '../../js/filter.js';
+import {getFilterOptions, filterList} from '../../js/filter.js';
 
 const selections =
   [
@@ -14,6 +14,10 @@ const selections =
     'Under'
   ];
 
+/*
+TODO: Add redux handling for activeBetList &
+filter it in reducer.
+*/
 class Filter extends Component{
   constructor(props){
     super(props);
@@ -83,20 +87,22 @@ class Filter extends Component{
   }
 
   /*
-  * Returns an array of filterOptions with key on which filter is applied,
-  * value used in filter and filter option ('over', 'under', 'is', 'contains').
+  * Returns filtered array.
   */
   onUpdate = () => {
     const {state, props} = this;
 
     props.onUpdate(
-      getFilterOptions(
-        props.type,
-        this.getFilteredValues(),
-        props.filteredKey,
-        props.type === 'number' ?
-          selections[state.selectedfilterOptionKey] : null
-      ));
+      filterList(
+        props.arrayToFilter,
+        getFilterOptions(
+          props.type,
+          this.getFilteredValues(),
+          props.filteredKey,
+          props.type === 'number' ?
+            selections[state.selectedfilterOptionKey] : null
+        ))
+      );
   }
 
   /*
@@ -145,6 +151,7 @@ Filter.propTypes = {
   label: PropTypes.string,
   type: PropTypes.string.isRequired, //'text', 'number', 'bool'
   filteredKey: PropTypes.string.isRequired,
+  arrayToFilter: PropTypes.array.isRequired,
   onUpdate: PropTypes.func.isRequired
 };
 

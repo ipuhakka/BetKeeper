@@ -13,30 +13,30 @@
     }
   ]
 */
-export function filterList(betList, filterOptions){
+export function filterList(list, filterOptions){
 
   filterOptions.forEach(filterOption => {
 
     switch (filterOption.option){
 
       case 'over':
-        betList = betList.filter(bet =>
-          bet[filterOption.key] > filterOption.value);
+        list = list.filter(item =>
+          item[filterOption.key] > filterOption.value);
         break;
 
       case 'under':
-        betList = betList.filter(bet =>
-          bet[filterOption.key] < filterOption.value);
+        list = list.filter(item =>
+          item[filterOption.key] < filterOption.value);
         break;
 
       case 'is':
-        betList = betList.filter(bet =>
-          bet[filterOption.key] === filterOption.value);
+        list = list.filter(item =>
+          item[filterOption.key] === filterOption.value);
         break;
 
       case 'contains':
-        betList = betList.filter(bet =>
-          bet[filterOption.key].includes(filterOption.value))
+        list = list.filter(item =>
+          item[filterOption.key].includes(filterOption.value))
         break;
 
       default:
@@ -44,7 +44,7 @@ export function filterList(betList, filterOptions){
     }
   });
 
-  return betList;
+  return list;
 }
 
 /*
