@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';
-import Button from 'react-bootstrap/lib/Button';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Radio from 'react-bootstrap/lib/Radio';
-import Modal from 'react-bootstrap/lib/Modal';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormCheck from 'react-bootstrap/FormCheck';
+import Modal from 'react-bootstrap/Modal';
 import Tag from '../Tag/Tag.jsx';
 import Search from '../Search/Search.jsx';
 import {isValidDouble, isValidString} from '../../js/utils.js';
@@ -37,34 +36,34 @@ class AddBet extends Component{
         <Modal.Body>
           <Form>
             <FormGroup className = "formMargins">
-              <ControlLabel>{"Bet"}</ControlLabel>
+              <Form.Label>{"Bet"}</Form.Label>
               <FormControl
                 type="number"
                 value={this.state.bet}
                 onChange={this.setValue.bind(this, "bet")}
                 />
-              <ControlLabel>{"Odd"}</ControlLabel>
+              <Form.Label>{"Odd"}</Form.Label>
               <FormControl
                 type="number"
                 value={this.state.odd}
                 onChange={this.setValue.bind(this, "odd")}/>
-              <ControlLabel>{"Name"}</ControlLabel>
+              <Form.Label>{"Name"}</Form.Label>
               <FormControl
                 type="text"
                 value={this.state.name}
                 onChange={this.setValue.bind(this, "name")}/>
             </FormGroup>
             <FormGroup type="radio" className="formMargins" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
-              <Radio name="radioGroup" value={-1} inline defaultChecked={this.state.betResult === "-1"}>Unresolved</Radio>{' '}
-              <Radio name="radioGroup" value={1} inline defaultChecked={this.state.betResult === "1"}>Won</Radio>{' '}
-              <Radio name="radioGroup" value={0} inline defaultChecked={this.state.betResult === "0"}>Lost</Radio>
+              <FormCheck name="radioGroup" value={-1} inline defaultChecked={this.state.betResult === "-1"}>Unresolved</FormCheck>{' '}
+              <FormCheck name="radioGroup" value={1} inline defaultChecked={this.state.betResult === "1"}>Won</FormCheck>{' '}
+              <FormCheck name="radioGroup" value={0} inline defaultChecked={this.state.betResult === "0"}>Lost</FormCheck>
             </FormGroup>
           </Form>
           <div className="tagDiv">
             {this.renderTags()}
           </div>
           <Search showCount={10} clearOnClick={true} data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
-          <Button disabled={this.state.betResult === null} bsStyle="primary" className="button" onClick={this.addBet}>New bet</Button>
+          <Button disabled={this.state.betResult === null} variant="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
     );

@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
-import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import Row from 'react-bootstrap/lib/Grid';
-import Col from 'react-bootstrap/lib/Grid';
-import FormControl from 'react-bootstrap/lib/FormControl';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Row from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Container';
+import FormControl from 'react-bootstrap/FormControl';
 import Confirm from '../../components/Confirm/Confirm.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
@@ -41,12 +41,12 @@ class Folders extends Component {
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
-				<Confirm bsStyle="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
+				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
 				<Row className="show-grid">
 					<Col className="col-md-6 col-xs-12">
 						<ListGroup>{folders}</ListGroup>
-						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} bsStyle="warning">Delete</Button>
+						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
 					</Col>
 					<Col className="col-md-6 col-xs-12">
 						<FormControl
@@ -54,7 +54,7 @@ class Folders extends Component {
 							value={this.state.newFolder}
 							onChange={this.handleNewFolderChange}
 							placeholder="Add new folder"/>
-						<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} bsStyle="success">{"Create folder"}</Button>
+						<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} variant="success">{"Create folder"}</Button>
 					</Col>
 				</Row>
 			</div>
@@ -70,7 +70,7 @@ class Folders extends Component {
 	renderFoldersList = () => {
 		var items = [];
 		for (var i = 0; i < this.state.folders.length; i++){
-			items.push(<ListGroupItem onClick={this.clickedListItem.bind(this, i)} key={i} bsStyle={this.state.folders[i].selected ? 'info': null}>{this.state.folders[i].name}</ListGroupItem>)
+			items.push(<ListGroupItem onClick={this.clickedListItem.bind(this, i)} key={i} variant={this.state.folders[i].selected ? 'info': null}>{this.state.folders[i].name}</ListGroupItem>)
 		}
 		if (items.length > 0){
 			return items;

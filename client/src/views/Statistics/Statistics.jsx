@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
-import Table from 'react-bootstrap/lib/Table';
-import Row from 'react-bootstrap/lib/Grid';
-import Col from 'react-bootstrap/lib/Grid';
+import Table from 'react-bootstrap/Table';
+import Row from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Container';
 import BarGraph from '../../components/BarGraph/BarGraph.jsx';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
@@ -77,7 +77,7 @@ class Statistics extends Component{
 						</Col>
 						<Col className="col-md-6 col-xs-12">
 							<Dropdown
-								bsStyle="primary"
+								variant="primary"
 								title={"Show folder"}
 								id={2}
 								data={this.folders()}

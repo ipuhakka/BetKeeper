@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Well from 'react-bootstrap/lib/Well';
-import Button from 'react-bootstrap/lib/Button';
+import Button from 'react-bootstrap/Button';
 import './Card.css';
 
 /*
@@ -11,12 +10,12 @@ class Card extends Component{
 
   render(){
     return(
-      <Well onClick={() => {this.props.onClick()}} className="card">
+      <div onClick={() => {this.props.onClick()}} className="card">
         <i className={this.props.image}/>
         <h3>{this.props.title}</h3>
         <div>{this.props.text}</div>
         <Button className="cardButton">{"Go to"}</Button>
-      </Well>
+      </div>
     );
   };
 };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 
 class Confirm extends Component{
 
@@ -12,11 +12,11 @@ class Confirm extends Component{
     if (props.visible){
 
       return (
-          <Alert bsStyle={props.bsStyle}>
+          <Alert variant={props.variant}>
             <h4>{props.headerText}</h4>
             <p>
-              <Button onClick={props.cancelAction} bsStyle="danger">{props.cancelText}</Button>
-              <Button onClick={props.confirmAction} bsStyle="success">{props.confirmText}
+              <Button onClick={props.cancelAction} variant="danger">{props.cancelText}</Button>
+              <Button onClick={props.confirmAction} variant="success">{props.confirmText}
               </Button>
             </p>
           </Alert>
@@ -31,7 +31,7 @@ Confirm.defaultProps = {
   confirmText: 'Confirm',
   cancelText: 'Cancel',
   headerText: 'Confirm action',
-  bsStyle: 'danger'
+  variant: 'danger'
 }
 
 Confirm.propTypes = {
@@ -41,7 +41,7 @@ Confirm.propTypes = {
   confirmText: PropTypes.string,
   cancelText: PropTypes.string,
   headerText: PropTypes.string,
-  bsStyle: PropTypes.string
+  variant: PropTypes.string
 };
 
 export default Confirm;

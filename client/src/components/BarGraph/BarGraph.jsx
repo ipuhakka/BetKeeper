@@ -16,7 +16,7 @@ class BarGraph extends Component {
     return(
       <div>
         <Dropdown
-          bsStyle="primary"
+          variant="primary"
           title={"Overview"}
           id={1}
           data={this.props.optionLabels}

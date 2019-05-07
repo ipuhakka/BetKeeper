@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchBets, fetchUnresolvedBets} from '../../actions/betsActions';
 import {fetchFolders} from '../../actions/foldersActions';
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
-import Row from 'react-bootstrap/lib/Grid';
-import Col from 'react-bootstrap/lib/Grid';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import DropdownItem from 'react-bootstrap/DropdownItem';
+import Row from 'react-bootstrap/Container';
+import Col from 'react-bootstrap/Container';
 import AddBet from '../../components/AddBet/AddBet.jsx';
 import Bet from '../../components/Bet/Bet.jsx';
 import Header from '../../components/Header/Header.jsx';
@@ -51,7 +51,7 @@ class Bets extends Component{
           </Col>
           <Col className="col-md-6 col-xs-12 col-md-pull-6">
             <DropdownButton
-              bsStyle="primary"
+              variant="primary"
               title={"Show from folder"}
               id={1}>
               {menuItems}
@@ -94,7 +94,7 @@ class Bets extends Component{
 				result = "Lost";
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
-			betItems.push(<ListGroupItem onClick={this.onPressedBet.bind(this, i)} bsStyle={isSelected ?  'info': null} key={i} header={bets[i].name + " " + bets[i].datetime}>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet + " " + result}</ListGroupItem>)
+			betItems.push(<ListGroupItem onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null} key={i} header={bets[i].name + " " + bets[i].datetime}>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet + " " + result}</ListGroupItem>)
 		}
 		return betItems;
 	}
@@ -102,20 +102,22 @@ class Bets extends Component{
   renderFolderList = () => {
     var folderItems = [];
     for (var j = 0; j < this.props.foldersOfBet.length; j++){
-      folderItems.push(<ListGroupItem onClick={this.onPressedFolder.bind(this, j)} bsStyle={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroupItem>)
+      folderItems.push(<ListGroupItem onClick={this.onPressedFolder.bind(this, j)} variant={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroupItem>)
     }
     return folderItems;
   }
 
   renderDropdown = () => {
     var menuItems = [];
-    menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, -1)} key={-1} active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</MenuItem>);
+    menuItems.push(<DropdownItem onClick={this.showFromFolder.bind(this, -1)} key={-1}
+      active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
     var active = false;
     for (var k = 0; k < this.props.folders.length; k++){
       active = false;
       if (k === this.state.allFoldersSelected || k.toString() === this.state.allFoldersSelected)
         active = true;
-      menuItems.push(<MenuItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active} eventKey={k}>{this.props.folders[k]}</MenuItem>);
+      menuItems.push(<DropdownItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active}
+        eventKey={k}>{this.props.folders[k]}</DropdownItem>);
     }
 
     return menuItems;
