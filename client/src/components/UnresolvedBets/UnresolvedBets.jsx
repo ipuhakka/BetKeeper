@@ -4,8 +4,8 @@ import store from '../../store';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
-import FormCheck from 'react-bootstrap/FormCheck';
 
 class UnresolvedBets extends Component{
   constructor(props){
@@ -22,9 +22,9 @@ class UnresolvedBets extends Component{
       <div>
         <h4>Unresolved bets</h4>
         <ListGroup>{this.renderBetsList()}</ListGroup>
-        <FormGroup type="radio" className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
-            <FormCheck name="radioGroup" defaultChecked={this.state.betResult === "1"} value={1} inline>Won</FormCheck>{' '}
-            <FormCheck name="radioGroup" defaultChecked={this.state.betResult === "0"} value={0} inline>Lost</FormCheck>
+        <FormGroup className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
+            <Form.Check id="check-1" name="radioGroup" type="radio" label='Won' defaultChecked={parseInt(this.state.betResult) === 1} value={1} inline/>
+            <Form.Check id="check-2" name="radioGroup" type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} value={0} inline/>
         </FormGroup>
         <Button disabled={this.state.betResult === null || this.state.selectedBet === -1} variant="primary" className="button" onClick={this.updateResult}>Update result</Button>
       </div>);

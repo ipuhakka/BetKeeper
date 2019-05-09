@@ -4,8 +4,8 @@ import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
 import Table from 'react-bootstrap/Table';
-import Row from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import BarGraph from '../../components/BarGraph/BarGraph.jsx';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
@@ -68,14 +68,14 @@ class Statistics extends Component{
 				<Menu disable={this.state.disabled}></Menu>
 				<Info></Info>
 				<div>
-					<Row className="show-grid">
-						<Col className="col-md-6 col-xs-12">
+					<Row>
+						<Col md={6} xs={12}>
 							<BarGraph data={this.state.betStatistics} optionLabels={this.graphOptionLabels()} graphOptions={this.state.graphOptions} />
 							<div>
 								{overview}
 							</div>
 						</Col>
-						<Col className="col-md-6 col-xs-12">
+						<Col md={6} xs={12}>
 							<Dropdown
 								variant="primary"
 								title={"Show folder"}

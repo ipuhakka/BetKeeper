@@ -46,10 +46,13 @@ class Bet extends Component{
             <FormControl type="number" value={this.state.bet} onChange={this.setValue.bind(this, "bet")}/>
             <Form.Label>Odd</Form.Label>
             <FormControl type="number" value={this.state.odd} onChange={this.setValue.bind(this, "odd")}/>
-            <FormGroup type="radio" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
-              <FormCheck name="radioGroup" value={-1} inline defaultChecked={this.state.betResult === -1}>Unresolved</FormCheck>{' '}
-              <FormCheck name="radioGroup" value={1} inline defaultChecked={this.state.betResult === 1}>Won</FormCheck>{' '}
-              <FormCheck name="radioGroup" value={0} inline defaultChecked={this.state.betResult === 0}>Lost</FormCheck>
+            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
+              <FormCheck name="radioGroup" type="radio" value={-1} label="Unresolved" inline
+                defaultChecked={parseInt(this.state.betResult) === -1}/>
+              <FormCheck name="radioGroup" type="radio" value={1} inline label="Won"
+                defaultChecked={parseInt(this.state.betResult) === 1}/>
+              <FormCheck name="radioGroup" type="radio" value={0} inline label="Lost"
+                defaultChecked={parseInt(this.state.betResult) === 0}/>
             </FormGroup>
           </FormGroup>
         </Form>

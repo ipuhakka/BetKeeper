@@ -35,7 +35,7 @@ class Info extends Component{
 				<Transition in={this.props.status !== null}
 					timeout={{enter:300, exit: 500}}>
 					{status => (
-						<Alert className="info" style={{...transitionStyles[status]}} variant={style} onClose={this.dismiss}>
+						<Alert dismissible className="info" style={{...transitionStyles[status]}} variant={style} onClose={this.dismiss}>
 							<p>{this.props.statusMessage}</p>
 						</Alert>
 					)}

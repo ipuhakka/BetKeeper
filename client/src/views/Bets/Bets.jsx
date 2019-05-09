@@ -5,10 +5,10 @@ import {fetchBets, fetchUnresolvedBets} from '../../actions/betsActions';
 import {fetchFolders} from '../../actions/foldersActions';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import DropdownItem from 'react-bootstrap/DropdownItem';
-import Row from 'react-bootstrap/Container';
-import Col from 'react-bootstrap/Container';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import AddBet from '../../components/AddBet/AddBet.jsx';
 import Bet from '../../components/Bet/Bet.jsx';
 import Header from '../../components/Header/Header.jsx';
@@ -43,24 +43,26 @@ class Bets extends Component{
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={this.state.showModal} hide={this.hideModal} folders={this.props.folders}/>
-        <Row className="show-grid">
-          <Col className="col-md-6 col-xs-12 col-md-push-6">
-            <div className="betView">
-              {betView}
-            </div>
-          </Col>
-          <Col className="col-md-6 col-xs-12 col-md-pull-6">
-            <DropdownButton
-              variant="primary"
-              title={"Show from folder"}
-              id={1}>
-              {menuItems}
-            </DropdownButton>
-            <div className="betList">
-              <ListGroup>{betItems}</ListGroup>
-            </div>
-          </Col>
-        </Row>
+        <Container>
+          <Row>
+            <Col xs={12} md={{span: 6, order: 12}}>
+              <div className="betView">
+                {betView}
+              </div>
+            </Col>
+            <Col xs={12} md={6}>
+              <DropdownButton
+                variant="primary"
+                title={"Show from folder"}
+                id={1}>
+                {menuItems}
+              </DropdownButton>
+              <div className="betList">
+                <ListGroup>{betItems}</ListGroup>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>);
   }
 
@@ -94,7 +96,10 @@ class Bets extends Component{
 				result = "Lost";
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
-			betItems.push(<ListGroupItem onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null} key={i} header={bets[i].name + " " + bets[i].datetime}>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet + " " + result}</ListGroupItem>)
+			betItems.push(<ListGroup.Item action onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
+        key={i}>
+        {bets[i].name + " " + bets[i].datetime + " Odd: " + bets[i].odd + " Bet: " + bets[i].bet + " " + result}<
+        /ListGroup.Item>)
 		}
 		return betItems;
 	}
@@ -102,7 +107,8 @@ class Bets extends Component{
   renderFolderList = () => {
     var folderItems = [];
     for (var j = 0; j < this.props.foldersOfBet.length; j++){
-      folderItems.push(<ListGroupItem onClick={this.onPressedFolder.bind(this, j)} variant={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroupItem>)
+      folderItems.push(<ListGroup.Item action onClick={this.onPressedFolder.bind(this, j)}
+      variant={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroup.Item>)
     }
     return folderItems;
   }

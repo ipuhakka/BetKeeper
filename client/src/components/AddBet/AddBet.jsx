@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
-import FormCheck from 'react-bootstrap/FormCheck';
 import Modal from 'react-bootstrap/Modal';
 import Tag from '../Tag/Tag.jsx';
 import Search from '../Search/Search.jsx';
@@ -21,7 +20,7 @@ class AddBet extends Component{
       bet: 0.0,
       odd: 0.0,
       name: "",
-      betResult: null,
+      betResult: -1,
       dragging: false,
       draggedOutOfModal: false
     };
@@ -53,10 +52,10 @@ class AddBet extends Component{
                 value={this.state.name}
                 onChange={this.setValue.bind(this, "name")}/>
             </FormGroup>
-            <FormGroup type="radio" className="formMargins" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
-              <FormCheck name="radioGroup" value={-1} inline defaultChecked={this.state.betResult === "-1"}>Unresolved</FormCheck>{' '}
-              <FormCheck name="radioGroup" value={1} inline defaultChecked={this.state.betResult === "1"}>Won</FormCheck>{' '}
-              <FormCheck name="radioGroup" value={0} inline defaultChecked={this.state.betResult === "0"}>Lost</FormCheck>
+            <FormGroup id="checkResult" className="formMargins" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
+              <Form.Check name="betResult" id="check-1" value={-1} inline type="radio" label='Unresolved' defaultChecked={parseInt(this.state.betResult) === -1} />
+              <Form.Check name="betResult" id="check-2" value={1} inline type="radio" label='Won' defaultChecked={parseInt(this.state.betResult) === 1} />
+              <Form.Check name="betResult" id="check-3" value={0} inline type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} />
             </FormGroup>
           </Form>
           <div className="tagDiv">
@@ -132,6 +131,7 @@ class AddBet extends Component{
   }
 
   setValue = (param, e) => {
+
     this.setState({
       [param]: e.target.value
     });
