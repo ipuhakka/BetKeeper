@@ -18,7 +18,7 @@ class Menu extends Component{
 		return(
 			<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
 				<Nav.Item as="li">
-					<Nav.Link className="disabled" eventKey={0} disabled={this.props.disable[0]}>Home</Nav.Link>
+					<Nav.Link eventKey={0} disabled={this.props.disable[0]}>Home</Nav.Link>
 				</Nav.Item>
 				<Nav.Item as="li">
 					<Nav.Link eventKey={1} disabled={this.props.disable[1]}>Bets</Nav.Link>

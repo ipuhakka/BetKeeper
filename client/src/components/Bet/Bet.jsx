@@ -27,6 +27,16 @@ class Bet extends Component{
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    const {props} = this;
+
+    this.setState({
+      name: props.bet.name,
+      bet: props.bet.bet,
+      odd: props.bet.odd
+    });
+  }
+
   render(){
 
     return (

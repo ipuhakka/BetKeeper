@@ -13,12 +13,15 @@ class Confirm extends Component{
 
       return (
           <Alert variant={props.variant}>
-            <h4>{props.headerText}</h4>
-            <p>
-              <Button onClick={props.cancelAction} variant="danger">{props.cancelText}</Button>
-              <Button onClick={props.confirmAction} variant="success">{props.confirmText}
+            <Alert.Heading>{props.headerText}</Alert.Heading>
+            <div className="d-flex justify-content-center">
+              <Button onClick={props.cancelAction} variant="outline-danger">
+                {props.cancelText}
               </Button>
-            </p>
+              <Button onClick={props.confirmAction} variant="outline-success">
+              {props.confirmText}
+              </Button>
+          </div>
           </Alert>
         );
     }
@@ -38,8 +41,8 @@ Confirm.propTypes = {
   visible: PropTypes.bool.isRequired,
   confirmAction: PropTypes.func.isRequired,
   cancelAction: PropTypes.func.isRequired,
-  confirmText: PropTypes.string,
-  cancelText: PropTypes.string,
+  confirmText: PropTypes.string.isRequired,
+  cancelText: PropTypes.string.isRequired,
   headerText: PropTypes.string,
   variant: PropTypes.string
 };

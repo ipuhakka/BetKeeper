@@ -96,10 +96,13 @@ class Bets extends Component{
 				result = "Lost";
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
-			betItems.push(<ListGroup.Item action onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
+			betItems.push(<ListGroup.Item action
+        onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
         key={i}>
-        {bets[i].name + " " + bets[i].datetime + " Odd: " + bets[i].odd + " Bet: " + bets[i].bet + " " + result}<
-        /ListGroup.Item>)
+        <div>{bets[i].name + " " + bets[i].datetime}</div>
+        <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+        <div>{result}</div>
+        </ListGroup.Item>)
 		}
 		return betItems;
 	}

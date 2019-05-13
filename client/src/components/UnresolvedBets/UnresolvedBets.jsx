@@ -34,8 +34,11 @@ class UnresolvedBets extends Component{
     let bets = this.props.bets;
     var items = [];
     for (var i = bets.length - 1; i >= 0; i--){
-      items.push(<ListGroupItem header={bets[i].name + " " + bets[i].datetime} key={i} onClick={this.handleListClick.bind(this, i)} variant={this.state.selectedBet === i ? 'info' : null}>
-            {"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</ListGroupItem>)
+      items.push(<ListGroupItem action key={i}
+        onClick={this.handleListClick.bind(this, i)} variant={this.state.selectedBet === i ? 'info' : null}>
+            <div>{bets[i].name + " " + bets[i].datetime}</div>
+            <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+            </ListGroupItem>)
     }
     return items;
   }
