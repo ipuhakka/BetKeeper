@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {clearAlert} from '../../actions/alertActions';
-import Alert from 'react-bootstrap/lib/Alert';
+import Alert from 'react-bootstrap/Alert';
 import {Transition} from 'react-transition-group';
 import './Info.css';
 
@@ -35,7 +35,7 @@ class Info extends Component{
 				<Transition in={this.props.status !== null}
 					timeout={{enter:300, exit: 500}}>
 					{status => (
-						<Alert className="info" style={{...transitionStyles[status]}} bsStyle={style} onDismiss={this.dismiss}>
+						<Alert dismissible className="info" style={{...transitionStyles[status]}} variant={style} onClose={this.dismiss}>
 							<p>{this.props.statusMessage}</p>
 						</Alert>
 					)}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Bets from '../Bets/Bets.jsx';
 import Folders from '../Folders/Folders.jsx';
 import Statistics from '../Statistics/Statistics.jsx';
-import Card from '../../components/Card/Card.jsx';
+import MenuCard from '../../components/MenuCard/MenuCard.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
@@ -40,9 +40,9 @@ class Home extends Component{
 	cardGrid = () => {
 		return (
 			<div className="grid">
-				<Card onClick={() => {this.changePage(0)}} image="fas fa-chart-bar fa-5x" title="Statistics" text="See how your bets have gone" data={this.props.stats}></Card>
-				<Card onClick={() => {this.changePage(1)}} image="fas fa-edit fa-5x" title="Bets" text="Add and delete bets, update unresoved bets"></Card>
-				<Card onClick={() => {this.changePage(2)}} image="fas fa-folder fa-5x" title="Folders" text="Create and delete folders"></Card>
+				<MenuCard onClick={() => {this.changePage(0)}} image="fas fa-chart-bar fa-6x" title="Statistics" text="See how your bets have gone" data={this.props.stats}></MenuCard>
+				<MenuCard onClick={() => {this.changePage(1)}} image="fas fa-pencil-alt fa-6x" title="Bets" text="Add and delete bets, update unresoved bets"></MenuCard>
+				<MenuCard onClick={() => {this.changePage(2)}} image="fas fa-folder fa-6x" title="Folders" text="Create and delete folders"></MenuCard>
 			</div>
 		);
 	}

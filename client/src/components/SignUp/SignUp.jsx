@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import store from '../../store';
-import Button from 'react-bootstrap/lib/Button';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import FormGroup from 'react-bootstrap/FormGroup';
 import {postUser} from '../../js/Requests/Users.js';
 import './SignUp.css';
 
@@ -45,7 +45,7 @@ class SignUp extends Component{
 							/>
 						</FormGroup>
 					</Form>
-					<Button bsStyle="primary" className="button" type="submit" onClick={this.signup}>Sign up</Button>
+					<Button variant="primary" className="button" type="submit" onClick={this.signup}>Sign up</Button>
 				</div>
 			</div>
 		);

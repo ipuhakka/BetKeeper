@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';
-import ListGroup from 'react-bootstrap/lib/ListGroup';
-import ListGroupItem from 'react-bootstrap/lib/ListGroupItem';
-import Button from 'react-bootstrap/lib/Button';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import Radio from 'react-bootstrap/lib/Radio';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
 
 class UnresolvedBets extends Component{
   constructor(props){
@@ -22,11 +22,11 @@ class UnresolvedBets extends Component{
       <div>
         <h4>Unresolved bets</h4>
         <ListGroup>{this.renderBetsList()}</ListGroup>
-        <FormGroup type="radio" className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
-            <Radio name="radioGroup" defaultChecked={this.state.betResult === "1"} value={1} inline>Won</Radio>{' '}
-            <Radio name="radioGroup" defaultChecked={this.state.betResult === "0"} value={0} inline>Lost</Radio>
+        <FormGroup className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
+            <Form.Check id="check-1" name="radioGroup" type="radio" label='Won' defaultChecked={parseInt(this.state.betResult) === 1} value={1} inline/>
+            <Form.Check id="check-2" name="radioGroup" type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} value={0} inline/>
         </FormGroup>
-        <Button disabled={this.state.betResult === null || this.state.selectedBet === -1} bsStyle="primary" className="button" onClick={this.updateResult}>Update result</Button>
+        <Button disabled={this.state.betResult === null || this.state.selectedBet === -1} variant="primary" className="button" onClick={this.updateResult}>Update result</Button>
       </div>);
   }
 
@@ -34,8 +34,11 @@ class UnresolvedBets extends Component{
     let bets = this.props.bets;
     var items = [];
     for (var i = bets.length - 1; i >= 0; i--){
-      items.push(<ListGroupItem header={bets[i].name + " " + bets[i].datetime} key={i} onClick={this.handleListClick.bind(this, i)} bsStyle={this.state.selectedBet === i ? 'info' : null}>
-            {"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</ListGroupItem>)
+      items.push(<ListGroupItem action key={i}
+        onClick={this.handleListClick.bind(this, i)} variant={this.state.selectedBet === i ? 'info' : null}>
+            <div>{bets[i].name + " " + bets[i].datetime}</div>
+            <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+            </ListGroupItem>)
     }
     return items;
   }

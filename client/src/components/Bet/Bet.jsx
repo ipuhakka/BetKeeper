@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Radio from 'react-bootstrap/lib/Radio';
+import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormCheck from 'react-bootstrap/FormCheck';
 import Confirm from '../Confirm/Confirm.jsx';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
@@ -28,11 +27,21 @@ class Bet extends Component{
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    const {props} = this;
+
+    this.setState({
+      name: props.bet.name,
+      bet: props.bet.bet,
+      odd: props.bet.odd
+    });
+  }
+
   render(){
 
     return (
       <div>
-        <Confirm visible={this.state.showAlert} bsStyle="warning" headerText="Delete bet?" confirmAction={this.deleteBet} cancelAction={this.handleDismiss}/>
+        <Confirm visible={this.state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.deleteBet} cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
           <i className="imageB trash fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
           <i className="imageB save fas fa-save fa-2x" onClick={this.updateBet.bind(this, null)}></i>
@@ -41,16 +50,19 @@ class Bet extends Component{
         <h2>{this.props.bet.datetime}</h2>
         <Form>
           <FormGroup>
-            <ControlLabel>Name</ControlLabel>
+            <Form.Label>Name</Form.Label>
             <FormControl type="text" value={this.state.name} onChange={this.setValue.bind(this, "name")}/>
-            <ControlLabel>Bet</ControlLabel>
+            <Form.Label>Bet</Form.Label>
             <FormControl type="number" value={this.state.bet} onChange={this.setValue.bind(this, "bet")}/>
-            <ControlLabel>Odd</ControlLabel>
+            <Form.Label>Odd</Form.Label>
             <FormControl type="number" value={this.state.odd} onChange={this.setValue.bind(this, "odd")}/>
-            <FormGroup type="radio" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
-              <Radio name="radioGroup" value={-1} inline defaultChecked={this.state.betResult === -1}>Unresolved</Radio>{' '}
-              <Radio name="radioGroup" value={1} inline defaultChecked={this.state.betResult === 1}>Won</Radio>{' '}
-              <Radio name="radioGroup" value={0} inline defaultChecked={this.state.betResult === 0}>Lost</Radio>
+            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
+              <FormCheck name="radioGroup" type="radio" value={-1} label="Unresolved" inline
+                defaultChecked={parseInt(this.state.betResult) === -1}/>
+              <FormCheck name="radioGroup" type="radio" value={1} inline label="Won"
+                defaultChecked={parseInt(this.state.betResult) === 1}/>
+              <FormCheck name="radioGroup" type="radio" value={0} inline label="Lost"
+                defaultChecked={parseInt(this.state.betResult) === 0}/>
             </FormGroup>
           </FormGroup>
         </Form>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-bootstrap/lib/Alert';
-import Button from 'react-bootstrap/lib/Button';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 
 class Confirm extends Component{
 
@@ -12,13 +12,16 @@ class Confirm extends Component{
     if (props.visible){
 
       return (
-          <Alert bsStyle={props.bsStyle}>
-            <h4>{props.headerText}</h4>
-            <p>
-              <Button onClick={props.cancelAction} bsStyle="danger">{props.cancelText}</Button>
-              <Button onClick={props.confirmAction} bsStyle="success">{props.confirmText}
+          <Alert variant={props.variant}>
+            <Alert.Heading>{props.headerText}</Alert.Heading>
+            <div className="d-flex justify-content-center">
+              <Button onClick={props.cancelAction} variant="outline-danger">
+                {props.cancelText}
               </Button>
-            </p>
+              <Button onClick={props.confirmAction} variant="outline-success">
+              {props.confirmText}
+              </Button>
+          </div>
           </Alert>
         );
     }
@@ -31,17 +34,17 @@ Confirm.defaultProps = {
   confirmText: 'Confirm',
   cancelText: 'Cancel',
   headerText: 'Confirm action',
-  bsStyle: 'danger'
+  variant: 'danger'
 }
 
 Confirm.propTypes = {
   visible: PropTypes.bool.isRequired,
   confirmAction: PropTypes.func.isRequired,
   cancelAction: PropTypes.func.isRequired,
-  confirmText: PropTypes.string,
-  cancelText: PropTypes.string,
+  confirmText: PropTypes.string.isRequired,
+  cancelText: PropTypes.string.isRequired,
   headerText: PropTypes.string,
-  bsStyle: PropTypes.string
+  variant: PropTypes.string
 };
 
 export default Confirm;

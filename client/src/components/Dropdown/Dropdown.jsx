@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import DropdownItem from 'react-bootstrap/DropdownItem';
 
 class Dropdown extends Component{
   constructor(props){
@@ -15,14 +15,15 @@ class Dropdown extends Component{
   render(){
     let i = 0;
     let items = this.props.data.map(item => {
-      let menuItem = (<MenuItem active={this.state.selectedKey === i} key={i} onClick={this.handleClick.bind(this, i, this.props.stateKey)}>{this.props.data[i]}</MenuItem>);
+      let menuItem = (<DropdownItem active={this.state.selectedKey === i} key={i}
+        onClick={this.handleClick.bind(this, i, this.props.stateKey)}>{this.props.data[i]}</DropdownItem>);
       i = i + 1;
       return menuItem;
     });
 
     return(
       <DropdownButton
-        bsStyle="primary"
+        variant="primary"
         title={this.props.title}
         id={this.props.id}>
         {items}
