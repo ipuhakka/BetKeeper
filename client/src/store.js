@@ -1,7 +1,7 @@
 import { applyMiddleware, createStore, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from './reducers/index';
-import rootSaga from './sagas';
+import rootSaga from './sagas/index.js';
 
 // middleware for listening actions that requires calling external APIs
 const sagaMiddleware = createSagaMiddleware();
