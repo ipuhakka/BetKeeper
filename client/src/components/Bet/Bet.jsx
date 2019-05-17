@@ -86,11 +86,13 @@ class Bet extends Component{
   }
 
   getUnselectedFolders = () => {
-    return this.props.allFolders.filter(
+    const {props} = this;
+
+    return props.allFolders.filter(
       function(e) {
         return this.indexOf(e) < 0;
       },
-      this.props.foldersOfBet
+      props.foldersOfBet
     );
   }
 

@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import store from '../../store';
-import {fetchBets, fetchUnresolvedBets} from '../../actions/betsActions';
-import {fetchFolders} from '../../actions/foldersActions';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import DropdownItem from 'react-bootstrap/DropdownItem';
@@ -23,26 +19,24 @@ class Bets extends Component{
 
 		this.state = {
 			menuDisabled: [false, true, false, false, false],
-    	deleteListFromFolder: false, //Tells whether all bets are open in delete list, or bets from a folder.
-      selectedBet: -1,
-      folders: [],
-      selectedFolders: [],
       showModal: false
 		};
 	}
 
   render(){
+    const {props, state} = this;
+
     var betItems = this.renderBetsList();
     var menuItems = this.renderDropdown();
     var betView = this.renderBetView(); //displays either list of unresolved bets, or data of specific bet.
 
     return (
-      <div className="content" onLoad={this.updateData}>
+      <div className="content">
     		<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-    		<Menu disable={this.state.menuDisabled}></Menu>
+    		<Menu disable={state.menuDisabled}></Menu>
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
-        <AddBet show={this.state.showModal} hide={this.hideModal} folders={this.props.folders}/>
+        <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
         <Container>
           <Row>
             <Col xs={12} md={{span: 6, order: 12}}>
@@ -67,108 +61,91 @@ class Bets extends Component{
   }
 
   renderBetView = () => {
-    if (this.state.selectedBet !== -1)
+    const {props} = this;
+
+    if (props.selectedBet !== -1)
     {
-      let key = this.state.selectedBet;
-      let bet = this.state.deleteListFromFolder ? this.props.betsFromFolder.bets[key] : this.props.allBets[key];
-      return <Bet bet={bet} allFolders={this.props.folders} foldersOfBet={this.props.foldersOfBet} onDelete={this.betDeleted} updateFolders={this.getBetsFolders}></Bet>;
+      let key = props.selectedBet;
+      let bet = props.deleteListFromFolder ? props.betsFromFolder.bets[key] : props.allBets[key];
+
+      return <Bet bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
+       onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></Bet>;
     }
     else {
-      return this.props.unresolvedBets.length > 0 ?
-        <UnresolvedBets bets={this.props.unresolvedBets}></UnresolvedBets> :
+      return props.unresolvedBets.length > 0 ?
+        <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> :
         null;
     }
   }
 
   renderBetsList = () => {
-    let bets = this.state.deleteListFromFolder ? this.props.betsFromFolder.bets : this.props.allBets;
+    const {props} = this;
+
+    let bets = props.deleteListFromFolder ? props.betsFromFolder.bets : props.allBets;
 		var betItems = [];
 		var isSelected = false;
+
 		for (var i = bets.length -1; i >= 0; i--){
-			if (i === this.state.selectedBet || i.toString() === this.state.selectedBet)
+			if (i === props.selectedBet || i.toString() === props.selectedBet)
 				isSelected = true;
 			else
 				isSelected = false;
+
 			var result = "Unresolved";
+
 			if (bets[i].bet_won)
 				result = "Won";
 			else if (!bets[i].bet_won)
 				result = "Lost";
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
+
 			betItems.push(<ListGroup.Item action
-        onClick={this.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
-        key={i}>
-        <div>{bets[i].name + " " + bets[i].datetime}</div>
-        <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
-        <div>{result}</div>
+          onClick={props.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
+          key={i}>
+          <div>{bets[i].name + " " + bets[i].datetime}</div>
+          <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+          <div>{result}</div>
         </ListGroup.Item>)
 		}
+
 		return betItems;
 	}
 
   renderFolderList = () => {
+    const {props} = this;
     var folderItems = [];
-    for (var j = 0; j < this.props.foldersOfBet.length; j++){
-      folderItems.push(<ListGroup.Item action onClick={this.onPressedFolder.bind(this, j)}
-      variant={this.state.selectedFolders[j] ?  'info': null} key={j}>{this.state.folders[j]}</ListGroup.Item>)
+
+    for (var j = 0; j < props.foldersOfBet.length; j++){
+      folderItems.push(
+        <ListGroup.Item action onClick={this.onPressedFolder.bind(this, j)}
+          variant={props.selectedFolders[j] ?  'info': null} key={j}>{props.folders[j]}
+        </ListGroup.Item>)
     }
+
     return folderItems;
   }
 
   renderDropdown = () => {
+    const {props} = this;
+
     var menuItems = [];
-    menuItems.push(<DropdownItem onClick={this.showFromFolder.bind(this, -1)} key={-1}
-      active={this.state.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
+
+    menuItems.push(<DropdownItem onClick={() => props.onShowFromFolder(-1)} key={-1}
+      active={props.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
+
     var active = false;
-    for (var k = 0; k < this.props.folders.length; k++){
+
+    for (var k = 0; k < props.folders.length; k++){
       active = false;
-      if (k === this.state.allFoldersSelected || k.toString() === this.state.allFoldersSelected)
+      if (k === props.allFoldersSelected || k.toString() === props.allFoldersSelected)
         active = true;
-      menuItems.push(<DropdownItem onClick={this.showFromFolder.bind(this, k)} key={k} active={active}
-        eventKey={k}>{this.props.folders[k]}</DropdownItem>);
+      menuItems.push(<DropdownItem onClick={props.onShowFromFolder.bind(this, k)} key={k} active={active}
+        eventKey={k}>{props.folders[k]}</DropdownItem>);
     }
 
     return menuItems;
   }
-
-	//updates data. Gets bets, folders and unresolved bets from the api. If folder parameter is not specified, gets all users bets, otherwise
-	//gets bets in that folder.
-	updateData = (folder) => {
-		if (typeof folder === "string"){
-			this.setState({
-				deleteListFromFolder: true
-			});
-			store.dispatch({type: 'FETCH_BETS_FROM_FOLDER', payload: {
-	      folder: folder
-	    	}
-	  	});
-		}
-		else {
-			this.setState({
-				deleteListFromFolder: false
-			});
-			this.props.fetchBets();
-		}
-		this.props.fetchUnresolvedBets();
-		this.props.fetchFolders();
-	}
-
-  //Get bets from selected folder.
-	showFromFolder = (key) => {
-		this.setState({
-			folders: [],
-			selectedFolders: [],
-			allFoldersSelected: key,
-			selectedBet: -1
-		});
-
-		if (key !== '-1' && key !== -1)
-			this.updateData(this.props.folders[key]);
-		else
-			this.updateData();
-
-	}
 
   showModal = () => {
     this.setState({
@@ -182,48 +159,6 @@ class Bets extends Component{
     });
   }
 
-  ///set new selectedBet, if one is chosen get folders in which bet belongs to.
-	onPressedBet = (key) => {
-    let bets = this.state.deleteListFromFolder ? this.props.betsFromFolder.bets : this.props.allBets;
-		var value = -1;
-		if (this.state.selectedBet !== key){ //set key and get folders.
-			value = key;
-			this.getBetsFolders(bets[key].bet_id);
-		}
-		else {
-			this.setState({
-				folders: [],
-				selectedFolders: []
-			});
-		}
-		this.setState({
-			selectedBet: value
-		});
-	}
-
-  betDeleted = () => {
-    this.setState({
-      selectedBet: -1
-    });
-  };
-
-  getBetsFolders = (id) => {
-		store.dispatch({type: 'FETCH_FOLDERS_OF_BET', payload: {
-				bet_id: id
-			}
-		});
-	}
-
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return { ...state.bets, ...state.folders}
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  fetchBets: () => dispatch(fetchBets()),
-	fetchUnresolvedBets: () => dispatch(fetchUnresolvedBets()),
-	fetchFolders: () => dispatch(fetchFolders())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Bets);
+export default Bets;

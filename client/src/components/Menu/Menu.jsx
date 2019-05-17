@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import App from '../../App.jsx';
-import Bets from '../../views/Bets/Bets.jsx';
+import BetsContainer from '../../containers/BetsContainer.jsx';
 import Folders from '../../views/Folders/Folders.jsx';
 import Home from '../../views/Home/Home.jsx';
 import Statistics from '../../views/Statistics/Statistics.jsx';
@@ -42,7 +42,7 @@ class Menu extends Component{
 				changeToComponent(<Home/>);
 				break;
 			case 1:
-				changeToComponent(<Bets/>);
+				changeToComponent(<BetsContainer/>);
 				break;
 			case 2:
 				changeToComponent(<Statistics/>);

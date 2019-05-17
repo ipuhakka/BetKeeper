@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Bets from '../Bets/Bets.jsx';
+import BetsContainer from '../../containers/BetsContainer.jsx';
 import Folders from '../Folders/Folders.jsx';
 import Statistics from '../Statistics/Statistics.jsx';
 import MenuCard from '../../components/MenuCard/MenuCard.jsx';
@@ -27,7 +27,7 @@ class Home extends Component{
 				changeToComponent(<Statistics/>);
 				break;
 			case 1:
-				changeToComponent(<Bets/>);
+				changeToComponent(<BetsContainer/>);
 				break;
 			case 2:
 				changeToComponent(<Folders/>);
