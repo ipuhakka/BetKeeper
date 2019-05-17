@@ -177,7 +177,8 @@ class AddBet extends Component{
       name: "",
       betResult: null
     });
-    this.props.hide();
+    
+    this.hideModal();
 	}
 
 }

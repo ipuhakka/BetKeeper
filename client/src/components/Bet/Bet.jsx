@@ -112,7 +112,7 @@ class Bet extends Component{
   onPressedAddFolder = (folder) => {
     let data = {
       folders: [folder],
-      bet_won: this.props.bet.bet_won,
+      bet_won: betResultToRadioButtonValue(this.props.bet.bet_won),
       odd: this.props.bet.odd,
       bet: this.props.bet.bet
     }
