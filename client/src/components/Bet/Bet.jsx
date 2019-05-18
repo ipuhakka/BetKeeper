@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import store from '../../store';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -8,14 +7,14 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import Confirm from '../Confirm/Confirm.jsx';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
-import {betResultToRadioButtonValue, isValidDouble, isValidString} from '../../js/utils.js';
+import {betResultToRadioButtonValue} from '../../js/utils.js';
 import './Bet.css';
 
 class Bet extends Component{
   constructor(props){
     super(props);
 
-    let bet = props.bet;
+    const bet = props.bet;
 
     this.state = {
       showAlert: false,
@@ -29,40 +28,45 @@ class Bet extends Component{
 
   componentWillReceiveProps(nextProps){
     const {props} = this;
+    const {bet} = props;
 
     this.setState({
-      name: props.bet.name,
-      bet: props.bet.bet,
-      odd: props.bet.odd
+      name: bet.name,
+      bet: bet.bet,
+      odd: bet.odd,
+      betResult: betResultToRadioButtonValue(bet.bet_won)
     });
   }
 
   render(){
+    const {props, state} = this;
+    const { bet } = props;
 
     return (
       <div>
-        <Confirm visible={this.state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.deleteBet} cancelAction={this.handleDismiss}/>
+        <Confirm visible={state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.onDeleteBet}
+          cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
           <i className="imageB trash fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
-          <i className="imageB save fas fa-save fa-2x" onClick={this.updateBet.bind(this, null)}></i>
+          <i className="imageB save fas fa-save fa-2x" onClick={this.updateBet}></i>
         </div>
-        <h2>{this.props.bet.name}</h2>
-        <h2>{this.props.bet.datetime}</h2>
+        <h2>{bet.name}</h2>
+        <h2>{bet.datetime}</h2>
         <Form>
           <FormGroup>
             <Form.Label>Name</Form.Label>
-            <FormControl type="text" value={this.state.name} onChange={this.setValue.bind(this, "name")}/>
+            <FormControl type="text" value={state.name} onChange={this.setValue.bind(this, "name")}/>
             <Form.Label>Bet</Form.Label>
-            <FormControl type="number" value={this.state.bet} onChange={this.setValue.bind(this, "bet")}/>
+            <FormControl type="number" value={state.bet} onChange={this.setValue.bind(this, "bet")}/>
             <Form.Label>Odd</Form.Label>
-            <FormControl type="number" value={this.state.odd} onChange={this.setValue.bind(this, "odd")}/>
-            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
+            <FormControl type="number" value={state.odd} onChange={this.setValue.bind(this, "odd")}/>
+            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={state.betResult}>
               <FormCheck name="radioGroup" type="radio" value={-1} label="Unresolved" inline
-                defaultChecked={parseInt(this.state.betResult) === -1}/>
+                defaultChecked={parseInt(state.betResult) === -1}/>
               <FormCheck name="radioGroup" type="radio" value={1} inline label="Won"
-                defaultChecked={parseInt(this.state.betResult) === 1}/>
+                defaultChecked={parseInt(state.betResult) === 1}/>
               <FormCheck name="radioGroup" type="radio" value={0} inline label="Lost"
-                defaultChecked={parseInt(this.state.betResult) === 0}/>
+                defaultChecked={parseInt(state.betResult) === 0}/>
             </FormGroup>
           </FormGroup>
         </Form>
@@ -70,7 +74,7 @@ class Bet extends Component{
           {this.renderIsInFoldersList()}
         </div>
         <div>
-          <Search placeholder="Add folders" data={this.getUnselectedFolders()} onClickResult={this.onPressedAddFolder} />
+          <Search placeholder="Add folders" data={this.getUnselectedFolders()} onClickResult={props.onAddFolder} />
         </div>
       </div>
     )
@@ -96,39 +100,9 @@ class Bet extends Component{
     );
   }
 
-  onPressedDelete = (folder) => {
-    if (folder !== null){
-      this.setState({
-        deleteFromFolder: folder
-      }, () => {this.deleteBet()});
-    } else {
-      this.setState({
-        showAlert: true,
-        deleteFromFolder: folder
-      });
-    }
-  }
-
-  onPressedAddFolder = (folder) => {
-    let data = {
-      folders: [folder],
-      bet_won: betResultToRadioButtonValue(this.props.bet.bet_won),
-      odd: this.props.bet.odd,
-      bet: this.props.bet.bet
-    }
-
-    store.dispatch({type: 'PUT_BET', payload: {
-        data: data,
-        bet_id: this.props.bet.bet_id
-      },
-      callback: () => {this.props.updateFolders(this.props.bet.bet_id)}
-    });
-  }
-
   handleDismiss = () => {
     this.setState({
-      showAlert: false,
-      deleteFromFolders: null
+      showAlert: false
     })
   }
 
@@ -136,66 +110,40 @@ class Bet extends Component{
     Updates a bet.
   */
   updateBet = () => {
-    const state = this.state;
+    const {state} = this;
 
-    if (!isValidString(state.name)){
-      store.dispatch({type: 'SET_ALERT_STATUS',
-        status: -1,
-        message: "Name contains invalid characters"
-      });
-
-      return;
-    }
-
-    if (!isValidDouble(state.bet) || !isValidDouble(state.odd)){
-      store.dispatch({type: 'SET_ALERT_STATUS',
-				status: -1,
-				message: "Invalid decimal values given"
-			});
-
-			return;
-    }
-
-    let modifiedBet = {
+    const modifiedBet = {
       name: state.name,
-      bet: parseFloat(state.bet),
-      odd: parseFloat(state.odd),
-      bet_won: parseInt(state.betResult, 10)
+      bet: state.bet,
+      odd: state.odd,
+      betResult: state.betResult
     }
 
-    store.dispatch({type: 'PUT_BET', payload: {
-        data: modifiedBet,
-        bet_id: this.props.bet.bet_id
-      },
-      showAlert: true
-    });
+    this.props.onUpdateBet(modifiedBet);
   }
 
-  //Creates a request to delete the selected bet. If any folders are selected, bet is only deleted from selected folders.
-  deleteBet = () => {
-    let folders = [];
-    if (this.state.deleteFromFolder !== null){
-      folders = [this.state.deleteFromFolder];
-    }
-    let callback = undefined;
+  /*
+  If folder is specified,
+  bet is removed from selected folder.
+  Otherwise a confirmation dialog is presented to inform
+  that bet will be deleted completely.*/
+  onPressedDelete = (folder) => {
 
-    if (this.state.deleteFromFolder !== null){
-      callback = () => { this.props.updateFolders(this.props.bet.bet_id)};
+    if (folder !== null){
+      this.props.onDelete(folder);
     }
-
-    store.dispatch({type: 'DELETE_BET', payload: {
-        bet_id: this.props.bet.bet_id,
-        folders: folders
-      },
-      callback: callback
-    });
-
-    if (callback === undefined){
-      this.props.onDelete();
+    else {
+      this.setState({
+        showAlert: true
+      });
     }
+  }
+
+  onDeleteBet = () => {
+    this.props.onDelete();
+
     this.setState({
-      showAlert: false,
-      deleteFromFolder: null
+      showAlert: false
     });
   }
 

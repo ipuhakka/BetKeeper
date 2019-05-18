@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AddBet from '../../components/AddBet/AddBet.jsx';
-import Bet from '../../components/Bet/Bet.jsx';
+import BetContainer from '../../containers/BetContainer.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
@@ -68,8 +68,8 @@ class Bets extends Component{
       let key = props.selectedBet;
       let bet = props.deleteListFromFolder ? props.betsFromFolder.bets[key] : props.allBets[key];
 
-      return <Bet bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
-       onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></Bet>;
+      return <BetContainer bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
+       onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
     }
     else {
       return props.unresolvedBets.length > 0 ?
