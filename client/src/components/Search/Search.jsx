@@ -5,6 +5,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import './Search.css';
 
 class Search extends Component {
 
@@ -17,6 +18,14 @@ class Search extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    const {data} = nextProps;
+
+    this.setState({
+      shownData: data
+    })
+  }
+
   render(){
     return (
       <div>
@@ -27,7 +36,7 @@ class Search extends Component {
               type="text"
               value={this.state.searchValue}
               onChange={this.updateSearch}/>
-            <ListGroup>{this.renderShowedResults()}</ListGroup>
+            <ListGroup className="overflow-list">{this.renderShowedResults()}</ListGroup>
           </FormGroup>
         </Form>
       </div>
@@ -36,48 +45,43 @@ class Search extends Component {
 
   /* Renders the list of showed results.*/
   renderShowedResults(){
-    let key = this.props.key;
+    const {state, props} = this;
+    const key = this.props.key;
 
-    if (this.canShowAll() && this.state.searchValue.length === 0){
-      let i = -1;
+    let listGroupItems = [];
 
-      return this.props.data.map(row => {
-        i = i + 1;
-          return <ListGroupItem onClick={this.pressedItem.bind(this, this.props.data[i])} key={i}>
-          {key === null ? this.props.data[i] : this.props.data[i].key}</ListGroupItem>;
-      });
-    }
-    else {
-      let listGroupItems = [];
-
-      for (var i = 0; i < this.state.shownData.length; i++){
-        if (i > this.props.showCount){
-          break;
-        }
-
-        listGroupItems.push(
-          <ListGroupItem onClick={this.pressedItem.bind(this, this.state.shownData[i])} key={i}>
-            {key === null ? this.state.shownData[i] : this.state.shownData[i].key}</ListGroupItem>);
+    for (var i = 0; i < state.shownData.length; i++){
+      if (i > props.showCount){
+        break;
       }
 
-      return listGroupItems;
+      listGroupItems.push(
+        <ListGroupItem action onClick={this.pressedItem.bind(this, state.shownData[i])} key={i}>
+          {key === null ? state.shownData[i] : state.shownData[i].key}</ListGroupItem>);
     }
+
+    return listGroupItems;
   }
 
-  pressedItem = (data) => {
-    if (this.props.clearOnClick){
+  pressedItem = (data, e) => {
+    const {props} = this;
+    e.preventDefault();
+
+    if (props.clearOnClick){
       this.setState({
         searchValue: "",
         shownData: []
       });
     }
 
-    this.props.onClickResult(data);
+    props.onClickResult(data);
   }
 
   /*Updates search result. Sets the shownResults
   as all results which include searched string. */
   updateSearch = (e) => {
+    const {props} = this;
+
     let inputText = e.target.value;
     let searchedSubstring = this.formSearchWord(inputText);
 
@@ -86,14 +90,14 @@ class Search extends Component {
     }, () => {
 
       let shownResultsArray = [];
-      let searchedKey = this.props.key;
+      let searchedKey = props.key;
 
-      for (var i = 0; i < this.props.data.length; i++){
+      for (var i = 0; i < props.data.length; i++){
         let compareWord = (searchedKey === null ?
-          this.props.data[i] : this.props.data[i].searchedKey).toLowerCase();
+          props.data[i] : props.data[i].searchedKey).toLowerCase();
 
         if (compareWord.indexOf(searchedSubstring) !== -1){
-          shownResultsArray.push(this.props.data[i]);
+          shownResultsArray.push(props.data[i]);
         }
       }
 
@@ -111,15 +115,9 @@ class Search extends Component {
 
     return originalWord.toString();
   }
-
-  /* Returns true if all data in array can be shown. */
-  canShowAll = () => {
-    return this.props.showCount >= this.props.data.length;
-  }
 }
 
 Search.defaultProps = {
-  showCount: 5,
   key: null,
   clearOnClick: false
 };
@@ -128,7 +126,6 @@ Search.propTypes = {
   data: PropTypes.array.isRequired,
   onClickResult: PropTypes.func.isRequired,
   key: PropTypes.string,
-  showCount: PropTypes.number,
   placeholder: PropTypes.string,
   clearOnClick: PropTypes.bool,
 };

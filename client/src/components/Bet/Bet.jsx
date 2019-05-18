@@ -73,9 +73,7 @@ class Bet extends Component{
         <div className="tagDiv">
           {this.renderIsInFoldersList()}
         </div>
-        <div>
-          <Search placeholder="Add folders" data={this.getUnselectedFolders()} onClickResult={props.onAddFolder} />
-        </div>
+        <Search placeholder="Add to folder" data={this.getUnselectedFolders()} onClickResult={props.onAddFolder} />
       </div>
     )
   }
