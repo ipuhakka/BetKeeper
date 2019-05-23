@@ -11,6 +11,8 @@ Bet-object format:
 
 data parameter used in function is expected to be array parsed from JSON-data sent by the api.
 */
+import {isOdd} from './utils.js';
+import * as Sort from './sort.js';
 
 //Counts how much money has been won in an array of bets. Money won in a single bet is (data["bet"] * data["odd"]).
 export function moneyWon(data){
@@ -93,7 +95,7 @@ export function verifiedReturn(data){
 
 ///calculated median value for param in an array of bets.
 export function median(data, param){
-	var sorted = sortByHighest(data, param);
+	var sorted = Sort.byHighest(data, param);
     if (sorted.length < 1)
     {
         return 0;
@@ -124,25 +126,6 @@ export function mean(data, param){
 		sum = sum + data[i][param];
 	}
 	return sum / data.length;
-}
-
-function isOdd(num){
-	return (num % 2) === 1;
-}
-
-export function sortByHighest(data, param)
-{
-    return data.sort(function (a, b) {
-			return b[param] - a[param];
-    });
-}
-
-export function sortAlphabetically(data, param){
-	return data.sort(function(a, b){
-    if(a[param] < b[param]) return -1;
-    if(a[param] > b[param]) return 1;
-  	return 0;
-	});
 }
 
 export function roundByTwo(num){

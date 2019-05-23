@@ -1,4 +1,4 @@
-import ConstVars from '../Consts.js';
+import ConstVars from '../consts.js';
 
 /*
 POST-request to get a token to use in the app.

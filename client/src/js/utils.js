@@ -1,4 +1,14 @@
 
+/*
+  Checks if number is odd
+*/
+export function isOdd(number){
+  	return (number % 2) === 1;
+}
+
+/*
+  Returns radioButtonValue used for betResult.
+*/
 export function betResultToRadioButtonValue(betResult){
   switch(betResult){
     case false:

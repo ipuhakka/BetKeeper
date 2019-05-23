@@ -27,6 +27,8 @@ class AddBet extends Component{
   }
 
   render(){
+    const {state} = this;
+
     return (
       <Modal onMouseOut={this.handleMouseOut} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp.bind(this)} show={this.props.show} onHide={this.hideModal}>
         <Modal.Header closeButton>
@@ -38,7 +40,7 @@ class AddBet extends Component{
               <Form.Label>{"Bet"}</Form.Label>
               <FormControl
                 type="number"
-                value={this.state.bet}
+                value={state.bet}
                 onChange={this.setValue.bind(this, "bet")}
                 />
               <Form.Label>{"Odd"}</Form.Label>
@@ -61,8 +63,8 @@ class AddBet extends Component{
           <div className="tagDiv">
             {this.renderTags()}
           </div>
-          <Search clearOnClick={true} data={this.props.folders} onClickResult={this.selectFolder} placeholder="Search folders"/>
-          <Button disabled={this.state.betResult === null} variant="primary" className="button" onClick={this.addBet}>New bet</Button>
+          <Search clearOnClick={true} data={this.filterFolderList()} onClickResult={this.selectFolder} placeholder="Search folders"/>
+          <Button disabled={state.betResult === null} variant="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
     );
@@ -99,6 +101,15 @@ class AddBet extends Component{
     })
   }
 
+  /* Filters props.folders by removing selected folders.*/
+  filterFolderList = () => {
+    const {state, props} = this;
+
+    return props.folders.filter(folder =>
+      !state.selected.some(selectedFolder =>
+        selectedFolder === folder));
+  }
+
   hideModal = () => {
     if (!this.state.draggedOutOfModal){
       this.setState({
@@ -119,6 +130,7 @@ class AddBet extends Component{
   }
 
   selectFolder = (folder) => {
+    console.log('select folder');
     var selectedFolders = this.state.selected;
 
     if (!this.state.selected.includes(folder)){

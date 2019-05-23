@@ -12,7 +12,8 @@ import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
-import * as Stats from '../../js/Stats.js';
+import * as Stats from '../../js/stats.js';
+import * as Sort from '../../js/sort.js';
 import './Statistics.css';
 
 class Statistics extends Component{
@@ -38,7 +39,9 @@ class Statistics extends Component{
 			folderSelected: 0,
 			graphOptions: graphOptions,
 			betStatistics: [],
-			sortedBetStatistics: []
+			sortedBetStatistics: [],
+			sortOrderHigh: false,
+			lastSortedKey: ''
 		};
 	}
 
@@ -112,10 +115,10 @@ class Statistics extends Component{
 		return(<Table>
 					<thead>
 						<tr>
-							<th className="clickable" onClick={this.sort.bind(this, Stats.sortAlphabetically, "folder")}>{"Folder"}</th>
-							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "moneyReturned")}>{"Money returned"}</th>
-							<th className="clickable" onClick={this.sort.bind(this,Stats.sortByHighest, "verifiedReturn")}>{"Return percentage"}</th>
-							<th className="clickable" onClick={this.sort.bind(this, Stats.sortByHighest, "winPercentage")}>{"Win percentage"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Sort.alphabetically, "folder")}>{"Folder"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "moneyReturned")}>{"Money returned"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "verifiedReturn")}>{"Return percentage"}</th>
+							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "winPercentage")}>{"Win percentage"}</th>
 						</tr>
 					</thead>
 					<tbody>{tableItems}</tbody>
@@ -253,10 +256,15 @@ class Statistics extends Component{
 	}
 
 	sort = (func, param) => {
-		var sorted = func(this.state.sortedBetStatistics, param);
+		const { state } = this;
+
+		var sortOrderHigh = state.lastSortedKey === param ? !state.sortOrderHigh : true;
+		var sorted = func(this.state.sortedBetStatistics, param, sortOrderHigh);
 
 		this.setState({
-			sortedBetStatistics: sorted
+			sortedBetStatistics: sorted,
+			sortOrderHigh: sortOrderHigh,
+			lastSortedKey: param
 		});
 	}
 
