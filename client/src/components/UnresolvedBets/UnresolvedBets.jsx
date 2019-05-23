@@ -74,12 +74,14 @@ class UnresolvedBets extends Component{
     var data = {
       bet_won: result
     }
+
     store.dispatch({type: 'PUT_BET', payload: {
         data: data,
         bet_id: this.props.bets[this.state.selectedBet].bet_id
       },
       showAlert: true
     });
+    
     this.setState({
       betResult: null
     });
