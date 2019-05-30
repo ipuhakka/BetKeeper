@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import store from '../../store';
 import {fetchFolders} from '../../actions/foldersActions';
 import {fetchFinishedBets} from '../../actions/betsActions';
-import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import BarGraph from '../../components/BarGraph/BarGraph.jsx';
@@ -11,9 +10,10 @@ import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import ObjectTable from '../../components/ObjectTable/ObjectTable.jsx';
+import OverviewTable from '../../components/OverviewTable/OverviewTable.jsx';
 import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
 import * as Stats from '../../js/stats.js';
-import * as Sort from '../../js/sort.js';
 import './Statistics.css';
 
 class Statistics extends Component{
@@ -62,20 +62,20 @@ class Statistics extends Component{
 	}
 
 	render(){
-		var table = this.renderTable();
-		var overview = this.renderOverviewTable();
+		const {state} = this;
 
 		return(
 			<div className="content" onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-				<Menu disable={this.state.disabled}></Menu>
+				<Menu disable={state.disabled}></Menu>
 				<Info></Info>
 				<div>
 					<Row>
 						<Col md={6} xs={12}>
-							<BarGraph data={this.state.betStatistics} optionLabels={this.graphOptionLabels()} graphOptions={this.state.graphOptions} />
+							<BarGraph data={state.betStatistics} optionLabels={this.graphOptionLabels()}
+								graphOptions={state.graphOptions} />
 							<div>
-								{overview}
+								<OverviewTable overviewItems={state.sortedBetStatistics}/>
 							</div>
 						</Col>
 						<Col md={6} xs={12}>
@@ -87,12 +87,13 @@ class Statistics extends Component{
 								onUpdate={this.setSelectedDropdownItem.bind(this)}
 								stateKey={"folderSelected"}>
 							</Dropdown>
-							{table}
+							{this.renderTable()}
 						</Col>
 					</Row>
 					<Row>
 						<Col>
-								<ScatterPlot optionLabels={this.graphOptionLabels()} data={this.state.betStatistics} graphOptions={this.state.graphOptions}></ScatterPlot>
+								<ScatterPlot optionLabels={this.graphOptionLabels()} data={this.state.betStatistics}
+								graphOptions={this.state.graphOptions}></ScatterPlot>
 						</Col>
 					</Row>
 				</div>
@@ -100,92 +101,21 @@ class Statistics extends Component{
 		);
 	}
 
-	renderOverviewTable = () => {
-		var tableItems = [];
-		var overviewItems = this.state.sortedBetStatistics;
-		for (var i = 0; i < overviewItems.length; i++){
-			tableItems.push(<tr key={i}>
-								<td>{overviewItems[i]["folder"]}</td>
-								<td className={overviewItems[i]["moneyReturned"] >= 0 ? 'tableGreen' : 'tableRed'}>{overviewItems[i]["moneyReturned"]}</td>
-								<td className={overviewItems[i]["verifiedReturn"] >= 1 ? 'tableGreen' : 'tableRed'}>{overviewItems[i]["verifiedReturn"]}</td>
-								<td>{overviewItems[i]["winPercentage"]}</td>
-							</tr>)
-		}
-
-		return(<Table>
-					<thead>
-						<tr>
-							<th className="clickable" onClick={this.sort.bind(this, Sort.alphabetically, "folder")}>{"Folder"}</th>
-							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "moneyReturned")}>{"Money returned"}</th>
-							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "verifiedReturn")}>{"Return percentage"}</th>
-							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "winPercentage")}>{"Win percentage"}</th>
-						</tr>
-					</thead>
-					<tbody>{tableItems}</tbody>
-				</Table>);
-	}
-
 	renderTable = () => {
-		var index = this.state.folderSelected;
-		if (this.state.betStatistics.length > 0){
-			return (
-			<Table>
-				<thead>
-					<tr>
-						<th>{this.state.betStatistics[index].folder}</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>{"Money played"}</td>
-						<td>{this.state.betStatistics[index].moneyPlayed}</td>
-					</tr>
-					<tr>
-						<td>{"Money won"}</td>
-						<td>{this.state.betStatistics[index].moneyWon}</td>
-					</tr>
-						<tr className={this.state.betStatistics[index].moneyReturned >= 0 ? 'tableGreen' : 'tableRed'}>
-							<td>{"Return"}</td>
-							<td>{this.state.betStatistics[index].moneyReturned}</td>
-						</tr>
-						<tr>
-							<td>{"Won/played"}</td>
-							<td>{this.state.betStatistics[index].wonBets + "/" + this.state.betStatistics[index].playedBets + "	" + (Stats.roundByTwo(this.state.betStatistics[index].winPercentage) * 100) + "%"}</td>
-						</tr>
-						<tr className={this.state.betStatistics[index].avgReturn >= 0 ? 'tableGreen' : 'tableRed'}>
-							<td>{"Average return (cash)"}</td>
-							<td>{this.state.betStatistics[index].avgReturn}</td>
-						</tr>
-						<tr>
-							<td>{"Expected return"}</td>
-							<td>{this.state.betStatistics[index].expectedReturn}</td>
-						</tr>
-						<tr className={this.state.betStatistics[index].verifiedReturn >= 1 ? 'tableGreen' : 'tableRed'}>
-							<td>{"Verified return"}</td>
-							<td>{this.state.betStatistics[index].verifiedReturn}</td>
-						</tr>
-						<tr>
-							<td>{"Odd median"}</td>
-							<td>{this.state.betStatistics[index].oddMedian}</td>
-						</tr>
-						<tr>
-							<td>{"Odd mean"}</td>
-							<td>{this.state.betStatistics[index].oddMean}</td>
-						</tr>
-						<tr>
-							<td>{"Bet median"}</td>
-							<td>{this.state.betStatistics[index].betMedian}</td>
-						</tr>
-						<tr>
-							<td>{"Bet mean"}</td>
-							<td>{this.state.betStatistics[index].betMean}</td>
-						</tr>
-				</tbody>
-			</Table>
-			);
-		} else {
-			return null;
-		}
+		const {folderSelected, graphOptions, sortedBetStatistics} = this.state;
+
+		const titleOptions = graphOptions.map(option => {
+			return ({
+				key: option.variableName,
+				value: option.labelName
+			});
+		})
+
+		return sortedBetStatistics.length > 0 ?
+				<ObjectTable
+						tableTitle={sortedBetStatistics[folderSelected].folder}
+						data={sortedBetStatistics[folderSelected]}
+						titles={titleOptions}/> : null;
 	}
 
 	folders = () => {
@@ -253,19 +183,6 @@ class Statistics extends Component{
 				sortedBetStatistics: [...stats] //initialize sortedBetStatistics with the same list
 			});
 		}
-	}
-
-	sort = (func, param) => {
-		const { state } = this;
-
-		var sortOrderHigh = state.lastSortedKey === param ? !state.sortOrderHigh : true;
-		var sorted = func(this.state.sortedBetStatistics, param, sortOrderHigh);
-
-		this.setState({
-			sortedBetStatistics: sorted,
-			sortOrderHigh: sortOrderHigh,
-			lastSortedKey: param
-		});
 	}
 
 	onLoad = () => {
