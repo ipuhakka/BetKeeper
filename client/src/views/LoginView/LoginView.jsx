@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom';
 import store from '../../store';
 import Header from '../../components/Header/Header.jsx';
-import Home from '../Home/Home.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Login from '../../components/Login/Login.jsx';
 import SignUp from '../../components/SignUp/SignUp.jsx';
 import {postToken, getToken} from '../../js/Requests/Token.js';
-import {changeToComponent} from '../../changeView';
+import {loginCredentialsExist} from '../../js/utils.js';
 
 class LoginView extends Component {
 
@@ -25,11 +25,14 @@ class LoginView extends Component {
     //Checks if sessionStorage contains a valid token. If does, goes to user main page as logged user.
     //On error, set's alertStatus and proper message.
   checkToken = async () => {
-    if (sessionStorage.getItem('token') != null && sessionStorage.getItem('token').toString() !== 'null'){
+    const {history} = this.props;
+
+    if (loginCredentialsExist()){
       try {
         await getToken(sessionStorage.getItem('token'), sessionStorage.getItem('loggedUserID'));
-        changeToComponent(<Home/>);
-      } catch (err){
+        history.push('/home');
+      }
+      catch (err){
         switch(err){
           case 404:
             store.dispatch({type: 'SET_ALERT_STATUS',
@@ -51,6 +54,8 @@ class LoginView extends Component {
   //Makes a post request to resource at URI/token. On success, sets the token from response, and user inputted username
   //to sessionStorage and changes html page.
   requestToken = async (user, passwd) => {
+    const {history} = this.props;
+
     if (user === "" || passwd === ""){
       return;
     }
@@ -61,7 +66,8 @@ class LoginView extends Component {
       window.sessionStorage.setItem('loggedUser', res.username);
       window.sessionStorage.setItem('loggedUserID', res.owner);
       store.dispatch({type: 'CLEAR_ALERT'});
-      changeToComponent(<Home/>);
+
+      history.push('/home');
     } catch (err){
       switch(err){
         case 401:
@@ -88,4 +94,4 @@ class LoginView extends Component {
   }
 };
 
-export default LoginView;
+export default withRouter(LoginView);

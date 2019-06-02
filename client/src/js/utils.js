@@ -50,6 +50,11 @@ export function isValidString(value){
 }
 
 /* Deep copies an object. */
-export function deepCopy(obj){  
+export function deepCopy(obj){
   return JSON.parse(JSON.stringify(obj));
+}
+
+export function loginCredentialsExist(){
+  return sessionStorage.getItem('token') != null &&
+    sessionStorage.getItem('token').toString() !== 'null';
 }

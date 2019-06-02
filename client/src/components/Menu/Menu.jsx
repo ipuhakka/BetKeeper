@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
-import App from '../../App.jsx';
-import BetsContainer from '../../containers/BetsContainer.jsx';
-import Folders from '../../views/Folders/Folders.jsx';
-import Home from '../../views/Home/Home.jsx';
-import StatisticsContainer from '../../containers/StatisticsContainer.jsx';
 import Spinner from '../Spinner/Spinner.jsx';
-import {changeToComponent} from '../../changeView';
 import {deleteToken} from '../../js/Requests/Token';
 import './Menu.css';
 
@@ -37,30 +32,32 @@ class Menu extends Component{
 	}
 
 	handleSelect = async (key) => {
+		const {history} = this.props;
+
 		switch(parseInt(key)){
 			case 0:
-				changeToComponent(<Home/>);
+				history.push('/home');
 				break;
 			case 1:
-				changeToComponent(<BetsContainer/>);
+				history.push('/bets');
 				break;
 			case 2:
-				changeToComponent(<StatisticsContainer/>);
+				history.push('/statistics');
 				break;
 			case 3:
-				changeToComponent(<Folders/>);
+				history.push('/folders');
 				break;
 			case 4:
 				try {
 					await deleteToken();
 				}
 				catch (e){
-					console.log("error in deleteToken");
 				}
+				
 				window.sessionStorage.setItem('loggedUser', null);
 				window.sessionStorage.setItem('token', null);
 				window.sessionStorage.setItem('loggedUserID', -1);
-				changeToComponent(<App/>);
+				history.push('/');
 				break;
 			default:
 				console.log("clicked item " + key);
@@ -77,4 +74,4 @@ const mapStateToProps = (state, ownProps) => {
   return { ...state.loading};
 };
 
-export default connect(mapStateToProps)(Menu);
+export default connect(mapStateToProps)(withRouter(Menu));
