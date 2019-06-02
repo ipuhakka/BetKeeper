@@ -6,7 +6,7 @@ import App from '../../App.jsx';
 import BetsContainer from '../../containers/BetsContainer.jsx';
 import Folders from '../../views/Folders/Folders.jsx';
 import Home from '../../views/Home/Home.jsx';
-import Statistics from '../../views/Statistics/Statistics.jsx';
+import StatisticsContainer from '../../containers/StatisticsContainer.jsx';
 import Spinner from '../Spinner/Spinner.jsx';
 import {changeToComponent} from '../../changeView';
 import {deleteToken} from '../../js/Requests/Token';
@@ -45,7 +45,7 @@ class Menu extends Component{
 				changeToComponent(<BetsContainer/>);
 				break;
 			case 2:
-				changeToComponent(<Statistics/>);
+				changeToComponent(<StatisticsContainer/>);
 				break;
 			case 3:
 				changeToComponent(<Folders/>);

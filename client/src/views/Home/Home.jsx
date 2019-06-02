@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import BetsContainer from '../../containers/BetsContainer.jsx';
+import StatisticsContainer from '../../containers/StatisticsContainer.jsx';
 import Folders from '../Folders/Folders.jsx';
-import Statistics from '../Statistics/Statistics.jsx';
 import MenuCard from '../../components/MenuCard/MenuCard.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
@@ -24,7 +24,7 @@ class Home extends Component{
 	changePage = (key) => {
 		switch (key){
 			case 0:
-				changeToComponent(<Statistics/>);
+				changeToComponent(<StatisticsContainer/>);
 				break;
 			case 1:
 				changeToComponent(<BetsContainer/>);
