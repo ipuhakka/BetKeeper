@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Table from 'react-bootstrap/Table';
 import * as Sort from '../../js/sort.js';
+import {deepCopy} from '../../js/utils.js';
 
 class OverviewTable extends Component{
   constructor(props){
@@ -10,15 +11,21 @@ class OverviewTable extends Component{
     this.state = {
         sortedOverviewItems: [],
         sortOrderHigh: false,
-        lastSortedKey: ''
+        lastSortedKey: '',
+        defaultSortOrder: []
     }
   }
 
   componentWillReceiveProps(nextProps){
+    const {defaultSortOrder} = this.state;
+
+    let defaultOrder = defaultSortOrder.length === 0 ?
+      nextProps.overviewItems : defaultSortOrder;
 
     if ('overviewItems' in nextProps){
       this.setState({
-        sortedOverviewItems: nextProps.overviewItems
+        sortedOverviewItems: deepCopy(nextProps.overviewItems),
+        defaultSortOrder: defaultOrder
       })
     }
   }
@@ -53,9 +60,22 @@ class OverviewTable extends Component{
   }
 
   sort = (func, param) => {
-    const { state } = this;
+    const { state, props } = this;
 
     var sortOrderHigh = state.lastSortedKey === param ? !state.sortOrderHigh : true;
+
+    if (sortOrderHigh
+      && state.lastSortedKey === param
+      && props.defaultSort !== undefined){
+
+      this.setState({
+        sortedOverviewItems: deepCopy(props.defaultSort),
+        lastSortedKey: '',
+        sortOrderHigh: false
+      });
+
+      return;
+    }
 
     var sorted = func(this.state.sortedOverviewItems, param, sortOrderHigh);
 
@@ -67,15 +87,19 @@ class OverviewTable extends Component{
   }
 };
 
+const overviewItemProps = PropTypes.arrayOf(
+  PropTypes.shape({
+    folder: PropTypes.string,
+    moneyReturned: PropTypes.number,
+    verifiedReturn: PropTypes.number,
+    winPercentage: PropTypes.number
+  }));
+
 OverviewTable.propTypes = {
 
-  overviewItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      folder: PropTypes.string,
-      moneyReturned: PropTypes.number,
-      verifiedReturn: PropTypes.number,
-      winPercentage: PropTypes.number
-    })).isRequired
+  overviewItems: overviewItemProps.isRequired,
+
+  defaultSort: overviewItemProps
 };
 
 export default OverviewTable;

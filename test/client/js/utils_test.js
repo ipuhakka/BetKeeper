@@ -4,7 +4,7 @@ var chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 var should = chai.should();
 
-import {isValidDouble, isValidString} from '../../../client/src/js/utils';
+import {isValidDouble, isValidString, deepCopy} from '../../../client/src/js/utils';
 
 describe('isValidString', function(){
 
@@ -45,4 +45,27 @@ describe('isValidDouble', function(){
     expect(isValidDouble(2.2)).to.equals(true);
     done();
   })
+});
+
+describe('deepCopy', function(){
+
+  it('objects are not equal after copy', function(done){
+
+    const object1 = {
+      var1: 1.0,
+      var2: 1,
+      var3: true,
+      var4: 'test'
+    };
+
+    const object2 = object1;
+
+    expect(object1).to.equal(object2);
+
+    const deepCopiedObj = deepCopy(object2);
+
+    expect(deepCopiedObj).to.not.equal(object2);
+
+    done();
+  });
 })

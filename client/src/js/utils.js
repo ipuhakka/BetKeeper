@@ -48,3 +48,8 @@ export function isValidString(value){
 
   return !nonAllowed.test(value);
 }
+
+/* Deep copies an object. */
+export function deepCopy(obj){  
+  return JSON.parse(JSON.stringify(obj));
+}

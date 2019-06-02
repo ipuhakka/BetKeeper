@@ -75,7 +75,7 @@ class Statistics extends Component{
 							<BarGraph data={state.betStatistics} optionLabels={this.graphOptionLabels()}
 								graphOptions={state.graphOptions} />
 							<div>
-								<OverviewTable overviewItems={state.sortedBetStatistics}/>
+								<OverviewTable defaultSort={state.sortedBetStatistics} overviewItems={state.sortedBetStatistics}/>
 							</div>
 						</Col>
 						<Col md={6} xs={12}>
