@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
+import store from '../../store';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import Spinner from '../Spinner/Spinner.jsx';
-import {deleteToken} from '../../js/Requests/Token';
 import './Menu.css';
 
 class Menu extends Component{
@@ -48,19 +48,10 @@ class Menu extends Component{
 				history.push('/folders');
 				break;
 			case 4:
-				try {
-					await deleteToken();
-				}
-				catch (e){
-				}
-				
-				window.sessionStorage.setItem('loggedUser', null);
-				window.sessionStorage.setItem('token', null);
-				window.sessionStorage.setItem('loggedUserID', -1);
+				store.dispatch({type: 'LOGOUT'});
 				history.push('/');
 				break;
 			default:
-				console.log("clicked item " + key);
 				break;
 		}
 	}
