@@ -2,6 +2,7 @@ import { all } from 'redux-saga/effects';
 import * as betSagas from './betSagas.js';
 import * as folderSagas from './folderSagas.js';
 import * as alertSagas from './alertSagas.js';
+import * as sessionSagas from './sessionSagas.js';
 
 export default function* rootSaga() {
   yield all([
@@ -17,6 +18,8 @@ export default function* rootSaga() {
     betSagas.watchPostBet(),
     betSagas.watchPutBet(),
     betSagas.watchDeleteBet(),
-    alertSagas.watchClearAlert()
+    alertSagas.watchClearAlert(),
+    sessionSagas.watchLogin(),
+    sessionSagas.watchLogOut()
   ]);
 }

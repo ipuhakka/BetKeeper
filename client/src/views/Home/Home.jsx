@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import BetsContainer from '../../containers/BetsContainer.jsx';
-import StatisticsContainer from '../../containers/StatisticsContainer.jsx';
-import Folders from '../Folders/Folders.jsx';
+import {withRouter} from 'react-router-dom';
 import MenuCard from '../../components/MenuCard/MenuCard.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
-import {changeToComponent} from '../../changeView';
 import './Home.css';
 
 class Home extends Component{
@@ -22,15 +19,16 @@ class Home extends Component{
 	}
 
 	changePage = (key) => {
+		const {history} = this.props;
 		switch (key){
 			case 0:
-				changeToComponent(<StatisticsContainer/>);
+				history.push('/statistics');
 				break;
 			case 1:
-				changeToComponent(<BetsContainer/>);
+				history.push('/bets');
 				break;
 			case 2:
-				changeToComponent(<Folders/>);
+				history.push('/folders');
 				break;
 			default:
 				break;
@@ -48,6 +46,7 @@ class Home extends Component{
 	}
 
 	render() {
+
 		return (
 		<div className="content">
 			<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
@@ -67,4 +66,4 @@ class Home extends Component{
 
 }
 
-export default Home;
+export default withRouter(Home);
