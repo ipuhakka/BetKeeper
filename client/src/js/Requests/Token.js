@@ -1,4 +1,4 @@
-import ConstVars from '../Consts.js';
+import ConstVars from '../consts.js';
 
 /*
 POST-request to get a token to use in the app.
@@ -11,7 +11,7 @@ data:{
 On success, resolved with parsed token, user-id and username as parameters.
 Rejects with status of received http-response.
 */
-export function postToken(username, password, callback){
+export function postToken(username, password){
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
 

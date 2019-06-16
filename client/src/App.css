@@ -20,3 +20,23 @@
 ::-webkit-scrollbar-thumb:vertical {
     background:  white;
 }
+
+th{
+	text-align:center;
+}
+
+th.clickable{
+	cursor:pointer;
+}
+
+th.clickable:hover{
+  background-color: lightgray;
+}
+
+.tableGreen{
+	color: springgreen;
+}
+
+.tableRed{
+	color: salmon;
+}

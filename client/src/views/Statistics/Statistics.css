@@ -14,19 +14,3 @@
   width: 100%;
   height: 250px;
 }
-
-.tableGreen{
-	color: springgreen;
-}
-
-.tableRed{
-	color: salmon;
-}
-
-th{
-	text-align:center;
-}
-
-th.clickable{
-	cursor:pointer;
-}

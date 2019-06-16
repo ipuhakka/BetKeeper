@@ -1,4 +1,4 @@
-import ConstVars from '../Consts.js';
+import ConstVars from '../consts.js';
 
 /*
   POST-request to uri/folders. Resolves on 201 Created response,

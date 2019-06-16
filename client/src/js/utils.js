@@ -1,4 +1,14 @@
 
+/*
+  Checks if number is odd
+*/
+export function isOdd(number){
+  	return (number % 2) === 1;
+}
+
+/*
+  Returns radioButtonValue used for betResult.
+*/
 export function betResultToRadioButtonValue(betResult){
   switch(betResult){
     case false:
@@ -37,4 +47,14 @@ export function isValidString(value){
   var nonAllowed = /[!@#$%^&*()+=[\]{};'':"\\|,<>/?]/;
 
   return !nonAllowed.test(value);
+}
+
+/* Deep copies an object. */
+export function deepCopy(obj){
+  return JSON.parse(JSON.stringify(obj));
+}
+
+export function loginCredentialsExist(){
+  return sessionStorage.getItem('token') != null &&
+    sessionStorage.getItem('token').toString() !== 'null';
 }

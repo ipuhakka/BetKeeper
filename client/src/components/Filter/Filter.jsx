@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import Checkbox from 'react-bootstrap/lib/Checkbox';
+// import ControlLabel from 'react-bootstrap/ControlLabel';
+// import FormControl from 'react-bootstrap/FormControl';
+// import Checkbox from 'react-bootstrap/Checkbox';
+import Form from 'react-bootstrap/Form';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
 import {getFilterOptions, filterList} from '../../js/filter.js';
@@ -48,7 +49,7 @@ class Filter extends Component{
 
     return(
         <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
-            <Checkbox className="small" onChange={this.toggleChecked}/>
+            <Form.Check className="small" onChange={this.toggleChecked}/>
             <div className="small">
             <Dropdown defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1}
                 data={selections} title="Bet" onUpdate={this.updateSelection}/>
@@ -62,14 +63,14 @@ class Filter extends Component{
 
     if (state.selectedfilterOptionKey === 0){
       return <div>
-                <FormControl disabled={!state.filterOn} className="small" type="number" value={state.higherThan}
+                <Form.Control disabled={!state.filterOn} className="small" type="number" value={state.higherThan}
                   onChange={this.setValue.bind(this, "higherThan")}/>
-                <FormControl disabled={!state.filterOn} className="small" type="number" value={state.lowerThan}
+                <Form.Control disabled={!state.filterOn} className="small" type="number" value={state.lowerThan}
                   onChange={this.setValue.bind(this, "lowerThan")}/>
               </div>;
     }
     else {
-      return <FormControl disabled={!state.filterOn} className="large" type="number" value={state.singleNumericFilterValue}
+      return <Form.Control disabled={!state.filterOn} className="large" type="number" value={state.singleNumericFilterValue}
                 onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>;
     }
 
@@ -80,8 +81,8 @@ class Filter extends Component{
 
     return(
         <div>
-          <ControlLabel className="small">{props.label}</ControlLabel>
-          <FormControl disabled={!state.filterOn} className="large" type="text" value={state.stringFilter}
+          <Form.Label className="small">{props.label}</Form.Label>
+          <Form.Control disabled={!state.filterOn} className="large" type="text" value={state.stringFilter}
            onChange={this.setValue.bind(this, "stringFilter")}/>
         </div>);
   }

@@ -31,7 +31,7 @@ class ScatterPlot extends Component{
     return (
       <div>
         <Dropdown
-          bsStyle="primary"
+          variant="primary"
           title={"Y"}
           id={3}
           data={this.props.optionLabels}
@@ -40,7 +40,7 @@ class ScatterPlot extends Component{
           stateKey={"yVariable"}>
         </Dropdown>
         <Dropdown
-          bsStyle="primary"
+          variant="primary"
           title={"X"}
           id={4}
           data={this.props.optionLabels}

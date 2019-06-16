@@ -1,4 +1,4 @@
-import ConstVars from '../Consts.js';
+import ConstVars from '../consts.js';
 
 /*
 GET-request to uri/bets?finished=true.
