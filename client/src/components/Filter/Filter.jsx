@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-// import ControlLabel from 'react-bootstrap/ControlLabel';
-// import FormControl from 'react-bootstrap/FormControl';
-// import Checkbox from 'react-bootstrap/Checkbox';
+import _ from 'lodash';
 import Form from 'react-bootstrap/Form';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
@@ -15,10 +13,6 @@ const selections =
     'Under'
   ];
 
-/*
-TODO: Add redux handling for activeBetList &
-filter it in reducer.
-*/
 class Filter extends Component{
   constructor(props){
     super(props);
@@ -30,6 +24,16 @@ class Filter extends Component{
       singleNumericFilterValue: 0,
       stringFilter: '',
       filterOn: false
+    }
+  }
+
+  componentDidUpdate(prevProps)
+  {
+    const {props} = this;
+
+    if (!_.isEqual(props.arrayToFilter, prevProps.arrayToFilter))
+    {
+      this.onUpdate();
     }
   }
 
@@ -76,7 +80,8 @@ class Filter extends Component{
 
   }
 
-  renderTextFilter = () => {
+  renderTextFilter = () =>
+  {
     const {props, state} = this;
 
     return(
@@ -109,38 +114,56 @@ class Filter extends Component{
   /*
     Updates state key with new value.
   */
-  updateSelection = (value, key) => {
+  updateSelection = (value, key) =>
+  {
     this.setState({
       [key]: value
     })
   }
 
-  toggleChecked = () => {
-    this.setState({
-      filterOn: !this.state.filterOn
-    });
+  toggleChecked = () =>
+  {
+    const { props } = this;
+    const filterOn = !this.state.filterOn;
+    this.setState({ filterOn });
+
+    if (filterOn)
+    {
+      this.onUpdate();
+    }
+    else
+    {
+      this.props.onUpdate(props.arrayToFilter);
+    }
   }
 
-  setValue = (param, e) => {
+  setValue = (param, e) =>
+  {
     this.setState({
       [param]: e.target.value
+    }, () => {
+      this.onUpdate();
     });
-
-    this.onUpdate();
   }
 
-  getFilteredValues = () => {
+  getFilteredValues = () =>
+  {
     const {state, props} = this;
 
-    if (props.type === 'number'){
-      if (state.selectedfilterOptionKey[0]){ //between numbers
+    if (props.type === 'number')
+    {
+      if (state.selectedfilterOptionKey[0])
+      { //between numbers
         return [state.lowerThan, state.higherThan];
-      } else{
+      }
+      else
+      {
         return [state.singleNumericFilterValue];
       }
     }
 
-    else if (props.type === 'text'){
+    else if (props.type === 'text')
+    {
       return [state.stringFilter];
     }
 
@@ -148,7 +171,8 @@ class Filter extends Component{
   }
 }
 
-Filter.propTypes = {
+Filter.propTypes =
+{
   label: PropTypes.string,
   type: PropTypes.string.isRequired, //'text', 'number', 'bool'
   filteredKey: PropTypes.string.isRequired,

@@ -14,8 +14,11 @@ class BetsContainer extends Component {
       selectedBet: -1,
       folders: [],
       selectedFolders: [],
-    	deleteListFromFolder: false //Whether all bets are visible or bets from selected folder
-		};
+    	betListFromFolder: false, //Whether all bets are visible or bets from selected folder
+      visibleBets: null
+    };
+
+    this.updateFilteredList = this.updateFilteredList.bind(this);
 	}
 
   componentWillMount(){
@@ -25,8 +28,13 @@ class BetsContainer extends Component {
   render() {
     const {props, state} = this;
 
-    return(<Bets {...state} {...props} onChange={this.updateData} getBetsFolders={this.getBetsFolders}
-      onDeleteBet={this.betDeleted} onPressedBet={this.onPressedBet} onShowFromFolder={this.showFromFolder}/>);
+    return(<Bets {...state} {...props}
+      onChange={this.updateData}
+      getBetsFolders={this.getBetsFolders}
+      onDeleteBet={this.betDeleted}
+      onPressedBet={this.onPressedBet}
+      onShowFromFolder={this.showFromFolder}
+      onFilterUpdate={this.updateFilteredList}/>);
   }
 
   //updates data. Gets bets, folders and unresolved bets from the api. If folder parameter is not specified, gets all users bets, otherwise
@@ -35,7 +43,7 @@ class BetsContainer extends Component {
 
     if (typeof folder === "string"){
       this.setState({
-        deleteListFromFolder: true
+        betListFromFolder: true
       });
 
       store.dispatch({type: 'FETCH_BETS_FROM_FOLDER', payload: {
@@ -45,7 +53,7 @@ class BetsContainer extends Component {
     }
     else {
       this.setState({
-        deleteListFromFolder: false
+        betListFromFolder: false
       });
       this.props.fetchBets();
     }
@@ -68,7 +76,8 @@ class BetsContainer extends Component {
       folders: [],
       selectedFolders: [],
       allFoldersSelected: key,
-      selectedBet: -1
+      selectedBet: -1,
+      visibleBets: null
     });
 
     if (key !== '-1' && key !== -1)
@@ -83,12 +92,17 @@ class BetsContainer extends Component {
     });
   };
 
+  updateFilteredList(visibleBets)
+  {
+    this.setState({visibleBets});
+  }
+
   ///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet = (key) => {
 
     const {props, state} = this;
 
-    let bets = props.deleteListFromFolder ? props.betsFromFolder.bets : props.allBets;
+    let bets = props.betListFromFolder ? props.betsFromFolder.bets : props.allBets;
 
 		var value = -1;
 

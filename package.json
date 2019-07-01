@@ -30,6 +30,7 @@
     "html-webpack-plugin": "4.0.0-beta.5",
     "is-number": "^7.0.0",
     "jest": "24.8.0",
+    "lodash": "4.17.11",
     "moment": "^2.24.0",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "4.1.0",

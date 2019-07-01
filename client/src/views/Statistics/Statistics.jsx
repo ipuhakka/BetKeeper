@@ -8,7 +8,6 @@ import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import ObjectTable from '../../components/ObjectTable/ObjectTable.jsx';
 import OverviewTable from '../../components/OverviewTable/OverviewTable.jsx';
-import Filter from '../../components/Filter/Filter.jsx';
 import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
 import './Statistics.css';
 
@@ -41,9 +40,7 @@ class Statistics extends Component{
 						<Col md={6} xs={12}>
 							<BarGraph data={props.betStatistics} optionLabels={this.graphOptionLabels()}
 								graphOptions={props.graphOptions} />
-							<div>
-								<OverviewTable defaultSort={props.betStatistics} overviewItems={props.betStatistics}/>
-							</div>
+							<OverviewTable defaultSort={props.betStatistics} overviewItems={props.betStatistics}/>
 						</Col>
 						<Col md={6} xs={12}>
 							<Dropdown
@@ -54,7 +51,6 @@ class Statistics extends Component{
 								onUpdate={this.setSelectedDropdownItem.bind(this)}
 								stateKey={"folderSelected"}>
 							</Dropdown>
-							<Filter type="number"/>
 							{this.renderTable()}
 						</Col>
 					</Row>

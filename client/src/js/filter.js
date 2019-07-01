@@ -43,7 +43,7 @@ export function filterList(list, filterOptions){
         break;
     }
   });
-
+  
   return list;
 }
 
