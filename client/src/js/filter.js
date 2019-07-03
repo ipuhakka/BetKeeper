@@ -43,7 +43,7 @@ export function filterList(list, filterOptions){
         break;
     }
   });
-  
+
   return list;
 }
 
@@ -84,8 +84,8 @@ function getNumericFilters(values, key, option){
   let filterOptions = [];
 
   if (option.toLowerCase() === 'between'){
-    filterOptions.push(createFilter(Math.max(values), key, 'under'));
-    filterOptions.push(createFilter(Math.min(values), key, 'over'));
+    filterOptions.push(createFilter(Math.max(...values), key, 'under'));
+    filterOptions.push(createFilter(Math.min(...values), key, 'over'));
   }
 
   else if (option.toLowerCase() === 'under'){
@@ -95,7 +95,7 @@ function getNumericFilters(values, key, option){
   else if (option.toLowerCase() === 'over'){
     filterOptions.push(createFilter(values[0], key, 'over'));
   }
-
+  
   return filterOptions;
 }
 

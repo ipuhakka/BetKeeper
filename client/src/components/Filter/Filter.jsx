@@ -56,7 +56,7 @@ class Filter extends Component{
             <Form.Check className="small" onChange={this.toggleChecked}/>
             <div className="small">
             <Dropdown defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1}
-                data={selections} title="Bet" onUpdate={this.updateSelection}/>
+                data={selections} title={props.label} onUpdate={this.updateSelection}/>
             </div>
             {filterControls}
         </div>);
@@ -95,7 +95,7 @@ class Filter extends Component{
   /*
   * Returns filtered array.
   */
-  onUpdate = () => {
+  onUpdate = (applyFilters) => {
     const {state, props} = this;
 
     props.onUpdate(
@@ -116,9 +116,16 @@ class Filter extends Component{
   */
   updateSelection = (value, key) =>
   {
+    console.log('setting ' + key + ', ' + value);
     this.setState({
       [key]: value
-    })
+    }, () =>
+    {
+      if (this.state.filterOn)
+      {
+        this.onUpdate();
+      }
+    });
   }
 
   toggleChecked = () =>
@@ -152,7 +159,7 @@ class Filter extends Component{
 
     if (props.type === 'number')
     {
-      if (state.selectedfilterOptionKey[0])
+      if (state.selectedfilterOptionKey === 0)
       { //between numbers
         return [state.lowerThan, state.higherThan];
       }
@@ -173,7 +180,7 @@ class Filter extends Component{
 
 Filter.propTypes =
 {
-  label: PropTypes.string,
+  label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired, //'text', 'number', 'bool'
   filteredKey: PropTypes.string.isRequired,
   arrayToFilter: PropTypes.array.isRequired,

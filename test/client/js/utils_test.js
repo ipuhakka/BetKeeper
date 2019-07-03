@@ -1,7 +1,75 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-import {isValidDouble, isValidString, deepCopy} from '../../../client/src/js/utils';
+import {isValidDouble, isValidString, deepCopy, shallowEquals} from '../../../client/src/js/utils';
+
+describe('shallowEquals', function(){
+
+  it('returns true on equal objects', function(done){
+
+    const testObj =
+    {
+        a: 1,
+        b: "asd",
+        c: true,
+        d: null
+    };
+
+    const testObj2 =
+    {
+        a: 1,
+        b: "asd",
+        c: true,
+        d: null
+    }
+
+    expect(shallowEquals(testObj, testObj2)).to.equal(true);
+    done();
+  });
+
+  it('returns false on different number of keys', function(done){
+
+    const testObj =
+    {
+        a: 1,
+        b: "asd",
+        c: true,
+        d: null
+    };
+
+    const testObj2 =
+    {
+        a: 1,
+        b: "asd",
+        c: true
+    }
+
+    expect(shallowEquals(testObj, testObj2)).to.equal(false);
+    done();
+  });
+
+  it('returns false on unequal objects', function(done){
+
+    const testObj =
+    {
+        a: 1,
+        b: "asd",
+        c: true,
+        d: null
+    };
+
+    const testObj2 =
+    {
+        a: 1,
+        b: "asd",
+        c: true,
+        d: undefined
+    }
+
+    expect(shallowEquals(testObj, testObj2)).to.equal(false);
+    done();
+  });
+});
 
 describe('isValidString', function(){
 
