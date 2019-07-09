@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /*
   Filters a list. FilterOption is created
   per filter: When filtering number between values,
@@ -53,7 +55,7 @@ Returns an array of filterOptions for single filter.
 params:
   type: 'text', 'number', 'bool'.
   values: [].
-  key: string. Referenes the filtered key on array.
+  key: string. References the filtered key on array.
   option: used by numeric filter to identify what type of filtering
     is done. 'Between', 'Over' or 'Under'.
 */
@@ -83,7 +85,9 @@ larger than it.
 function getNumericFilters(values, key, option){
   let filterOptions = [];
 
-  if (option.toLowerCase() === 'between'){
+  _.remove(values, '');
+
+  if (option.toLowerCase() === 'between' && values.length === 2){
     filterOptions.push(createFilter(Math.max(...values), key, 'under'));
     filterOptions.push(createFilter(Math.min(...values), key, 'over'));
   }
@@ -95,7 +99,7 @@ function getNumericFilters(values, key, option){
   else if (option.toLowerCase() === 'over'){
     filterOptions.push(createFilter(values[0], key, 'over'));
   }
-  
+
   return filterOptions;
 }
 

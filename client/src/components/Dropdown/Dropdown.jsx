@@ -35,7 +35,7 @@ class Dropdown extends Component{
     this.props.onUpdate(key, stateKey);
     this.setState({
       selectedKey: key
-    })
+    });
   };
 };
 

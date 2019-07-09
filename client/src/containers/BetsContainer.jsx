@@ -17,8 +17,6 @@ class BetsContainer extends Component {
     	betListFromFolder: false, //Whether all bets are visible or bets from selected folder
       visibleBets: null
     };
-
-    this.updateFilteredList = this.updateFilteredList.bind(this);
 	}
 
   componentWillMount(){
@@ -91,11 +89,6 @@ class BetsContainer extends Component {
       selectedBet: -1
     });
   };
-
-  updateFilteredList(visibleBets)
-  {
-    this.setState({visibleBets});
-  }
 
   ///set new selectedBet, if one is chosen get folders in which bet belongs to.
 	onPressedBet = (key) => {

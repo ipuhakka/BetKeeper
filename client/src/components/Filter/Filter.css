@@ -1,22 +1,19 @@
 .filter{
   width: 100%;
-  display: inline-block;
+  display: flex;
+  margin: 5px;
 }
 
-.checked{
-  background-color: #FFFFFF;
+.dropdown {
+  margin-left: 10px;
 }
 
-.unchecked{
-  background-color: #F9F9F9;
+.input-field {
+  flex: 0 1 auto;
 }
 
-.small{
-  width: 25%;
-  float: left;
-}
-
-.large{
-  width: 50%;
-  float: left;
+.input-field-small {
+  display: flex;
+  flex-direction: row;
+  width: 50px;
 }

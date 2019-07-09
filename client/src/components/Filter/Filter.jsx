@@ -4,9 +4,9 @@ import _ from 'lodash';
 import Form from 'react-bootstrap/Form';
 import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
-import {getFilterOptions, filterList} from '../../js/filter.js';
+import {getFilterOptions} from '../../js/filter.js';
 
-const selections =
+const numericSelections =
   [
     'Between',
     'Over',
@@ -38,46 +38,44 @@ class Filter extends Component{
   }
 
   render(){
-    const {props, state} = this;
-    let filterControls;
+    const {props} = this;
 
-    if (props.type === "number"){
-      filterControls = this.renderNumericFilter();
+    if (props.type === "number")
+    {
+      return this.renderNumericFilter();
     }
-    else if (props.type === "text"){
-      filterControls = this.renderTextFilter();
+    else if (props.type === "text")
+    {
+      return this.renderTextFilter();
     }
-    else {
-      return null;
+    else
+    {
+      return;
     }
+  }
+
+  renderNumericFilter = () =>
+  {
+    const {state, props} = this;
+
+    const filters = state.selectedfilterOptionKey === 0
+      ? <div className='input-field-small'>
+          <Form.Control disabled={!state.filterOn} type="number"
+           value={state.higherThan} onChange={this.setValue.bind(this, "higherThan")}/>
+          <Form.Control disabled={!state.filterOn} type="number"
+            value={state.lowerThan} onChange={this.setValue.bind(this, "lowerThan")}/>
+        </div>
+      : <Form.Control className='input-field' disabled={!state.filterOn} type="number" value={state.singleNumericFilterValue}
+          onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>;
 
     return(
         <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
-            <Form.Check className="small" onChange={this.toggleChecked}/>
-            <div className="small">
-            <Dropdown defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1}
-                data={selections} title={props.label} onUpdate={this.updateSelection}/>
-            </div>
-            {filterControls}
+            <Form.Check className="check" onChange={this.toggleChecked}/>
+            <Dropdown
+              defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1} className='dropdown'
+                data={numericSelections} title={props.label} onUpdate={this.updateSelection}/>
+            {filters}
         </div>);
-  }
-
-  renderNumericFilter = () => {
-    const {state} = this;
-
-    if (state.selectedfilterOptionKey === 0){
-      return <div>
-                <Form.Control disabled={!state.filterOn} className="small" type="number" value={state.higherThan}
-                  onChange={this.setValue.bind(this, "higherThan")}/>
-                <Form.Control disabled={!state.filterOn} className="small" type="number" value={state.lowerThan}
-                  onChange={this.setValue.bind(this, "lowerThan")}/>
-              </div>;
-    }
-    else {
-      return <Form.Control disabled={!state.filterOn} className="large" type="number" value={state.singleNumericFilterValue}
-                onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>;
-    }
-
   }
 
   renderTextFilter = () =>
@@ -85,29 +83,28 @@ class Filter extends Component{
     const {props, state} = this;
 
     return(
-        <div>
-          <Form.Label className="small">{props.label}</Form.Label>
-          <Form.Control disabled={!state.filterOn} className="large" type="text" value={state.stringFilter}
-           onChange={this.setValue.bind(this, "stringFilter")}/>
-        </div>);
+      <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
+        <Form.Check className="check" onChange={this.toggleChecked}/>
+        <p>{props.label}</p>
+        <Form.Control disabled={!state.filterOn} type="text" value={state.stringFilter}
+          onChange={this.setValue.bind(this, "stringFilter")}/>
+    </div>);
   }
 
   /*
-  * Returns filtered array.
+  * Returns new filterOptions.
   */
   onUpdate = (applyFilters) => {
     const {state, props} = this;
 
     props.onUpdate(
-      filterList(
-        props.arrayToFilter,
         getFilterOptions(
           props.type,
           this.getFilteredValues(),
           props.filteredKey,
           props.type === 'number' ?
-            selections[state.selectedfilterOptionKey] : null
-        ))
+            numericSelections[state.selectedfilterOptionKey] : null
+        )
       );
   }
 
@@ -116,7 +113,6 @@ class Filter extends Component{
   */
   updateSelection = (value, key) =>
   {
-    console.log('setting ' + key + ', ' + value);
     this.setState({
       [key]: value
     }, () =>
