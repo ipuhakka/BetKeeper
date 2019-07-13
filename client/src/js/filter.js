@@ -5,40 +5,51 @@ import _ from 'lodash';
   per filter: When filtering number between values,
   options are created for both under and over values.
 
-  filterOptions:
-  [
-    {
-      key: filtered field key
-      option: 'over', 'under', 'contains', 'is'. Contains only for string type, is for bool. Over and under
-      exclude searched value.
-      value: //filtered value.
-    }
-  ]
+  filterOptions-model for boolean, dateTime and string type:
+  {
+    key: filtered field key
+    value: //filtered value.
+    type: //'string', 'boolean', 'dateTime'
+  }
+
+  model for number-filter:
+  {
+    key: filtered field key
+    lowerLimit: //values under this are excluded
+    upperLimit: //values over this are excluded
+    type: //'number',
+  }
 */
 export function filterList(list, filterOptions){
 
   filterOptions.forEach(filterOption => {
 
-    switch (filterOption.option){
+    switch (filterOption.type){
 
-      case 'over':
-        list = list.filter(item =>
-          item[filterOption.key] > filterOption.value);
+      case 'number':
+        if (!_.isNil(filterOption.lowerLimit))
+        {
+          list = list.filter(item =>
+            item[filterOption.key] > filterOption.lowerLimit);
+        }
+        if (!_.isNil(filterOption.upperLimit))
+        {
+          list = list.filter(item =>
+            item[filterOption.key] < filterOption.upperLimit);
+        }
         break;
 
-      case 'under':
-        list = list.filter(item =>
-          item[filterOption.key] < filterOption.value);
-        break;
-
-      case 'is':
+      case 'boolean':
         list = list.filter(item =>
           item[filterOption.key] === filterOption.value);
         break;
 
-      case 'contains':
+      case 'string':
         list = list.filter(item =>
           item[filterOption.key].includes(filterOption.value))
+        break;
+
+      case 'dateTime': //not implemented
         break;
 
       default:
@@ -50,63 +61,51 @@ export function filterList(list, filterOptions){
 }
 
 /*
-Returns an array of filterOptions for single filter.
+Returns a filterOption for filtering a key.
 
 params:
-  type: 'text', 'number', 'bool'.
-  values: [].
+  type: 'string', 'number', 'boolean', 'dateTime'.
   key: string. References the filtered key on array.
-  option: used by numeric filter to identify what type of filtering
-    is done. 'Between', 'Over' or 'Under'.
+  values: Array of fitlered values.with number filter,
+    first value is considered the lower limit and second as
+    upper limit.
 */
-export function getFilterOptions(type, values, key, option){
-
+export function getFilterOptions(type, key, values)
+{
   switch(type){
     case 'number':
-      return getNumericFilters(values, key, option);
-    case 'text':
-      return [createFilter(values[0], key, 'contains')];
+      return createNumberFilter(key, values[0], values[1]);
 
-    case 'bool':
-      return [createFilter(values[0], key, 'is')];
+    case 'string':
+      return createFilter(type, key, values[0]);
+
+    case 'boolean':
+      return createFilter(type, key, values[0]);
+
+    case 'dateTime':
+      // Not implemented
+      return;
 
     default:
-      break;
+      return;
   }
 }
 
-/*
-Returns numeric filters. If filter is used
-to find where key is between numbers,
-larger number is expected to be filtering values
-lower than it, and smaller number filtering values
-larger than it.
-*/
-function getNumericFilters(values, key, option){
-  let filterOptions = [];
-
-  _.remove(values, '');
-
-  if (option.toLowerCase() === 'between' && values.length === 2){
-    filterOptions.push(createFilter(Math.max(...values), key, 'under'));
-    filterOptions.push(createFilter(Math.min(...values), key, 'over'));
-  }
-
-  else if (option.toLowerCase() === 'under'){
-    filterOptions.push(createFilter(values[0], key, 'under'));
-  }
-
-  else if (option.toLowerCase() === 'over'){
-    filterOptions.push(createFilter(values[0], key, 'over'));
-  }
-
-  return filterOptions;
-}
-
-function createFilter(values, key, option){
+function createFilter(type, key, value)
+{
   return {
     key: key,
-    option: option,
-    value: values
+    value: value,
+    type: type
+  };
+}
+
+function createNumberFilter(key, lowerLimit, upperLimit)
+{
+  return {
+    key: key,
+    lowerLimit: lowerLimit,
+    upperLimit: upperLimit,
+    type: 'number'
   };
 }

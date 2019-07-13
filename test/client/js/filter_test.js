@@ -26,11 +26,11 @@ function mockBetList(){
 
 describe('filterList', function(){
 
-  it('filters correctly on over', function(done){
+  it('filters correctly with lowerLimit', function(done){
     let filterOptions = [{
       key: "bet",
-      option: "over",
-      value: 3.2
+      type: "number",
+      lowerLimit: 3.2
     }];
 
     let resultList = filterList(mockBetList(), filterOptions);
@@ -41,11 +41,11 @@ describe('filterList', function(){
     done();
   });
 
-  it('filters correctly on under', function(done){
+  it('filters correctly with upperLimit', function(done){
     let filterOptions = [{
       key: "bet",
-      option: "under",
-      value: 3.2
+      type: "number",
+      upperLimit: 3.2
     }];
 
     let resultList = filterList(mockBetList(), filterOptions);
@@ -56,10 +56,10 @@ describe('filterList', function(){
     done();
   });
 
-  it('filters correctly on contains', function(done){
+  it('filters correctly on string', function(done){
     let filterOptions = [{
       key: "name",
-      option: "contains",
+      type: "string",
       value: "other"
     }];
 
@@ -71,10 +71,10 @@ describe('filterList', function(){
     done();
   });
 
-  it('filters correctly on is', function(done){
+  it('filters correctly on boolean', function(done){
     let filterOptions = [{
       key: "bet_won",
-      option: "is",
+      type: "boolean",
       value: false
     }];
 
@@ -90,13 +90,13 @@ describe('filterList', function(){
     let filterOptions = [
       {
       key: "bet_won",
-      option: "is",
+      type: "boolean",
       value: null
     },
     {
       key: "bet",
-      option: "under",
-      value: 4
+      type: "number",
+      upperLimit: 4
     }];
 
     let resultList = filterList(mockBetList(), filterOptions);
@@ -111,33 +111,37 @@ describe('filterList', function(){
 
 describe('getFilterOptions', function(){
 
-  it('returns two filterOptions on between and options are identical regardless of value order',
+  it('returns excpcted filterOption for number, first array value is lowerLimit',
   function(done){
 
-    let filters1 = getFilterOptions('number', [0, 1], 'key', 'between');
-    let filters2 = getFilterOptions('number', [1, 0], 'key', 'between');
+    let filter1 = getFilterOptions('number', 'bet', [0, 1]);
+    let filter2 = getFilterOptions('number', 'bet', [1, 0]);
 
-    expect(filters1).to.deep.equal(filters2);
-    expect(filters1.length).to.equal(2);
+    expect(typeof filter1).to.equal('object');
+    expect(filter1.lowerLimit).to.equal(0);
+    expect(filter1.upperLimit).to.equal(1);
 
+    expect(typeof filter2).to.equal('object');
+    expect(filter2.lowerLimit).to.equal(1);
+    expect(filter2.upperLimit).to.equal(0);
     done();
   });
 
-  it('returns one filterOption with contains when filter is type text', function(done){
-    let filters = getFilterOptions('text', ['searchWord'], 'key'); //option does not matter
+  it('returns expected option with string', function(done){
+    let filter = getFilterOptions('string', 'key', ['searchWord']);
 
-    expect(filters.length).to.equal(1);
-    expect(filters[0].option).to.equal('contains');
-
+    expect(typeof filter).to.equal('object');
+    expect(filter.type).to.equal('string');
+    expect(filter.value).to.equal('searchWord');
     done();
   });
 
-  it('returns one filterOption with is when filter is type bool', function(done){
-    let filters = getFilterOptions('bool', [true], 'key'); //option does not matter
+  it('returns expected option with boolean filter', function(done){
+    let filter = getFilterOptions('boolean', 'key', [true]);
 
-    expect(filters.length).to.equal(1);
-    expect(filters[0].option).to.equal('is');
-
+    expect(typeof filter).to.equal('object');
+    expect(filter.type).to.equal('boolean');
+    expect(filter.value).to.equal(true);
     done();
   });
 });
