@@ -26,11 +26,26 @@ function mockBetList(){
 
 describe('filterList', function(){
 
+  it('includes limit value in results', function(done){
+    let filterOptions = [{
+      key: "bet",
+      type: "number",
+      lowerLimit: 1,
+      upperLimit: 5
+    }];
+
+    let resultList = filterList(mockBetList(), filterOptions);
+
+    expect(resultList.length).to.equal(3);
+
+    done();
+  });
+
   it('filters correctly with lowerLimit', function(done){
     let filterOptions = [{
       key: "bet",
       type: "number",
-      lowerLimit: 3.2
+      lowerLimit: 3.3
     }];
 
     let resultList = filterList(mockBetList(), filterOptions);
@@ -45,7 +60,7 @@ describe('filterList', function(){
     let filterOptions = [{
       key: "bet",
       type: "number",
-      upperLimit: 3.2
+      upperLimit: 3.1
     }];
 
     let resultList = filterList(mockBetList(), filterOptions);
