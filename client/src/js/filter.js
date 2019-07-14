@@ -30,12 +30,12 @@ export function filterList(list, filterOptions){
         if (!_.isNil(filterOption.lowerLimit))
         {
           list = list.filter(item =>
-            item[filterOption.key] > filterOption.lowerLimit);
+            item[filterOption.key] >= filterOption.lowerLimit);
         }
         if (!_.isNil(filterOption.upperLimit))
         {
           list = list.filter(item =>
-            item[filterOption.key] < filterOption.upperLimit);
+            item[filterOption.key] <= filterOption.upperLimit);
         }
         break;
 

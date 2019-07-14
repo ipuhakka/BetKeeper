@@ -42,18 +42,17 @@ class Filters extends Component
 
   render()
   {
-
     return <Accordion>
       <Card.Header className='header'>
-        <Accordion.Toggle className='toggleArrow' as={Button} eventKey="open">
+        <Accordion.Toggle className='toggleArrow' as={Button} eventKey="1">
           <i className="fas fa-chevron-down"></i>
         </Accordion.Toggle>
       </Card.Header>
-      <Accordion.Collapse eventKey="open">
+      <Accordion.Collapse eventKey="1">
         <Card.Body className='body'>
           {this.renderFilters()}
         </Card.Body>
-    </Accordion.Collapse>
+      </Accordion.Collapse>
     </Accordion>;
   }
 
@@ -64,19 +63,19 @@ class Filters extends Component
     const filters = [
       { key: 'bet', label: 'Bet', type:'number'},
       { key: 'odd', label: 'Odd', type: 'number'},
-      { key: 'name', label: 'Name', type: 'text'}
+      { key: 'name', label: 'Name', type: 'string'}
     ];
 
    return <Fragment>
       {
         _.map(filters, filter => {
-        return <Filter
-          arrayToFilter={props.toFilter}
-          onUpdate={this.onUpdate}
-          type={filter.type}
-          filteredKey={filter.key}
-          label={filter.label}
-          key={filter.key} />
+          return <Filter
+            arrayToFilter={props.toFilter}
+            onUpdate={this.onUpdate}
+            type={filter.type}
+            filteredKey={filter.key}
+            label={filter.label}
+            key={filter.key} />
         })
       }
       </Fragment>;
@@ -87,20 +86,18 @@ class Filters extends Component
   previous filterOptions for key and Filters
   with new options.
   */
-  onUpdate = (newFilterOptions) =>
+  onUpdate = (newFilterOption) =>
   {
     const { props, state } = this;
     let { filterOptions } = state;
 
-    const newFilterKey = newFilterOptions[0].key;
+    const newFilterKey = newFilterOption.key;
 
     _.remove(filterOptions, {
       key: newFilterKey
     });
 
-    _.map(newFilterOptions, filter => {
-      filterOptions.push(filter);
-    });
+    filterOptions.push(newFilterOption);
 
     const newFilteredArray = filterList(props.toFilter, filterOptions);
 

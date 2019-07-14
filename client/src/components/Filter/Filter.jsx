@@ -2,26 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Form from 'react-bootstrap/Form';
-import Dropdown from '../Dropdown/Dropdown.jsx';
 import './Filter.css';
 import {getFilterOptions} from '../../js/filter.js';
-
-const numericSelections =
-  [
-    'Between',
-    'Over',
-    'Under'
-  ];
 
 class Filter extends Component{
   constructor(props){
     super(props);
 
     this.state = {
-      selectedfilterOptionKey: 1,
-      higherThan: 0,
-      lowerThan: 100,
-      singleNumericFilterValue: 0,
+      upperLimit: '',
+      lowerLimit: '',
       stringFilter: '',
       filterOn: false
     }
@@ -44,36 +34,29 @@ class Filter extends Component{
     {
       return this.renderNumericFilter();
     }
-    else if (props.type === "text")
+    else if (props.type === "string")
     {
       return this.renderTextFilter();
     }
-    else
-    {
-      return;
-    }
+
+    return null;
   }
 
   renderNumericFilter = () =>
   {
     const {state, props} = this;
 
-    const filters = state.selectedfilterOptionKey === 0
-      ? <div className='input-field-small'>
+    const filters = <div className='inputs'>
           <Form.Control disabled={!state.filterOn} type="number"
-           value={state.higherThan} onChange={this.setValue.bind(this, "higherThan")}/>
+           value={state.lowerLimit} onChange={this.setValue.bind(this, "lowerLimit")}/>
           <Form.Control disabled={!state.filterOn} type="number"
-            value={state.lowerThan} onChange={this.setValue.bind(this, "lowerThan")}/>
-        </div>
-      : <Form.Control className='input-field' disabled={!state.filterOn} type="number" value={state.singleNumericFilterValue}
-          onChange={this.setValue.bind(this, "singleNumericFilterValue")}/>;
+            value={state.upperLimit} onChange={this.setValue.bind(this, "upperLimit")}/>
+        </div>;
 
     return(
         <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
             <Form.Check className="check" onChange={this.toggleChecked}/>
-            <Dropdown
-              defaultKey={1} stateKey={"selectedfilterOptionKey"} id={1} className='dropdown'
-                data={numericSelections} title={props.label} onUpdate={this.updateSelection}/>
+            <Form.Label className='label'>{props.label}</Form.Label>
             {filters}
         </div>);
   }
@@ -85,8 +68,8 @@ class Filter extends Component{
     return(
       <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
         <Form.Check className="check" onChange={this.toggleChecked}/>
-        <p>{props.label}</p>
-        <Form.Control disabled={!state.filterOn} type="text" value={state.stringFilter}
+        <Form.Label>{props.label}</Form.Label>
+        <Form.Control className='inputs' disabled={!state.filterOn} type="text" value={state.stringFilter}
           onChange={this.setValue.bind(this, "stringFilter")}/>
     </div>);
   }
@@ -94,16 +77,15 @@ class Filter extends Component{
   /*
   * Returns new filterOptions.
   */
-  onUpdate = (applyFilters) => {
-    const {state, props} = this;
+  onUpdate = (applyFilters) =>
+  {
+    const {props} = this;
 
     props.onUpdate(
         getFilterOptions(
           props.type,
-          this.getFilteredValues(),
           props.filteredKey,
-          props.type === 'number' ?
-            numericSelections[state.selectedfilterOptionKey] : null
+          this.getFilteredValues()
         )
       );
   }
@@ -155,29 +137,30 @@ class Filter extends Component{
 
     if (props.type === 'number')
     {
-      if (state.selectedfilterOptionKey === 0)
-      { //between numbers
-        return [state.lowerThan, state.higherThan];
-      }
-      else
-      {
-        return [state.singleNumericFilterValue];
-      }
+      const lowerLimit = state.lowerLimit === ''
+        ? null : state.lowerLimit;
+
+      const upperLimit = state.upperLimit === ''
+        ? null : state.upperLimit;
+
+      return [lowerLimit, upperLimit];
     }
 
-    else if (props.type === 'text')
+    else if (props.type === 'string')
     {
       return [state.stringFilter];
     }
 
     //TODO: add boolean handling
+
+    //TODO: add dateTime handling
   }
 }
 
 Filter.propTypes =
 {
   label: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired, //'text', 'number', 'bool'
+  type: PropTypes.oneOf(['string', 'number', 'boolean', 'dateTime']).isRequired,
   filteredKey: PropTypes.string.isRequired,
   arrayToFilter: PropTypes.array.isRequired,
   onUpdate: PropTypes.func.isRequired

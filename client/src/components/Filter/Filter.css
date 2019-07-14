@@ -4,16 +4,17 @@
   margin: 5px;
 }
 
-.dropdown {
-  margin-left: 10px;
+
+.check {
+  position: initial;
+  padding-left: 0;
 }
 
-.input-field {
+.label {
   flex: 0 1 auto;
 }
 
-.input-field-small {
+.inputs {
   display: flex;
-  flex-direction: row;
-  width: 50px;
+  margin-left: 1em;
 }
