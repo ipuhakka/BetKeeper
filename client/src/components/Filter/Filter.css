@@ -8,13 +8,16 @@
 .check {
   position: initial;
   padding-left: 0;
+  margin: auto;
 }
 
 .label {
   flex: 0 1 auto;
+  margin: auto;
 }
 
 .inputs {
   display: flex;
-  margin-left: 1em;
+  margin-left: auto;
+  max-width: 200px;
 }

@@ -68,7 +68,7 @@ class Filter extends Component{
     return(
       <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
         <Form.Check className="check" onChange={this.toggleChecked}/>
-        <Form.Label>{props.label}</Form.Label>
+        <Form.Label className='label'>{props.label}</Form.Label>
         <Form.Control className='inputs' disabled={!state.filterOn} type="text" value={state.stringFilter}
           onChange={this.setValue.bind(this, "stringFilter")}/>
     </div>);
