@@ -3,9 +3,7 @@ var expect = chai.expect;
 
 import {filterList, getFilterOptions} from '../../../client/src/js/filter';
 
-function mockBetList(){
-
-  return [
+const mockBetList = [
     {
       bet: 3.2,
       name: "a test bet",
@@ -22,7 +20,6 @@ function mockBetList(){
       bet_won: false
     }
   ];
-}
 
 describe('filterList', function(){
 
@@ -34,7 +31,7 @@ describe('filterList', function(){
       upperLimit: 5
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(3);
 
@@ -48,7 +45,7 @@ describe('filterList', function(){
       lowerLimit: 3.3
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(1);
     expect(resultList[0].bet).to.equal(5);
@@ -63,7 +60,7 @@ describe('filterList', function(){
       upperLimit: 3.1
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(1);
     expect(resultList[0].bet).to.equal(1);
@@ -78,7 +75,7 @@ describe('filterList', function(){
       value: "other"
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(1);
     expect(resultList[0].bet).to.equal(1);
@@ -93,7 +90,7 @@ describe('filterList', function(){
       value: false
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(1);
     expect(resultList[0].bet).to.equal(5);
@@ -114,7 +111,7 @@ describe('filterList', function(){
       upperLimit: 4
     }];
 
-    let resultList = filterList(mockBetList(), filterOptions);
+    let resultList = filterList(mockBetList, filterOptions);
 
     expect(resultList.length).to.equal(1);
     expect(resultList[0].bet).to.equal(1);
