@@ -13,6 +13,7 @@ class Filter extends Component{
       upperLimit: '',
       lowerLimit: '',
       stringFilter: '',
+      booleanFilters: [],
       filterOn: false
     }
   }
@@ -30,16 +31,46 @@ class Filter extends Component{
   render(){
     const {props} = this;
 
-    if (props.type === "number")
+    switch (props.type)
     {
-      return this.renderNumericFilter();
+      case 'number':
+        return this.renderNumericFilter();
+
+      case 'string':
+        return this.renderTextFilter();
+
+      case 'boolean':
+        return this.renderBooleanFilter();
+
+      default:
+        return null;
     }
-    else if (props.type === "string")
+  }
+
+  renderBooleanFilter = () =>
+  {
+    const {state, props} = this;
+
+    if (_.isNil(props.valueList))
     {
-      return this.renderTextFilter();
+      throw new Error('No valuelist prop provided');
     }
 
-    return null;
+    const checks = _.map(props.valueList, row => {
+      return <div className='boolean-check-div' key={`div_${row.value}`}>
+          <Form.Label key={`label_${row.value}`} className='label'>{row.legend}</Form.Label>
+          <Form.Check
+            className='boolean-check'
+            inline
+            key={`check_${row.value}`}
+            onChange={this.changeBooleanSelection.bind(this, row.value)}/>
+        </div>;
+    });
+
+    return(
+      <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
+        {checks}
+    </div>);
   }
 
   renderNumericFilter = () =>
@@ -91,6 +122,35 @@ class Filter extends Component{
   }
 
   /*
+  * Updates selected filter values for boolean selection.
+  */
+  changeBooleanSelection = (value, e) => {
+    const { booleanFilters } = this.state;
+
+    if (e.target.checked)
+    {
+      booleanFilters.push(value);
+
+      this.setState({
+        booleanFilters
+      });
+
+
+      this.onUpdate();
+      return;
+    }
+
+    _.remove(booleanFilters, filter => _.isEqual(filter, value));
+
+    this.setState({
+      booleanFilters
+    });
+
+
+    this.onUpdate();
+  }
+
+  /*
     Updates state key with new value.
   */
   updateSelection = (value, key) =>
@@ -135,35 +195,42 @@ class Filter extends Component{
   {
     const {state, props} = this;
 
-    if (props.type === 'number')
+    switch (props.type)
     {
-      const lowerLimit = state.lowerLimit === ''
-        ? null : state.lowerLimit;
+      case 'number':
+        const lowerLimit = state.lowerLimit === ''
+          ? null : state.lowerLimit;
 
-      const upperLimit = state.upperLimit === ''
-        ? null : state.upperLimit;
+        const upperLimit = state.upperLimit === ''
+          ? null : state.upperLimit;
 
-      return [lowerLimit, upperLimit];
+        return [lowerLimit, upperLimit];
+
+      case 'string':
+        return [state.stringFilter];
+
+      case 'boolean':
+        return state.booleanFilters;
+
+      case 'datetime':
+        throw new Error('datetime not implemented');
+
+      default:
+        return;
     }
-
-    else if (props.type === 'string')
-    {
-      return [state.stringFilter];
-    }
-
-    //TODO: add boolean handling
-
-    //TODO: add dateTime handling
   }
 }
 
-Filter.propTypes =
-{
+Filter.propTypes = {
   label: PropTypes.string.isRequired,
   type: PropTypes.oneOf(['string', 'number', 'boolean', 'dateTime']).isRequired,
   filteredKey: PropTypes.string.isRequired,
   arrayToFilter: PropTypes.array.isRequired,
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
+  valueList: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.any,
+    legend: PropTypes.string.isRequired
+  }))
 };
 
 export default Filter;

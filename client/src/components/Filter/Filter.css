@@ -2,8 +2,16 @@
   width: 100%;
   display: flex;
   margin: 5px;
+  justify-content: center;
 }
 
+.boolean-check-div {
+  display: flex;
+}
+
+.boolean-check {
+  margin-left: 0.8em;
+}
 
 .check {
   position: initial;

@@ -87,7 +87,7 @@ describe('filterList', function(){
     let filterOptions = [{
       key: "bet_won",
       type: "boolean",
-      value: false
+      value: [false]
     }];
 
     let resultList = filterList(mockBetList, filterOptions);
@@ -98,12 +98,40 @@ describe('filterList', function(){
     done();
   });
 
+  it ('filters none based on boolean 0-length valuelist', function(done){
+    let filterOptions = [{
+      key: "bet_won",
+      type: "boolean",
+      value: []
+    }];
+
+    const resultList = filterList(mockBetList, filterOptions);
+
+    expect(resultList.length).to.equal(3);
+
+    done();
+  });
+
+  it('filters all given parameters in boolean filter', function(done){
+    let filterOptions = [{
+      key: "bet_won",
+      type: "boolean",
+      value: [false, null]
+    }];
+
+    let resultList = filterList(mockBetList, filterOptions);
+
+    expect(resultList.length).to.equal(2);
+
+    done();
+  });
+
   it('filters correctly on multiple filters', function(done){
     let filterOptions = [
       {
       key: "bet_won",
       type: "boolean",
-      value: null
+      value: [null]
     },
     {
       key: "bet",
@@ -123,11 +151,22 @@ describe('filterList', function(){
 
 describe('getFilterOptions', function(){
 
-  it('returns excpcted filterOption for number, first array value is lowerLimit',
+  it('boolean filterOption contains array of values',
+    function(done){
+      const filter = getFilterOptions('boolean', 'test', [true, false]);
+
+      expect(filter.value.length).to.equal(2);
+      expect(filter.value[0]).to.equal(true);
+      expect(filter.value[1]).to.equal(false);
+
+      done();
+    });
+
+  it('returns expected filterOption for number, first array value is lowerLimit',
   function(done){
 
-    let filter1 = getFilterOptions('number', 'bet', [0, 1]);
-    let filter2 = getFilterOptions('number', 'bet', [1, 0]);
+    const filter1 = getFilterOptions('number', 'bet', [0, 1]);
+    const filter2 = getFilterOptions('number', 'bet', [1, 0]);
 
     expect(typeof filter1).to.equal('object');
     expect(filter1.lowerLimit).to.equal(0);
@@ -145,15 +184,6 @@ describe('getFilterOptions', function(){
     expect(typeof filter).to.equal('object');
     expect(filter.type).to.equal('string');
     expect(filter.value).to.equal('searchWord');
-    done();
-  });
-
-  it('returns expected option with boolean filter', function(done){
-    let filter = getFilterOptions('boolean', 'key', [true]);
-
-    expect(typeof filter).to.equal('object');
-    expect(filter.type).to.equal('boolean');
-    expect(filter.value).to.equal(true);
     done();
   });
 });

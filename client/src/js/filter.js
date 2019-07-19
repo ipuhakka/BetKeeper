@@ -32,6 +32,7 @@ export function filterList(list, filterOptions){
           list = list.filter(item =>
             item[filterOption.key] >= filterOption.lowerLimit);
         }
+
         if (!_.isNil(filterOption.upperLimit))
         {
           list = list.filter(item =>
@@ -40,8 +41,14 @@ export function filterList(list, filterOptions){
         break;
 
       case 'boolean':
+        if (filterOption.value.length === 0)
+        {
+          break;
+        }
+
         list = list.filter(item =>
-          item[filterOption.key] === filterOption.value);
+          _.some(filterOption.value, value =>
+            value === item[filterOption.key]));
         break;
 
       case 'string':
@@ -80,7 +87,7 @@ export function getFilterOptions(type, key, values)
       return createFilter(type, key, values[0]);
 
     case 'boolean':
-      return createFilter(type, key, values[0]);
+      return createFilter(type, key, values);
 
     case 'dateTime':
       // Not implemented

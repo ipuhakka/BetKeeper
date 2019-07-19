@@ -63,7 +63,21 @@ class Filters extends Component
     const filters = [
       { key: 'bet', label: 'Bet', type:'number'},
       { key: 'odd', label: 'Odd', type: 'number'},
-      { key: 'name', label: 'Name', type: 'string'}
+      { key: 'name', label: 'Name', type: 'string'},
+      { key: 'bet_won', label: 'Result', type: 'boolean', valueList: [
+        {
+          value: null,
+          legend: 'Unresolved'
+        },
+        {
+          value: false,
+          legend: 'Lost'
+        },
+        {
+          value: true,
+          legend: 'Won'
+        }
+    ]}
     ];
 
    return <Fragment>
@@ -75,7 +89,8 @@ class Filters extends Component
             type={filter.type}
             filteredKey={filter.key}
             label={filter.label}
-            key={filter.key} />
+            key={filter.key}
+            valueList={filter.valueList} />
         })
       }
       </Fragment>;
