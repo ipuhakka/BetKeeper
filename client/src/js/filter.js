@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 /*
   Filters a list. FilterOption is created
@@ -58,7 +59,22 @@ export function filterList(list, filterOptions){
             .includes(filterOption.value.toLowerCase()))
         break;
 
-      case 'dateTime': //not implemented
+      case 'dateTime':
+        if (!_.isNil(filterOption.before))
+        {
+          list = list.filter(item =>
+            moment(item[filterOption.key])
+              .isSameOrBefore(filterOption.before))
+        }
+
+        if (!_.isNil(filterOption.after))
+        {
+          list = list.filter(item =>
+            moment(item[filterOption.key])
+              .isSameOrAfter(filterOption.after))
+        }
+
+
         break;
 
       default:
@@ -75,7 +91,7 @@ Returns a filterOption for filtering a key.
 params:
   type: 'string', 'number', 'boolean', 'dateTime'.
   key: string. References the filtered key on array.
-  values: Array of fitlered values.with number filter,
+  values: Array of filtered values. With number and dateTime filter,
     first value is considered the lower limit and second as
     upper limit.
 */
@@ -92,8 +108,7 @@ export function getFilterOptions(type, key, values)
       return createFilter(type, key, values);
 
     case 'dateTime':
-      // Not implemented
-      return;
+      return createDateTimeFilter(key, values[0], values[1]);
 
     default:
       return;
@@ -106,6 +121,16 @@ function createFilter(type, key, value)
     key: key,
     value: value,
     type: type
+  };
+}
+
+function createDateTimeFilter(key, after, before)
+{
+  return {
+    type: 'dateTime',
+    after: moment(after),
+    before: moment(before),
+    ...key
   };
 }
 
