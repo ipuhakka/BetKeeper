@@ -1,6 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var moment = require('moment');
+var _ = require('lodash');
 
 import {filterList, getFilterOptions} from '../../../client/src/js/filter';
 
@@ -193,6 +194,17 @@ describe('getFilterOptions', function(){
 
     expect(filter.after.isSame(moment(after))).to.equal(true);
     expect(filter.before.isSame(moment(before))).to.equal(true);
+
+    done();
+  });
+
+  it('returns null value for invalid datetime', function(done){
+    const before = '';
+    const after = 'invalid date';
+    const filter = getFilterOptions('dateTime', 'testKey', [after, before]);
+
+    expect(_.isNil(filter.after)).to.equal(true);
+    expect(_.isNil(filter.before)).to.equal(true);
 
     done();
   });

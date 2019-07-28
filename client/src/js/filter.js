@@ -126,11 +126,19 @@ function createFilter(type, key, value)
 
 function createDateTimeFilter(key, after, before)
 {
+  const format = 'YYYY-MM-DD hh:mm:ss';
+  const momentAfter = moment(after, format);
+  const momentBefore = moment(before, format);
+
   return {
     type: 'dateTime',
-    after: moment(after),
-    before: moment(before),
-    ...key
+    key: key,
+    after: momentAfter.isValid()
+      ? momentAfter
+      : null,
+    before: momentBefore.isValid()
+      ? momentBefore
+      : null
   };
 }
 
