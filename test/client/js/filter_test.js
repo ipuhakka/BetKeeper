@@ -83,6 +83,21 @@ describe('filterList', function(){
     done();
   });
 
+  it('ignores case for string filter', function(done){
+    let filterOptions = [{
+      key: "name",
+      type: "string",
+      value: "OTHER"
+    }];
+
+    let resultList = filterList(mockBetList, filterOptions);
+
+    expect(resultList.length).to.equal(1);
+    expect(resultList[0].bet).to.equal(1);
+
+    done();
+  });
+
   it('filters correctly on boolean', function(done){
     let filterOptions = [{
       key: "bet_won",

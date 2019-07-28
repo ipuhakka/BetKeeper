@@ -53,7 +53,9 @@ export function filterList(list, filterOptions){
 
       case 'string':
         list = list.filter(item =>
-          item[filterOption.key].includes(filterOption.value))
+          item[filterOption.key]
+            .toLowerCase()
+            .includes(filterOption.value.toLowerCase()))
         break;
 
       case 'dateTime': //not implemented
