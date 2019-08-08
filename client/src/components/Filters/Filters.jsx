@@ -77,7 +77,8 @@ class Filters extends Component
           value: true,
           legend: 'Won'
         }
-    ]}
+    ]},
+    { key: 'datetime', label: 'Played', type: 'dateTime'}
     ];
 
    return <Fragment>

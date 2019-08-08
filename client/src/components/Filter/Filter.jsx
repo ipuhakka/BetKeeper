@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Form from 'react-bootstrap/Form';
+import DatePicker from 'react-datepicker';
 import './Filter.css';
 import {getFilterOptions} from '../../js/filter.js';
+import consts from '../../js/consts.js';
+import moment from 'moment';
 
 class Filter extends Component{
   constructor(props){
@@ -42,9 +45,40 @@ class Filter extends Component{
       case 'boolean':
         return this.renderBooleanFilter();
 
+      case 'dateTime':
+        return this.renderDateTimeFilter();
       default:
         return null;
     }
+  }
+
+  renderDateTimeFilter = () =>
+  {
+      const {state, props} = this;
+
+      // TODO: Muotoile
+      return <div>
+
+        <DatePicker
+          selected={state.lowerLimit}
+          startDate={null}
+          showTimeSelect
+          timeFormat="HH:mm"
+          timeIntervals={15}
+          onChange={(date) => this.setDateTime(date, 'lowerLimit')}
+          onChangeRaw={(input) => this.setDateTime(input, 'lowerLimit')}
+          dateFormat={consts.DATETIME_FORMAT}/>
+
+        <DatePicker
+          selected={state.upperLimit}
+          startDate={null}
+          showTimeSelect
+          timeFormat="HH:mm"
+          timeIntervals={15}
+          onChange={(date) => this.setDateTime(date, 'upperLimit')}        
+          onChangeRaw={(input) => this.setDateTime(input, 'upperLimit')}
+          dateFormat={consts.DATETIME_FORMAT}/>
+      </div>;
   }
 
   renderBooleanFilter = () =>
@@ -79,9 +113,9 @@ class Filter extends Component{
 
     const filters = <div className='inputs'>
           <Form.Control disabled={!state.filterOn} type="number"
-           value={state.lowerLimit} onChange={this.setValue.bind(this, "lowerLimit")}/>
+           value={state.lowerLimit} onChange={this.setValueFromEvent.bind(this, "lowerLimit")}/>
           <Form.Control disabled={!state.filterOn} type="number"
-            value={state.upperLimit} onChange={this.setValue.bind(this, "upperLimit")}/>
+            value={state.upperLimit} onChange={this.setValueFromEvent.bind(this, "upperLimit")}/>
         </div>;
 
     return(
@@ -101,7 +135,7 @@ class Filter extends Component{
         <Form.Check className="check" onChange={this.toggleChecked}/>
         <Form.Label className='label'>{props.label}</Form.Label>
         <Form.Control className='inputs' disabled={!state.filterOn} type="text" value={state.stringFilter}
-          onChange={this.setValue.bind(this, "stringFilter")}/>
+          onChange={this.setValueFromEvent.bind(this, "stringFilter")}/>
     </div>);
   }
 
@@ -121,6 +155,28 @@ class Filter extends Component{
       );
   }
 
+  /**
+   * Sets a datetime value, if newDate is a valid datetime.
+   * @param {object} newDate
+   * @param {string} key
+   */
+  setDateTime = (newDate, key) => {
+
+    if (!newDate)
+    {
+      this.setValue(key, null);
+      
+      return;
+    }
+
+    const newDateAsMoment = moment(newDate, consts.DATETIME_FORMAT);
+
+    if (newDateAsMoment.isValid())
+    {
+      this.setValue(key, newDate);
+    }
+  }
+
   /*
   * Updates selected filter values for boolean selection.
   */
@@ -131,23 +187,13 @@ class Filter extends Component{
     {
       booleanFilters.push(value);
 
-      this.setState({
-        booleanFilters
-      });
-
-
-      this.onUpdate();
+      this.setValue('booleanFilters', booleanFilters);
       return;
     }
 
     _.remove(booleanFilters, filter => _.isEqual(filter, value));
 
-    this.setState({
-      booleanFilters
-    });
-
-
-    this.onUpdate();
+    this.setValue('booleanFilters', booleanFilters);
   }
 
   /*
@@ -182,10 +228,24 @@ class Filter extends Component{
     }
   }
 
-  setValue = (param, e) =>
+  /**
+   * Sets a value of e.target to state
+   */
+  setValueFromEvent = (param, e) =>
+  {
+    this.setValue(param, e.target.value);
+  }
+
+  /**
+   * Sets key to state with given value and 
+   * calls onUpdate after state change.
+   * @param {string} key
+   * @param {any} value
+   */
+  setValue = (key, value) => 
   {
     this.setState({
-      [param]: e.target.value
+      [key]: value
     }, () => {
       this.onUpdate();
     });
@@ -212,8 +272,8 @@ class Filter extends Component{
       case 'boolean':
         return state.booleanFilters;
 
-      case 'datetime':
-        throw new Error('datetime not implemented');
+      case 'dateTime':
+        return [state.lowerLimit, state.upperLimit];
 
       default:
         return;

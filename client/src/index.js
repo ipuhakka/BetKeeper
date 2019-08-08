@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import Routes from './routes.jsx';
 import './index.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import registerServiceWorker from './registerServiceWorker';
 
 const app = (
