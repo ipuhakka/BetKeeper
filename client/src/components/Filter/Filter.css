@@ -5,6 +5,21 @@
   justify-content: center;
 }
 
+.datetime-input {
+  width: 95%;
+  font-size: small;
+}
+
+.filter .react-datepicker__close-icon {
+  margin-right: 2px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.filter .react-datepicker-wrapper:hover .react-datepicker__close-icon {
+    opacity: 1;   
+}
+
 .boolean-check-div {
   display: flex;
 }

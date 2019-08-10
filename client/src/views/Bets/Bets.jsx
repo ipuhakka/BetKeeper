@@ -68,12 +68,12 @@ class Bets extends Component{
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
         <Container>
           <Row>
-            <Col xs={12} md={{span: 6, order: 12}}>
+            <Col xs={12} md={{span: 5, order: 12}}>
               <div className="betView">
                 {betView}
               </div>
             </Col>
-            <Col xs={12} md={6}>
+            <Col xs={12} md={7}>
               <DropdownButton
                 variant="primary"
                 title={"Show from folder"}
