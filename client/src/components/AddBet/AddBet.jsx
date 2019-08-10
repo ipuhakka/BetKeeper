@@ -30,7 +30,12 @@ class AddBet extends Component{
     const {state} = this;
 
     return (
-      <Modal onMouseOut={this.handleMouseOut} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp.bind(this)} show={this.props.show} onHide={this.hideModal}>
+      <Modal 
+        onMouseOut={this.handleMouseOut} 
+        onMouseDown={this.handleMouseDown} 
+        onMouseUp={this.handleMouseUp.bind(this)} 
+        show={this.props.show} 
+        onHide={this.hideModal}>
         <Modal.Header closeButton>
           <Modal.Title>{"Add bet"}</Modal.Title>
         </Modal.Header>
@@ -130,7 +135,6 @@ class AddBet extends Component{
   }
 
   selectFolder = (folder) => {
-    console.log('select folder');
     var selectedFolders = this.state.selected;
 
     if (!this.state.selected.includes(folder)){
