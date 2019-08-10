@@ -16,7 +16,7 @@ class Filter extends Component{
       upperLimit: '',
       lowerLimit: '',
       stringFilter: '',
-      booleanFilters: [],
+      valueListFilters: [],
       filterOn: false
     }
   }
@@ -42,8 +42,8 @@ class Filter extends Component{
       case 'string':
         return this.renderTextFilter();
 
-      case 'boolean':
-        return this.renderBooleanFilter();
+      case 'valueList':
+        return this.renderValueListFilter();
 
       case 'dateTime':
         return this.renderDateTimeFilter();
@@ -85,7 +85,7 @@ class Filter extends Component{
       </div>;
   }
 
-  renderBooleanFilter = () =>
+  renderValueListFilter = () =>
   {
     const {state, props} = this;
 
@@ -95,13 +95,13 @@ class Filter extends Component{
     }
 
     const checks = _.map(props.valueList, row => {
-      return <div className='boolean-check-div' key={`div_${row.value}`}>
+      return <div className='valueList-check-div' key={`div_${row.value}`}>
           <Form.Label key={`label_${row.value}`} className='label'>{row.legend}</Form.Label>
           <Form.Check
-            className='boolean-check'
+            className='valueList-check'
             inline
             key={`check_${row.value}`}
-            onChange={this.changeBooleanSelection.bind(this, row.value)}/>
+            onChange={this.changeValueListSelection.bind(this, row.value)}/>
         </div>;
     });
 
@@ -182,22 +182,22 @@ class Filter extends Component{
   }
 
   /*
-  * Updates selected filter values for boolean selection.
+  * Updates selected filter values for valueList selection.
   */
-  changeBooleanSelection = (value, e) => {
-    const { booleanFilters } = this.state;
+  changeValueListSelection = (value, e) => {
+    const { valueListFilters } = this.state;
 
     if (e.target.checked)
     {
-      booleanFilters.push(value);
+      valueListFilters.push(value);
 
-      this.setValue('booleanFilters', booleanFilters);
+      this.setValue('valueListFilters', valueListFilters);
       return;
     }
 
-    _.remove(booleanFilters, filter => _.isEqual(filter, value));
+    _.remove(valueListFilters, filter => _.isEqual(filter, value));
 
-    this.setValue('booleanFilters', booleanFilters);
+    this.setValue('valueListFilters', valueListFilters);
   }
 
   /*
@@ -235,7 +235,6 @@ class Filter extends Component{
    */
   toggleChecked = () =>
   {
-    const { props } = this;
     const filterOn = !this.state.filterOn;
     this.setState({ filterOn });
 
@@ -290,8 +289,8 @@ class Filter extends Component{
       case 'string':
         return [state.stringFilter];
 
-      case 'boolean':
-        return state.booleanFilters;
+      case 'valueList':
+        return state.valueListFilters;
 
       case 'dateTime':
         return [state.lowerLimit, state.upperLimit];
@@ -304,7 +303,7 @@ class Filter extends Component{
 
 Filter.propTypes = {
   label: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(['string', 'number', 'boolean', 'dateTime']).isRequired,
+  type: PropTypes.oneOf(['string', 'number', 'valueList', 'dateTime']).isRequired,
   filteredKey: PropTypes.string.isRequired,
   arrayToFilter: PropTypes.array.isRequired,
   onUpdate: PropTypes.func.isRequired,

@@ -119,10 +119,10 @@ describe('filterList', function(){
     done();
   });
 
-  it('filters correctly on boolean', function(done){
+  it('filters correctly on valueList', function(done){
     let filterOptions = [{
       key: "bet_won",
-      type: "boolean",
+      type: "valueList",
       value: [false]
     }];
 
@@ -134,10 +134,10 @@ describe('filterList', function(){
     done();
   });
 
-  it ('filters none based on boolean 0-length valuelist', function(done){
+  it ('filters none based on valueList 0-length valuelist', function(done){
     let filterOptions = [{
       key: "bet_won",
-      type: "boolean",
+      type: "valueList",
       value: []
     }];
 
@@ -148,10 +148,10 @@ describe('filterList', function(){
     done();
   });
 
-  it('filters all given parameters in boolean filter', function(done){
+  it('filters all given parameters in valueList filter', function(done){
     let filterOptions = [{
       key: "bet_won",
-      type: "boolean",
+      type: "valueList",
       value: [false, null]
     }];
 
@@ -166,7 +166,7 @@ describe('filterList', function(){
     let filterOptions = [
       {
       key: "bet_won",
-      type: "boolean",
+      type: "valueList",
       value: [null]
     },
     {
@@ -211,11 +211,12 @@ describe('getFilterOptions', function(){
 
   it('boolean filterOption contains array of values',
     function(done){
-      const filter = getFilterOptions('boolean', 'test', [true, false]);
+      const filter = getFilterOptions('valueList', 'test', [true, false]);
 
       expect(filter.value.length).to.equal(2);
       expect(filter.value[0]).to.equal(true);
       expect(filter.value[1]).to.equal(false);
+      expect(filter.type).to.equal('valueList');
 
       done();
     });

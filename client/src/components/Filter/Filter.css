@@ -20,11 +20,11 @@
     opacity: 1;   
 }
 
-.boolean-check-div {
+.valueList-check-div {
   display: flex;
 }
 
-.boolean-check {
+.valueList-check {
   margin-left: 0.8em;
 }
 

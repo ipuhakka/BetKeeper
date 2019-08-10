@@ -1,26 +1,11 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-/*
-  Filters a list. FilterOption is created
-  per filter: When filtering number between values,
-  options are created for both under and over values.
-
-  filterOptions-model for boolean, dateTime and string type:
-  {
-    key: filtered field key
-    value: //filtered value.
-    type: //'string', 'boolean', 'dateTime'
-  }
-
-  model for number-filter:
-  {
-    key: filtered field key
-    lowerLimit: //values under this are excluded
-    upperLimit: //values over this are excluded
-    type: //'number',
-  }
-*/
+/**
+ * Filters a list with selected filterOptions.
+ * @param {array} list object array to filter
+ * @param {object} filterOptions Filters used
+ */
 export function filterList(list, filterOptions){
 
   filterOptions.forEach(filterOption => {
@@ -41,7 +26,7 @@ export function filterList(list, filterOptions){
         }
         break;
 
-      case 'boolean':
+      case 'valueList':
         if (filterOption.value.length === 0)
         {
           break;
@@ -73,8 +58,6 @@ export function filterList(list, filterOptions){
             moment(item[filterOption.key])
               .isSameOrAfter(filterOption.after))
         }
-
-
         break;
 
       default:
@@ -85,30 +68,32 @@ export function filterList(list, filterOptions){
   return list;
 }
 
-/*
-Returns a filterOption for filtering a key.
-
-params:
-  type: 'string', 'number', 'boolean', 'dateTime'.
-  key: string. References the filtered key on array.
-  values: Array of filtered values. With number and dateTime filter,
-    first value is considered the lower limit and second as
-    upper limit.
-*/
+/**
+ * Returns a filterOption for filtering a key.
+ * @param {string} type
+ * @param {string} key 
+ * @param {array} values 
+ */
 export function getFilterOptions(type, key, values)
 {
   switch(type){
     case 'number':
-      return createNumberFilter(key, values[0], values[1]);
+      const lowerLimit = values[0];
+      const upperLimit = values[1];
+
+      return createNumberFilter(key, lowerLimit, upperLimit);
 
     case 'string':
       return createFilter(type, key, values[0]);
 
-    case 'boolean':
+    case 'valueList':
       return createFilter(type, key, values);
 
-    case 'dateTime':
-      return createDateTimeFilter(key, values[0], values[1]);
+    case 'dateTime':     
+      const after = values[0];
+      const before = values[1];
+
+      return createDateTimeFilter(key, after, before);
 
     default:
       return;
