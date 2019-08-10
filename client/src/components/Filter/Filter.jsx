@@ -146,7 +146,7 @@ class Filter extends Component{
   /*
   * Returns new filterOptions.
   */
-  onUpdate = (applyFilters) =>
+  onUpdate = () =>
   {
     const {props} = this;
 
@@ -216,6 +216,23 @@ class Filter extends Component{
     });
   }
 
+  /**
+   * Clears filters and handles update.
+   */
+  clearFilters = () => 
+  {
+    this.setState({
+      upperLimit: '',
+      lowerLimit: '',
+      stringFilter: ''
+    }, () => {
+      this.onUpdate();
+    });
+  }
+
+  /**
+   * Toggles a filter check.
+   */
   toggleChecked = () =>
   {
     const { props } = this;
@@ -228,7 +245,7 @@ class Filter extends Component{
     }
     else
     {
-      this.props.onUpdate(props.arrayToFilter);
+      this.clearFilters();
     }
   }
 
