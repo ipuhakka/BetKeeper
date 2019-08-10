@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import _ from 'lodash';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import DropdownItem from 'react-bootstrap/DropdownItem';
@@ -7,6 +8,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AddBet from '../../components/AddBet/AddBet.jsx';
 import BetContainer from '../../containers/BetContainer.jsx';
+import Filter from '../../components/Filter/Filter.jsx';
+import Filters from '../../components/Filters/Filters.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
@@ -14,21 +17,47 @@ import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets.jsx';
 import './Bets.css';
 
 class Bets extends Component{
-  constructor(props){
+  constructor(props)
+  {
 		super(props);
 
 		this.state = {
 			menuDisabled: [false, true, false, false, false],
-      showModal: false
+      showModal: false,
+      visibleBets: null
 		};
 	}
 
-  render(){
+  componentDidUpdate(prevProps)
+  {
+    const { props } = this;
+
+    const previousBets = prevProps.betListFromFolder
+      ? prevProps.betsFromFolder
+      : prevProps.allBets;
+
+    const currentBets = props.betListFromFolder
+      ? props.betsFromFolder
+      : props.allBets;
+
+    if (!_.isEqual(currentBets, previousBets))
+    {
+      this.setState({
+        visibleBets: currentBets
+      })
+    }
+  }
+
+  render()
+  {
     const {props, state} = this;
 
     var betItems = this.renderBetsList();
     var menuItems = this.renderDropdown();
-    var betView = this.renderBetView(); //displays either list of unresolved bets, or data of specific bet.
+    var betView = this.renderBetView();
+
+    const arrayToFilter = props.betListFromFolder ?
+      props.betsFromFolder.bets : props.allBets;
 
     return (
       <div className="content">
@@ -39,12 +68,12 @@ class Bets extends Component{
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
         <Container>
           <Row>
-            <Col xs={12} md={{span: 6, order: 12}}>
+            <Col xs={12} md={{span: 5, order: 12}}>
               <div className="betView">
                 {betView}
               </div>
             </Col>
-            <Col xs={12} md={6}>
+            <Col xs={12} md={7}>
               <DropdownButton
                 variant="primary"
                 title={"Show from folder"}
@@ -52,6 +81,9 @@ class Bets extends Component{
                 {menuItems}
               </DropdownButton>
               <div className="betList">
+							  <Filters
+                  toFilter={arrayToFilter}
+                  onResultsUpdate={this.onFilterUpdate}/>
                 <ListGroup>{betItems}</ListGroup>
               </div>
             </Col>
@@ -60,13 +92,14 @@ class Bets extends Component{
       </div>);
   }
 
+  // Displays either list of unresolved bets, or data of specific bet.
   renderBetView = () => {
     const {props} = this;
 
     if (props.selectedBet !== -1)
     {
       let key = props.selectedBet;
-      let bet = props.deleteListFromFolder ? props.betsFromFolder.bets[key] : props.allBets[key];
+      let bet = props.betListFromFolder ? props.betsFromFolder.bets[key] : props.allBets[key];
 
       return <BetContainer bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
        onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
@@ -79,10 +112,15 @@ class Bets extends Component{
   }
 
   renderBetsList = () => {
-    const {props} = this;
+    const {props, state} = this;
 
-    let bets = props.deleteListFromFolder ? props.betsFromFolder.bets : props.allBets;
-		var betItems = [];
+    let bets = state.visibleBets;
+    if (_.isNil(bets))
+    {
+      bets = props.betListFromFolder ? props.betsFromFolder.bets : props.allBets;
+    }
+
+		const betItems = [];
 		var isSelected = false;
 
 		for (var i = bets.length -1; i >= 0; i--){
@@ -118,7 +156,9 @@ class Bets extends Component{
 
     for (var j = 0; j < props.foldersOfBet.length; j++){
       folderItems.push(
-        <ListGroup.Item action onClick={this.onPressedFolder.bind(this, j)}
+        <ListGroup.Item
+          action
+          onClick={this.onPressedFolder.bind(this, j)}
           variant={props.selectedFolders[j] ?  'info': null} key={j}>{props.folders[j]}
         </ListGroup.Item>)
     }
@@ -159,6 +199,34 @@ class Bets extends Component{
     });
   }
 
+  renderFilters = () =>
+  {
+    const { props } = this;
+    const arrayToFilter = props.betListFromFolder ?
+      props.betsFromFolder.bets : props.allBets;
+
+    return <Fragment>
+      <Filter type="number"
+        arrayToFilter={arrayToFilter}
+        onUpdate={props.onFilterUpdate}
+        filteredKey='bet'
+        label='Bet' />
+
+      <Filter type="number"
+        arrayToFilter={arrayToFilter}
+        onUpdate={props.onFilterUpdate}
+        filteredKey='odd'
+        label='Odd' />
+    </Fragment>;
+  }
+
+  /*
+  Handles an update in filtered list.
+  */
+  onFilterUpdate = (array) =>
+  {
+    this.setState({ visibleBets: array });
+  }
 };
 
 export default Bets;

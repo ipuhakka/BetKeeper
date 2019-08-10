@@ -12,6 +12,12 @@ import ScatterPlot from '../../components/ScatterPlot/ScatterPlot.jsx';
 import './Statistics.css';
 
 class Statistics extends Component{
+
+	onLoad = () => {
+		this.props.fetchFinishedBets();
+		this.props.fetchFolders();
+	}
+
 	constructor(props){
 		super(props);
 
@@ -34,9 +40,7 @@ class Statistics extends Component{
 						<Col md={6} xs={12}>
 							<BarGraph data={props.betStatistics} optionLabels={this.graphOptionLabels()}
 								graphOptions={props.graphOptions} />
-							<div>
-								<OverviewTable defaultSort={props.betStatistics} overviewItems={props.betStatistics}/>
-							</div>
+							<OverviewTable defaultSort={props.betStatistics} overviewItems={props.betStatistics}/>
 						</Col>
 						<Col md={6} xs={12}>
 							<Dropdown

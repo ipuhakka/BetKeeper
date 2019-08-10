@@ -1,0 +1,46 @@
+.filter{
+  width: 100%;
+  display: flex;
+  margin: 5px;
+  justify-content: center;
+}
+
+.datetime-input {
+  width: 95%;
+  font-size: small;
+}
+
+.filter .react-datepicker__close-icon {
+  margin-right: 2px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.filter .react-datepicker-wrapper:hover .react-datepicker__close-icon {
+    opacity: 1;   
+}
+
+.valueList-check-div {
+  display: flex;
+}
+
+.valueList-check {
+  margin-left: 0.8em;
+}
+
+.check {
+  position: initial;
+  padding-left: 0;
+  margin: auto;
+}
+
+.label {
+  flex: 0 1 auto;
+  margin: auto;
+}
+
+.inputs {
+  display: flex;
+  margin-left: auto;
+  max-width: 200px;
+}

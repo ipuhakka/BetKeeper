@@ -1,0 +1,14 @@
+.header {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.toggleArrow {
+  color: black;
+  background: none;
+  border-color: #e2e5ea;
+}
+
+.body {
+  background-color: rgba(0,0,0,.03);
+}
