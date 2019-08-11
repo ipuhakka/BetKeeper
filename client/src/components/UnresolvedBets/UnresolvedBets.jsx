@@ -37,7 +37,7 @@ class UnresolvedBets extends Component{
       items.push(<ListGroupItem action key={i}
         onClick={this.handleListClick.bind(this, i)} variant={this.state.selectedBet === i ? 'info' : null}>
             <div>{bets[i].name + " " + bets[i].datetime}</div>
-            <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+            <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
             </ListGroupItem>)
     }
     return items;

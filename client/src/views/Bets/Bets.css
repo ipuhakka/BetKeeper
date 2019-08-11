@@ -2,7 +2,7 @@
   margin: 2px;
 }
 
-.addButton{
+.addButton {
   position: fixed;
   right: 0;
   bottom: 0;
@@ -11,19 +11,27 @@
   cursor: pointer;
 }
 
-.betList{
+.betList {
   max-height: 400px;
   min-height: 300px;
   overflow-x: scroll;
+  margin-bottom: 10px;
 }
 
-.betView{
-	max-height:400px;
+.bottom-shadow {
+  box-shadow: 0px 5px 5px 0px #E2E5EA;
+}
+
+.betView {
 	overflow-x: scroll;
 }
 
+.small-betInfo {
+  font-size: smaller;
+}
+
 @media screen and (max-width: 800px) {
-  .addButton{
+  .addButton {
     position: relative;
     margin-top: 10px;
     float: right;

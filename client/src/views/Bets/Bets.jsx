@@ -15,7 +15,8 @@ import Menu from '../../components/Menu/Menu.jsx';
 import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets.jsx';
 import './Bets.css';
 
-class Bets extends Component{
+class Bets extends Component
+{
   constructor(props)
   {
 		super(props);
@@ -24,8 +25,8 @@ class Bets extends Component{
 			menuDisabled: [false, true, false, false, false],
       showModal: false,
       visibleBets: null
-		};
-	}
+    };
+  }
 
   componentDidUpdate(prevProps)
   {
@@ -65,7 +66,7 @@ class Bets extends Component{
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
-        <Row className='row'>
+        <Row>
           <Col xs={12} md={{span: 6, order: 12}}>
             <div className="betView">
               {betView}
@@ -78,7 +79,11 @@ class Bets extends Component{
               id={1}>
               {menuItems}
             </DropdownButton>
-            <div className="betList">
+            <div 
+              className={`betList ${state.betListScrolledToBottom
+                ? null
+                : 'bottom-shadow'}`}
+              onScroll={this.handleScrollChange.bind(this, 'betListScrolledToBottom')}>
               <Filters
                 toFilter={arrayToFilter}
                 onResultsUpdate={this.onFilterUpdate}/>
@@ -90,7 +95,8 @@ class Bets extends Component{
   }
 
   // Displays either list of unresolved bets, or data of specific bet.
-  renderBetView = () => {
+  renderBetView = () => 
+  {
     const {props} = this;
 
     if (props.selectedBet !== -1)
@@ -108,7 +114,8 @@ class Bets extends Component{
     }
   }
 
-  renderBetsList = () => {
+  renderBetsList = () => 
+  {
     const {props, state} = this;
 
     let bets = state.visibleBets;
@@ -138,16 +145,16 @@ class Bets extends Component{
 			betItems.push(<ListGroup.Item action
           onClick={props.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
           key={i}>
-          <div>{bets[i].name + " " + bets[i].datetime}</div>
-          <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
-          <div>{result}</div>
+          <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
+          <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
         </ListGroup.Item>)
 		}
 
 		return betItems;
 	}
 
-  renderFolderList = () => {
+  renderFolderList = () => 
+  {
     const {props} = this;
     var folderItems = [];
 
@@ -163,7 +170,8 @@ class Bets extends Component{
     return folderItems;
   }
 
-  renderDropdown = () => {
+  renderDropdown = () => 
+  {
     const {props} = this;
 
     var menuItems = [];
@@ -184,13 +192,41 @@ class Bets extends Component{
     return menuItems;
   }
 
-  showModal = () => {
+  /**
+   * Checks if scroll has reached or left the bottom of container.
+   * @param {string} stateKey key in component state
+   * @param {object} e event
+   */
+  handleScrollChange = (stateKey, e) => 
+  {  
+    const { state } = this;
+    const hasScrollReachedBottom = this.hasScrollReachedBottom(e);
+    const hasScrollBottomStateChanged = !_.isEqual(hasScrollReachedBottom, state[stateKey]);
+
+    if (hasScrollBottomStateChanged)
+    {
+      this.setState({
+        [stateKey]: hasScrollReachedBottom
+      });
+    }
+  }
+
+  hasScrollReachedBottom = (e) => 
+  {
+    const element = e.target;
+
+    return element.scrollHeight - element.scrollTop === element.clientHeight;
+  }
+
+  showModal = () => 
+  {
     this.setState({
       showModal: true
     });
   }
 
-  hideModal = () => {
+  hideModal = () => 
+  {
     this.setState({
       showModal: false
     });
