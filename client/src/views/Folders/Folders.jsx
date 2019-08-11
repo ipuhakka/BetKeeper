@@ -6,7 +6,6 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
@@ -44,22 +43,20 @@ class Folders extends Component {
 				<Menu disable={this.state.disabled}></Menu>
 				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
-				<Container>
-					<Row>
-						<Col lg={6} sm={12}>
-							<ListGroup>{folders}</ListGroup>
-							<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
-						</Col>
-						<Col lg={6} sm={12}>
-							<FormControl
-								className="list margins"
-								value={this.state.newFolder}
-								onChange={this.handleNewFolderChange}
-								placeholder="Add new folder"/>
-							<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} variant="success">{"Create folder"}</Button>
-						</Col>
-					</Row>
-				</Container>
+				<Row>
+					<Col lg={6} sm={12}>
+						<ListGroup>{folders}</ListGroup>
+						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
+					</Col>
+					<Col lg={6} sm={12}>
+						<FormControl
+							className="list margins"
+							value={this.state.newFolder}
+							onChange={this.handleNewFolderChange}
+							placeholder="Add new folder"/>
+						<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} variant="success">{"Create folder"}</Button>
+					</Col>
+				</Row>
 			</div>
 		);
 	}

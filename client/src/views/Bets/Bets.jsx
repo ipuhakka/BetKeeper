@@ -3,7 +3,6 @@ import _ from 'lodash';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import DropdownItem from 'react-bootstrap/DropdownItem';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AddBet from '../../components/AddBet/AddBet.jsx';
@@ -66,29 +65,27 @@ class Bets extends Component{
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
-        <Container>
-          <Row>
-            <Col xs={12} md={{span: 5, order: 12}}>
-              <div className="betView">
-                {betView}
-              </div>
-            </Col>
-            <Col xs={12} md={7}>
-              <DropdownButton
-                variant="primary"
-                title={"Show from folder"}
-                id={1}>
-                {menuItems}
-              </DropdownButton>
-              <div className="betList">
-							  <Filters
-                  toFilter={arrayToFilter}
-                  onResultsUpdate={this.onFilterUpdate}/>
-                <ListGroup>{betItems}</ListGroup>
-              </div>
-            </Col>
-          </Row>
-        </Container>
+        <Row className='row'>
+          <Col xs={12} md={{span: 6, order: 12}}>
+            <div className="betView">
+              {betView}
+            </div>
+          </Col>
+          <Col xs={12} md={6}>
+            <DropdownButton
+              variant="primary"
+              title={"Show from folder"}
+              id={1}>
+              {menuItems}
+            </DropdownButton>
+            <div className="betList">
+              <Filters
+                toFilter={arrayToFilter}
+                onResultsUpdate={this.onFilterUpdate}/>
+              <ListGroup>{betItems}</ListGroup>
+            </div>
+          </Col>
+        </Row>
       </div>);
   }
 
