@@ -51,7 +51,7 @@ class ScrollableDiv extends Component
   {
     const element = e.target;
 
-    return element.scrollHeight - element.scrollTop === element.clientHeight;
+    return Math.floor(element.scrollHeight - element.scrollTop) === element.clientHeight;
   }
 };
 

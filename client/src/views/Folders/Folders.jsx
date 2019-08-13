@@ -13,6 +13,7 @@ import Confirm from '../../components/Confirm/Confirm.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv.jsx';
 import {isValidString} from '../../js/utils.js';
 import './Folders.css';
 
@@ -45,12 +46,14 @@ class Folders extends Component {
 				<Info></Info>
 				<Row>
 					<Col lg={6} sm={12}>
-						<ListGroup>{folders}</ListGroup>
+						<ScrollableDiv className='list margins'>						
+							<ListGroup>{folders}</ListGroup>
+						</ScrollableDiv>
 						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
 					</Col>
 					<Col lg={6} sm={12}>
 						<FormControl
-							className="list margins"
+							className='margins'
 							value={this.state.newFolder}
 							onChange={this.handleNewFolderChange}
 							placeholder="Add new folder"/>

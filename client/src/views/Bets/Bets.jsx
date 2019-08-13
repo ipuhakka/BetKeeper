@@ -80,10 +80,10 @@ class Bets extends Component
               id={1}>
               {menuItems}
             </DropdownButton>
-            <ScrollableDiv className='betList'>
-              <Filters
+            <Filters
                 toFilter={arrayToFilter}
                 onResultsUpdate={this.onFilterUpdate}/>
+            <ScrollableDiv className='betList'>                         
               <ListGroup>{betItems}</ListGroup>
             </ScrollableDiv>
           </Col>
@@ -105,9 +105,9 @@ class Bets extends Component
        onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
     }
     else {
-      return props.unresolvedBets.length > 0 ?
-        <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> :
-        null;
+      return props.unresolvedBets.length > 0 
+        ? <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> 
+        : null;
     }
   }
 
