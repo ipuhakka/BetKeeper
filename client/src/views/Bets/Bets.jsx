@@ -13,6 +13,7 @@ import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets.jsx';
+import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv.jsx';
 import './Bets.css';
 
 class Bets extends Component
@@ -79,16 +80,12 @@ class Bets extends Component
               id={1}>
               {menuItems}
             </DropdownButton>
-            <div 
-              className={`betList ${state.betListScrolledToBottom
-                ? null
-                : 'bottom-shadow'}`}
-              onScroll={this.handleScrollChange.bind(this, 'betListScrolledToBottom')}>
+            <ScrollableDiv className='betList'>
               <Filters
                 toFilter={arrayToFilter}
                 onResultsUpdate={this.onFilterUpdate}/>
               <ListGroup>{betItems}</ListGroup>
-            </div>
+            </ScrollableDiv>
           </Col>
         </Row>
       </div>);
@@ -190,32 +187,6 @@ class Bets extends Component
     }
 
     return menuItems;
-  }
-
-  /**
-   * Checks if scroll has reached or left the bottom of container.
-   * @param {string} stateKey key in component state
-   * @param {object} e event
-   */
-  handleScrollChange = (stateKey, e) => 
-  {  
-    const { state } = this;
-    const hasScrollReachedBottom = this.hasScrollReachedBottom(e);
-    const hasScrollBottomStateChanged = !_.isEqual(hasScrollReachedBottom, state[stateKey]);
-
-    if (hasScrollBottomStateChanged)
-    {
-      this.setState({
-        [stateKey]: hasScrollReachedBottom
-      });
-    }
-  }
-
-  hasScrollReachedBottom = (e) => 
-  {
-    const element = e.target;
-
-    return element.scrollHeight - element.scrollTop === element.clientHeight;
   }
 
   showModal = () => 
