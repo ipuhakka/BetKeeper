@@ -8,7 +8,8 @@ import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 
 class UnresolvedBets extends Component{
-  constructor(props){
+  constructor(props)
+  {
     super(props);
 
     this.state = {
@@ -17,25 +18,51 @@ class UnresolvedBets extends Component{
     };
   }
 
-  render(){
+  render()
+  {
     return (
       <div>
         <h4>Unresolved bets</h4>
-        <ListGroup>{this.renderBetsList()}</ListGroup>
-        <FormGroup className="formMargins" onChange={this.setBetResult} value={this.state.betResult}>
-            <Form.Check id="check-1" name="radioGroup" type="radio" label='Won' defaultChecked={parseInt(this.state.betResult) === 1} value={1} inline/>
-            <Form.Check id="check-2" name="radioGroup" type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} value={0} inline/>
+          <ListGroup>{this.renderBetsList()}</ListGroup>
+        <FormGroup 
+          className="formMargins"
+          onChange={this.setBetResult} 
+          value={this.state.betResult}>
+            <Form.Check 
+              id="check-1" 
+              name="radioGroup" 
+              type="radio" 
+              label='Won' 
+              defaultChecked={parseInt(this.state.betResult) === 1} 
+              value={1} 
+              inline/>
+            <Form.Check 
+              id="check-2" 
+              name="radioGroup" 
+              type="radio" 
+              label='Lost' 
+              defaultChecked={parseInt(this.state.betResult) === 0} 
+              value={0} 
+              inline/>
         </FormGroup>
-        <Button disabled={this.state.betResult === null || this.state.selectedBet === -1} variant="primary" className="button" onClick={this.updateResult}>Update result</Button>
+        <Button 
+          disabled={this.state.betResult === null || this.state.selectedBet === -1} 
+          variant="primary" 
+          className="button" 
+          onClick={this.updateResult}>Update result</Button>
       </div>);
   }
 
-  renderBetsList = () => {
+  renderBetsList = () => 
+  {
     let bets = this.props.bets;
     var items = [];
-    for (var i = bets.length - 1; i >= 0; i--){
+
+    for (var i = bets.length - 1; i >= 0; i--)
+    {
       items.push(<ListGroupItem action key={i}
-        onClick={this.handleListClick.bind(this, i)} variant={this.state.selectedBet === i ? 'info' : null}>
+        onClick={this.handleListClick.bind(this, i)} 
+        variant={this.state.selectedBet === i ? 'info' : null}>
             <div>{bets[i].name + " " + bets[i].datetime}</div>
             <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
             </ListGroupItem>)
@@ -43,28 +70,34 @@ class UnresolvedBets extends Component{
     return items;
   }
 
-  handleListClick = (key) => {
-    if (key === this.state.selectedBet){
+  handleListClick = (key) =>
+  {
+    if (key === this.state.selectedBet)
+    {
       this.setState({
         selectedBet: -1
       });
     }
-    else {
+    else 
+    {
       this.setState({
         selectedBet: key
       });
     }
   }
 
-  setBetResult = (e) => {
+  setBetResult = (e) => 
+  {
   	this.setState({
   		betResult: e.target.value
   	});
   }
 
   //Changes unresolved bet to solved.
-  updateResult = () => {
-    if (this.state.selectedBet === -1){
+  updateResult = () => 
+  {
+    if (this.state.selectedBet === -1)
+    {
       this.setAlertState("No bet selected", "Invalid input");
       return;
     }

@@ -11,7 +11,8 @@ import {betResultToRadioButtonValue} from '../../js/utils.js';
 import './Bet.css';
 
 class Bet extends Component{
-  constructor(props){
+  constructor(props)
+  {
     super(props);
 
     const bet = props.bet;
@@ -26,7 +27,8 @@ class Bet extends Component{
     }
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps)
+  {
     const {props} = this;
     const {bet} = props;
 
@@ -38,7 +40,8 @@ class Bet extends Component{
     });
   }
 
-  render(){
+  render()
+  {
     const {props, state} = this;
     const { bet } = props;
 
@@ -47,11 +50,16 @@ class Bet extends Component{
         <Confirm visible={state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.onDeleteBet}
           cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
-          <i className="imageB trash fas fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
-          <i className="imageB save fas fa-save fa-2x" onClick={this.updateBet}></i>
+          <div>
+            <i className="imageB trash far fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
+          </div>
+          <div className='save-div'>
+            <i className="imageB save far fa-save fa-2x" onClick={this.updateBet}></i>
+          </div>         
         </div>
         <h2>{bet.name}</h2>
         <h2>{bet.datetime}</h2>
+
         <Form>
           <FormGroup>
             <Form.Label>Name</Form.Label>
@@ -78,16 +86,19 @@ class Bet extends Component{
     )
   }
 
-  renderIsInFoldersList = () => {
+  renderIsInFoldersList = () => 
+  {
     let i = -1;
 
-    return this.props.foldersOfBet.map(item => {
+    return this.props.foldersOfBet.map(item => 
+    {
       i = i + 1;
       return <Tag key={i} value={item} onClick={this.onPressedDelete}/>;
     });
   }
 
-  getUnselectedFolders = () => {
+  getUnselectedFolders = () => 
+  {
     const {props} = this;
 
     return props.allFolders.filter(
@@ -98,7 +109,8 @@ class Bet extends Component{
     );
   }
 
-  handleDismiss = () => {
+  handleDismiss = () => 
+  {
     this.setState({
       showAlert: false
     })
@@ -107,7 +119,8 @@ class Bet extends Component{
   /*
     Updates a bet.
   */
-  updateBet = () => {
+  updateBet = () => 
+  {
     const {state} = this;
 
     const modifiedBet = {
@@ -125,19 +138,23 @@ class Bet extends Component{
   bet is removed from selected folder.
   Otherwise a confirmation dialog is presented to inform
   that bet will be deleted completely.*/
-  onPressedDelete = (folder) => {
+  onPressedDelete = (folder) => 
+  {
 
-    if (folder !== null){
+    if (folder !== null)
+    {
       this.props.onDelete(folder);
     }
-    else {
+    else 
+    {
       this.setState({
         showAlert: true
       });
     }
   }
 
-  onDeleteBet = () => {
+  onDeleteBet = () => 
+  {
     this.props.onDelete();
 
     this.setState({
@@ -145,7 +162,8 @@ class Bet extends Component{
     });
   }
 
-  setValue = (param, event) => {
+  setValue = (param, event) => 
+  {
     this.setState({
       [param]: event.target.value
     });

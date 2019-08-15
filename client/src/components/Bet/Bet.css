@@ -4,7 +4,12 @@
 }
 
 .actionsDiv{
-  float: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-div {
+  margin-top: 1.5px;
 }
 
 .trash{
