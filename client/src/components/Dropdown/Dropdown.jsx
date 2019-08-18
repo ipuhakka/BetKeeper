@@ -13,10 +13,12 @@ class Dropdown extends Component{
   };
 
   render(){
+    const { props } = this;
+
     let i = 0;
-    let items = this.props.data.map(item => {
+    let items = props.data.map(item => {
       let menuItem = (<DropdownItem active={this.state.selectedKey === i} key={i}
-        onClick={this.handleClick.bind(this, i, this.props.stateKey)}>{this.props.data[i]}</DropdownItem>);
+        onClick={this.handleClick.bind(this, i, props.stateKey)}>{props.data[i]}</DropdownItem>);
       i = i + 1;
       return menuItem;
     });
@@ -24,8 +26,9 @@ class Dropdown extends Component{
     return(
       <DropdownButton
         variant="primary"
-        title={this.props.title}
-        id={this.props.id}>
+        title={props.title}
+        id={props.id}
+        {...props}>
         {items}
       </DropdownButton>
     );
@@ -45,7 +48,8 @@ Dropdown.propTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   stateKey: PropTypes.string.isRequired,
-  defaultKey: PropTypes.number
+  defaultKey: PropTypes.number,
+  className: PropTypes.string
 }
 
 export default Dropdown;

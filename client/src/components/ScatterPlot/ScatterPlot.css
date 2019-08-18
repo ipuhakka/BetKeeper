@@ -1,0 +1,13 @@
+.selection-div {
+    display: flex;
+    justify-content: center;
+}
+
+.margin-right {
+    margin-right: 3px;
+}
+
+.scatterplot-div .recharts-legend-wrapper {
+    position: relative !important;
+    bottom: 15px !important;
+}
