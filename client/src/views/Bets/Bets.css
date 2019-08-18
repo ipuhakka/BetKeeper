@@ -3,11 +3,10 @@
 }
 
 .addButton {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  margin-bottom: 20px;
-  margin-right: 20px;
+  position: relative;
+  float: right;
+  margin-top: 4px;
+  margin-right: 2px;
   cursor: pointer;
 }
 
@@ -23,12 +22,4 @@
 
 .small-betInfo {
   font-size: smaller;
-}
-
-@media screen and (max-width: 800px) {
-  .addButton {
-    position: relative;
-    margin-top: 10px;
-    float: right;
-  }
 }

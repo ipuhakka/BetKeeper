@@ -141,9 +141,9 @@ class Bets extends Component
 
 			betItems.push(<ListGroup.Item action
           onClick={props.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
-          key={i}>
+          key={i}>     
           <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
-          <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+          <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].bet}`}</div>
         </ListGroup.Item>)
 		}
 
