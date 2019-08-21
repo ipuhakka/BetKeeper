@@ -27,8 +27,7 @@ class Dropdown extends Component{
       <DropdownButton
         variant="primary"
         title={props.title}
-        id={props.id}
-        {...props}>
+        id={props.id}>
         {items}
       </DropdownButton>
     );
