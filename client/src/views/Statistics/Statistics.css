@@ -1,6 +1,6 @@
 .content {
   text-align: center;
-  overflow-x: scroll;
+  overflow-x: auto;
   height: 100%;
   width: 100%;
 }

@@ -1,6 +1,6 @@
 .content{
 	text-align: center;
-	overflow-x: scroll;
+	overflow-x: auto;
 }
 
 @media screen and (max-width: 600px) {

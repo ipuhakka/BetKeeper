@@ -14,8 +14,22 @@ class ScrollableDiv extends Component
         super(props);
 
         this.state = {
-            scrolledToBottom: false
+            hideBottomShadow: false
         }
+
+        this.scrollRef = React.createRef();
+    }
+
+    componentDidUpdate()
+    {
+      const {scrollHeight, offsetHeight} = this.scrollRef.current;
+      
+      const isScrollable = scrollHeight > offsetHeight;
+
+      if (!isScrollable !== this.state.hideBottomShadow && !isScrollable)
+      {
+        this.setState({hideBottomShadow: true});
+      }     
     }
 
     render()
@@ -23,12 +37,13 @@ class ScrollableDiv extends Component
         const { state, props } = this;
 
         return <div 
-        className={`scrollableDiv ${state.scrolledToBottom
-          ? null
-          : 'bottom-shadow'} ${props.className}`}
-        onScroll={this.handleScrollChange}>
-        {props.children}
-      </div>;
+          ref={this.scrollRef}
+          className={`scrollableDiv ${state.hideBottomShadow
+            ? null
+            : 'bottom-shadow'} ${props.className}`}
+          onScroll={this.handleScrollChange}>
+          {props.children}
+        </div>;
     }
 
   /**
@@ -43,7 +58,7 @@ class ScrollableDiv extends Component
 
     if (hasScrollBottomStateChanged)
     {
-      this.setState({ scrolledToBottom });
+      this.setState({ hideBottomShadow: scrolledToBottom });
     }
   }
 
@@ -51,7 +66,7 @@ class ScrollableDiv extends Component
   {
     const element = e.target;
 
-    return Math.floor(element.scrollHeight - element.scrollTop) === element.clientHeight;
+    return Math.floor(element.scrollHeight - element.scrollTop) <= element.clientHeight;
   }
 };
 

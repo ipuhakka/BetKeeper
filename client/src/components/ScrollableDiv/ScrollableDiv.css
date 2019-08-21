@@ -1,5 +1,5 @@
 .scrollableDiv {  
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .bottom-shadow {

@@ -1,16 +1,16 @@
 .App {
   text-align: center;
-  overflow-x: scroll;
+  overflow-x: auto;
   height: 100%;
   width: 100%;
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-    background: white;
+    background: #e2e5ea;
 }
 
 ::-webkit-scrollbar-thumb:horizontal {

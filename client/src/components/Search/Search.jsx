@@ -5,6 +5,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import ScrollableDiv from '../ScrollableDiv/ScrollableDiv';
 import './Search.css';
 
 class Search extends Component {
@@ -36,7 +37,10 @@ class Search extends Component {
               type="text"
               value={this.state.searchValue}
               onChange={this.updateSearch}/>
-            <ListGroup className="overflow-list">{this.renderShowedResults()}</ListGroup>
+            <ScrollableDiv className="overflow-list">
+              <ListGroup>{this.renderShowedResults()}</ListGroup>
+            </ScrollableDiv>
+            
           </FormGroup>
         </Form>
       </div>
