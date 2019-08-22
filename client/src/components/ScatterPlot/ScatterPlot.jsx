@@ -36,6 +36,7 @@ class ScatterPlot extends Component{
             className='margin-right'
             variant="primary"
             title={"Y"}
+            selectedItemAsTitle
             id={3}
             data={this.props.optionLabels}
             onUpdate={this.setSelectedDropdownItem.bind(this)}
@@ -45,7 +46,8 @@ class ScatterPlot extends Component{
           <Dropdown
             variant="primary"
             title={"X"}
-            id={4}
+            id={4}       
+            selectedItemAsTitle
             data={this.props.optionLabels}
             onUpdate={this.setSelectedDropdownItem.bind(this)}
             stateKey={"xVariable"}>

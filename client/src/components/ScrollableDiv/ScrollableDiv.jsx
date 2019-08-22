@@ -26,7 +26,7 @@ class ScrollableDiv extends Component
       
       const isScrollable = scrollHeight > offsetHeight;
 
-      if (!isScrollable !== this.state.hideBottomShadow && !isScrollable)
+      if (isScrollable === this.state.hideBottomShadow && !isScrollable)
       {
         this.setState({hideBottomShadow: true});
       }     
