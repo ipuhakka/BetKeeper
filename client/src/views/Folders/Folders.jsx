@@ -49,7 +49,11 @@ class Folders extends Component {
 						<ScrollableDiv className='list margins'>						
 							<ListGroup>{folders}</ListGroup>
 						</ScrollableDiv>
-						<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
+						<Button 
+							className="button" 
+							disabled={this.state.deleteDisabled} 
+							onClick={this.toggleConfirm} 
+							variant="danger">Delete</Button>
 					</Col>
 					<Col lg={6} sm={12}>
 						<FormControl
