@@ -39,7 +39,7 @@ class ScrollableDiv extends Component
         return <div 
           ref={this.scrollRef}
           className={`scrollableDiv ${state.hideBottomShadow
-            ? null
+            ? ''
             : 'bottom-shadow'} ${props.className}`}
           onScroll={this.handleScrollChange}>
           {props.children}
