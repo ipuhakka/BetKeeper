@@ -30,7 +30,7 @@ class Dropdown extends Component{
 
     return(
       <DropdownButton
-        className={`${props.className}`}
+        className={`${props.className} dropdownButton`}
         variant="primary"
         title={title}
         id={props.id}>

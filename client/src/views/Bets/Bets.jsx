@@ -5,15 +5,15 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import AddBet from '../../components/AddBet/AddBet.jsx';
-import BetContainer from '../../containers/BetContainer.jsx';
-import Filter from '../../components/Filter/Filter.jsx';
-import Filters from '../../components/Filters/Filters.jsx';
-import Header from '../../components/Header/Header.jsx';
-import Info from '../../components/Info/Info.jsx';
-import Menu from '../../components/Menu/Menu.jsx';
-import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets.jsx';
-import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv.jsx';
+import AddBet from '../../components/AddBet/AddBet';
+import BetContainer from '../../containers/BetContainer';
+import Filter from '../../components/Filter/Filter';
+import Filters from '../../components/Filters/Filters';
+import Header from '../../components/Header/Header';
+import Info from '../../components/Info/Info';
+import Menu from '../../components/Menu/Menu';
+import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets';
+import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv';
 import './Bets.css';
 
 class Bets extends Component
