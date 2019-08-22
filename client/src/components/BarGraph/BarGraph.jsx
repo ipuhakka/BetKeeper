@@ -18,6 +18,7 @@ class BarGraph extends Component {
         <Dropdown
           variant="primary"
           title={"Overview"}
+          selectedItemAsTitle
           id={1}
           data={this.props.optionLabels}
           onUpdate={this.setSelectedDropdownItem.bind(this)}
