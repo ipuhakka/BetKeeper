@@ -8,9 +8,11 @@ import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import ScrollableDiv from '../ScrollableDiv/ScrollableDiv';
 import './Search.css';
 
-class Search extends Component {
+class Search extends Component 
+{
 
-  constructor(props){
+  constructor(props)
+  {
     super(props);
 
     this.state = {
@@ -19,7 +21,8 @@ class Search extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps)
+  {
     const {data} = nextProps;
 
     this.setState({
@@ -27,7 +30,9 @@ class Search extends Component {
     })
   }
 
-  render(){
+  render()
+  {
+
     return (
       <div>
         <Form>
@@ -48,14 +53,17 @@ class Search extends Component {
   }
 
   /* Renders the list of showed results.*/
-  renderShowedResults(){
+  renderShowedResults()
+  {
     const {state, props} = this;
     const key = this.props.key;
 
     let listGroupItems = [];
 
-    for (var i = 0; i < state.shownData.length; i++){
-      if (i > props.showCount){
+    for (var i = 0; i < state.shownData.length; i++)
+    {
+      if (i > props.showCount)
+      {
         break;
       }
 
@@ -67,11 +75,13 @@ class Search extends Component {
     return listGroupItems;
   }
 
-  pressedItem = (data, e) => {
+  pressedItem = (data, e) => 
+  {
     const {props} = this;
     e.preventDefault();
 
-    if (props.clearOnClick){
+    if (props.clearOnClick)
+    {
       this.setState({
         searchValue: "",
         shownData: []
@@ -83,7 +93,8 @@ class Search extends Component {
 
   /*Updates search result. Sets the shownResults
   as all results which include searched string. */
-  updateSearch = (e) => {
+  updateSearch = (e) => 
+  {
     const {props} = this;
 
     let inputText = e.target.value;
@@ -96,11 +107,13 @@ class Search extends Component {
       let shownResultsArray = [];
       let searchedKey = props.key;
 
-      for (var i = 0; i < props.data.length; i++){
+      for (var i = 0; i < props.data.length; i++)
+      {
         let compareWord = (searchedKey === null ?
           props.data[i] : props.data[i].searchedKey).toLowerCase();
 
-        if (compareWord.indexOf(searchedSubstring) !== -1){
+        if (compareWord.indexOf(searchedSubstring) !== -1)
+        {
           shownResultsArray.push(props.data[i]);
         }
       }
@@ -112,8 +125,10 @@ class Search extends Component {
   }
 
   /* Returns a filtered search word.*/
-  formSearchWord = (originalWord) => {
-    if (typeof(originalWord) === 'string'){
+  formSearchWord = (originalWord) => 
+  {
+    if (typeof(originalWord) === 'string')
+    {
       return originalWord.toLowerCase();
     }
 

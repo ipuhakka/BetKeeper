@@ -11,8 +11,10 @@ import Search from '../Search/Search.jsx';
 import {isValidDouble, isValidString} from '../../js/utils.js';
 import './AddBet.css';
 
-class AddBet extends Component{
-  constructor(props){
+class AddBet extends Component
+{
+  constructor(props)
+  {
     super(props);
 
     this.state = {
@@ -26,7 +28,8 @@ class AddBet extends Component{
     };
   }
 
-  render(){
+  render()
+  {
     const {state} = this;
 
     return (
@@ -68,14 +71,19 @@ class AddBet extends Component{
           <div className="tagDiv">
             {this.renderTags()}
           </div>
-          <Search clearOnClick={true} data={this.filterFolderList()} onClickResult={this.selectFolder} placeholder="Search folders"/>
+          <Search 
+            clearOnClick={true} 
+            data={this.filterFolderList()} 
+            onClickResult={this.selectFolder} 
+            placeholder="Search folders"/>
           <Button disabled={state.betResult === null} variant="primary" className="button" onClick={this.addBet}>New bet</Button>
         </Modal.Body>
       </Modal>
     );
   }
 
-  renderTags = () => {
+  renderTags = () => 
+  {
     let i = -1;
       return this.state.selected.map(folder => {
         i = i + 1;
@@ -84,7 +92,8 @@ class AddBet extends Component{
   }
 
   /* Sets dragging to true to prevent closing modal on dragging */
-  handleMouseDown = (e) => {
+  handleMouseDown = (e) => 
+  {
     this.setState({
       dragging: true,
       draggedOutOfModal: false
@@ -92,14 +101,16 @@ class AddBet extends Component{
   }
 
   /* Sets dragging to false*/
-  handleMouseUp = () => {
+  handleMouseUp = () => 
+  {
     this.setState({
       dragging: false
     })
   }
 
   /* Sets draggedOutOfModal to prevent hiding the modal on drag.*/
-  handleMouseOut = () => {
+  handleMouseOut = () => 
+  {
     let dragging = this.state.dragging;
     this.setState({
       draggedOutOfModal: dragging
@@ -107,7 +118,8 @@ class AddBet extends Component{
   }
 
   /* Filters props.folders by removing selected folders.*/
-  filterFolderList = () => {
+  filterFolderList = () => 
+  {
     const {state, props} = this;
 
     return props.folders.filter(folder =>
@@ -116,15 +128,19 @@ class AddBet extends Component{
   }
 
   hideModal = () => {
-    if (!this.state.draggedOutOfModal){
+
+    if (!this.state.draggedOutOfModal)
+    {
       this.setState({
         selected: []
       });
+
       this.props.hide();
     }
   }
 
-  removeFolderFromSelected = (folder) => {
+  removeFolderFromSelected = (folder) => 
+  {
     let selectedFolders = this.state.selected;
 
     selectedFolders.splice(selectedFolders.indexOf(folder), 1);
@@ -137,7 +153,8 @@ class AddBet extends Component{
   selectFolder = (folder) => {
     var selectedFolders = this.state.selected;
 
-    if (!this.state.selected.includes(folder)){
+    if (!this.state.selected.includes(folder))
+    {
       selectedFolders.push(folder);
 
       this.setState({
@@ -146,7 +163,8 @@ class AddBet extends Component{
     }
   }
 
-  setValue = (param, e) => {
+  setValue = (param, e) => 
+  {
 
     this.setState({
       [param]: e.target.value
@@ -154,9 +172,11 @@ class AddBet extends Component{
   }
 
   //Creates a new bet to database, if bet and odd values are valid and a result for a bet is set.
-	addBet = () => {
+  addBet = () => 
+  {
 
-    if (!isValidString(this.state.name)){
+    if (!isValidString(this.state.name))
+    {
       store.dispatch({type: 'SET_ALERT_STATUS',
         status: -1,
         message: "Name contains invalid characters"
@@ -165,7 +185,8 @@ class AddBet extends Component{
       return;
     }
 
-    if (!isValidDouble(this.state.bet) || !isValidDouble(this.state.odd)){
+    if (!isValidDouble(this.state.bet) || !isValidDouble(this.state.odd))
+    {
       store.dispatch({type: 'SET_ALERT_STATUS',
         status: -1,
         message: "Invalid decimal values given"
@@ -182,11 +203,13 @@ class AddBet extends Component{
 			bet: parseFloat(this.state.bet),
 			name: this.state.name,
 			folders: selectedFolders
-		}
+    }
+    
 		store.dispatch({type: 'POST_BET', payload: {
 				bet: data
 			}
-		});
+    });
+    
 		this.setState({
       bet: 0.0,
       odd: 0.0,
