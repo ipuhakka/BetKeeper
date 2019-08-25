@@ -7,7 +7,8 @@ import Bets from '../views/Bets/Bets.jsx';
 
 class BetsContainer extends Component {
 
-  constructor(props){
+  constructor(props)
+  {
 		super(props);
 
 		this.state = {
@@ -19,11 +20,13 @@ class BetsContainer extends Component {
     };
 	}
 
-  componentWillMount(){
+  componentWillMount()
+  {
     this.updateData();
   }
 
-  render() {
+  render() 
+  {
     const {props, state} = this;
 
     return(<Bets {...state} {...props}
@@ -37,9 +40,11 @@ class BetsContainer extends Component {
 
   //updates data. Gets bets, folders and unresolved bets from the api. If folder parameter is not specified, gets all users bets, otherwise
   //gets bets in that folder.
-  updateData = (folder) => {
+  updateData = (folder) => 
+  {
 
-    if (typeof folder === "string"){
+    if (typeof folder === "string")
+    {
       this.setState({
         betListFromFolder: true
       });
@@ -49,17 +54,21 @@ class BetsContainer extends Component {
         }
       });
     }
-    else {
+    else 
+    {
       this.setState({
         betListFromFolder: false
       });
+
       this.props.fetchBets();
     }
+
     this.props.fetchUnresolvedBets();
     this.props.fetchFolders();
   }
 
-  getBetsFolders = (id) => {
+  getBetsFolders = (id) => 
+  {
     store.dispatch({type: 'FETCH_FOLDERS_OF_BET', payload: {
         bet_id: id
       }
@@ -67,7 +76,8 @@ class BetsContainer extends Component {
   }
 
   //Get bets from selected folder.
-  showFromFolder = (key) => {
+  showFromFolder = (key) => 
+  {
     const {props} = this;
 
     this.setState({
@@ -84,14 +94,16 @@ class BetsContainer extends Component {
       this.updateData();
   }
 
-  betDeleted = () => {
+  betDeleted = () => 
+  {
     this.setState({
       selectedBet: -1
     });
   };
 
   ///set new selectedBet, if one is chosen get folders in which bet belongs to.
-	onPressedBet = (key) => {
+  onPressedBet = (key) => 
+  {
 
     const {props, state} = this;
 
@@ -117,7 +129,8 @@ class BetsContainer extends Component {
 
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state) => 
+{
   return { ...state.bets, ...state.folders}
 };
 

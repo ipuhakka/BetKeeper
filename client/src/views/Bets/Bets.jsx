@@ -29,26 +29,6 @@ class Bets extends Component
     };
   }
 
-  componentDidUpdate(prevProps)
-  {
-    const { props } = this;
-
-    const previousBets = prevProps.betListFromFolder
-      ? prevProps.betsFromFolder
-      : prevProps.allBets;
-
-    const currentBets = props.betListFromFolder
-      ? props.betsFromFolder
-      : props.allBets;
-
-    if (!_.isEqual(currentBets, previousBets))
-    {
-      this.setState({
-        visibleBets: currentBets
-      })
-    }
-  }
-
   render()
   {
     const {props, state} = this;
@@ -176,13 +156,13 @@ class Bets extends Component
     menuItems.push(<DropdownItem onClick={() => props.onShowFromFolder(-1)} key={-1}
       active={props.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
 
-    var active = false;
-
-    for (var k = 0; k < props.folders.length; k++){
-      active = false;
-      if (k === props.allFoldersSelected || k.toString() === props.allFoldersSelected)
-        active = true;
-      menuItems.push(<DropdownItem onClick={props.onShowFromFolder.bind(this, k)} key={k} active={active}
+    for (var k = 0; k < props.folders.length; k++)
+    {
+      menuItems.push(<DropdownItem 
+        onClick={props.onShowFromFolder.bind(this, k)} 
+        key={k} 
+        active={k === props.allFoldersSelected 
+          || k.toString() === props.allFoldersSelected}
         eventKey={k}>{props.folders[k]}</DropdownItem>);
     }
 
