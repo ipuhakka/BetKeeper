@@ -10,7 +10,9 @@ class Tag extends Component {
     return (
       <div className="tag">
         {this.props.value}
-        <i className="fas fa-times-circle img" onClick={this.props.onClick.bind(this, this.props.value)}></i>
+        <i 
+          className="fas fa-times-circle img" 
+          onClick={this.props.onClick.bind(this, this.props.value)}></i>
       </div>
     );
   }

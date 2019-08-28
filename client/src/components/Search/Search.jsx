@@ -21,6 +21,13 @@ class Search extends Component
     }
   }
 
+  componentDidMount()
+  {
+    this.setState({
+      shownData: this.props.data
+    });
+  }
+
   componentWillReceiveProps(nextProps)
   {
     const {data} = nextProps;
@@ -42,10 +49,10 @@ class Search extends Component
               type="text"
               value={this.state.searchValue}
               onChange={this.updateSearch}/>
+
             <ScrollableDiv className="overflow-list">
               <ListGroup>{this.renderShowedResults()}</ListGroup>
-            </ScrollableDiv>
-            
+            </ScrollableDiv>          
           </FormGroup>
         </Form>
       </div>

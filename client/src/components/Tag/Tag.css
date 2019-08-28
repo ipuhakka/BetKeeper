@@ -11,3 +11,8 @@
 .img{
   margin-left: 2px;
 }
+
+.img:hover {
+  cursor: pointer;
+  color: #E2E5EA;
+}

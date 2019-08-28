@@ -34,7 +34,7 @@ class AddBet extends Component
 
     return (
       <Modal 
-        onMouseOut={this.handleMouseOut} 
+        onMouseLeave={this.handleMouseLeave} 
         onMouseDown={this.handleMouseDown} 
         onMouseUp={this.handleMouseUp.bind(this)} 
         show={this.props.show} 
@@ -68,15 +68,22 @@ class AddBet extends Component
               <Form.Check name="betResult" id="check-3" value={0} inline type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} />
             </FormGroup>
           </Form>
+
           <div className="tagDiv">
             {this.renderTags()}
           </div>
+
           <Search 
             clearOnClick={true} 
             data={this.filterFolderList()} 
             onClickResult={this.selectFolder} 
             placeholder="Search folders"/>
-          <Button disabled={state.betResult === null} variant="primary" className="button" onClick={this.addBet}>New bet</Button>
+          <Button 
+            disabled={state.betResult === null} 
+            variant="primary" 
+            className="button" 
+            onClick={this.addBet}>New bet</Button>
+
         </Modal.Body>
       </Modal>
     );
@@ -87,7 +94,10 @@ class AddBet extends Component
     let i = -1;
       return this.state.selected.map(folder => {
         i = i + 1;
-        return (<Tag key={i} value={folder} onClick={this.removeFolderFromSelected}/>);
+        return (<Tag 
+          key={i} 
+          value={folder} 
+          onClick={this.removeFolderFromSelected}/>);
       });
   }
 
