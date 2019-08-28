@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import store from '../store';
 import {fetchBets, fetchUnresolvedBets} from '../actions/betsActions';
 import {fetchFolders} from '../actions/foldersActions';
-import Bets from '../views/Bets/Bets.jsx';
+import Bets from '../views/Bets/Bets';
 
 class BetsContainer extends Component {
 

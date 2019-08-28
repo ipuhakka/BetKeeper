@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
-import DropdownItem from 'react-bootstrap/DropdownItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import AddBet from '../../components/AddBet/AddBet';
 import BetContainer from '../../containers/BetContainer';
+import Dropdown from '../../components/Dropdown/Dropdown';
 import Filter from '../../components/Filter/Filter';
 import Filters from '../../components/Filters/Filters';
 import Header from '../../components/Header/Header';
@@ -34,11 +33,14 @@ class Bets extends Component
     const {props, state} = this;
 
     var betItems = this.renderBetsList();
-    var menuItems = this.renderDropdown();
     var betView = this.renderBetView();
 
     const arrayToFilter = props.betListFromFolder ?
       props.betsFromFolder.bets : props.allBets;
+
+    const folderSelections = _.clone(props.folders);
+
+    folderSelections.splice(0, 0, 'Overview');
 
     return (
       <div className="content">
@@ -54,12 +56,17 @@ class Bets extends Component
             </div>
           </Col>
           <Col xs={12} md={6}>
-            <DropdownButton
-              variant="primary"
-              title={"Show from folder"}
-              id={1}>
-              {menuItems}
-            </DropdownButton>
+            <Dropdown 
+              data={folderSelections}
+              title='Select from folder'
+              selectedItemAsTitle
+              stateKey=''
+              id='bets_folder_dropdown'
+              onUpdate={(key, stateKey) => 
+              {
+                props.onShowFromFolder(key - 1);
+              }}
+              />
             <Filters
                 toFilter={arrayToFilter}
                 onResultsUpdate={this.onFilterUpdate}/>
@@ -145,28 +152,6 @@ class Bets extends Component
     }
 
     return folderItems;
-  }
-
-  renderDropdown = () => 
-  {
-    const {props} = this;
-
-    var menuItems = [];
-
-    menuItems.push(<DropdownItem onClick={() => props.onShowFromFolder(-1)} key={-1}
-      active={props.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
-
-    for (var k = 0; k < props.folders.length; k++)
-    {
-      menuItems.push(<DropdownItem 
-        onClick={props.onShowFromFolder.bind(this, k)} 
-        key={k} 
-        active={k === props.allFoldersSelected 
-          || k.toString() === props.allFoldersSelected}
-        eventKey={k}>{props.folders[k]}</DropdownItem>);
-    }
-
-    return menuItems;
   }
 
   showModal = () => 
