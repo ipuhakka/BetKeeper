@@ -16,7 +16,7 @@ class Search extends Component
     super(props);
 
     this.state = {
-      shownData: [],
+      shownData: props.data,
       searchValue: ""
     }
   }
@@ -31,10 +31,14 @@ class Search extends Component
   componentWillReceiveProps(nextProps)
   {
     const {data} = nextProps;
-
-    this.setState({
-      shownData: data
-    })
+    
+    if (data.length === 0 ||
+      data.length !== this.props.data.length)
+      {
+        this.setState({
+          shownData: data
+        });
+      }
   }
 
   render()
@@ -75,7 +79,10 @@ class Search extends Component
       }
 
       listGroupItems.push(
-        <ListGroupItem action onClick={this.pressedItem.bind(this, state.shownData[i])} key={i}>
+        <ListGroupItem 
+          action 
+          onClick={this.pressedItem.bind(this, state.shownData[i])} 
+          key={i}>
           {key === null ? state.shownData[i] : state.shownData[i].key}</ListGroupItem>);
     }
 
@@ -124,7 +131,7 @@ class Search extends Component
           shownResultsArray.push(props.data[i]);
         }
       }
-
+      
       this.setState({
         shownData: shownResultsArray
       });

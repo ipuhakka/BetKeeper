@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import store from '../../store';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -36,7 +37,7 @@ class AddBet extends Component
       <Modal 
         onMouseLeave={this.handleMouseLeave} 
         onMouseDown={this.handleMouseDown} 
-        onMouseUp={this.handleMouseUp.bind(this)} 
+        onMouseUp={this.handleMouseUp} 
         show={this.props.show} 
         onHide={this.hideModal}>
         <Modal.Header closeButton>
@@ -91,8 +92,7 @@ class AddBet extends Component
 
   renderTags = () => 
   {
-    let i = -1;
-      return this.state.selected.map(folder => {
+      return this.state.selected.map((folder, i) => {
         i = i + 1;
         return (<Tag 
           key={i} 
@@ -103,7 +103,7 @@ class AddBet extends Component
 
   /* Sets dragging to true to prevent closing modal on dragging */
   handleMouseDown = (e) => 
-  {
+  {   
     this.setState({
       dragging: true,
       draggedOutOfModal: false
@@ -111,7 +111,7 @@ class AddBet extends Component
   }
 
   /* Sets dragging to false*/
-  handleMouseUp = () => 
+  handleMouseUp = (e) => 
   {
     this.setState({
       dragging: false
@@ -151,7 +151,7 @@ class AddBet extends Component
 
   removeFolderFromSelected = (folder) => 
   {
-    let selectedFolders = this.state.selected;
+    let selectedFolders = _.clone(this.state.selected);
 
     selectedFolders.splice(selectedFolders.indexOf(folder), 1);
 
@@ -161,12 +161,12 @@ class AddBet extends Component
   }
 
   selectFolder = (folder) => {
-    var selectedFolders = this.state.selected;
+    var selectedFolders = _.clone(this.state.selected);
 
     if (!this.state.selected.includes(folder))
     {
       selectedFolders.push(folder);
-
+      
       this.setState({
         selected: selectedFolders
       });
