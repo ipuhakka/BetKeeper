@@ -26,17 +26,20 @@ class Bets extends Component
       showModal: false,
       visibleBets: null
     };
+
+    this.betViewRef = React.createRef();
   }
 
   render()
   {
     const {props, state} = this;
 
-    var betItems = this.renderBetsList();
-    var betView = this.renderBetView();
+    const betItems = this.renderBetsList();
+    const betView = this.renderBetView();
 
-    const arrayToFilter = props.betListFromFolder ?
-      props.betsFromFolder.bets : props.allBets;
+    const arrayToFilter = props.betListFromFolder 
+      ? props.betsFromFolder.bets 
+      : props.allBets;
 
     const folderSelections = _.clone(props.folders);
 
@@ -51,7 +54,7 @@ class Bets extends Component
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
         <Row>
           <Col xs={12} md={{span: 6, order: 12}}>
-            <div className="betView">
+            <div className="betView" ref={this.betViewRef}>
               {betView}
             </div>
           </Col>
@@ -78,7 +81,9 @@ class Bets extends Component
       </div>);
   }
 
-  // Displays either list of unresolved bets, or data of specific bet.
+  /**
+   * Displays either list of unresolved bets, or data of specific bet.
+   */
   renderBetView = () => 
   {
     const {props} = this;
@@ -91,7 +96,8 @@ class Bets extends Component
       return <BetContainer bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
        onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
     }
-    else {
+    else 
+    {
       return props.unresolvedBets.length > 0 
         ? <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> 
         : null;
@@ -111,7 +117,8 @@ class Bets extends Component
 		const betItems = [];
 		var isSelected = false;
 
-		for (var i = bets.length -1; i >= 0; i--){
+    for (var i = bets.length -1; i >= 0; i--)
+    {
 			if (i === props.selectedBet || i.toString() === props.selectedBet)
 				isSelected = true;
 			else
@@ -126,12 +133,14 @@ class Bets extends Component
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
 
-			betItems.push(<ListGroup.Item action
-          onClick={props.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
-          key={i}>     
-          <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
-          <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].bet}`}</div>
-        </ListGroup.Item>)
+      betItems.push(<ListGroup.Item 
+        action
+        onClick={this.handleBetListClick.bind(this, i)} 
+        variant={isSelected ?  'info': null}
+        key={i}>     
+        <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
+        <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].bet}`}</div>
+        </ListGroup.Item>);
 		}
 
 		return betItems;
@@ -152,6 +161,12 @@ class Bets extends Component
     }
 
     return folderItems;
+  }
+
+  handleBetListClick = (i) => 
+  {
+    this.props.onPressedBet(i);
+    window.scrollTo(0, this.betViewRef.current.offsetTop);
   }
 
   showModal = () => 
