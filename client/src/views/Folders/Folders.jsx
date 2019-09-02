@@ -6,7 +6,6 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
@@ -14,6 +13,7 @@ import Confirm from '../../components/Confirm/Confirm.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
+import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv.jsx';
 import {isValidString} from '../../js/utils.js';
 import './Folders.css';
 
@@ -44,22 +44,26 @@ class Folders extends Component {
 				<Menu disable={this.state.disabled}></Menu>
 				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
-				<Container>
-					<Row>
-						<Col lg={6} sm={12}>
+				<Row>
+					<Col lg={6} sm={12}>
+						<ScrollableDiv className='list margins'>						
 							<ListGroup>{folders}</ListGroup>
-							<Button className="button" disabled={this.state.deleteDisabled} onClick={this.toggleConfirm} variant="warning">Delete</Button>
-						</Col>
-						<Col lg={6} sm={12}>
-							<FormControl
-								className="list margins"
-								value={this.state.newFolder}
-								onChange={this.handleNewFolderChange}
-								placeholder="Add new folder"/>
-							<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} variant="success">{"Create folder"}</Button>
-						</Col>
-					</Row>
-				</Container>
+						</ScrollableDiv>
+						<Button 
+							className="button" 
+							disabled={this.state.deleteDisabled} 
+							onClick={this.toggleConfirm} 
+							variant="danger">Delete</Button>
+					</Col>
+					<Col lg={6} sm={12}>
+						<FormControl
+							className='margins'
+							value={this.state.newFolder}
+							onChange={this.handleNewFolderChange}
+							placeholder="Add new folder"/>
+						<Button onClick={this.addFolder} className="button" disabled={this.state.newFolder === ""} variant="success">{"Create folder"}</Button>
+					</Col>
+				</Row>
 			</div>
 		);
 	}

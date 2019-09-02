@@ -6,18 +6,31 @@
 }
 
 .datetime-input {
-  width: 95%;
   font-size: small;
 }
 
-.filter .react-datepicker__close-icon {
-  margin-right: 2px;
+.react-datepicker__close-icon {
   opacity: 0;
-  transition: opacity 0.6s ease;
 }
 
-.filter .react-datepicker-wrapper:hover .react-datepicker__close-icon {
-    opacity: 1;   
+.react-datepicker-wrapper:hover .react-datepicker__close-icon {
+    opacity: 1;  
+    transition: opacity 0.6s ease;
+}
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list::webkit-scrollbar{
+  width: 0px !important;
+}
+
+@media screen and (max-width: 800px){
+
+  .react-datepicker-popper {
+    left: -125px !important;
+  }
+
+  .react-datepicker__triangle {
+    visibility: collapse;
+  }
 }
 
 .valueList-check-div {

@@ -1,22 +1,22 @@
 import React, { Component, Fragment } from 'react';
 import _ from 'lodash';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
-import DropdownItem from 'react-bootstrap/DropdownItem';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import AddBet from '../../components/AddBet/AddBet.jsx';
-import BetContainer from '../../containers/BetContainer.jsx';
-import Filter from '../../components/Filter/Filter.jsx';
-import Filters from '../../components/Filters/Filters.jsx';
-import Header from '../../components/Header/Header.jsx';
-import Info from '../../components/Info/Info.jsx';
-import Menu from '../../components/Menu/Menu.jsx';
-import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets.jsx';
+import AddBet from '../../components/AddBet/AddBet';
+import BetContainer from '../../containers/BetContainer';
+import Dropdown from '../../components/Dropdown/Dropdown';
+import Filter from '../../components/Filter/Filter';
+import Filters from '../../components/Filters/Filters';
+import Header from '../../components/Header/Header';
+import Info from '../../components/Info/Info';
+import Menu from '../../components/Menu/Menu';
+import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets';
+import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv';
 import './Bets.css';
 
-class Bets extends Component{
+class Bets extends Component
+{
   constructor(props)
   {
 		super(props);
@@ -25,39 +25,25 @@ class Bets extends Component{
 			menuDisabled: [false, true, false, false, false],
       showModal: false,
       visibleBets: null
-		};
-	}
+    };
 
-  componentDidUpdate(prevProps)
-  {
-    const { props } = this;
-
-    const previousBets = prevProps.betListFromFolder
-      ? prevProps.betsFromFolder
-      : prevProps.allBets;
-
-    const currentBets = props.betListFromFolder
-      ? props.betsFromFolder
-      : props.allBets;
-
-    if (!_.isEqual(currentBets, previousBets))
-    {
-      this.setState({
-        visibleBets: currentBets
-      })
-    }
+    this.betViewRef = React.createRef();
   }
 
   render()
   {
     const {props, state} = this;
 
-    var betItems = this.renderBetsList();
-    var menuItems = this.renderDropdown();
-    var betView = this.renderBetView();
+    const betItems = this.renderBetsList();
+    const betView = this.renderBetView();
 
-    const arrayToFilter = props.betListFromFolder ?
-      props.betsFromFolder.bets : props.allBets;
+    const arrayToFilter = props.betListFromFolder 
+      ? props.betsFromFolder.bets 
+      : props.allBets;
+
+    const folderSelections = _.clone(props.folders);
+
+    folderSelections.splice(0, 0, 'Overview');
 
     return (
       <div className="content">
@@ -66,34 +52,40 @@ class Bets extends Component{
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
-        <Container>
-          <Row>
-            <Col xs={12} md={{span: 5, order: 12}}>
-              <div className="betView">
-                {betView}
-              </div>
-            </Col>
-            <Col xs={12} md={7}>
-              <DropdownButton
-                variant="primary"
-                title={"Show from folder"}
-                id={1}>
-                {menuItems}
-              </DropdownButton>
-              <div className="betList">
-							  <Filters
-                  toFilter={arrayToFilter}
-                  onResultsUpdate={this.onFilterUpdate}/>
-                <ListGroup>{betItems}</ListGroup>
-              </div>
-            </Col>
-          </Row>
-        </Container>
+        <Row>
+          <Col xs={12} md={{span: 6, order: 12}}>
+            <div className="betView" ref={this.betViewRef}>
+              {betView}
+            </div>
+          </Col>
+          <Col xs={12} md={6}>
+            <Dropdown 
+              data={folderSelections}
+              title='Select from folder'
+              selectedItemAsTitle
+              stateKey=''
+              id='bets_folder_dropdown'
+              onUpdate={(key, stateKey) => 
+              {
+                props.onShowFromFolder(key - 1);
+              }}
+              />
+            <Filters
+                toFilter={arrayToFilter}
+                onResultsUpdate={this.onFilterUpdate}/>
+            <ScrollableDiv className='betList'>                         
+              <ListGroup>{betItems}</ListGroup>
+            </ScrollableDiv>
+          </Col>
+        </Row>
       </div>);
   }
 
-  // Displays either list of unresolved bets, or data of specific bet.
-  renderBetView = () => {
+  /**
+   * Displays either list of unresolved bets, or data of specific bet.
+   */
+  renderBetView = () => 
+  {
     const {props} = this;
 
     if (props.selectedBet !== -1)
@@ -104,14 +96,16 @@ class Bets extends Component{
       return <BetContainer bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
        onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
     }
-    else {
-      return props.unresolvedBets.length > 0 ?
-        <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> :
-        null;
+    else 
+    {
+      return props.unresolvedBets.length > 0 
+        ? <UnresolvedBets bets={props.unresolvedBets}></UnresolvedBets> 
+        : null;
     }
   }
 
-  renderBetsList = () => {
+  renderBetsList = () => 
+  {
     const {props, state} = this;
 
     let bets = state.visibleBets;
@@ -123,7 +117,8 @@ class Bets extends Component{
 		const betItems = [];
 		var isSelected = false;
 
-		for (var i = bets.length -1; i >= 0; i--){
+    for (var i = bets.length -1; i >= 0; i--)
+    {
 			if (i === props.selectedBet || i.toString() === props.selectedBet)
 				isSelected = true;
 			else
@@ -138,19 +133,21 @@ class Bets extends Component{
 			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
 				result = "Unresolved";
 
-			betItems.push(<ListGroup.Item action
-          onClick={props.onPressedBet.bind(this, i)} variant={isSelected ?  'info': null}
-          key={i}>
-          <div>{bets[i].name + " " + bets[i].datetime}</div>
-          <div>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
-          <div>{result}</div>
-        </ListGroup.Item>)
+      betItems.push(<ListGroup.Item 
+        action
+        onClick={this.handleBetListClick.bind(this, i)} 
+        variant={isSelected ?  'info': null}
+        key={i}>     
+        <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
+        <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].bet}`}</div>
+        </ListGroup.Item>);
 		}
 
 		return betItems;
 	}
 
-  renderFolderList = () => {
+  renderFolderList = () => 
+  {
     const {props} = this;
     var folderItems = [];
 
@@ -166,34 +163,25 @@ class Bets extends Component{
     return folderItems;
   }
 
-  renderDropdown = () => {
-    const {props} = this;
-
-    var menuItems = [];
-
-    menuItems.push(<DropdownItem onClick={() => props.onShowFromFolder(-1)} key={-1}
-      active={props.allFoldersSelected === -1} eventKey={-1}>{"show all"}</DropdownItem>);
-
-    var active = false;
-
-    for (var k = 0; k < props.folders.length; k++){
-      active = false;
-      if (k === props.allFoldersSelected || k.toString() === props.allFoldersSelected)
-        active = true;
-      menuItems.push(<DropdownItem onClick={props.onShowFromFolder.bind(this, k)} key={k} active={active}
-        eventKey={k}>{props.folders[k]}</DropdownItem>);
-    }
-
-    return menuItems;
+  handleBetListClick = (i) => 
+  {
+    this.props.onPressedBet(i);
+    window.scrollTo({
+      left: 0, 
+      top: this.betViewRef.current.offsetTop, 
+      behavior: 'smooth'
+    });
   }
 
-  showModal = () => {
+  showModal = () => 
+  {
     this.setState({
       showModal: true
     });
   }
 
-  hideModal = () => {
+  hideModal = () => 
+  {
     this.setState({
       showModal: false
     });

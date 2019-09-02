@@ -59,29 +59,33 @@ class Filter extends Component{
       return <div className='filter'>
         <Form.Label className='label'>{props.label}</Form.Label>
 
-        <DatePicker
-          className='datetime-input'
-          selected={state.lowerLimit}
-          startDate={null}
-          showTimeSelect
-          timeFormat="HH:mm"
-          timeIntervals={15}
-          isClearable
-          onChange={(date) => this.setDateTime(date, 'lowerLimit')}
-          onChangeRaw={(input) => this.setDateTime(input, 'lowerLimit')}
-          dateFormat={consts.DATETIME_FORMAT}/>
+        <div>
+          <DatePicker
+            className='datetime-input'
+            selected={state.lowerLimit}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            isClearable
+            startDate={state.lowerLimit}
+            endDate={state.upperLimit}
+            onChange={(date) => this.setDateTime(date, 'lowerLimit')}
+            onChangeRaw={(input) => this.setDateTime(input, 'lowerLimit')}
+            dateFormat={consts.DATETIME_FORMAT}/>
 
-        <DatePicker
-          className='datetime-input'
-          selected={state.upperLimit}
-          startDate={null}
-          showTimeSelect
-          timeFormat="HH:mm"
-          timeIntervals={15}
-          isClearable
-          onChange={(date) => this.setDateTime(date, 'upperLimit')}       
-          onChangeRaw={(input) => this.setDateTime(input, 'upperLimit')}
-          dateFormat={consts.DATETIME_FORMAT}/>
+          <DatePicker
+            className='datetime-input'
+            selected={state.upperLimit}
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            isClearable            
+            startDate={state.lowerLimit}
+            endDate={state.upperLimit}
+            onChange={(date) => this.setDateTime(date, 'upperLimit')}       
+            onChangeRaw={(input) => this.setDateTime(input, 'upperLimit')}
+            dateFormat={consts.DATETIME_FORMAT}/>
+          </div>
       </div>;
   }
 

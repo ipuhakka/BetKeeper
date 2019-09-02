@@ -38,7 +38,9 @@ class Statistics extends Component{
 				<div>
 					<Row>
 						<Col md={6} xs={12}>
-							<BarGraph data={props.betStatistics} optionLabels={this.graphOptionLabels()}
+							<BarGraph 
+								data={props.betStatistics} 
+								optionLabels={this.graphOptionLabels()}
 								graphOptions={props.graphOptions} />
 							<OverviewTable defaultSort={props.betStatistics} overviewItems={props.betStatistics}/>
 						</Col>
@@ -56,7 +58,9 @@ class Statistics extends Component{
 					</Row>
 					<Row>
 						<Col>
-								<ScatterPlot optionLabels={this.graphOptionLabels()} data={props.betStatistics}
+							<ScatterPlot 
+								optionLabels={this.graphOptionLabels()} 
+								data={props.betStatistics}
 								graphOptions={props.graphOptions}></ScatterPlot>
 						</Col>
 					</Row>
@@ -77,10 +81,10 @@ class Statistics extends Component{
 		})
 
 		return betStatistics.length > 0 ?
-				<ObjectTable
-						tableTitle={betStatistics[folderSelected].folder}
-						data={betStatistics[folderSelected]}
-						titles={titleOptions}/> : null;
+			<ObjectTable
+				tableTitle={betStatistics[folderSelected].folder}
+				data={betStatistics[folderSelected]}
+				titles={titleOptions}/> : null;
 	}
 
 	folders = () => {

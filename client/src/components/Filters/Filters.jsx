@@ -23,9 +23,9 @@ class Filters extends Component
 
   componentDidMount()
   {
-      this.setState({
-        visibleArray: this.props.toFilter
-      });
+    this.setState({
+      visibleArray: this.props.toFilter
+    });
   }
 
   componentDidUpdate(prevProps)
@@ -34,9 +34,7 @@ class Filters extends Component
 
     if (!_.isEqual(prevProps.toFilter, props.toFilter))
     {
-      this.setState({
-        visibleArray: props.toFilter
-      })
+      this.update();
     }
   }
 
@@ -104,18 +102,30 @@ class Filters extends Component
   */
   onUpdate = (newFilterOption) =>
   {
-    const { props, state } = this;
-    let { filterOptions } = state;
+    const { state } = this;
+    const { filterOptions } = state;
 
-    const newFilterKey = newFilterOption.key;
+    const newFilterOptions = _.filter(filterOptions, filterOption => 
+      filterOption.key !== newFilterOption.key);
 
-    _.remove(filterOptions, {
-      key: newFilterKey
+    newFilterOptions.push(newFilterOption);
+
+    this.setState({
+      filterOptions: newFilterOptions
+    }, () => 
+    {
+      this.update();
     });
+  }
 
-    filterOptions.push(newFilterOption);
+  /**
+   * Filters a list.
+   */
+  update = () => 
+  {
+    const { state, props } = this;
 
-    const newFilteredArray = filterList(props.toFilter, filterOptions);
+    const newFilteredArray = filterList(props.toFilter, state.filterOptions);
 
     if (!_.isEqual(newFilteredArray, state.visibleArray))
     {
@@ -123,7 +133,7 @@ class Filters extends Component
         visibleArray: newFilteredArray
       });
 
-      this.props.onResultsUpdate(newFilteredArray);
+      props.onResultsUpdate(newFilteredArray);
     }
   }
 
