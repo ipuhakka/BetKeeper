@@ -3,3 +3,40 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e2e5ea;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    background:  #A9A9A9;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+    background:  white;
+}
+
+th{
+	text-align:center;
+}
+
+th.clickable{
+	cursor:pointer;
+}
+
+th.clickable:hover{
+  background-color: lightgray;
+}
+
+.tableGreen{
+	color: springgreen;
+}
+
+.tableRed{
+	color: salmon;
+}
+

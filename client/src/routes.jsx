@@ -1,17 +1,17 @@
 import React from 'react';
 import { Route, BrowserRouter as Router, Switch} from 'react-router-dom';
-import App from './App.jsx';
-import BetsContainer from './containers/BetsContainer.jsx';
-import Folders from './views/Folders/Folders.jsx';
-import Home from './views/Home/Home.jsx';
-import StatisticsContainer from './containers/StatisticsContainer.jsx';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute.jsx';
+import LoginView from './views/LoginView/LoginView';
+import BetsContainer from './containers/BetsContainer';
+import Folders from './views/Folders/Folders';
+import Home from './views/Home/Home';
+import StatisticsContainer from './containers/StatisticsContainer';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 const Routes = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path='/' component={App}/>
+        <Route exact path='/' component={LoginView}/>
         <PrivateRoute path='/folders' component={Folders} />
         <PrivateRoute path='/bets' component={BetsContainer} />
         <PrivateRoute path='/statistics' component={StatisticsContainer} />
