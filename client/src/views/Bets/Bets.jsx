@@ -166,7 +166,11 @@ class Bets extends Component
   handleBetListClick = (i) => 
   {
     this.props.onPressedBet(i);
-    window.scrollTo(0, this.betViewRef.current.offsetTop);
+    window.scrollTo({
+      left: 0, 
+      top: this.betViewRef.current.offsetTop, 
+      behavior: 'smooth'
+    });
   }
 
   showModal = () => 
