@@ -1,19 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Betkeeper.Data;
 
 namespace Betkeeper.Models
 {
     public class User
     {
-        [Column(dataType: "INTEGER", columnName: "user_id")]
+        public const string TableName = "Users";
+
         public int UserId { get; set; }
 
-        [Column(dataType: "TEXT", columnName: "username")]
         public string Username { get; set; }
 
-        [Column(dataType: "TEXT", columnName: "password")]
         public string Password { get; set; }
+
+        public void AddUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static List<User> Authenticate(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool UsernameInUse(string username)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
