@@ -1,32 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Betkeeper.Data;
+using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
     public class User
     {
-        public const string TableName = "Users";
 
-        public int UserId { get; set; }
-
-        public string Username { get; set; }
-
-        public string Password { get; set; }
-
-        public void AddUser()
+        /// <summary>
+        /// Adds a new user.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns>User id for created user.</returns>
+        public static int AddUser(string username, string password)
         {
-            throw new NotImplementedException();
+            if (UsernameInUse(username))
+            {
+                throw new UsernameInUseException(
+                    string.Format(
+                        "Username {0} already in use, user not created", 
+                        username));
+            }
+
+            var commandText = "INSERT INTO users(username, password) " +
+                "VALUES(@username, @password)";
+
+            return Database.ExecuteCommand(
+                commandText,
+                new Dictionary<string, object>
+                {
+                    {"username", username },
+                    {"password", password }
+                });
         }
 
-        public static List<User> Authenticate(string username, string password)
+        /// <summary>
+        /// Returns user id of matching username.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public static int GetUserId(string username)
         {
-            throw new NotImplementedException();
+            if (!UsernameInUse(username))
+            {
+                throw new NotFoundException(
+                    string.Format("Username {0} not found", username));
+            }
+
+            var queryText = "SELECT user_id FROM users " +
+                    "WHERE username=@username";
+
+            return Database.ReadInt(
+                queryText,
+                new Dictionary<string, object>
+                {
+                    {"username", username }
+                });
+        }
+
+        /// <summary>
+        /// Checks if userId matches a given password.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static bool Authenticate(int userId, string password)
+        {
+            var query = "SELECT(EXISTS(SELECT 1 " +
+                "FROM users " +
+                "WHERE user_id = @user_id AND password=@password))";
+
+            return Database.ReadBoolean(
+                query,
+                new Dictionary<string, object>
+                {
+                    { "user_id", userId },
+                    { "password", password }
+                });
         }
 
         public static bool UsernameInUse(string username)
         {
-            throw new NotImplementedException();
+            var query = "SELECT(EXISTS(SELECT 1 " +
+                "FROM users " +
+                "WHERE username = @username))";
+
+            return Database.ReadBoolean(
+                query,
+                new Dictionary<string, object>
+                {
+                    { "username", username }
+                });
         }
     }
 }

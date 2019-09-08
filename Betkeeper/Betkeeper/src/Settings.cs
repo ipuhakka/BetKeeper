@@ -15,7 +15,7 @@ namespace Betkeeper
                 throw new ConfigurationException("Database path not set");
             }
 
-            return string.Format("Data Source = {0} Version = 3; foreign keys = true;", DatabasePath);
+            return string.Format("Data Source = {0}; Version = 3; foreign keys = true;", DatabasePath);
         }
     }
 }
