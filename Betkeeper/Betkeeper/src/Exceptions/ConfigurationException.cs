@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Betkeeper
+namespace Betkeeper.Exceptions
 {
     [Serializable]
     public class ConfigurationException : Exception
