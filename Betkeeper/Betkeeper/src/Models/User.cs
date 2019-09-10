@@ -13,6 +13,7 @@ namespace Betkeeper.Models
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
+        /// <exception cref="UsernameInUseException"></exception>
         /// <returns>User id for created user.</returns>
         public static int AddUser(string username, string password)
         {
@@ -40,6 +41,7 @@ namespace Betkeeper.Models
         /// Returns user id of matching username.
         /// </summary>
         /// <param name="username"></param>
+        /// <exception cref="NotFoundException"></exception>
         /// <returns></returns>
         public static int GetUserId(string username)
         {
