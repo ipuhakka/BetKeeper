@@ -22,6 +22,8 @@ namespace Test
             SQLiteConnection.CreateFile(testDatabaseName);
 
             Settings.DatabasePath = testDatabaseName;
+            Settings.UseForeignKeys = false;
+
             CreateSchemas();
         }
 
