@@ -43,14 +43,6 @@ namespace Test.Models
             Tools.DeleteTestDatabase();
         }
 
-        // TODO: testicaset:
-        /*
-         1. Haetaan vain käyttäjän kansiot
-         2. Haetaan käyttäjän 1 kansiot missä bet 1
-         3. Ei palauteta mitään jos käyttäjällä ei vetoa
-         4. Ei palauteta mitään jos käyttäjällä ei kansiota
-         */
-
         [Test]
         public void GetUsersFolders_ReturnsUsersFolders()
         {

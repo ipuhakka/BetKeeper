@@ -30,17 +30,34 @@ namespace Betkeeper.Extensions
             return double.Parse(asString, culture);
         }
 
-        public static int? ToInt32(this DataRow dataRow, string fieldKey)
+        public static int ToInt32(this DataRow dataRow, string fieldKey)
         {
-            // TODO: Yksikkötestit
-            return dataRow[fieldKey] as int?;
+            var asString = dataRow[fieldKey].ToString();
+
+            if (int.TryParse(asString, out int result))
+            {
+                return result;
+            }
+
+            throw new Exception(
+                string.Format(
+                    "Integer conversion with input {0} failed",
+                    dataRow[fieldKey].ToString()));
         }
 
-        public static DateTime? ToDateTime(this DataRow dataRow, string fieldKey)
+        public static DateTime ToDateTime(this DataRow dataRow, string fieldKey)
         {
-            // TODO: Yksikkötestit
+           if (DateTime.TryParse(
+               dataRow[fieldKey].ToString(),
+               out DateTime result))
+            {
+                return result;
+            }
 
-            return dataRow[fieldKey] as DateTime?;
+            throw new Exception(
+                string.Format(
+                    "Cannot convert {0} to DateTime",
+                    dataRow[fieldKey].ToString()));
         }
     }
 }
