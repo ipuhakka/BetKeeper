@@ -4,8 +4,8 @@
     {
         public enum BetResult
         {
-            Unresolved = 0,
-            Lost = -1,
+            Unresolved = -1,
+            Lost = 0,
             Won = 1
         };
     }

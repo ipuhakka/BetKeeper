@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Betkeeper.Models;
+using Betkeeper.Exceptions;
 using NUnit.Framework;
 
 namespace Test.Models
@@ -54,6 +55,20 @@ namespace Test.Models
             Assert.AreEqual(2.64, bet.Odd);
             Assert.AreEqual(3, bet.Stake);
             Assert.AreEqual(1, bet.BetId);
+        }
+
+        [Test]
+        public void DeleteBet_BetNotUsers_ThrowsNotFoundException()
+        {
+            Assert.Throws<NotFoundException>(() =>
+                Bet.DeleteBet(2, 1));
+        }
+
+        [Test]
+        public void DeleteBet_UsersBet_Returns1BetDeleted()
+        {
+            Assert.AreEqual(1, Bet.DeleteBet(1, 1));
+            Assert.IsNull(Bet.GetBet(1, 1));
         }
     }
 }
