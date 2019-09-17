@@ -14,13 +14,13 @@ namespace Betkeeper.Models
 
         public string Name { get; set; }
 
-        public double? Odd { get; set; }
+        public double Odd { get; set; }
 
-        public double? Stake { get; set; }
+        public double Stake { get; set; }
 
-        public DateTime? PlayedDate { get; set; }
+        public DateTime PlayedDate { get; set; }
 
-        public int? Owner { get; set; }
+        public int Owner { get; set; }
 
         public int BetId { get; }
 
@@ -57,19 +57,32 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public int CreateBet()
         {
-            if (Odd == null
-                || Stake == null
-                || Owner == null
-                || PlayedDate == null)
+            if (PlayedDate == null)
             {
-                throw new InvalidOperationException("Missing required parameters in bet");
+                throw new InvalidOperationException(
+                    "DateTime cannot be null when creating a new bet");
             }
 
-            // TODO: Tarkista onko owneria?
+            if (!User.UserIdExists((int)Owner))
+            {
+                throw new NotFoundException("UserId not found");
+            }
 
-            // TODO: Luo veto
+            string query = "INSERT INTO bets " +
+                "(bet_won, name, odd, bet, date_time, owner) " +
+                "VALUES (@betWon, @name, @odd, @bet, @dateTime, @owner);";
 
-            throw new NotImplementedException();
+            return Database.ExecuteCommand(
+                query,
+                new Dictionary<string, object>
+                {
+                    {"betWon", (int)BetResult },
+                    {"name", Name },
+                    {"odd", Odd },
+                    {"bet", Stake },
+                    {"dateTime", PlayedDate },
+                    {"owner", Owner }
+                });
         }
 
         /// <summary>

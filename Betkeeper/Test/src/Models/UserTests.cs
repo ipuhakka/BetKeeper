@@ -31,6 +31,18 @@ namespace Test.Models
         }
 
         [Test]
+        public void UserIdExists_DoesNotExist_ReturnsFalse()
+        {
+            Assert.IsFalse(User.UserIdExists(999));
+        }
+
+        [Test]
+        public void UserIdExists_ReturnsTrue()
+        {
+            Assert.IsTrue(User.UserIdExists(1));
+        }
+
+        [Test]
         public void UserNameInUse_InUse_ReturnsTrue()
         {
             Assert.IsTrue(User.UsernameInUse("username1"));

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Betkeeper;
 using Betkeeper.Models;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
@@ -11,11 +12,22 @@ namespace Test.Models
 {
     public class BetTests
     {
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             Tools.CreateTestDatabase();
+        }
 
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Tools.DeleteTestDatabase();
+        }
+
+        [SetUp]
+        public void Setup()
+        {
             var setUpCommand =
                 "INSERT OR REPLACE INTO users(username, password, user_id) " +
                     "VALUES ('testi', 'salasana', 1);" +
@@ -34,10 +46,15 @@ namespace Test.Models
             Tools.ExecuteNonQuery(setUpCommand);
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        [TearDown]
+        public void TearDown()
         {
-            Tools.DeleteTestDatabase();
+            Tools.ClearTables(new List<string>
+            {
+                "bets",
+                "bet_in_bet_folder",
+                "users"
+            });
         }
 
         [Test]
@@ -69,6 +86,44 @@ namespace Test.Models
         {
             Assert.AreEqual(1, Bet.DeleteBet(1, 1));
             Assert.IsNull(Bet.GetBet(1, 1));
+        }
+
+        [Test]
+        public void CreateBet_UserDoesNotExist_ThrowsNotFoundException()
+        {
+            var bet = new Bet(
+                betWon: true,
+                name: "testName",
+                odd: 2.5,
+                stake: 2.2,
+                playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
+                userId: 999);
+
+            Assert.Throws<NotFoundException>(() =>
+             bet.CreateBet());
+        }
+
+        [Test]
+        public void CreateBet_OnSuccess_BetAdded()
+        {
+            var bet = new Bet(
+                betWon: true,
+                name: "testName",
+                odd: 2.5,
+                stake: 2.2,
+                playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
+                userId: 1);
+
+            Assert.AreEqual(1, bet.CreateBet());
+
+            var addedBet = Bet.GetBet(3, 1);
+
+            Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
+            Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);
+            Assert.AreEqual(2.5, addedBet.Odd);
+            Assert.AreEqual(2.2, addedBet.Stake);
+            Assert.AreEqual("testName", addedBet.Name);
+            Assert.AreEqual(1, addedBet.Owner);
         }
     }
 }

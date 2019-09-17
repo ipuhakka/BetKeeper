@@ -96,5 +96,24 @@ namespace Betkeeper.Models
                     { "username", username }
                 });
         }
+
+        /// <summary>
+        /// Checks if userId is found.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static bool UserIdExists(int userId)
+        {
+            var query = "SELECT(EXISTS(SELECT 1 " +
+                "FROM users " +
+                "WHERE user_id = @userId))";
+
+            return Database.ReadBoolean(
+                query,
+                new Dictionary<string, object>
+                {
+                    { "userId", userId }
+                });
+        }
     }
 }
