@@ -16,7 +16,7 @@ namespace Betkeeper.Data
         /// <returns></returns>
         public static DataTable ExecuteQuery(
             string query, 
-            Dictionary<string, object> parameters)
+            Dictionary<string, object> parameters = null)
         {
             using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
             {
@@ -24,14 +24,19 @@ namespace Betkeeper.Data
 
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
-                foreach (var parameter in parameters)
+                if (parameters != null)
                 {
-                    command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    }
                 }
 
                 var dataTable = new DataTable();
 
                 dataTable.Load(command.ExecuteReader());
+
+                command.Dispose();
 
                 return dataTable;
             }
@@ -67,6 +72,8 @@ namespace Betkeeper.Data
                     result = dataReader.GetBoolean(0);
                 }
 
+                command.Dispose();
+
                 return result;
             }
         }
@@ -94,6 +101,8 @@ namespace Betkeeper.Data
                 {
                     result = dataReader.GetInt32(0);
                 }
+
+                command.Dispose();
 
                 return result;
             }
