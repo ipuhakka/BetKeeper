@@ -37,6 +37,12 @@ namespace Test.Models
                     "VALUES('käyttäjä3', 'salasana3', 3);" +
                 "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
                     "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, 0, 1);" +
+                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
+                    "VALUES ('testiveto', 2, 4, datetime('now', 'localTime'), 1, 1, 3);" +
+                 "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
+                    "VALUES ('testiveto', 4, 5, datetime('now', 'localTime'), 1, 1, 4);" +
+                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
+                    "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, -1, 5);" +
                 "INSERT OR REPLACE INTO bets(name, odd, bet, date_time, owner, bet_won, bet_id) " +
                     "VALUES(NULL, 3.13, 3, datetime('now', 'localTime'), 2, 0, 2); " +
                 "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder1', 1, 1);" +
@@ -72,6 +78,36 @@ namespace Test.Models
             Assert.AreEqual(2.64, bet.Odd);
             Assert.AreEqual(3, bet.Stake);
             Assert.AreEqual(1, bet.BetId);
+        }
+
+        [Test]
+        public void GetBets_UserIdGiven_ReturnsUsersBets()
+        {
+            Assert.AreEqual(4, Bet.GetBets(userId: 1).Count);
+        }
+
+        [Test]
+        public void GetBets_NoParameters_ReturnsAllBets()
+        {
+            Assert.AreEqual(5, Bet.GetBets().Count);
+        }
+
+        [Test]
+        public void GetBets_WhereBetFinishedAndUserId_ReturnsUsersFinishedBets()
+        {
+            Assert.AreEqual(3, Bet.GetBets(userId: 1, betFinished: true).Count);
+        }
+
+        [Test]
+        public void GetBets_WhereBetFinished_ReturnsAllFinishedBets()
+        {
+            Assert.AreEqual(4, Bet.GetBets(betFinished: true).Count);
+        }
+
+        [Test]
+        public void GetBets_WhereBetUnfinished_ReturnsAllUnfinishedBets()
+        {
+            Assert.AreEqual(1, Bet.GetBets(betFinished: false).Count);
         }
 
         [Test]
@@ -116,7 +152,7 @@ namespace Test.Models
 
             Assert.AreEqual(1, bet.CreateBet());
 
-            var addedBet = Bet.GetBet(3, 1);
+            var addedBet = Bet.GetBet(6, 1);
 
             Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
             Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);

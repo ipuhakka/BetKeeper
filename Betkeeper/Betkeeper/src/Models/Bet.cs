@@ -134,6 +134,47 @@ namespace Betkeeper.Models
                 : null;
         }
 
+        /// <summary>
+        /// Gets a list of bets matching parameters
+        /// </summary>
+        /// <param name="betFinished"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static List<Bet> GetBets(int? userId = null, bool? betFinished = null)
+        {
+            var query = "SELECT * FROM bets";
+            var queryParameters = new Dictionary<string, object>();
+            var whereConditions = new List<string>();
+
+            if (userId != null)
+            {
+
+                whereConditions.Add("owner=@userId");
+
+                queryParameters.Add("userId", userId);
+            }
+
+            if (betFinished != null)
+            {
+                whereConditions.Add((bool)betFinished
+                    ? "bet_won != @betFinished"
+                    : "bet_won = @betFinished");
+
+                queryParameters.Add("betFinished", -1);
+            }
+
+            if (queryParameters.Count > 0)
+            {
+                query += " WHERE ";
+                query += string.Join(" AND ", whereConditions);           
+            }
+
+            return DatatableToBetList(
+                Database.ExecuteQuery(
+                    query,
+                    queryParameters));
+        }
+
         private static List<Bet> DatatableToBetList(DataTable datatable)
         {
             var dataRows = datatable.Rows.Cast<DataRow>();
