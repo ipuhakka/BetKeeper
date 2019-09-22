@@ -50,7 +50,7 @@ namespace Betkeeper.Models
                 .ToList();
         }
 
-        public static bool FolderExists(int userId, string folderName)
+        public static bool UserHasFolder(int userId, string folderName)
         {
             var query = "SELECT(EXISTS(" +
                 "SELECT 1 FROM bet_folders " +
@@ -65,6 +65,23 @@ namespace Betkeeper.Models
                 });
         }
 
+        public static bool FolderHasBet(int userId, string folderName, int betId)
+        {
+            var query = "SELECT(EXISTS(" +
+                "SELECT 1 FROM bet_in_bet_folder " +
+                "WHERE owner = @userId AND folder = @folderName " +
+                    "AND bet_id=@betId))";
+
+            return Database.ReadBoolean(
+                query,
+                new Dictionary<string, object>
+                {
+                    {"userId", userId },
+                    {"folderName", folderName },
+                    {"betId", betId }
+                });
+        }
+
         /// <summary>
         /// Adds a new folder to database.
         /// </summary>
@@ -74,7 +91,7 @@ namespace Betkeeper.Models
         /// <returns>Number of rows affected.</returns>
         public static int AddNewFolder(int userId, string folderName)
         {
-            if (FolderExists(userId, folderName))
+            if (UserHasFolder(userId, folderName))
             {
                 throw new FolderExistsException(
                     string.Format("{0} already has folder named {1}", userId, folderName));
@@ -100,7 +117,7 @@ namespace Betkeeper.Models
         /// <returns>Number of rows affected.</returns>
         public static int DeleteFolder(int userId, string folderName)
         {
-            if (!FolderExists(userId, folderName))
+            if (!UserHasFolder(userId, folderName))
             {
                 throw new NotFoundException("Folder trying to be deleted not found");
             }

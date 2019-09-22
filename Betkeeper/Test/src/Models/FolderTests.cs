@@ -97,15 +97,27 @@ namespace Test.Models
         }
 
         [Test]
-        public void FolderExists_UserDoesNotHaveFolder_ReturnsFalse()
+        public void UserHasFolder_UserDoesNotHaveFolder_ReturnsFalse()
         {
-            Assert.IsFalse(Folder.FolderExists(userId: 1, folderName: "testFolder3"));
+            Assert.IsFalse(Folder.UserHasFolder(userId: 1, folderName: "testFolder3"));
         }
 
         [Test]
-        public void FolderExists_UserHasFolder_ReturnsTrue()
+        public void UserHasFolder_UserHasFolder_ReturnsTrue()
         {
-            Assert.IsTrue(Folder.FolderExists(userId: 1, folderName: "testFolder1"));
+            Assert.IsTrue(Folder.UserHasFolder(userId: 1, folderName: "testFolder1"));
+        }
+
+        [Test]
+        public void FolderHasBet_ReturnsTrue()
+        {
+            Assert.IsTrue(Folder.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 1));
+        }
+
+        [Test]
+        public void FolderHasBet_BetNotInFolder_ReturnsFalse()
+        {
+            Assert.IsFalse(Folder.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 2));
         }
 
         [Test]

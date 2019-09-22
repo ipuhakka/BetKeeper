@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SQLite;
 using System.Linq;
 using Betkeeper.Data;
 using Betkeeper.Extensions;
@@ -86,6 +87,44 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
+        /// Adds bet to folders.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="folders"></param>
+        /// <returns>List of folders to which bet was added</returns>
+        public static List<string> AddBetToFolders(int betId, int userId, List<string> folders)
+        {
+            var addedToFoldersList = new List<string>();
+            var queryParameters = new Dictionary<string, object>();
+            queryParameters.Add("betId", betId);
+            queryParameters.Add("userId", userId);
+
+            foreach(var folder in folders)
+            {
+                if (!Folder.UserHasFolder(userId, folder)
+                    || Folder.FolderHasBet(userId, folder, betId))
+                {
+                    continue;
+                }
+
+                var query = "INSERT INTO bet_in_bet_folder VALUES (@folder, @userId, @betId)";
+                queryParameters["folder"] = folder;
+
+                var modifiedRowCount = Database.ExecuteCommand(
+                    query,
+                    queryParameters);
+
+                if (modifiedRowCount == 1)
+                {
+                    addedToFoldersList.Add(folder);
+                }
+            }
+
+            return addedToFoldersList;
+        }
+
+        /// <summary>
         /// Deletes a bet from database.
         /// </summary>
         /// <param name="betId"></param>
@@ -107,6 +146,101 @@ namespace Betkeeper.Models
                 {
                     { "betId", betId }
                 });
+        }
+
+        /// <summary>
+        /// Deletes a bet from specified folders.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="folders"></param>
+        /// <returns>List of folders from which bet was deleted</returns>
+        public static List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
+        {
+            var deletedFromFoldersList = new List<string>();
+            var queryParameters = new Dictionary<string, object>();
+            queryParameters.Add("betId", betId);
+            queryParameters.Add("userId", userId);
+
+            foreach(var folder in folders)
+            {
+                if (!Folder.UserHasFolder(userId, folder)
+                    || !Folder.FolderHasBet(userId, folder, betId))
+                {
+                    continue;
+                }
+
+                var query = "DELETE FROM bet_in_bet_folder " +
+                    "WHERE bet_id = @betId AND folder = @folder";
+                queryParameters["folder"] = folder;
+
+                var modifiedRowCount = Database.ExecuteCommand(
+                    query,
+                    queryParameters);
+
+                if (modifiedRowCount == 1)
+                {
+                    deletedFromFoldersList.Add(folder);
+                }
+            }
+
+            return deletedFromFoldersList;
+        }
+
+        /// <summary>
+        /// Modifies users existing bet.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="betWon"></param>
+        /// <param name="stake"></param>
+        /// <param name="odd"></param>
+        /// <param name="name"></param>
+        /// <exception cref="NotFoundException"></exception>
+        public static int ModifyBet(
+            int betId,
+            int userId,
+            bool? betWon = null,
+            double? stake = null,
+            double? odd = null,
+            string name = null)
+        {
+            var bet = GetBet(betId, userId);
+
+            if (bet == null || bet.Owner != userId)
+            {
+                throw new NotFoundException("Bet not found");
+            }
+
+            var queryParameters = new Dictionary<string, object>();
+            var query = "UPDATE bets SET bet_won = @betResult";
+
+            queryParameters.Add("betResult", GetBetResult(betWon));
+
+            if (stake != null)
+            {
+                query += ", bet = @stake";
+                queryParameters.Add("stake", stake);
+            }
+
+            if (odd != null)
+            {
+                query += ", odd = @odd";
+                queryParameters.Add("odd", odd);
+            }
+
+            if (name != null)
+            {
+                query += ", name = @name";
+                queryParameters.Add("name", name);
+            }
+
+            query += " WHERE bet_id = @betId";
+            queryParameters.Add("betId", betId);
+
+            return Database.ExecuteCommand(
+                query,
+                queryParameters);
         }
 
         /// <summary>
