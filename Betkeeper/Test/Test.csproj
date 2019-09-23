@@ -65,6 +65,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Api\Classes\TokenLogTests.cs" />
+    <Compile Include="src\Api\Classes\TokenTests.cs" />
     <Compile Include="src\Extensions\DataRowExtensionTests.cs" />
     <Compile Include="src\Models\BetTests.cs" />
     <Compile Include="src\Models\FolderTests.cs" />
@@ -72,6 +74,10 @@
     <Compile Include="src\Tools.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Api\Api.csproj">
+      <Project>{637306f3-811d-47dc-8b49-2511643431b2}</Project>
+      <Name>Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Betkeeper\Betkeeper.csproj">
       <Project>{457c7e86-0d37-4062-96d7-f1e1997fd669}</Project>
       <Name>Betkeeper</Name>
