@@ -8,7 +8,7 @@ using Betkeeper.Models;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
-namespace Test.Models
+namespace Test.Betkeeper.Models
 {
     public class BetTests
     {

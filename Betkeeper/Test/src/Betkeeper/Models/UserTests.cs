@@ -5,7 +5,7 @@ using Betkeeper.Models;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
-namespace Test.Models
+namespace Test.Betkeeper.Models
 {
     [TestFixture]
     public class UserTests

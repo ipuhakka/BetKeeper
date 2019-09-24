@@ -4,7 +4,7 @@ using Betkeeper.Extensions;
 using Betkeeper;
 using NUnit.Framework;
 
-namespace Test.Extensions
+namespace Test.Betkeeper.Extensions
 {
     [TestFixture]
     public class DataRowExtensionTests
