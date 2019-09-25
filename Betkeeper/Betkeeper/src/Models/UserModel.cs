@@ -5,7 +5,7 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
-    public class UserModel
+    public class UserModel : IUserModel
     {
 
         /// <summary>

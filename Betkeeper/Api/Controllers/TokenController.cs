@@ -14,6 +14,8 @@ namespace Api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class TokenController : ApiController
     {
+        public IUserModel _UserModel { get; set; }
+
         // GET: api/Token
         public IEnumerable<string> Get()
         {
@@ -30,20 +32,20 @@ namespace Api.Controllers
         /// <summary>
         /// Post login-info.
         /// </summary>
+        /// <param name="userModel"></param>
         /// <returns>Token used for accessing the system.
         /// </returns>
         public HttpResponseMessage Post()
         {
-            // TODO: Yksikkötestit
+            _UserModel = _UserModel ?? new UserModel();
+
             var password = Request.Headers.Authorization.ToString();
 
             var username = Http.GetRequestBody(Request)["username"].ToString();
 
-            var userModel = new Betkeeper.Models.UserModel();
+            var userId = _UserModel.GetUserId(username);
 
-            var userId = userModel.GetUserId(username);
-
-            if (!userModel.Authenticate(userId, password))
+            if (!_UserModel.Authenticate(userId, password))
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
