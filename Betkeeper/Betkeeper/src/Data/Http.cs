@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Data
 {
@@ -30,11 +31,16 @@ namespace Betkeeper.Data
         /// <returns></returns>
         public static dynamic GetRequestBody(HttpRequestMessage request)
         {
-            // TODO: Yksikkötestit
+            var serializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
             HttpContent requestContent = request.Content;
             string jsonContent = requestContent.ReadAsStringAsync().Result;
 
-            return (dynamic)JsonConvert.DeserializeObject(jsonContent);
+            return JsonConvert.DeserializeObject(jsonContent, serializerSettings);
         }
     }
 }
