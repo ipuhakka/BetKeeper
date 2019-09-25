@@ -39,9 +39,11 @@ namespace Api.Controllers
 
             var username = Http.GetRequestBody(Request)["username"].ToString();
 
-            var userId = Betkeeper.Models.User.GetUserId(username);
+            var userModel = new Betkeeper.Models.UserModel();
 
-            if (!Betkeeper.Models.User.Authenticate(userId, password))
+            var userId = userModel.GetUserId(username);
+
+            if (!userModel.Authenticate(userId, password))
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }

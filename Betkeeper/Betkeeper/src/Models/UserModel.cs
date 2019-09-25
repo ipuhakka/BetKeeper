@@ -5,7 +5,7 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
-    public class User
+    public class UserModel
     {
 
         /// <summary>
@@ -15,7 +15,7 @@ namespace Betkeeper.Models
         /// <param name="password"></param>
         /// <exception cref="UsernameInUseException"></exception>
         /// <returns>User id for created user.</returns>
-        public static int AddUser(string username, string password)
+        public int AddUser(string username, string password)
         {
             if (UsernameInUse(username))
             {
@@ -43,7 +43,7 @@ namespace Betkeeper.Models
         /// <param name="username"></param>
         /// <exception cref="NotFoundException"></exception>
         /// <returns></returns>
-        public static int GetUserId(string username)
+        public int GetUserId(string username)
         {
             if (!UsernameInUse(username))
             {
@@ -68,7 +68,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public static bool Authenticate(int userId, string password)
+        public bool Authenticate(int userId, string password)
         {
             var query = "SELECT(EXISTS(SELECT 1 " +
                 "FROM users " +
@@ -83,7 +83,7 @@ namespace Betkeeper.Models
                 });
         }
 
-        public static bool UsernameInUse(string username)
+        public bool UsernameInUse(string username)
         {
             var query = "SELECT(EXISTS(SELECT 1 " +
                 "FROM users " +
@@ -102,7 +102,7 @@ namespace Betkeeper.Models
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public static bool UserIdExists(int userId)
+        public bool UserIdExists(int userId)
         {
             var query = "SELECT(EXISTS(SELECT 1 " +
                 "FROM users " +

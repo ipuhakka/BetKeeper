@@ -64,7 +64,7 @@ namespace Betkeeper.Models
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!User.UserIdExists((int)Owner))
+            if (!new UserModel().UserIdExists((int)Owner))
             {
                 throw new NotFoundException("UserId not found");
             }
