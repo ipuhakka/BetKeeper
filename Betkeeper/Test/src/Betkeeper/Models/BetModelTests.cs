@@ -9,12 +9,12 @@ namespace Test.Betkeeper.Models
 {
     public class BetModelTests
     {
-        BetModel betModel;
+        BetModel _BetModel;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            betModel = new BetModel();
+            _BetModel = new BetModel();
             Tools.CreateTestDatabase();
         }
 
@@ -69,13 +69,13 @@ namespace Test.Betkeeper.Models
         [Test]
         public void GetBet_BetIdOfAnotherOwner_ReturnsNull()
         {
-            Assert.IsNull(betModel.GetBet(2, 1));
+            Assert.IsNull(_BetModel.GetBet(2, 1));
         }
 
         [Test]
         public void GetBet_OwnerHasBet_ReturnsCorrectData()
         {
-            var bet = betModel.GetBet(1, 1);
+            var bet = _BetModel.GetBet(1, 1);
 
             Assert.AreEqual("testiveto", bet.Name);
             Assert.AreEqual(2.64, bet.Odd);
@@ -86,45 +86,45 @@ namespace Test.Betkeeper.Models
         [Test]
         public void GetBets_UserIdGiven_ReturnsUsersBets()
         {
-            Assert.AreEqual(4, betModel.GetBets(userId: 1).Count);
+            Assert.AreEqual(4, _BetModel.GetBets(userId: 1).Count);
         }
 
         [Test]
         public void GetBets_NoParameters_ReturnsAllBets()
         {
-            Assert.AreEqual(5, betModel.GetBets().Count);
+            Assert.AreEqual(5, _BetModel.GetBets().Count);
         }
 
         [Test]
         public void GetBets_WhereBetFinishedAndUserId_ReturnsUsersFinishedBets()
         {
-            Assert.AreEqual(3, betModel.GetBets(userId: 1, betFinished: true).Count);
+            Assert.AreEqual(3, _BetModel.GetBets(userId: 1, betFinished: true).Count);
         }
 
         [Test]
         public void GetBets_WhereBetFinished_ReturnsAllFinishedBets()
         {
-            Assert.AreEqual(4, betModel.GetBets(betFinished: true).Count);
+            Assert.AreEqual(4, _BetModel.GetBets(betFinished: true).Count);
         }
 
         [Test]
         public void GetBets_WhereBetUnfinished_ReturnsAllUnfinishedBets()
         {
-            Assert.AreEqual(1, betModel.GetBets(betFinished: false).Count);
+            Assert.AreEqual(1, _BetModel.GetBets(betFinished: false).Count);
         }
 
         [Test]
         public void DeleteBet_BetNotUsers_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                betModel.DeleteBet(2, 1));
+                _BetModel.DeleteBet(2, 1));
         }
 
         [Test]
         public void DeleteBet_UsersBet_Returns1BetDeleted()
         {
-            Assert.AreEqual(1, betModel.DeleteBet(1, 1));
-            Assert.IsNull(betModel.GetBet(1, 1));
+            Assert.AreEqual(1, _BetModel.DeleteBet(1, 1));
+            Assert.IsNull(_BetModel.GetBet(1, 1));
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace Test.Betkeeper.Models
                 "testFolder2"
             };
 
-            var deletedFrom = betModel.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = _BetModel.DeleteBetFromFolders(1, 1, deleteFromFolders);
 
             Assert.AreEqual(1, deletedFrom.Count);
             Assert.AreEqual("testFolder1", deletedFrom[0]);
@@ -150,7 +150,7 @@ namespace Test.Betkeeper.Models
                 "someTestFolder"
             };
 
-            var deletedFrom = betModel.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = _BetModel.DeleteBetFromFolders(1, 1, deleteFromFolders);
 
             Assert.AreEqual(0, deletedFrom.Count);
         }
@@ -159,7 +159,7 @@ namespace Test.Betkeeper.Models
         public void CreateBet_UserDoesNotExist_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-             betModel.CreateBet(
+             _BetModel.CreateBet(
                 betWon: true,
                 name: "testName",
                 odd: 2.5,
@@ -171,7 +171,7 @@ namespace Test.Betkeeper.Models
         [Test]
         public void CreateBet_OnSuccess_BetAdded()
         {
-            Assert.AreEqual(1, betModel.CreateBet(
+            Assert.AreEqual(1, _BetModel.CreateBet(
                 betWon: true,
                 name: "testName",
                 odd: 2.5,
@@ -179,7 +179,7 @@ namespace Test.Betkeeper.Models
                 playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
                 userId: 1));
 
-            var addedBet = betModel.GetBet(6, 1);
+            var addedBet = _BetModel.GetBet(6, 1);
 
             Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
             Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);
@@ -198,7 +198,7 @@ namespace Test.Betkeeper.Models
                 "someTestFolder"
             };
 
-            var addedToFolders = betModel.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = _BetModel.AddBetToFolders(1, 1, testFolders);
 
             Assert.AreEqual(1, addedToFolders.Count);
             Assert.AreEqual("testFolder2", addedToFolders[0]);
@@ -213,7 +213,7 @@ namespace Test.Betkeeper.Models
                 "testFolder2"
             };
 
-            var addedToFolders = betModel.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = _BetModel.AddBetToFolders(1, 1, testFolders);
 
             Assert.AreEqual(1, addedToFolders.Count);
             Assert.AreEqual("testFolder2", addedToFolders[0]);
@@ -223,13 +223,13 @@ namespace Test.Betkeeper.Models
         public void ModifyBet_UserDoesNotHaveBet_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                betModel.ModifyBet(2, 1, betWon: true));
+                _BetModel.ModifyBet(2, 1, betWon: true));
         }
 
         [Test]
         public void ModifyBet_ModifiesInputtedParameters()
         {
-            betModel.ModifyBet(
+            _BetModel.ModifyBet(
                 betId: 1,
                 userId: 1,
                 betWon: true,
@@ -237,7 +237,7 @@ namespace Test.Betkeeper.Models
                 odd: 1.2,
                 name: "modifyTest");
 
-            var modifiedBet = betModel.GetBet(1, 1);
+            var modifiedBet = _BetModel.GetBet(1, 1);
 
             Assert.AreEqual(modifiedBet.Stake, 5.2);
             Assert.AreEqual(modifiedBet.Odd, 1.2);
@@ -248,12 +248,12 @@ namespace Test.Betkeeper.Models
         [Test]
         public void ModifyBet_DoesNotModifyNullParameters()
         {
-            betModel.ModifyBet(
+            _BetModel.ModifyBet(
                 betId: 1,
                 userId: 1,
                 betWon: false);
 
-            var modifiedBet = betModel.GetBet(1, 1);
+            var modifiedBet = _BetModel.GetBet(1, 1);
 
             Assert.AreEqual(modifiedBet.Stake, 3);
             Assert.AreEqual(modifiedBet.Odd, 2.64);
@@ -273,12 +273,12 @@ namespace Test.Betkeeper.Models
             
             foreach(var betResult in betWonDict)
             {
-                betModel.ModifyBet(
+                _BetModel.ModifyBet(
                     betId: 1,
                     userId: 1,
                     betWon: betResult.Value);
 
-                var modifiedBet = betModel.GetBet(1, 1);
+                var modifiedBet = _BetModel.GetBet(1, 1);
 
                 Assert.AreEqual(modifiedBet.BetResult, (Enums.BetResult)betResult.Key);
             }

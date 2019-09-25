@@ -7,16 +7,15 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
-    public class Folder
+    public class FolderModel
     {
-
         /// <summary>
         /// Gets folders for specified user.
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="betId"></param>
         /// <returns></returns>
-        public static List<string> GetUsersFolders(int userId, int? betId = null)
+        public List<string> GetUsersFolders(int userId, int? betId = null)
         {
             var query = "";
             var parameters = new Dictionary<string, object>();
@@ -50,7 +49,7 @@ namespace Betkeeper.Models
                 .ToList();
         }
 
-        public static bool UserHasFolder(int userId, string folderName)
+        public bool UserHasFolder(int userId, string folderName)
         {
             var query = "SELECT(EXISTS(" +
                 "SELECT 1 FROM bet_folders " +
@@ -65,7 +64,7 @@ namespace Betkeeper.Models
                 });
         }
 
-        public static bool FolderHasBet(int userId, string folderName, int betId)
+        public bool FolderHasBet(int userId, string folderName, int betId)
         {
             var query = "SELECT(EXISTS(" +
                 "SELECT 1 FROM bet_in_bet_folder " +
@@ -89,7 +88,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <exception cref="FolderExistsException"></exception>
         /// <returns>Number of rows affected.</returns>
-        public static int AddNewFolder(int userId, string folderName)
+        public int AddNewFolder(int userId, string folderName)
         {
             if (UserHasFolder(userId, folderName))
             {
@@ -115,7 +114,7 @@ namespace Betkeeper.Models
         /// <param name="folderName"></param>
         /// <exception cref="NotFoundException"></exception>
         /// <returns>Number of rows affected.</returns>
-        public static int DeleteFolder(int userId, string folderName)
+        public int DeleteFolder(int userId, string folderName)
         {
             if (!UserHasFolder(userId, folderName))
             {

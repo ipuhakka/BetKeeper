@@ -7,12 +7,12 @@ namespace Test.Betkeeper.Models
     [TestFixture]
     public class UserModelTests
     {
-        UserModel userModel;
+        UserModel _UserModel;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            userModel = new UserModel();
+            _UserModel = new UserModel();
             Tools.CreateTestDatabase();
 
             var setUpCommand = 
@@ -33,56 +33,56 @@ namespace Test.Betkeeper.Models
         [Test]
         public void UserIdExists_DoesNotExist_ReturnsFalse()
         {
-            Assert.IsFalse(userModel.UserIdExists(999));
+            Assert.IsFalse(_UserModel.UserIdExists(999));
         }
 
         [Test]
         public void UserIdExists_ReturnsTrue()
         {
-            Assert.IsTrue(userModel.UserIdExists(1));
+            Assert.IsTrue(_UserModel.UserIdExists(1));
         }
 
         [Test]
         public void UserNameInUse_InUse_ReturnsTrue()
         {
-            Assert.IsTrue(userModel.UsernameInUse("username1"));
+            Assert.IsTrue(_UserModel.UsernameInUse("username1"));
         }
 
         [Test]
         public void UserNameInUse_NotInUse_ReturnsFalse()
         {
-            Assert.IsFalse(userModel.UsernameInUse("UnexistingUserName"));
+            Assert.IsFalse(_UserModel.UsernameInUse("UnexistingUserName"));
         }
 
         [Test]
         public void Authenticate_PasswordMatchesUserId_ReturnsTrue()
         {
-            Assert.IsTrue(userModel.Authenticate(1, "password1"));
+            Assert.IsTrue(_UserModel.Authenticate(1, "password1"));
         }
 
         [Test]
         public void Authenticate_PasswordDoesNotMatchUserId_ReturnsFalse()
         {
-            Assert.IsFalse(userModel.Authenticate(1, "password2"));
+            Assert.IsFalse(_UserModel.Authenticate(1, "password2"));
         }
 
         [Test]
         public void Authenticate_UserIdDoesNotExist_ReturnsFalse()
         {
-            Assert.IsFalse(userModel.Authenticate(-1, "password2"));
+            Assert.IsFalse(_UserModel.Authenticate(-1, "password2"));
         }
 
         [Test]
         public void AddUser_UsernameExists_ThrowsUsernameInUseException()
         {
             Assert.Throws<UsernameInUseException>(() =>
-                userModel.AddUser("username1", "password"));
+                _UserModel.AddUser("username1", "password"));
         }
 
         [Test]
         public void AddUser_UsernameDoesNotExist_ReturnsUserId()
         {
-            var result = userModel.AddUser("username3", "password3");
+            var result = _UserModel.AddUser("username3", "password3");
 
             Assert.AreEqual(1, result);
         }
@@ -92,15 +92,15 @@ namespace Test.Betkeeper.Models
         {
             Assert.Throws<NotFoundException>(() =>
             {
-                userModel.GetUserId("unexistingUser");
+                _UserModel.GetUserId("unexistingUser");
             });
         }
 
         [Test]
         public void GetUserId_UsernameExists_ReturnsMatchingUserId()
         {
-            var userId1 = userModel.GetUserId("username1");
-            var userId2 = userModel.GetUserId("username2");
+            var userId1 = _UserModel.GetUserId("username1");
+            var userId2 = _UserModel.GetUserId("username2");
 
             Assert.AreEqual(1, userId1);
             Assert.AreEqual(2, userId2);

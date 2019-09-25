@@ -107,10 +107,12 @@ namespace Betkeeper.Models
             queryParameters.Add("betId", betId);
             queryParameters.Add("userId", userId);
 
+            var folderModel = new FolderModel();
+
             foreach(var folder in folders)
             {
-                if (!Folder.UserHasFolder(userId, folder)
-                    || Folder.FolderHasBet(userId, folder, betId))
+                if (!folderModel.UserHasFolder(userId, folder)
+                    || folderModel.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -169,10 +171,12 @@ namespace Betkeeper.Models
             queryParameters.Add("betId", betId);
             queryParameters.Add("userId", userId);
 
+            var folderModel = new FolderModel();
+
             foreach(var folder in folders)
             {
-                if (!Folder.UserHasFolder(userId, folder)
-                    || !Folder.FolderHasBet(userId, folder, betId))
+                if (!folderModel.UserHasFolder(userId, folder)
+                    || !folderModel.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
