@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
 using System.Linq;
 using Betkeeper.Data;
 using Betkeeper.Extensions;
@@ -9,34 +8,56 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
-    public class Bet
+    public class BetModel
     {
-        public Enums.BetResult BetResult { get; set; }
-
-        public string Name { get; set; }
-
-        public double Odd { get; set; }
-
-        public double Stake { get; set; }
-
-        public DateTime PlayedDate { get; set; }
-
-        public int Owner { get; set; }
-
-        public int BetId { get; }
-
-        public Bet(DataRow row)
+        public class Bet
         {
-            BetResult = row.ToBetResult("bet_won");
-            Name = row["name"].ToString();
-            Odd = row.ToDouble("odd");
-            Stake = row.ToDouble("bet");
-            PlayedDate = row.ToDateTime("date_time");
-            BetId = row.ToInt32("bet_id");
-            Owner = row.ToInt32("owner");
+            public Enums.BetResult BetResult { get; set; }
+
+            public string Name { get; set; }
+
+            public double Odd { get; set; }
+
+            public double Stake { get; set; }
+
+            public DateTime PlayedDate { get; set; }
+
+            public int Owner { get; set; }
+
+            public int BetId { get; }
+
+            public Bet(
+                bool? betWon,
+                string name,
+                double odd,
+                double stake,
+                DateTime playedDate,
+                int userId)
+            {
+                BetResult = GetBetResult(betWon);
+                Name = name;
+                Odd = odd;
+                Stake = stake;
+                PlayedDate = playedDate;
+                Owner = userId;
+            }
+            public Bet(DataRow row)
+            {
+                BetResult = row.ToBetResult("bet_won");
+                Name = row["name"].ToString();
+                Odd = row.ToDouble("odd");
+                Stake = row.ToDouble("bet");
+                PlayedDate = row.ToDateTime("date_time");
+                BetId = row.ToInt32("bet_id");
+                Owner = row.ToInt32("owner");
+            }
         }
 
-        public Bet(
+        /// <summary>
+        /// Inserts a new bet to table bets.
+        /// </summary>
+        /// <returns></returns>
+        public int CreateBet(
             bool? betWon,
             string name,
             double odd,
@@ -44,27 +65,13 @@ namespace Betkeeper.Models
             DateTime playedDate,
             int userId)
         {
-            BetResult = GetBetResult(betWon);
-            Name = name;
-            Odd = odd;
-            Stake = stake;
-            PlayedDate = playedDate;
-            Owner = userId;
-        }
-
-        /// <summary>
-        /// Inserts a new bet to table bets.
-        /// </summary>
-        /// <returns></returns>
-        public int CreateBet()
-        {
-            if (PlayedDate == null)
+            if (playedDate == null)
             {
                 throw new InvalidOperationException(
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!new UserModel().UserIdExists((int)Owner))
+            if (!new UserModel().UserIdExists((int)userId))
             {
                 throw new NotFoundException("UserId not found");
             }
@@ -77,12 +84,12 @@ namespace Betkeeper.Models
                 query,
                 new Dictionary<string, object>
                 {
-                    {"betWon", (int)BetResult },
-                    {"name", Name },
-                    {"odd", Odd },
-                    {"bet", Stake },
-                    {"dateTime", PlayedDate },
-                    {"owner", Owner }
+                    {"betWon", (int)GetBetResult(betWon) },
+                    {"name", name },
+                    {"odd", odd },
+                    {"bet", stake },
+                    {"dateTime", playedDate },
+                    {"owner", userId }
                 });
         }
 
@@ -93,7 +100,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <param name="folders"></param>
         /// <returns>List of folders to which bet was added</returns>
-        public static List<string> AddBetToFolders(int betId, int userId, List<string> folders)
+        public List<string> AddBetToFolders(int betId, int userId, List<string> folders)
         {
             var addedToFoldersList = new List<string>();
             var queryParameters = new Dictionary<string, object>();
@@ -131,7 +138,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <exception cref="NotFoundException"></exception>
         /// <returns></returns>
-        public static int DeleteBet(int betId, int userId)
+        public int DeleteBet(int betId, int userId)
         {
             if (GetBet(betId, userId) == null)
             {
@@ -155,7 +162,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <param name="folders"></param>
         /// <returns>List of folders from which bet was deleted</returns>
-        public static List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
+        public List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
         {
             var deletedFromFoldersList = new List<string>();
             var queryParameters = new Dictionary<string, object>();
@@ -197,7 +204,7 @@ namespace Betkeeper.Models
         /// <param name="odd"></param>
         /// <param name="name"></param>
         /// <exception cref="NotFoundException"></exception>
-        public static int ModifyBet(
+        public int ModifyBet(
             int betId,
             int userId,
             bool? betWon = null,
@@ -249,7 +256,7 @@ namespace Betkeeper.Models
         /// <param name="userId"></param>
         /// <param name="betId"></param>
         /// <returns></returns>
-        public static Bet GetBet(int betId, int userId)
+        public Bet GetBet(int betId, int userId)
         {
             var query = "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId";
 
@@ -274,7 +281,7 @@ namespace Betkeeper.Models
         /// <param name="betFinished"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public static List<Bet> GetBets(int? userId = null, bool? betFinished = null)
+        public List<Bet> GetBets(int? userId = null, bool? betFinished = null)
         {
             var query = "SELECT * FROM bets";
             var queryParameters = new Dictionary<string, object>();

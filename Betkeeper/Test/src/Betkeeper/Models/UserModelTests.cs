@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Test.Betkeeper.Models
 {
     [TestFixture]
-    public class UserTests
+    public class UserModelTests
     {
         UserModel userModel;
 
