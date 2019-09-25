@@ -13,7 +13,7 @@ namespace Api
         public static void Register(HttpConfiguration config)
         {
             // Set database connection 
-            Settings.DatabasePath = ConfigurationSettings.AppSettings["databasePath"];
+            Settings.DatabasePath = ConfigurationManager.AppSettings["databasePath"];
 
             // Web API configuration and services
             config.EnableCors();

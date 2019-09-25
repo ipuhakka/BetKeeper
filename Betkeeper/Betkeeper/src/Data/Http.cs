@@ -15,7 +15,6 @@ namespace Betkeeper.Data
         /// <returns></returns>
         public static HttpResponseMessage CreateResponse(HttpStatusCode httpStatusCode, object data = null)
         {
-            // TODO: Yksikkötestit
             var response = new HttpResponseMessage(httpStatusCode)
             {
                 Content = new StringContent(JsonConvert.SerializeObject(data))
