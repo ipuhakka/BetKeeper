@@ -16,16 +16,32 @@ namespace Api.Controllers
     {
         public IUserModel _UserModel { get; set; }
 
-        // GET: api/Token
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET: api/Token/5
-        public string Get(int id)
+        /// <summary>
+        /// Checks if user authentication token is still valid.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Get(int userId)
         {
-            return "value";
+            var tokenString = Request.Headers.Authorization?.ToString();
+
+            if (tokenString == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            if (!TokenLog.ContainsToken(tokenString))
+            {
+                return Http.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            if (TokenLog.GetTokenOwner(tokenString) == userId)
+            {
+                return Http.CreateResponse(HttpStatusCode.OK);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         // POST: api/Token
@@ -39,9 +55,14 @@ namespace Api.Controllers
         {
             _UserModel = _UserModel ?? new UserModel();
 
-            var password = Request.Headers.Authorization.ToString();
+            var password = Request.Headers.Authorization?.ToString();
 
-            var username = Http.GetRequestBody(Request)["username"].ToString();
+            if (password == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var username = Http.GetHttpContent(Request)["username"].ToString();
 
             var userId = _UserModel.GetUserId(username);
 
