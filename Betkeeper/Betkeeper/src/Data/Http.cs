@@ -28,8 +28,25 @@ namespace Betkeeper.Data
         /// Returns request body as dynamic.
         /// </summary>
         /// <param name="request"></param>
-        /// <returns></returns>
-        public static dynamic GetRequestBody(HttpRequestMessage request)
+        public static dynamic GetHttpContent(HttpRequestMessage request)
+        {
+            HttpContent requestContent = request.Content;
+
+            return DeserializeHttpContent(requestContent);
+        }
+
+        /// <summary>
+        /// Returns response body as dynamic.
+        /// </summary>
+        /// <param name="response"></param>
+        public static dynamic GetHttpContent(HttpResponseMessage response)
+        {
+            HttpContent requestContent = response.Content;
+
+            return DeserializeHttpContent(requestContent);
+        }
+
+        private static dynamic DeserializeHttpContent(HttpContent content)
         {
             var serializerSettings = new JsonSerializerSettings
             {
@@ -37,8 +54,7 @@ namespace Betkeeper.Data
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
 
-            HttpContent requestContent = request.Content;
-            string jsonContent = requestContent.ReadAsStringAsync().Result;
+            string jsonContent = content.ReadAsStringAsync().Result;
 
             return JsonConvert.DeserializeObject(jsonContent, serializerSettings);
         }

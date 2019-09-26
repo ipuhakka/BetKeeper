@@ -30,53 +30,53 @@ namespace Test.Betkeeper.Data
         }
 
         [Test]
-        public void GetRequestBody_WorksWithInt()
+        public void GetHttpContent_WorksWithInt()
         {
             var testJsonContent = "{ 'testInt': 1}";
 
             var request = new HttpRequestMessage();
             request.Content = new StringContent(testJsonContent);
 
-            var asDynamic = Http.GetRequestBody(request);
+            var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual(1, (int)asDynamic.testInt);
         }
 
         [Test]
-        public void GetRequestBody_WorksWithDouble()
+        public void GetHttpContent_WorksWithDouble()
         {
             var testJsonContent = "{ 'testDouble': 2.8}";
 
             var request = new HttpRequestMessage();
             request.Content = new StringContent(testJsonContent);
 
-            var asDynamic = Http.GetRequestBody(request);
+            var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual(2.8, (double)asDynamic.testDouble);
         }
 
         [Test]
-        public void GetRequestBody_WorksWithString()
+        public void GetHttpContent_WorksWithString()
         {
             var testJsonContent = "{ 'testString': 'string'}";
 
             var request = new HttpRequestMessage();
             request.Content = new StringContent(testJsonContent);
 
-            var asDynamic = Http.GetRequestBody(request);
+            var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual("string", asDynamic.testString.ToString());
         }
 
         [Test]
-        public void GetRequestBody_WorksWithDateTime()
+        public void GetHttpContent_WorksWithDateTime()
         {
             var testJsonContent = "{ 'testDateTime': '2019-01-01 12:20:20'}";
 
             var request = new HttpRequestMessage();
             request.Content = new StringContent(testJsonContent);
 
-            var asDynamic = Http.GetRequestBody(request);
+            var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual(
                 new DateTime(2019, 1, 1, 12, 20, 20), 
@@ -84,14 +84,14 @@ namespace Test.Betkeeper.Data
         }
 
         [Test]
-        public void GetRequestBody_WorksWithNullValues()
+        public void GetHttpContent_WorksWithNullValues()
         {
             var testJsonContent = "{ 'testNull': null}";
 
             var request = new HttpRequestMessage();
             request.Content = new StringContent(testJsonContent);
 
-            var asDynamic = Http.GetRequestBody(request);
+            var asDynamic = Http.GetHttpContent(request);
 
             Assert.IsTrue(asDynamic.testNull == null);
         }
