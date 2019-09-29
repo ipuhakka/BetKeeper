@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Betkeeper.Data
 {
@@ -14,11 +14,23 @@ namespace Betkeeper.Data
         /// <param name="httpStatusCode"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static HttpResponseMessage CreateResponse(HttpStatusCode httpStatusCode, object data = null)
+        public static HttpResponseMessage CreateResponse(
+            HttpStatusCode httpStatusCode, 
+            object data = null, 
+            bool SerializeAsCamelCase = true)
         {
+            var serializerSettings = SerializeAsCamelCase
+                ? new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }
+                : new JsonSerializerSettings();
+
             var response = new HttpResponseMessage(httpStatusCode)
             {
-                Content = new StringContent(JsonConvert.SerializeObject(data))
+                Content = new StringContent(JsonConvert.SerializeObject(
+                    data,
+                    serializerSettings))
             };
 
             return response;

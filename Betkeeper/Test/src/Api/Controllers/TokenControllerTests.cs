@@ -69,8 +69,8 @@ namespace Test.Api.Controllers
             var responseBody = Http.GetHttpContent(request);
 
             Assert.AreEqual(HttpStatusCode.OK, request.StatusCode);
-            Assert.AreEqual(12, responseBody.TokenString.ToString().Length);
-            Assert.AreEqual(1, (int)responseBody.Owner);
+            Assert.AreEqual(12, responseBody.tokenString.ToString().Length);
+            Assert.AreEqual(1, (int)responseBody.owner);
         }
 
         [Test]
