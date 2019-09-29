@@ -29,19 +29,39 @@ namespace Api.Classes
                 token.TokenString == tokenString);
         }
 
-        public static int GetTokenOwner(string tokenString)
+        /// <summary>
+        /// Gets owner of tokenString.
+        /// </summary>
+        /// <param name="tokenString"></param>
+        /// <returns></returns>
+        public static int? GetTokenOwner(string tokenString)
         {
-            var owner = TokensInUse
+            return TokensInUse
                 .FirstOrDefault(token =>
                     token.TokenString == tokenString)
                 ?.Owner;
+        }
 
-            if (owner == null)
+        /// <summary>
+        /// Deletes token if it belogns to user.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tokenString"></param>
+        /// <exception cref="NotFoundException"></exception>
+        public static void DeleteToken(int userId, string tokenString)
+        {
+            var tokenToRemove = TokensInUse.Find(token =>
+                token.Owner == userId 
+                && token.TokenString == tokenString);
+
+            if (tokenToRemove == null)
             {
-                throw new NotFoundException("TokenString did not match any active user");
+                throw new NotFoundException(
+                    string.Format("User with id {0} does not have specified tokenstring",
+                    userId));
             }
 
-            return (int)owner;
+            TokensInUse.Remove(tokenToRemove);                 
         }
     }
 }

@@ -168,5 +168,57 @@ namespace Test.Api.Controllers
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
+        [Test]
+        public void Delete_NoAuthorizationHeader_ReturnsBadRequest()
+        {
+            var controller = new TokenController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(),
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_TokenDoesNotBelongToUser_ReturnsUnauthorized()
+        {
+            TokenLog.CreateToken(1);
+            var token2 = TokenLog.CreateToken(2);
+
+            var controller = new TokenController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token2.TokenString}
+                    }),
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_TokenBelongsToUser_ReturnsNoContent()
+        {
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new TokenController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString}
+                    }),
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
+        }
     }
 }

@@ -76,14 +76,24 @@ namespace Api.Controllers
             return Http.CreateResponse(HttpStatusCode.OK, token);
         }
 
-        // PUT: api/Token/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
         // DELETE: api/Token/5
-        public void Delete(int id)
+        public HttpResponseMessage Delete(int userId)
         {
+            var tokenString = Request.Headers.Authorization?.ToString();
+
+            if (tokenString == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            if (TokenLog.GetTokenOwner(tokenString) == userId)
+            {
+                TokenLog.DeleteToken(userId, tokenString);
+
+                return Http.CreateResponse(HttpStatusCode.NoContent);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.Unauthorized);
         }
     }
 }

@@ -18,10 +18,32 @@ namespace Test.Api.Classes
         }
 
         [Test]
-        public void GetTokenOwner_UnusedToken_ThrowsNotFoundException()
+        public void GetTokenOwner_UnusedToken_ReturnsNull()
         {
-            Assert.Throws<NotFoundException>(() => 
-                TokenLog.GetTokenOwner("faketoken123"));
+            Assert.IsNull(TokenLog.GetTokenOwner("faketoken123"));
+        }
+
+        [Test]
+        public void DeleteToken_DoesNotBelongToUser_ThrowsNotFoundException()
+        {
+            TokenLog.CreateToken(1);
+            var token2 = TokenLog.CreateToken(2);
+
+            Assert.Throws<NotFoundException>(() =>
+                TokenLog.DeleteToken(1, token2.TokenString));
+
+            Assert.IsTrue(TokenLog.ContainsToken(token2.TokenString));
+        }
+
+        [Test]
+        public void DeleteToken_DoesBelongToUser_TokenDeleted()
+        {
+            TokenLog.CreateToken(1);
+            var token2 = TokenLog.CreateToken(2);
+
+            TokenLog.DeleteToken(2, token2.TokenString);
+
+            Assert.IsFalse(TokenLog.ContainsToken(token2.TokenString));
         }
     }
 }
