@@ -7,7 +7,7 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
-    public class FolderModel
+    public class FolderModel : IFolderModel
     {
         /// <summary>
         /// Gets folders for specified user.
