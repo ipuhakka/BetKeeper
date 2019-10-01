@@ -63,8 +63,8 @@ class UnresolvedBets extends Component{
       items.push(<ListGroupItem action key={i}
         onClick={this.handleListClick.bind(this, i)} 
         variant={this.state.selectedBet === i ? 'info' : null}>
-            <div>{bets[i].name + " " + bets[i].datetime}</div>
-            <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].bet}</div>
+            <div>{bets[i].name + " " + bets[i].playedDate}</div>
+            <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].stake}</div>
             </ListGroupItem>)
     }
     return items;
@@ -110,7 +110,7 @@ class UnresolvedBets extends Component{
 
     store.dispatch({type: 'PUT_BET', payload: {
         data: data,
-        bet_id: this.props.bets[this.state.selectedBet].bet_id
+        betId: this.props.bets[this.state.selectedBet].betId
       },
       showAlert: true
     });

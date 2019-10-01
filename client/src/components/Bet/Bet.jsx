@@ -21,9 +21,9 @@ class Bet extends Component{
       showAlert: false,
       deleteFromFolder: null,
       name: bet.name,
-      bet: bet.bet,
+      bet: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.bet_won)
+      betResult: betResultToRadioButtonValue(bet.betResult)
     }
   }
 
@@ -34,9 +34,9 @@ class Bet extends Component{
 
     this.setState({
       name: bet.name,
-      bet: bet.bet,
+      bet: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.bet_won)
+      betResult: betResultToRadioButtonValue(bet.betResult)
     });
   }
 
@@ -58,7 +58,7 @@ class Bet extends Component{
           </div>         
         </div>
         <h2>{bet.name}</h2>
-        <h2>{bet.datetime}</h2>
+        <h2>{bet.playedDate}</h2>
 
         <Form>
           <FormGroup>

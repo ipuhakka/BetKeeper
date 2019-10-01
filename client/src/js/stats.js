@@ -3,9 +3,9 @@
 Bet-object format:
         int owner;
         string name;
-        string datetime;
-        bool? bet_won; //null = unresolved, false = lost, true = won.
-        int bet_id;
+        string playedDate;
+        bool? betResult; //null = unresolved, false = lost, true = won.
+        int betId;
         double odd;
         double bet;
 
@@ -14,12 +14,15 @@ data parameter used in function is expected to be array parsed from JSON-data se
 import {isOdd} from './utils.js';
 import * as Sort from './sort.js';
 
-//Counts how much money has been won in an array of bets. Money won in a single bet is (data["bet"] * data["odd"]).
+//Counts how much money has been won in an array of bets. Money won in a single bet is (data["stake"] * data["odd"]).
 export function moneyWon(data){
 	var moneyWon = 0;
-	for (var i = 0; i < data.length; i++){
-		if (data[i]["bet_won"] === true){
-			moneyWon = moneyWon + (data[i]["bet"] * data[i]["odd"]);
+
+	for (var i = 0; i < data.length; i++)
+	{
+		if (data[i]["betResult"] === 1)
+		{
+			moneyWon = moneyWon + (data[i]["stake"] * data[i]["odd"]);
 		}
 	}
 	return moneyWon;
@@ -29,8 +32,8 @@ export function moneyWon(data){
 export function moneyPlayed(data){
 	var moneyPlayed = 0;
 	for (var i = 0; i < data.length; i++){
-		if (data[i]["bet_won"] !== null && data[i]["bet_won"] !== 'null'){
-			moneyPlayed = moneyPlayed + data[i]["bet"];
+		if (data[i]["betResult"] !== -1){
+			moneyPlayed = moneyPlayed + data[i]["stake"];
 		}
 	}
 	return moneyPlayed;
@@ -43,7 +46,7 @@ export function moneyReturned(data){
 export function playedBets(data){
 	var played = 0;
 	for (var i = 0; i < data.length; i++){
-		if (data[i]["bet_won"] !== null && data[i]["bet_won"] !== 'null'){
+		if (data[i]["betResult"] !== -1){
 			played = played + 1;
 		}
 	}
@@ -53,7 +56,7 @@ export function playedBets(data){
 export function wonBets(data){
 	var won = 0;
 	for (var i = 0; i < data.length; i++){
-		if (data[i]["bet_won"] === true){
+		if (data[i]["betResult"] === 1){
 			won = won + 1;
 		}
 	}

@@ -203,11 +203,11 @@ module.exports = {
 }
 
 function isValidBetRequest(bet){
-  if (bet.bet_won === undefined || bet.bet === undefined || bet.bet === undefined || bet.odd === undefined
+  if (bet.bet_won === undefined || bet.stake === undefined || bet.stake === undefined || bet.odd === undefined
   || bet.name === undefined){
     return false;
   }
-  if(!isNumber(bet.odd) || !isNumber(bet.bet) || typeof bet.odd === "string" || typeof bet.bet === "string"){
+  if(!isNumber(bet.odd) || !isNumber(bet.bet) || typeof bet.odd === "string" || typeof bet.stake === "string"){
     return false;
   }
 

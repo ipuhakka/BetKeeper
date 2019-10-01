@@ -19,14 +19,14 @@ class BetContainer extends Component{
       folders: [folder],
       bet_won: betResultToRadioButtonValue(bet.bet_won),
       odd: bet.odd,
-      bet: bet.bet
+      bet: bet.stake
     }
 
     store.dispatch({type: 'PUT_BET', payload: {
         data: data,
-        bet_id: bet.bet_id
+        betId: bet.betId
       },
-      callback: () => {props.updateFolders(bet.bet_id)}
+      callback: () => {props.updateFolders(bet.betId)}
     });
   }
 
@@ -40,11 +40,11 @@ class BetContainer extends Component{
 
     if (folder !== undefined){
       folders = [folder];
-      callback = () => { props.updateFolders(props.bet.bet_id)};
+      callback = () => { props.updateFolders(props.bet.betId)};
     }
 
     store.dispatch({type: 'DELETE_BET', payload: {
-        bet_id: props.bet.bet_id,
+      betId: props.bet.betId,
         folders: folders
       },
       callback: callback
@@ -70,7 +70,7 @@ class BetContainer extends Component{
       return;
     }
 
-    if (!isValidDouble(bet.bet) || !isValidDouble(bet.odd)){
+    if (!isValidDouble(bet.stake) || !isValidDouble(bet.odd)){
       store.dispatch({type: 'SET_ALERT_STATUS',
         status: -1,
         message: "Invalid decimal values given"
@@ -81,14 +81,14 @@ class BetContainer extends Component{
 
     let modifiedBet = {
       name: bet.name,
-      bet: parseFloat(bet.bet),
+      bet: parseFloat(bet.stake),
       odd: parseFloat(bet.odd),
       bet_won: parseInt(bet.betResult, 10)
     }
 
     store.dispatch({type: 'PUT_BET', payload: {
         data: modifiedBet,
-        bet_id: props.bet.bet_id
+        betId: props.bet.betId
       },
       showAlert: true
     });

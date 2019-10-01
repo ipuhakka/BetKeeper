@@ -62,7 +62,7 @@ class Filters extends Component
       { key: 'bet', label: 'Bet', type:'number'},
       { key: 'odd', label: 'Odd', type: 'number'},
       { key: 'name', label: 'Name', type: 'string'},
-      { key: 'bet_won', label: 'Result', type: 'valueList', valueList: [
+      { key: 'betResult', label: 'Result', type: 'valueList', valueList: [
         {
           value: null,
           legend: 'Unresolved'

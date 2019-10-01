@@ -29,14 +29,20 @@ export function* fetchFolders(){
   }
 }
 
-export function* fetchFoldersOfBet(action){
-  try {
+export function* fetchFoldersOfBet(action)
+{
+  try 
+  {
     yield put(setLoading(true));
-    let folders = yield call(getFoldersOfBet, action.payload.bet_id);
+
+    let folders = yield call(getFoldersOfBet, action.payload.betId);
+
     yield put(fetchFoldersOfBetSuccess(folders));
   }
-  catch(error){
-    switch(error){
+  catch(error)
+  {
+    switch(error)
+    {
       case 401:
         yield put(setAlertStatus(error, "Session expired, please login again"));
         break;
@@ -48,7 +54,8 @@ export function* fetchFoldersOfBet(action){
         break;
     }
   }
-  finally{
+  finally
+  {
     yield put(setLoading(false));
   }
 }

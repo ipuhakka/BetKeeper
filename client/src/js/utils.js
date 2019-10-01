@@ -34,7 +34,8 @@ export function isOdd(number){
   Returns radioButtonValue used for betResult.
 */
 export function betResultToRadioButtonValue(betResult){
-  switch(betResult){
+  switch(betResult)
+  {
     case false:
       return 0;
     case true:

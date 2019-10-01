@@ -49,7 +49,7 @@ class AddBet extends Component
               <Form.Label>{"Bet"}</Form.Label>
               <FormControl
                 type="number"
-                value={state.bet}
+                value={state.stake}
                 onChange={this.setValue.bind(this, "bet")}
                 />
               <Form.Label>{"Odd"}</Form.Label>

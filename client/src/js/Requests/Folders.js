@@ -97,23 +97,30 @@ GET-request to get folders of selected bet.
 Resolves on 200 OK response,
 rejects on any other response status, with given status.
 */
-export function getFoldersOfBet(id){
-  return new Promise(function(resolve, reject){
+export function getFoldersOfBet(id)
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
+    xmlHttp.onreadystatechange =(() => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
           resolve(JSON.parse(xmlHttp.responseText));
         }
         else {
           reject(xmlHttp.status);
         }
       }
-
     });
-    xmlHttp.open("GET", ConstVars.URI + "folders?bet_id=" + id);
+
+    xmlHttp.open("GET", ConstVars.URI + "folders?betId=" + id);
+
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+
     xmlHttp.send();
   });
 }
