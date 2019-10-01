@@ -287,9 +287,13 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public List<Bet> GetBets(
             int? userId = null, 
-            bool? betFinished = null)
+            bool? betFinished = null,
+            string folder = null)
         {
-            // TODO: Lisää folderhaku
+            if (folder != null && userId != null)
+            {
+                return GetBetsFromFolder((int)userId, folder, betFinished);
+            }            
 
             var query = "SELECT * FROM bets";
             var queryParameters = new Dictionary<string, object>();
@@ -297,7 +301,6 @@ namespace Betkeeper.Models
 
             if (userId != null)
             {
-
                 whereConditions.Add("owner=@userId");
 
                 queryParameters.Add("userId", userId);
@@ -323,6 +326,33 @@ namespace Betkeeper.Models
                     query,
                     queryParameters));
         }
+
+        private List<Bet> GetBetsFromFolder(int userId, string folder, bool? betFinished)
+        {
+            var queryParameters = new Dictionary<string, object>();
+
+            var query = "SELECT * " +
+                    "FROM bet_in_bet_folder bf " +
+                    "INNER JOIN bets b ON b.bet_id = bf.bet_id " +
+                    "WHERE bf.owner = @userId and bf.folder = @folder";
+
+            queryParameters.Add("userId", userId);
+            queryParameters.Add("folder", folder);
+
+            if (betFinished != null)
+            {
+                query += string.Format(" AND {0}", (bool)betFinished
+                ? "bet_won != @betFinished"
+                : "bet_won = @betFinished");
+
+                queryParameters.Add("betFinished", -1);
+            }      
+
+            return DatatableToBetList(
+                Database.ExecuteQuery(
+                    query,
+                    queryParameters));
+    }
 
         private static List<Bet> DatatableToBetList(DataTable datatable)
         {

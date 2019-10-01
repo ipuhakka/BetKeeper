@@ -114,6 +114,30 @@ namespace Test.Betkeeper.Models
         }
 
         [Test]
+        public void GetBets_WhereFolder_ReturnsOnlyFoldersBets()
+        {
+            var bets = _BetModel.GetBets(1, null, "testFolder1");
+
+            Assert.AreEqual(1, bets.Count);
+        }
+
+        [Test]
+        public void GetBets_WhereFolderAndFinishedTrue_ReturnsFoldersFinishedBets()
+        {
+            var bets = _BetModel.GetBets(1, true, "testFolder1");
+
+            Assert.AreEqual(1, bets.Count);
+        }
+
+        [Test]
+        public void GetBets_WhereFolderAndFinishedFalse_ReturnsFoldersUnfinishedBets()
+        {
+            var bets = _BetModel.GetBets(1, false, "testFolder1");
+
+            Assert.AreEqual(0, bets.Count);
+        }
+
+        [Test]
         public void DeleteBet_BetNotUsers_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
