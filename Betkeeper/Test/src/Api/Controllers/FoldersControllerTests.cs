@@ -90,7 +90,7 @@ namespace Test.Api.Controllers
         }
 
         [Test]
-        public void Get_InvalidTokenReturnsUnauthorized()
+        public void Get_InvalidToken_ReturnsUnauthorized()
         {
             var controller = new FoldersController()
             {
@@ -104,6 +104,161 @@ namespace Test.Api.Controllers
             var response = controller.Get();
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void Post_FolderMissing_ReturnsBadRequest()
+        {
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext()
+            };
+
+            var response = controller.Post(null);
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Test]
+        public void Post_InvalidToken_ReturnsUnauthorized()
+        {
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", "unusedToken" }
+                    })
+            };
+
+            var response = controller.Post("folderToAdd");
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void Post_UserHasFolder_ReturnsConflict()
+        {
+            var mock = new Mock<IFolderModel>();
+
+            mock.Setup(folderModel =>
+                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(true);
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _FolderModel = mock.Object
+            };
+
+            var response = controller.Post("folderToAdd");
+
+            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+        }
+
+        [Test]
+        public void Post_UserDoesNotHaveFolder_ReturnsCreated()
+        {
+            var mock = new Mock<IFolderModel>();
+
+            mock.Setup(folderModel =>
+                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(false);
+
+            mock.Setup(folderModel =>
+                folderModel.AddNewFolder(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(1);
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _FolderModel = mock.Object
+            };
+
+            var response = controller.Post("folderToAdd");
+
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_InvalidToken_ReturnsUnauthorized()
+        {
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", "unusedToken" }
+                    })
+            };
+
+            var response = controller.Delete("folderToDelete");
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_UserDoesNotHaveFolder_ReturnsNotFound()
+        {
+            var mock = new Mock<IFolderModel>();
+
+            mock.Setup(folderModel =>
+                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(false);
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _FolderModel = mock.Object
+            };
+
+            var response = controller.Delete("folderToDelete");
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_UserHasFolder_ReturnsNoContent()
+        {
+            var mock = new Mock<IFolderModel>();
+
+            mock.Setup(folderModel =>
+                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(true);
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _FolderModel = mock.Object
+            };
+
+            var response = controller.Delete("folderToDelete");
+
+            Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
         }
     }
 }

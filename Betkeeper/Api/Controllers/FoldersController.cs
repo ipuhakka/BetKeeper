@@ -37,16 +37,60 @@ namespace Api.Controllers
         }
 
         // POST: api/Folders
-        public void Post([FromBody] string folder = null)
+        public HttpResponseMessage Post([FromBody] string folder)
         {
-            throw new NotImplementedException();
+            _FolderModel = _FolderModel ?? new FolderModel();
+
+            if (folder == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var tokenString = Request.Headers.Authorization?.ToString();
+
+            if (tokenString == null
+                || !TokenLog.ContainsToken(tokenString))
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }       
+
+            var userId = (int)TokenLog.GetTokenOwner(tokenString);
+
+            if (_FolderModel.UserHasFolder(userId, folder))
+            {
+                return Http.CreateResponse(HttpStatusCode.Conflict);
+            }
+
+            _FolderModel.AddNewFolder(userId, folder);
+
+            return Http.CreateResponse(HttpStatusCode.Created);
         }
 
-        // DELETE: api/Folders/5
-        public void Delete(string folder)
+        // DELETE: api/Folders/folderToDelete
+        [Route("api/folders/{folder}")]
+        public HttpResponseMessage Delete([FromUri]string folder)
         {
-            // TODO: folder osoitteesta vai querystä?
-            throw new NotImplementedException();
+            // TODO: Folder ei toimi, id toimii
+            _FolderModel = _FolderModel ?? new FolderModel();
+
+            var tokenString = Request.Headers.Authorization?.ToString();
+
+            if (tokenString == null
+                || !TokenLog.ContainsToken(tokenString))
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            var userId = (int)TokenLog.GetTokenOwner(tokenString);
+
+            if (!_FolderModel.UserHasFolder(userId, folder))
+            {
+                return Http.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            _FolderModel.DeleteFolder(userId, folder);
+
+            return Http.CreateResponse(HttpStatusCode.NoContent);
         }
     }
 }
