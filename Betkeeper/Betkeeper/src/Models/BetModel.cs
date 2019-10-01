@@ -285,8 +285,12 @@ namespace Betkeeper.Models
         /// <param name="betFinished"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public List<Bet> GetBets(int? userId = null, bool? betFinished = null)
+        public List<Bet> GetBets(
+            int? userId = null, 
+            bool? betFinished = null)
         {
+            // TODO: Lisää folderhaku
+
             var query = "SELECT * FROM bets";
             var queryParameters = new Dictionary<string, object>();
             var whereConditions = new List<string>();

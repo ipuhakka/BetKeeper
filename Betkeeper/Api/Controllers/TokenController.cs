@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
@@ -77,6 +74,7 @@ namespace Api.Controllers
         }
 
         // DELETE: api/Token/5
+        [Route("api/token/{userId}")]
         public HttpResponseMessage Delete(int userId)
         {
             var tokenString = Request.Headers.Authorization?.ToString();
