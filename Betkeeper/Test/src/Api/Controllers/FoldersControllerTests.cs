@@ -19,8 +19,8 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.GetUsersFolders(It.IsAny<int>(), null)).Returns(
+            mock.Setup(folderRepository =>
+                folderRepository.GetUsersFolders(It.IsAny<int>(), null)).Returns(
                 new List<string>
                 {
                     "folder1",
@@ -53,16 +53,16 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.GetUsersFolders(It.IsAny<int>(), null)).Returns(
+            mock.Setup(folderRepository =>
+                folderRepository.GetUsersFolders(It.IsAny<int>(), null)).Returns(
                 new List<string>
                 {
                     "folder1",
                     "folder2"
                 });
 
-            mock.Setup(folderModel =>
-                folderModel.GetUsersFolders(It.IsAny<int>(), 1)).Returns(
+            mock.Setup(folderRepository =>
+                folderRepository.GetUsersFolders(It.IsAny<int>(), 1)).Returns(
                 new List<string>
                 {
                     "folder1"
@@ -141,8 +141,8 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+            mock.Setup(folderRepository =>
+                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(true);
 
             var token = TokenLog.CreateToken(1);
@@ -167,12 +167,12 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+            mock.Setup(folderRepository =>
+                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(false);
 
-            mock.Setup(folderModel =>
-                folderModel.AddNewFolder(It.IsAny<int>(), It.IsAny<string>()))
+            mock.Setup(folderRepository =>
+                folderRepository.AddNewFolder(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(1);
 
             var token = TokenLog.CreateToken(1);
@@ -214,8 +214,8 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+            mock.Setup(folderRepository =>
+                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(false);
 
             var token = TokenLog.CreateToken(1);
@@ -240,8 +240,8 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IFolderRepository>();
 
-            mock.Setup(folderModel =>
-                folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
+            mock.Setup(folderRepository =>
+                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(true);
 
             var token = TokenLog.CreateToken(1);

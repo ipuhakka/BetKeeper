@@ -17,11 +17,11 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IUserRepository>();
 
-            mock.Setup(userModel =>
-                userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(false);
+            mock.Setup(userRepository =>
+                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(false);
 
-            mock.Setup(userModel =>
-                userModel.GetUserId(It.IsAny<string>())).Returns(1);
+            mock.Setup(userRepository =>
+                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
 
             var testData = new { username = "user" };
 
@@ -46,11 +46,11 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IUserRepository>();
 
-            mock.Setup(userModel =>
-                userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+            mock.Setup(userRepository =>
+                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
 
-            mock.Setup(userModel =>
-                userModel.GetUserId(It.IsAny<string>())).Returns(1);
+            mock.Setup(userRepository =>
+                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
 
             var testData = new { username = "user" };
 
@@ -78,11 +78,11 @@ namespace Test.Api.Controllers
         {
             var mock = new Mock<IUserRepository>();
 
-            mock.Setup(userModel =>
-                userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+            mock.Setup(userRepository =>
+                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
 
-            mock.Setup(userModel =>
-                userModel.GetUserId(It.IsAny<string>())).Returns(1);
+            mock.Setup(userRepository =>
+                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
 
             var testData = new { username = "user" };
 
