@@ -12,6 +12,8 @@ namespace Api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class BetsController : ApiController
     {
+        public IBetRepository _BetRepository { get; set; }
+
         // GET: api/Bets
         /// <summary>
         /// Gets bets.
@@ -23,9 +25,7 @@ namespace Api.Controllers
             [FromUri]bool? finished = null,
             [FromUri]string folder = null)
         {
-            // TODO: Testit, interfaceimplementointi,
-            // refaktorointi (bet pois modelin sisältä?)
-            // Implementoi kansiohaku
+            _BetRepository = _BetRepository ?? new BetRepository();
 
             var tokenString = Request.Headers.Authorization?.ToString();
 
@@ -37,7 +37,7 @@ namespace Api.Controllers
 
             var userId = TokenLog.GetTokenOwner(tokenString);
 
-            var bets = new BetRepository().GetBets(userId, finished);
+            var bets = _BetRepository.GetBets(userId, finished, folder);
 
             return Http.CreateResponse(HttpStatusCode.OK, bets);
         }

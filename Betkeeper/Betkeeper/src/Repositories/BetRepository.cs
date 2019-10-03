@@ -8,7 +8,7 @@ using Betkeeper.Models;
 
 namespace Betkeeper.Repositories
 {
-    public class BetRepository
+    public class BetRepository : IBetRepository
     {
         /// <summary>
         /// Inserts a new bet to table bets.

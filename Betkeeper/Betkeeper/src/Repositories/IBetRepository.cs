@@ -71,5 +71,16 @@ namespace Betkeeper.Repositories
         /// <param name="betId"></param>
         /// <returns></returns>
         Bet GetBet(int betId, int userId);
+
+        /// <summary>
+        /// Gets a list of bets matching parameters
+        /// </summary>
+        /// <param name="betFinished"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        List<Bet> GetBets(
+            int? userId = null,
+            bool? betFinished = null,
+            string folder = null);
     }
 }
