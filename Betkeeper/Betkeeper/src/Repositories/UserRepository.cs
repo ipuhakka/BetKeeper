@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 
-namespace Betkeeper.Models
+namespace Betkeeper.Repositories
 {
-    public class UserModel : IUserModel
+    public class UserRepository : IUserRepository
     {
 
         /// <summary>

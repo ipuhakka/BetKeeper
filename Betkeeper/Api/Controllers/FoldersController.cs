@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Betkeeper.Data;
-using Betkeeper.Models;
+using Betkeeper.Repositories;
 using Api.Classes;
 
 namespace Api.Controllers
@@ -14,12 +14,12 @@ namespace Api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class FoldersController : ApiController
     {
-        public IFolderModel _FolderModel;
+        public IFolderRepository _FolderRepository;
 
         // GET: api/Folders
         public HttpResponseMessage Get([FromUri] int? betId = null)
         {
-            _FolderModel = _FolderModel ?? new FolderModel();
+            _FolderRepository = _FolderRepository ?? new FolderRepository();
 
             var tokenString = Request.Headers.Authorization?.ToString();
 
@@ -29,7 +29,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var folders = _FolderModel.GetUsersFolders(
+            var folders = _FolderRepository.GetUsersFolders(
                 userId: (int)TokenLog.GetTokenOwner(tokenString),
                 betId: betId);
 
@@ -39,7 +39,7 @@ namespace Api.Controllers
         // POST: api/Folders
         public HttpResponseMessage Post([FromBody] string folder)
         {
-            _FolderModel = _FolderModel ?? new FolderModel();
+            _FolderRepository = _FolderRepository ?? new FolderRepository();
 
             if (folder == null)
             {
@@ -56,12 +56,12 @@ namespace Api.Controllers
 
             var userId = (int)TokenLog.GetTokenOwner(tokenString);
 
-            if (_FolderModel.UserHasFolder(userId, folder))
+            if (_FolderRepository.UserHasFolder(userId, folder))
             {
                 return Http.CreateResponse(HttpStatusCode.Conflict);
             }
 
-            _FolderModel.AddNewFolder(userId, folder);
+            _FolderRepository.AddNewFolder(userId, folder);
 
             return Http.CreateResponse(HttpStatusCode.Created);
         }
@@ -71,7 +71,7 @@ namespace Api.Controllers
         public HttpResponseMessage Delete([FromUri]string folder)
         {
             // TODO: Folder ei toimi, id toimii
-            _FolderModel = _FolderModel ?? new FolderModel();
+            _FolderRepository = _FolderRepository ?? new FolderRepository();
 
             var tokenString = Request.Headers.Authorization?.ToString();
 
@@ -83,12 +83,12 @@ namespace Api.Controllers
 
             var userId = (int)TokenLog.GetTokenOwner(tokenString);
 
-            if (!_FolderModel.UserHasFolder(userId, folder))
+            if (!_FolderRepository.UserHasFolder(userId, folder))
             {
                 return Http.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            _FolderModel.DeleteFolder(userId, folder);
+            _FolderRepository.DeleteFolder(userId, folder);
 
             return Http.CreateResponse(HttpStatusCode.NoContent);
         }

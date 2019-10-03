@@ -1,10 +1,11 @@
-﻿using Betkeeper.Models;
-using Betkeeper.Data;
-using Api.Classes;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Betkeeper.Repositories;
+using Betkeeper.Data;
+using Api.Classes;
 
 namespace Api.Controllers
 {
@@ -36,30 +37,27 @@ namespace Api.Controllers
 
             var userId = TokenLog.GetTokenOwner(tokenString);
 
-            var bets = new BetModel().GetBets(userId, finished);
+            var bets = new BetRepository().GetBets(userId, finished);
 
             return Http.CreateResponse(HttpStatusCode.OK, bets);
-        }
-
-        // GET: api/Bets/5
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST: api/Bets
         public void Post([FromBody]string value)
         {
+            throw new NotImplementedException();
         }
 
         // PUT: api/Bets/5
         public void Put(int id, [FromBody]string value)
         {
+            throw new NotImplementedException();
         }
 
         // DELETE: api/Bets/5
         public void Delete(int id)
         {
+            throw new NotImplementedException();
         }
     }
 }

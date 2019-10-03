@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Betkeeper.Models
+namespace Betkeeper.Repositories
 {
-    public interface IFolderModel
+    public interface IFolderRepository
     {
         /// <summary>
         /// Gets folders for specified user.

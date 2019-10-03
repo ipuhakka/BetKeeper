@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using Betkeeper.Models;
+
+namespace Betkeeper.Repositories
+{
+    public interface IBetRepository
+    {
+
+        /// <summary>
+        /// Inserts a new bet to table bets.
+        /// </summary>
+        /// <returns></returns>
+        int CreateBet(
+            bool? betWon,
+            string name,
+            double odd,
+            double stake,
+            DateTime playedDate,
+            int userId);
+
+        /// <summary>
+        /// Adds bet to folders.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="folders"></param>
+        /// <returns>List of folders to which bet was added</returns>
+        List<string> AddBetToFolders(int betId, int userId, List<string> folders);
+
+        /// <summary>
+        /// Deletes a bet from database.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <exception cref="NotFoundException"></exception>
+        /// <returns></returns>
+        int DeleteBet(int betId, int userId);
+
+        /// <summary>
+        /// Deletes a bet from specified folders.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="folders"></param>
+        /// <returns>List of folders from which bet was deleted</returns>
+        List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders);
+
+        /// <summary>
+        /// Modifies users existing bet.
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
+        /// <param name="betWon"></param>
+        /// <param name="stake"></param>
+        /// <param name="odd"></param>
+        /// <param name="name"></param>
+        /// <exception cref="NotFoundException"></exception>
+        int ModifyBet(
+            int betId,
+            int userId,
+            bool? betWon = null,
+            double? stake = null,
+            double? odd = null,
+            string name = null);
+
+        /// <summary>
+        /// Gets a bet.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="betId"></param>
+        /// <returns></returns>
+        Bet GetBet(int betId, int userId);
+    }
+}

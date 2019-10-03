@@ -1,13 +1,12 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 
-namespace Betkeeper.Models
+namespace Betkeeper.Repositories
 {
-    public class FolderModel : IFolderModel
+    public class FolderRepository : IFolderRepository
     {
         /// <summary>
         /// Gets folders for specified user.

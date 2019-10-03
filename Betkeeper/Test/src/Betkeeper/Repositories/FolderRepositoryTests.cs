@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using Betkeeper.Models;
+using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Models
+namespace Test.Betkeeper.Repositories
 {
     [TestFixture]
-    public class FolderModelTests
+    public class FolderRepositoryTests
     {
-        FolderModel _FolderModel;
+        FolderRepository _FolderRepository;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _FolderModel = new FolderModel();
+            _FolderRepository = new FolderRepository();
 
             Tools.CreateTestDatabase();
 
@@ -55,7 +55,7 @@ namespace Test.Betkeeper.Models
                 "testFolder4"
             };
 
-            var folders = _FolderModel.GetUsersFolders(userId: 1);
+            var folders = _FolderRepository.GetUsersFolders(userId: 1);
 
             Assert.AreEqual(3, folders.Count);
 
@@ -74,7 +74,7 @@ namespace Test.Betkeeper.Models
                 "testFolder2"
             };
 
-            var folders = _FolderModel.GetUsersFolders(userId: 1, betId: 1);
+            var folders = _FolderRepository.GetUsersFolders(userId: 1, betId: 1);
 
             Assert.AreEqual(2, folders.Count);
 
@@ -87,7 +87,7 @@ namespace Test.Betkeeper.Models
         [Test]
         public void GetUsersFolders_WhereBet_BetDoesNotBelongToUser_ReturnsNone()
         {
-            var folders = _FolderModel.GetUsersFolders(userId: 1, betId: 2);
+            var folders = _FolderRepository.GetUsersFolders(userId: 1, betId: 2);
 
             Assert.AreEqual(0, folders.Count);
         }
@@ -95,52 +95,52 @@ namespace Test.Betkeeper.Models
         [Test]
         public void GetUsersFolders_NoFolders_ReturnsNone()
         {
-            Assert.AreEqual(0, _FolderModel.GetUsersFolders(userId: 3).Count);
+            Assert.AreEqual(0, _FolderRepository.GetUsersFolders(userId: 3).Count);
         }
 
         [Test]
         public void UserHasFolder_UserDoesNotHaveFolder_ReturnsFalse()
         {
-            Assert.IsFalse(_FolderModel.UserHasFolder(userId: 1, folderName: "testFolder3"));
+            Assert.IsFalse(_FolderRepository.UserHasFolder(userId: 1, folderName: "testFolder3"));
         }
 
         [Test]
         public void UserHasFolder_UserHasFolder_ReturnsTrue()
         {
-            Assert.IsTrue(_FolderModel.UserHasFolder(userId: 1, folderName: "testFolder1"));
+            Assert.IsTrue(_FolderRepository.UserHasFolder(userId: 1, folderName: "testFolder1"));
         }
 
         [Test]
         public void FolderHasBet_ReturnsTrue()
         {
-            Assert.IsTrue(_FolderModel.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 1));
+            Assert.IsTrue(_FolderRepository.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 1));
         }
 
         [Test]
         public void FolderHasBet_BetNotInFolder_ReturnsFalse()
         {
-            Assert.IsFalse(_FolderModel.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 2));
+            Assert.IsFalse(_FolderRepository.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 2));
         }
 
         [Test]
         public void AddNewFolder_FolderExists_ThrowsFolderExistsException()
         {
             Assert.Throws<FolderExistsException>(() =>
-                _FolderModel.AddNewFolder(1, "testFolder1"));
+                _FolderRepository.AddNewFolder(1, "testFolder1"));
         }
 
         [Test]
         public void AddNewFolder_UserDoesNotHaveFolder_Returns1()
         {
-            Assert.AreEqual(1, _FolderModel.AddNewFolder(3, "testFolder1"));
-            _FolderModel.DeleteFolder(3, "testFolder1");
+            Assert.AreEqual(1, _FolderRepository.AddNewFolder(3, "testFolder1"));
+            _FolderRepository.DeleteFolder(3, "testFolder1");
         }
 
         [Test]
         public void DeleteFolder_UserDoesNotHaveFolder_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                _FolderModel.DeleteFolder(3, "testFolder1"));
+                _FolderRepository.DeleteFolder(3, "testFolder1"));
         }
 
         [Test]
@@ -149,8 +149,8 @@ namespace Test.Betkeeper.Models
             var userId = 3;
             var folderName = "testFolder1";
 
-            _FolderModel.AddNewFolder(userId, folderName);
-            Assert.AreEqual(1, _FolderModel.DeleteFolder(userId, folderName));
+            _FolderRepository.AddNewFolder(userId, folderName);
+            Assert.AreEqual(1, _FolderRepository.DeleteFolder(userId, folderName));
         }
     }
 }

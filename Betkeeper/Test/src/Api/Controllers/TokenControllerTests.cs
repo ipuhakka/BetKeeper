@@ -3,7 +3,7 @@ using System.Net;
 using Api.Classes;
 using Api.Controllers;
 using Betkeeper.Data;
-using Betkeeper.Models;
+using Betkeeper.Repositories;
 using NUnit.Framework;
 using Moq;
 
@@ -15,7 +15,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Post_AuthenticationFails_ReturnsUnauthorized()
         {
-            var mock = new Mock<IUserModel>();
+            var mock = new Mock<IUserRepository>();
 
             mock.Setup(userModel =>
                 userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(false);
@@ -33,7 +33,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", "fakePassword"}
                     }),
-                _UserModel = mock.Object
+                _UserRepository = mock.Object
             };
 
             var result = controller.Post();
@@ -44,7 +44,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Post_AuthenticationSucceeds_ReturnsOK()
         {
-            var mock = new Mock<IUserModel>();
+            var mock = new Mock<IUserRepository>();
 
             mock.Setup(userModel =>
                 userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
@@ -62,7 +62,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", "fakePassword"}
                     }),
-                _UserModel = mock.Object
+                _UserRepository = mock.Object
             };
 
             var request = controller.Post();
@@ -76,7 +76,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Post_NoAuthenticationHeader_ReturnsBadRequest()
         {
-            var mock = new Mock<IUserModel>();
+            var mock = new Mock<IUserRepository>();
 
             mock.Setup(userModel =>
                 userModel.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
@@ -90,7 +90,7 @@ namespace Test.Api.Controllers
             {
                 ControllerContext = Tools.MockHttpControllerContext(
                     testData),
-                _UserModel = mock.Object
+                _UserRepository = mock.Object
             };
 
             var request = controller.Post();

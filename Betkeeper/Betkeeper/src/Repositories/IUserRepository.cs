@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Betkeeper.Models
+namespace Betkeeper.Repositories
 {
-    public interface IUserModel
+    public interface IUserRepository
     {
         /// <summary>
         /// Checks if userId matches a given password.

@@ -3,56 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Betkeeper.Data;
-using Betkeeper.Extensions;
 using Betkeeper.Exceptions;
+using Betkeeper.Models;
 
-namespace Betkeeper.Models
+namespace Betkeeper.Repositories
 {
-    public class BetModel
+    public class BetRepository
     {
-        public class Bet
-        {
-            public Enums.BetResult BetResult { get; set; }
-
-            public string Name { get; set; }
-
-            public double Odd { get; set; }
-
-            public double Stake { get; set; }
-
-            public DateTime PlayedDate { get; set; }
-
-            public int Owner { get; set; }
-
-            public int BetId { get; }
-
-            public Bet(
-                bool? betWon,
-                string name,
-                double odd,
-                double stake,
-                DateTime playedDate,
-                int userId)
-            {
-                BetResult = GetBetResult(betWon);
-                Name = name;
-                Odd = odd;
-                Stake = stake;
-                PlayedDate = playedDate;
-                Owner = userId;
-            }
-            public Bet(DataRow row)
-            {
-                BetResult = row.ToBetResult("bet_won");
-                Name = row["name"].ToString();
-                Odd = row.ToDouble("odd");
-                Stake = row.ToDouble("bet");
-                PlayedDate = row.ToDateTime("date_time");
-                BetId = row.ToInt32("bet_id");
-                Owner = row.ToInt32("owner");
-            }
-        }
-
         /// <summary>
         /// Inserts a new bet to table bets.
         /// </summary>
@@ -71,7 +28,7 @@ namespace Betkeeper.Models
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!new UserModel().UserIdExists((int)userId))
+            if (!new UserRepository().UserIdExists((int)userId))
             {
                 throw new NotFoundException("UserId not found");
             }
@@ -84,7 +41,7 @@ namespace Betkeeper.Models
                 query,
                 new Dictionary<string, object>
                 {
-                    {"betWon", (int)GetBetResult(betWon) },
+                    {"betWon", (int)Bet.GetBetResult(betWon) },
                     {"name", name },
                     {"odd", odd },
                     {"bet", stake },
@@ -107,7 +64,7 @@ namespace Betkeeper.Models
             queryParameters.Add("betId", betId);
             queryParameters.Add("userId", userId);
 
-            var folderModel = new FolderModel();
+            var folderModel = new FolderRepository();
 
             foreach(var folder in folders)
             {
@@ -171,7 +128,7 @@ namespace Betkeeper.Models
             queryParameters.Add("betId", betId);
             queryParameters.Add("userId", userId);
 
-            var folderModel = new FolderModel();
+            var folderModel = new FolderRepository();
 
             foreach(var folder in folders)
             {
@@ -226,7 +183,7 @@ namespace Betkeeper.Models
             var queryParameters = new Dictionary<string, object>();
             var query = "UPDATE bets SET bet_won = @betResult";
 
-            queryParameters.Add("betResult", GetBetResult(betWon));
+            queryParameters.Add("betResult", Bet.GetBetResult(betWon));
 
             if (stake != null)
             {
@@ -361,18 +318,6 @@ namespace Betkeeper.Models
             return dataRows.Select(row =>
                 new Bet(row))
                 .ToList();
-        }
-
-        /// <summary>
-        /// Converts nullable boolean to BetResult.
-        /// </summary>
-        /// <param name="betWon"></param>
-        /// <returns></returns>
-        private static Enums.BetResult GetBetResult(bool? betWon)
-        {
-            return betWon == null
-                ? Enums.BetResult.Unresolved
-                : (Enums.BetResult)Convert.ToInt32(betWon);
         }
     }
 }

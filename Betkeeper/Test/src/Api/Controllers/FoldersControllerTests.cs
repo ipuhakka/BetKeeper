@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Collections.Generic;
-using Betkeeper.Models;
+using Betkeeper.Repositories;
 using Betkeeper.Data;
 using Api.Classes;
 using Api.Controllers;
@@ -17,7 +17,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Get_ValidTokenBetIdNull_ReturnsUsersFolders()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.GetUsersFolders(It.IsAny<int>(), null)).Returns(
@@ -36,7 +36,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Get();
@@ -51,7 +51,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Get_ValidTokenBetId1_ReturnsUsersFolders()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.GetUsersFolders(It.IsAny<int>(), null)).Returns(
@@ -77,7 +77,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Get(1);
@@ -139,7 +139,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Post_UserHasFolder_ReturnsConflict()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
@@ -154,7 +154,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Post("folderToAdd");
@@ -165,7 +165,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Post_UserDoesNotHaveFolder_ReturnsCreated()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
@@ -184,7 +184,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Post("folderToAdd");
@@ -212,7 +212,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Delete_UserDoesNotHaveFolder_ReturnsNotFound()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
@@ -227,7 +227,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Delete("folderToDelete");
@@ -238,7 +238,7 @@ namespace Test.Api.Controllers
         [Test]
         public void Delete_UserHasFolder_ReturnsNoContent()
         {
-            var mock = new Mock<IFolderModel>();
+            var mock = new Mock<IFolderRepository>();
 
             mock.Setup(folderModel =>
                 folderModel.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
@@ -253,7 +253,7 @@ namespace Test.Api.Controllers
                     {
                         { "Authorization", token.TokenString }
                     }),
-                _FolderModel = mock.Object
+                _FolderRepository = mock.Object
             };
 
             var response = controller.Delete("folderToDelete");
