@@ -23,14 +23,15 @@ namespace Api.Controllers
 
             var tokenString = Request.Headers.Authorization?.ToString();
 
-            if (tokenString == null 
-                || !TokenLog.ContainsToken(tokenString))
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
             var folders = _FolderRepository.GetUsersFolders(
-                userId: (int)TokenLog.GetTokenOwner(tokenString),
+                userId: (int)userId,
                 betId: betId);
 
             return Http.CreateResponse(HttpStatusCode.OK, data: folders);
@@ -46,22 +47,19 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var tokenString = Request.Headers.Authorization?.ToString();
+            var userId = TokenLog.GetUserIdFromRequest(Request);
 
-            if (tokenString == null
-                || !TokenLog.ContainsToken(tokenString))
+            if (userId == null)
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
-            }       
+            }
 
-            var userId = (int)TokenLog.GetTokenOwner(tokenString);
-
-            if (_FolderRepository.UserHasFolder(userId, folder))
+            if (_FolderRepository.UserHasFolder((int)userId, folder))
             {
                 return Http.CreateResponse(HttpStatusCode.Conflict);
             }
 
-            _FolderRepository.AddNewFolder(userId, folder);
+            _FolderRepository.AddNewFolder((int)userId, folder);
 
             return Http.CreateResponse(HttpStatusCode.Created);
         }
@@ -75,20 +73,19 @@ namespace Api.Controllers
 
             var tokenString = Request.Headers.Authorization?.ToString();
 
-            if (tokenString == null
-                || !TokenLog.ContainsToken(tokenString))
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var userId = (int)TokenLog.GetTokenOwner(tokenString);
-
-            if (!_FolderRepository.UserHasFolder(userId, folder))
+            if (!_FolderRepository.UserHasFolder((int)userId, folder))
             {
                 return Http.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            _FolderRepository.DeleteFolder(userId, folder);
+            _FolderRepository.DeleteFolder((int)userId, folder);
 
             return Http.CreateResponse(HttpStatusCode.NoContent);
         }

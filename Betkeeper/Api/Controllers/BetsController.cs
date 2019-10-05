@@ -27,15 +27,12 @@ namespace Api.Controllers
         {
             _BetRepository = _BetRepository ?? new BetRepository();
 
-            var tokenString = Request.Headers.Authorization?.ToString();
+            var userId = TokenLog.GetUserIdFromRequest(Request);
 
-            if (tokenString == null
-                || !TokenLog.ContainsToken(tokenString))
-            {
+            if (userId == null)
+            { 
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
-
-            var userId = TokenLog.GetTokenOwner(tokenString);
 
             var bets = _BetRepository.GetBets(userId, finished, folder);
 
@@ -43,8 +40,24 @@ namespace Api.Controllers
         }
 
         // POST: api/Bets
-        public void Post([FromBody]string value)
+        public HttpResponseMessage Post()
         {
+            // Authenticate
+            _BetRepository = _BetRepository ?? new BetRepository();
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            // Read and validate request
+
+            // Käännä tulos?
+
+            // Lisää veto, palauta 201
+
             throw new NotImplementedException();
         }
 

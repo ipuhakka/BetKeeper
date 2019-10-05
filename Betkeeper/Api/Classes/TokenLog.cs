@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Betkeeper.Exceptions;
 
 namespace Api.Classes
@@ -23,23 +24,22 @@ namespace Api.Classes
             return token;
         }
 
-        public static bool ContainsToken(string tokenString)
-        {
-            return TokensInUse.Any(token =>
-                token.TokenString == tokenString);
-        }
-
         /// <summary>
-        /// Gets owner of tokenString.
+        /// Returns user id if request token is found.
         /// </summary>
-        /// <param name="tokenString"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public static int? GetTokenOwner(string tokenString)
+        public static int? GetUserIdFromRequest(HttpRequestMessage request) 
         {
-            return TokensInUse
-                .FirstOrDefault(token =>
-                    token.TokenString == tokenString)
-                ?.Owner;
+            var tokenString = request.Headers.Authorization?.ToString();
+
+            if (tokenString == null
+                || !ContainsToken(tokenString))
+            {
+                return null;
+            }
+
+            return GetTokenOwner(tokenString);
         }
 
         /// <summary>
@@ -62,6 +62,25 @@ namespace Api.Classes
             }
 
             TokensInUse.Remove(tokenToRemove);                 
+        }
+
+        public static bool ContainsToken(string tokenString)
+        {
+            return TokensInUse.Any(token =>
+                token.TokenString == tokenString);
+        }
+
+        /// <summary>
+        /// Gets owner of tokenString.
+        /// </summary>
+        /// <param name="tokenString"></param>
+        /// <returns></returns>
+        public static int? GetTokenOwner(string tokenString)
+        {
+            return TokensInUse
+                .FirstOrDefault(token =>
+                    token.TokenString == tokenString)
+                ?.Owner;
         }
     }
 }

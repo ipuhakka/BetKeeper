@@ -1,4 +1,5 @@
-﻿using Api.Classes;
+﻿using System.Net.Http;
+using Api.Classes;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
@@ -44,6 +45,29 @@ namespace Test.Api.Classes
             TokenLog.DeleteToken(2, token2.TokenString);
 
             Assert.IsFalse(TokenLog.ContainsToken(token2.TokenString));
+        }
+
+        [Test]
+        public void GetUserIdFromRequest_UserDoesNotHaveToken_ReturnsNull()
+        {
+            var request = new HttpRequestMessage();
+
+            request.Headers.Add("Authorization", "tokenDoesNotExist");
+
+            Assert.IsNull(TokenLog.GetUserIdFromRequest(request));
+        }
+
+        [Test]
+        public void GetUserIdFromRequest_UserHasToken_ReturnsUserId()
+        {
+            TokenLog.CreateToken(1);
+            var testToken = TokenLog.CreateToken(2);
+
+            var request = new HttpRequestMessage();
+
+            request.Headers.Add("Authorization", testToken.TokenString);
+
+            Assert.AreEqual(2, TokenLog.GetUserIdFromRequest(request));
         }
     }
 }
