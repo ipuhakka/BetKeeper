@@ -68,7 +68,6 @@ namespace Api.Controllers
         [Route("api/folders/{folder}")]
         public HttpResponseMessage Delete([FromUri]string folder)
         {
-            // TODO: Folder ei toimi, id toimii
             _FolderRepository = _FolderRepository ?? new FolderRepository();
 
             var tokenString = Request.Headers.Authorization?.ToString();

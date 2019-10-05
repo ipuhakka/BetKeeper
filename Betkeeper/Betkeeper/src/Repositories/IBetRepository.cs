@@ -12,7 +12,7 @@ namespace Betkeeper.Repositories
         /// </summary>
         /// <returns></returns>
         int CreateBet(
-            bool? betWon,
+            Enums.BetResult betResult,
             string name,
             double odd,
             double stake,

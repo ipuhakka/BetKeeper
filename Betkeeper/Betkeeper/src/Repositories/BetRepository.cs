@@ -15,7 +15,7 @@ namespace Betkeeper.Repositories
         /// </summary>
         /// <returns></returns>
         public int CreateBet(
-            bool? betWon,
+            Enums.BetResult betResult,
             string name,
             double odd,
             double stake,
@@ -41,7 +41,7 @@ namespace Betkeeper.Repositories
                 query,
                 new Dictionary<string, object>
                 {
-                    {"betWon", (int)Bet.GetBetResult(betWon) },
+                    {"betWon", (int)betResult },
                     {"name", name },
                     {"odd", odd },
                     {"bet", stake },

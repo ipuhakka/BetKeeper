@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Betkeeper.Models;
 using Betkeeper.Repositories;
 using Betkeeper.Data;
 using Api.Classes;
@@ -42,7 +43,7 @@ namespace Api.Controllers
         // POST: api/Bets
         public HttpResponseMessage Post()
         {
-            // Authenticate
+            //TODO: Yksikkötestit
             _BetRepository = _BetRepository ?? new BetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
@@ -52,13 +53,26 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            // Read and validate request
+            // TODO: Pyöristä datetime sekunteihin
 
-            // Käännä tulos?
+            var bet = new Bet(
+                Http.GetHttpContent(Request), 
+                (int)userId,
+                DateTime.Now
+                );
 
             // Lisää veto, palauta 201
+            _BetRepository.CreateBet(
+                bet.BetResult,
+                bet.Name,
+                bet.Odd,
+                bet.Stake,
+                bet.PlayedDate,
+                bet.Owner);
 
-            throw new NotImplementedException();
+            // TODO: Lisää kansioihin jos on.
+
+            return Http.CreateResponse(HttpStatusCode.Created);
         }
 
         // PUT: api/Bets/5

@@ -20,7 +20,7 @@ class AddBet extends Component
 
     this.state = {
       selected: [],
-      bet: 0.0,
+      stake: 0.0,
       odd: 0.0,
       name: "",
       betResult: -1,
@@ -50,7 +50,7 @@ class AddBet extends Component
               <FormControl
                 type="number"
                 value={state.stake}
-                onChange={this.setValue.bind(this, "bet")}
+                onChange={this.setValue.bind(this, "stake")}
                 />
               <Form.Label>{"Odd"}</Form.Label>
               <FormControl
@@ -195,7 +195,7 @@ class AddBet extends Component
       return;
     }
 
-    if (!isValidDouble(this.state.bet) || !isValidDouble(this.state.odd))
+    if (!isValidDouble(this.state.stake) || !isValidDouble(this.state.odd))
     {
       store.dispatch({type: 'SET_ALERT_STATUS',
         status: -1,
@@ -208,9 +208,9 @@ class AddBet extends Component
 		var selectedFolders = this.state.selected;
 
 		var data = {
-			bet_won: parseInt(this.state.betResult, 10),
+			betWon: parseInt(this.state.betResult, 10),
 			odd: parseFloat(this.state.odd),
-			bet: parseFloat(this.state.bet),
+			stake: parseFloat(this.state.stake),
 			name: this.state.name,
 			folders: selectedFolders
     }
@@ -221,7 +221,7 @@ class AddBet extends Component
     });
     
 		this.setState({
-      bet: 0.0,
+      stake: 0.0,
       odd: 0.0,
       name: "",
       betResult: null

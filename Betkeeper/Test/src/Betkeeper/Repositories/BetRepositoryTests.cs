@@ -184,7 +184,7 @@ namespace Test.Betkeeper.Repositories
         {
             Assert.Throws<NotFoundException>(() =>
              _BetRepository.CreateBet(
-                betWon: true,
+                betResult: Enums.BetResult.Unresolved,
                 name: "testName",
                 odd: 2.5,
                 stake: 2.2,
@@ -196,7 +196,7 @@ namespace Test.Betkeeper.Repositories
         public void CreateBet_OnSuccess_BetAdded()
         {
             Assert.AreEqual(1, _BetRepository.CreateBet(
-                betWon: true,
+                betResult: Enums.BetResult.Won,
                 name: "testName",
                 odd: 2.5,
                 stake: 2.2,

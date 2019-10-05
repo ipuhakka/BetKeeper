@@ -48,6 +48,22 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
+        /// Constructor for creating a new bet from dynamic content.
+        /// </summary>
+        /// <param name="bet"></param>
+        /// <param name="userId"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public Bet(dynamic bet, int userId, DateTime playedDate)
+        {
+            BetResult = bet.betWon;
+            Name = bet.name;
+            Odd = bet.odd;
+            Stake = bet.stake;
+            PlayedDate = playedDate;
+            Owner = userId;
+        }
+
+        /// <summary>
         /// Converts nullable boolean to BetResult.
         /// </summary>
         /// <param name="betWon"></param>
