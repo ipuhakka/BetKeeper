@@ -2,7 +2,7 @@
 using System.Net;
 using Api.Classes;
 using Api.Controllers;
-using Betkeeper.Data;
+using Betkeeper.Classes;
 using Betkeeper.Repositories;
 using NUnit.Framework;
 using Moq;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Microsoft.CSharp.RuntimeBinder;
 using Betkeeper.Extensions;
 
 namespace Betkeeper.Models
@@ -73,6 +74,35 @@ namespace Betkeeper.Models
             return betWon == null
                 ? Enums.BetResult.Unresolved
                 : (Enums.BetResult)Convert.ToInt32(betWon);
+        }
+
+        /// <summary>
+        /// Validates that a dynamic bet object
+        /// has valid values for stake, odd and betWon.
+        /// </summary>
+        /// <param name="bet"></param>
+        public static bool ValidateBetRequest(dynamic bet)
+        {
+            // TODO: Muuta testattavampaan muotoon, arvoja ei löydy?
+            try
+            {
+                if (bet.stake == null
+                    || bet.odd == null
+                    || bet.betWon == null)
+                {
+                    return false;
+                }
+
+                // TODO: Validoi betWon arvot
+
+                return !double.TryParse(bet.stake, out double stake)
+                    || !double.TryParse(bet.odd, out double odd)
+                    || !int.TryParse(bet.betWon, out int betWon);
+            } 
+            catch (RuntimeBinderException)
+            {
+                return false;
+            }
         }
     }
 }

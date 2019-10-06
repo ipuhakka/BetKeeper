@@ -5,7 +5,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using Betkeeper.Models;
 using Betkeeper.Repositories;
-using Betkeeper.Data;
+using Betkeeper.Classes;
 using Api.Classes;
 
 namespace Api.Controllers
@@ -52,6 +52,8 @@ namespace Api.Controllers
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
+
+            // TODO: Validoi content ennen vedon luomista
 
             // TODO: Pyöristä datetime sekunteihin
 

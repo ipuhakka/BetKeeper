@@ -3,7 +3,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Betkeeper.Data
+namespace Betkeeper.Classes
 {
     public class Http
     {

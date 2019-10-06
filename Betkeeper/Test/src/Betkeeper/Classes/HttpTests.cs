@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using Betkeeper.Data;
+using Betkeeper.Classes;
 using Betkeeper.Exceptions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Data
+namespace Test.Betkeeper.Classes
 {
     [TestFixture]
     public class HttpTests

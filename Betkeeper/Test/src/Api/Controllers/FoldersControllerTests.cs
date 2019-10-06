@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Collections.Generic;
 using Betkeeper.Repositories;
-using Betkeeper.Data;
+using Betkeeper.Classes;
 using Api.Classes;
 using Api.Controllers;
 using NUnit.Framework;

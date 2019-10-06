@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Betkeeper.Data;
+using Betkeeper.Classes;
 using Betkeeper.Repositories;
 using Api.Classes;
 
@@ -69,8 +69,6 @@ namespace Api.Controllers
         public HttpResponseMessage Delete([FromUri]string folder)
         {
             _FolderRepository = _FolderRepository ?? new FolderRepository();
-
-            var tokenString = Request.Headers.Authorization?.ToString();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
