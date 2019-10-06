@@ -89,7 +89,6 @@
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DataRowExtensionTests.cs" />
-    <Compile Include="src\Betkeeper\Models\BetTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\BetRepositoryTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\FolderRepositoryTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\UserRepositoryTests.cs" />

@@ -135,5 +135,30 @@ namespace Test.Api.Controllers
                     It.IsNotNull<DateTime>(),
                     1));
         }
+
+        [Test]
+        public void Post_MissingRequiredParameters_ReturnsBadRequest()
+        {
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    dataContent: new
+                    {
+                        betWon = 1,
+                        name = "testBet",
+                        stake = 2.2
+                    },
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    })
+            };
+
+            var response = controller.Post();
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
     }
 }

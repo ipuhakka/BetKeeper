@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using Microsoft.CSharp.RuntimeBinder;
 using Betkeeper.Models;
 using Betkeeper.Repositories;
 using Betkeeper.Classes;
@@ -53,15 +54,21 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            // TODO: Validoi content ennen vedon luomista
-
             // TODO: Pyöristä datetime sekunteihin
+            Bet bet;
 
-            var bet = new Bet(
-                Http.GetHttpContent(Request), 
-                (int)userId,
-                DateTime.Now
-                );
+            try
+            {
+                bet = new Bet(
+                    Http.GetHttpContent(Request),
+                    (int)userId,
+                    DateTime.Now
+                    );
+            }
+            catch (RuntimeBinderException)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
 
             // Lisää veto, palauta 201
             _BetRepository.CreateBet(
