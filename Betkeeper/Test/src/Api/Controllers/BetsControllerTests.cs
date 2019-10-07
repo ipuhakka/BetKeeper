@@ -105,6 +105,12 @@ namespace Test.Api.Controllers
                     It.IsAny<DateTime>(),
                     It.IsAny<int>()));
 
+            mock.Setup(betRepository =>
+                betRepository.AddBetToFolders(
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<List<string>>()));
+
             var token = TokenLog.CreateToken(1);
 
             var controller = new BetsController()
@@ -134,6 +140,67 @@ namespace Test.Api.Controllers
                     2.2,
                     It.IsNotNull<DateTime>(),
                     1));
+
+            mock.Verify(betRepository =>
+                betRepository.AddBetToFolders(
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<List<string>>()), Times.Never);
+        }
+
+        [Test]
+        public void Post_AddBetToFolders_CalledWithCorrectParameters()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.CreateBet(
+                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<string>(),
+                    It.IsAny<double>(),
+                    It.IsAny<double>(),
+                    It.IsAny<DateTime>(),
+                    It.IsAny<int>())).Returns(1);
+
+            mock.Setup(betRepository =>
+                betRepository.AddBetToFolders(
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<List<string>>()));
+
+            var token = TokenLog.CreateToken(1);
+
+            var testFolders = new List<string>
+            {
+                "folder1",
+                "folder2"
+            };
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    dataContent: new
+                    {
+                        betWon = 1,
+                        name = "testBet",
+                        odd = 2.1,
+                        stake = 2.2,
+                        folders = testFolders
+                    },
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _BetRepository = mock.Object
+            };
+
+            controller.Post();
+
+            mock.Verify(betRepository =>
+                betRepository.AddBetToFolders(
+                    1,
+                    1,
+                    testFolders));
         }
 
         [Test]

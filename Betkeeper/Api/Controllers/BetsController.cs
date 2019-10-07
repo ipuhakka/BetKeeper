@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Microsoft.CSharp.RuntimeBinder;
+using Newtonsoft.Json.Linq;
 using Betkeeper.Models;
 using Betkeeper.Repositories;
 using Betkeeper.Classes;
@@ -42,9 +44,12 @@ namespace Api.Controllers
         }
 
         // POST: api/Bets
+        /// <summary>
+        ///  Creates a new bet and adds it to folders if specified.
+        /// </summary>
+        /// <returns></returns>
         public HttpResponseMessage Post()
         {
-            //TODO: Yksikkötestit
             _BetRepository = _BetRepository ?? new BetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
@@ -56,22 +61,29 @@ namespace Api.Controllers
 
             // TODO: Pyöristä datetime sekunteihin
             Bet bet;
+            List<string> folders = null;
+            var content = Http.GetHttpContent(Request);
 
             try
             {
                 bet = new Bet(
-                    Http.GetHttpContent(Request),
+                    content,
                     (int)userId,
                     DateTime.Now
                     );
+
+                if (content.folders is JArray)
+                {
+                    folders = content.folders.ToObject<List<string>>();
+                }
+                          
             }
             catch (RuntimeBinderException)
             {
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            // Lisää veto, palauta 201
-            _BetRepository.CreateBet(
+            var betId = _BetRepository.CreateBet(
                 bet.BetResult,
                 bet.Name,
                 bet.Odd,
@@ -79,7 +91,10 @@ namespace Api.Controllers
                 bet.PlayedDate,
                 bet.Owner);
 
-            // TODO: Lisää kansioihin jos on.
+            if (folders != null && folders.Count > 0)
+            {
+                _BetRepository.AddBetToFolders(betId, (int)userId, folders);
+            }
 
             return Http.CreateResponse(HttpStatusCode.Created);
         }
