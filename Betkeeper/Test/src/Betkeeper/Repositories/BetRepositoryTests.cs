@@ -193,9 +193,9 @@ namespace Test.Betkeeper.Repositories
         }
 
         [Test]
-        public void CreateBet_OnSuccess_BetAdded()
+        public void CreateBet_OnSuccess_BetAddedReturnsLastInsertedId()
         {
-            Assert.AreEqual(1, _BetRepository.CreateBet(
+            Assert.AreEqual(6, _BetRepository.CreateBet(
                 betResult: Enums.BetResult.Won,
                 name: "testName",
                 odd: 2.5,

@@ -109,25 +109,40 @@ namespace Betkeeper.Data
         }
 
         /// <summary>
-        /// Executes a command and returns number of rows affected.
+        /// Executes a command.
         /// </summary>
         /// <returns></returns>
         public static int ExecuteCommand(
             string query,
-            Dictionary<string, object> parameters)
+            Dictionary<string, object> parameters,
+            bool returnLastInsertedRowId = false)
         {
             using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
             {
                 connection.Open();
 
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-
-                foreach (var parameter in parameters)
+                using (var command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue(parameter.Key, parameter.Value);
-                }
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                    }
 
-                return command.ExecuteNonQuery();
+                    var affectedRows = command.ExecuteNonQuery();
+
+                    if (returnLastInsertedRowId)
+                    {
+                        using (var command2 = new SQLiteCommand(
+                        @"select last_insert_rowid()",
+                        connection))
+                        {
+                            var lastInsertedId = (long)command2.ExecuteScalar();
+                            return (int)lastInsertedId;
+                        }
+                    }
+
+                    return affectedRows;
+                }             
             }
         }
     }

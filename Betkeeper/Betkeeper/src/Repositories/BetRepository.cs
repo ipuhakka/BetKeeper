@@ -47,7 +47,8 @@ namespace Betkeeper.Repositories
                     {"bet", stake },
                     {"dateTime", playedDate },
                     {"owner", userId }
-                });
+                },
+                returnLastInsertedRowId: true);
         }
 
         /// <summary>
