@@ -148,7 +148,7 @@ export function deleteBet(betId, folders){
     var uri = ConstVars.URI + "bets/" + betId;
 
     if (folders.length > 0){
-      uri = uri + '?folders=' + JSON.stringify(folders);
+      uri = uri + '?folders=' + folders;
     }
     var xmlHttp = new XMLHttpRequest();
 

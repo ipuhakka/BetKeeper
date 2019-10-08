@@ -5,6 +5,8 @@ using Api.Controllers;
 using Api.Classes;
 using Betkeeper;
 using Betkeeper.Repositories;
+using Betkeeper.Exceptions;
+using Betkeeper.Models;
 using NUnit.Framework;
 using Moq;
 
@@ -86,9 +88,9 @@ namespace Test.Api.Controllers
                     })
             };
 
-        var response = controller.Post();
+            var response = controller.Post();
 
-        Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Test]
@@ -226,6 +228,149 @@ namespace Test.Api.Controllers
             var response = controller.Post();
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_InvalidAuthorizationToken_ReturnsUnauthorized()
+        {
+            TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", "InvalidToken" }
+                    })
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_NoFoldersThrowsNotFoundException_ReturnsNotFound()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.DeleteBet(
+                    It.IsAny<int>(),
+                    It.IsAny<int>()
+                    )).Throws(new NotFoundException("testError"));
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _BetRepository = mock.Object
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Tests than when bet is deleted from no folders successfully, 
+        /// not found is returned.
+        /// </summary>
+        [Test]
+        public void Delete_DeleteFromFoldersReturnsEmptyList_ReturnsNotFound()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.DeleteBetFromFolders(
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<List<string>>()
+                    )).Returns(new List<string>());
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _BetRepository = mock.Object
+            };
+
+            var response = controller.Delete(1, new List<string>
+            {
+                "testFolderToDelete"
+            });
+
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_DeleteFromFoldersReturnsList_ReturnsOK()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.DeleteBetFromFolders(
+                    It.IsAny<int>(),
+                    It.IsAny<int>(),
+                    It.IsAny<List<string>>()
+                    )).Returns(new List<string> { "testFolderToDelete" });
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _BetRepository = mock.Object
+            };
+
+            var response = controller.Delete(1, new List<string>
+            {
+                "testFolderToDelete"
+            });
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Test]
+        public void Delete_DeleteDoesNotThrowException_ReturnsNoContent()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.DeleteBet(
+                    It.IsAny<int>(),
+                    It.IsAny<int>()
+                    ));
+
+            var token = TokenLog.CreateToken(1);
+
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    }),
+                _BetRepository = mock.Object
+            };
+
+            var response = controller.Delete(1);
+
+            Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
         }
     }
 }

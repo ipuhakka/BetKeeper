@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using Betkeeper.Models;
 using Betkeeper.Repositories;
 using Betkeeper.Classes;
+using Betkeeper.Exceptions;
 using Api.Classes;
 
 namespace Api.Controllers
@@ -59,9 +60,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            // TODO: Pyöristä datetime sekunteihin
             Bet bet;
-            List<string> folders = null;
             var content = Http.GetHttpContent(Request);
 
             try
@@ -70,13 +69,7 @@ namespace Api.Controllers
                     content,
                     (int)userId,
                     DateTime.Now
-                    );
-
-                if (content.folders is JArray)
-                {
-                    folders = content.folders.ToObject<List<string>>();
-                }
-                          
+                    );                        
             }
             catch (RuntimeBinderException)
             {
@@ -91,9 +84,9 @@ namespace Api.Controllers
                 bet.PlayedDate,
                 bet.Owner);
 
-            if (folders != null && folders.Count > 0)
+            if (bet.Folders != null && bet.Folders.Count > 0)
             {
-                _BetRepository.AddBetToFolders(betId, (int)userId, folders);
+                _BetRepository.AddBetToFolders(betId, (int)userId, bet.Folders);
             }
 
             return Http.CreateResponse(HttpStatusCode.Created);
@@ -106,9 +99,62 @@ namespace Api.Controllers
         }
 
         // DELETE: api/Bets/5
-        public void Delete(int id)
+        public HttpResponseMessage Delete(
+            int id, [FromUri]
+            List<string> folders = null)
         {
-            throw new NotImplementedException();
+            _BetRepository = _BetRepository ?? new BetRepository();
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            if (folders == null || folders.Count == 0)
+            {
+                return DeleteCompletely(betId: id, userId: (int)userId);
+            }
+            else
+            {
+                return DeleteFromFolders(
+                    betId: id,
+                    userId: (int)userId,
+                    folders: folders);
+            }
+        }
+
+        private HttpResponseMessage DeleteCompletely(int betId, int userId)
+        {
+            try
+            {
+                _BetRepository.DeleteBet(betId: betId, userId: userId);
+            }
+            catch (NotFoundException)
+            {
+                return Http.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.NoContent);
+        }
+
+        private HttpResponseMessage DeleteFromFolders(
+            int betId, 
+            int userId, 
+            List<string> folders)
+        {
+            var deletedFromFolders = _BetRepository.DeleteBetFromFolders(
+                    betId: betId,
+                    userId: userId,
+                    folders: folders);
+
+            if (deletedFromFolders.Count == 0)
+            {
+                return Http.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

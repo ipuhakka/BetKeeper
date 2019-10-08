@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Microsoft.CSharp.RuntimeBinder;
 using Betkeeper.Extensions;
-using System.Globalization;
+using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Models
 {
@@ -22,6 +23,8 @@ namespace Betkeeper.Models
 
         public int BetId { get; }
 
+        public List<string> Folders { get; }
+
         public Bet(
             bool? betWon,
             string name,
@@ -40,6 +43,7 @@ namespace Betkeeper.Models
 
         public Bet(DataRow row)
         {
+            // TODO: Pyöristä datetime sekunteihin
             BetResult = row.ToBetResult("bet_won");
             Name = row["name"].ToString();
             Odd = row.ToDouble("odd");
@@ -63,6 +67,11 @@ namespace Betkeeper.Models
             Stake = bet.stake;
             PlayedDate = playedDate;
             Owner = userId;
+
+            if (bet.folders is JArray)
+            {
+                Folders = bet.folders.ToObject<List<string>>();
+            }
         }
 
         /// <summary>
