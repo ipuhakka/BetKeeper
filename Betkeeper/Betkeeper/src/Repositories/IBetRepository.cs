@@ -51,7 +51,7 @@ namespace Betkeeper.Repositories
         /// </summary>
         /// <param name="betId"></param>
         /// <param name="userId"></param>
-        /// <param name="betWon"></param>
+        /// <param name="betResult"></param>
         /// <param name="stake"></param>
         /// <param name="odd"></param>
         /// <param name="name"></param>
@@ -59,7 +59,7 @@ namespace Betkeeper.Repositories
         int ModifyBet(
             int betId,
             int userId,
-            bool? betWon = null,
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
             double? stake = null,
             double? odd = null,
             string name = null);

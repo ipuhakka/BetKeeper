@@ -247,7 +247,7 @@ namespace Test.Betkeeper.Repositories
         public void ModifyBet_UserDoesNotHaveBet_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                _BetRepository.ModifyBet(2, 1, betWon: true));
+                _BetRepository.ModifyBet(2, 1, Enums.BetResult.Won));
         }
 
         [Test]
@@ -256,7 +256,7 @@ namespace Test.Betkeeper.Repositories
             _BetRepository.ModifyBet(
                 betId: 1,
                 userId: 1,
-                betWon: true,
+                betResult: Enums.BetResult.Won,
                 stake: 5.2,
                 odd: 1.2,
                 name: "modifyTest");
@@ -275,7 +275,7 @@ namespace Test.Betkeeper.Repositories
             _BetRepository.ModifyBet(
                 betId: 1,
                 userId: 1,
-                betWon: false);
+                betResult: Enums.BetResult.Lost);
 
             var modifiedBet = _BetRepository.GetBet(1, 1);
 
@@ -288,11 +288,11 @@ namespace Test.Betkeeper.Repositories
         [Test]
         public void ModifyBet_BetWonAlwaysModified()
         {
-            var betWonDict = new Dictionary<int, bool?>
+            var betWonDict = new Dictionary<int, Enums.BetResult>
             {
-                { 1, true},
-                { 0, false},
-                { -1, null}
+                { 1, Enums.BetResult.Won},
+                { 0, Enums.BetResult.Lost},
+                { -1, Enums.BetResult.Unresolved}
             };
             
             foreach(var betResult in betWonDict)
@@ -300,7 +300,7 @@ namespace Test.Betkeeper.Repositories
                 _BetRepository.ModifyBet(
                     betId: 1,
                     userId: 1,
-                    betWon: betResult.Value);
+                    betResult: betResult.Value);
 
                 var modifiedBet = _BetRepository.GetBet(1, 1);
 
