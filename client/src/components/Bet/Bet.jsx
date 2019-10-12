@@ -21,7 +21,7 @@ class Bet extends Component{
       showAlert: false,
       deleteFromFolder: null,
       name: bet.name,
-      bet: bet.stake,
+      stake: bet.stake,
       odd: bet.odd,
       betResult: betResultToRadioButtonValue(bet.betResult)
     }
@@ -34,7 +34,7 @@ class Bet extends Component{
 
     this.setState({
       name: bet.name,
-      bet: bet.stake,
+      stake: bet.stake,
       odd: bet.odd,
       betResult: betResultToRadioButtonValue(bet.betResult)
     });
@@ -65,7 +65,7 @@ class Bet extends Component{
             <Form.Label>Name</Form.Label>
             <FormControl type="text" value={state.name} onChange={this.setValue.bind(this, "name")}/>
             <Form.Label>Bet</Form.Label>
-            <FormControl type="number" value={state.bet} onChange={this.setValue.bind(this, "bet")}/>
+            <FormControl type="number" value={state.stake} onChange={this.setValue.bind(this, "stake")}/>
             <Form.Label>Odd</Form.Label>
             <FormControl type="number" value={state.odd} onChange={this.setValue.bind(this, "odd")}/>
             <FormGroup onChange={this.setValue.bind(this, "betResult")} value={state.betResult}>
@@ -125,7 +125,7 @@ class Bet extends Component{
 
     const modifiedBet = {
       name: state.name,
-      bet: state.bet,
+      stake: state.stake,
       odd: state.odd,
       betResult: state.betResult
     }

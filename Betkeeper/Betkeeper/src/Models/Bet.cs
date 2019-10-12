@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.CSharp.RuntimeBinder;
 using Betkeeper.Extensions;
+using Betkeeper.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Models
@@ -13,9 +14,9 @@ namespace Betkeeper.Models
 
         public string Name { get; set; }
 
-        public double Odd { get; set; }
+        public double? Odd { get; set; }
 
-        public double Stake { get; set; }
+        public double? Stake { get; set; }
 
         public DateTime PlayedDate { get; set; }
 
@@ -58,19 +59,88 @@ namespace Betkeeper.Models
         /// </summary>
         /// <param name="bet"></param>
         /// <param name="userId"></param>
-        /// <exception cref="RuntimeBinderException"></exception>
+        /// <exception cref="ParsingException"></exception>
         public Bet(dynamic bet, int userId, DateTime playedDate)
         {
-            BetResult = bet.betWon;
-            Name = bet.name;
-            Odd = bet.odd;
-            Stake = bet.stake;
-            PlayedDate = playedDate;
-            Owner = userId;
-
-            if (bet.folders is JArray)
+            try
             {
-                Folders = bet.folders.ToObject<List<string>>();
+                BetResult = bet.betWon;
+                Name = bet.name;
+                Odd = bet.odd;
+
+                Stake = bet.stake;
+                // TODO: Pyöristä DateTime sekunteihin
+                PlayedDate = playedDate;
+                Owner = userId;
+
+                if (bet.folders is JArray)
+                {
+                    Folders = bet.folders.ToObject<List<string>>();
+                }
+            }
+            catch (FormatException)
+            {
+                throw new ParsingException("Parsing dynamic bet content failed");
+            }
+            catch (RuntimeBinderException)
+            {
+                throw new ParsingException("Parsing dynamic bet content failed");
+            }
+
+            if (Stake == null || Odd == null)
+            {
+                throw new ParsingException("Empty parameters");
+            }
+        }
+
+        /// <summary>
+        /// Constructor for bet to be modified
+        /// </summary>
+        /// <param name="bet"></param>
+        /// <param name="userId"></param>
+        /// <exception cref="ParsingException"></exception>
+        public Bet(dynamic bet, int userId)
+        {
+            try
+            {
+                if (!(bet.betWon is null))
+                {
+                    BetResult = bet.betWon;
+                }
+                else
+                {
+                    BetResult = Enums.BetResult.Unresolved;
+                }
+
+                if (!(bet.name is null))
+                {
+                    Name = bet.name;
+                }
+
+                if (!(bet.odd is null))
+                {
+                    Odd = bet.odd;
+                }
+
+                if (!(bet.stake is null))
+                {
+                    Stake = bet.stake;
+                }
+
+                Owner = userId;
+
+                if (bet.folders is JArray)
+                {
+                    Folders = bet.folders.ToObject<List<string>>();
+                }
+            }
+            catch (FormatException)
+            {
+                throw new ParsingException("Parsing dynamic bet content failed");
+            }
+            catch (RuntimeBinderException)
+            {
+                throw new ParsingException("Parsing dynamic bet content failed");
             }
         }
 

@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Microsoft.CSharp.RuntimeBinder;
-using Newtonsoft.Json.Linq;
 using Betkeeper.Models;
 using Betkeeper.Repositories;
 using Betkeeper.Classes;
@@ -69,9 +68,9 @@ namespace Api.Controllers
                     content,
                     (int)userId,
                     DateTime.Now
-                    );                        
+                    );
             }
-            catch (RuntimeBinderException)
+            catch (ParsingException)
             {
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
@@ -79,8 +78,8 @@ namespace Api.Controllers
             var betId = _BetRepository.CreateBet(
                 bet.BetResult,
                 bet.Name,
-                bet.Odd,
-                bet.Stake,
+                (double)bet.Odd,
+                (double)bet.Stake,
                 bet.PlayedDate,
                 bet.Owner);
 
@@ -93,12 +92,63 @@ namespace Api.Controllers
         }
 
         // PUT: api/Bets/5
-        public void Put(int id, [FromBody]string value)
+        /// <summary>
+        /// Updates a bet.
+        /// </summary>
+        /// <param name="id">betId</param>
+        /// <returns></returns>
+        public HttpResponseMessage Put(int id)
         {
-            throw new NotImplementedException();
+            _BetRepository = _BetRepository ?? new BetRepository();
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            Bet bet;
+            var content = Http.GetHttpContent(Request);
+
+            try
+            {
+                bet = new Bet(
+                    content,
+                    (int)userId
+                    );
+            }
+            catch (ParsingException)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            _BetRepository.ModifyBet(
+                id,
+                (int)userId,
+                bet.BetResult,
+                bet.Stake,
+                bet.Odd,
+                bet.Name);
+
+            if (bet.Folders != null && bet.Folders.Count > 0)
+            {
+                _BetRepository.AddBetToFolders(
+                    id,
+                    (int)userId,
+                    bet.Folders);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.OK);
         }
 
         // DELETE: api/Bets/5
+        /// <summary>
+        /// Deletes a bet
+        /// </summary>
+        /// <param name="id">Bet id</param>
+        /// <param name="folders">List of folders from where bet is deleted.</param>
+        /// <returns></returns>
         public HttpResponseMessage Delete(
             int id, [FromUri]
             List<string> folders = null)

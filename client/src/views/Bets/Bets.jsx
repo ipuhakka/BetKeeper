@@ -126,11 +126,11 @@ class Bets extends Component
 
       var result = "Unresolved";
       
-			if (bets[i].betResult)
+			if (bets[i].betResult === 1)
 				result = "Won";
-			else if (!bets[i].betResult)
+			else if (bets[i].betResult === 0)
 				result = "Lost";
-			if (bets[i].betResult === null || bets[i].betResult.toString() === 'null')
+			if (bets[i].betResult === -1)
 				result = "Unresolved";
 
       betItems.push(<ListGroup.Item 

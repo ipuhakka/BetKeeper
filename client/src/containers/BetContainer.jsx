@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import store from '../store';
 import Bet from '../components/Bet/Bet.jsx';
-import {betResultToRadioButtonValue, isValidDouble, isValidString} from '../js/utils.js';
+import {isValidDouble, isValidString} from '../js/utils.js';
 
 class BetContainer extends Component{
 
@@ -17,7 +17,7 @@ class BetContainer extends Component{
 
     let data = {
       folders: [folder],
-      bet_won: betResultToRadioButtonValue(bet.bet_won),
+      betWon: bet.betResult,
       odd: bet.odd,
       bet: bet.stake
     }
@@ -81,9 +81,9 @@ class BetContainer extends Component{
 
     let modifiedBet = {
       name: bet.name,
-      bet: parseFloat(bet.stake),
+      stake: parseFloat(bet.stake),
       odd: parseFloat(bet.odd),
-      bet_won: parseInt(bet.betResult, 10)
+      betWon: parseInt(bet.betResult, 10)
     }
 
     store.dispatch({type: 'PUT_BET', payload: {

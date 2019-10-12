@@ -105,7 +105,7 @@ class UnresolvedBets extends Component{
     result = parseInt(this.state.betResult, 10);
 
     var data = {
-      bet_won: result
+      betWon: result
     }
 
     store.dispatch({type: 'PUT_BET', payload: {
