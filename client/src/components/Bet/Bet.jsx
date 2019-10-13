@@ -7,7 +7,7 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import Confirm from '../Confirm/Confirm.jsx';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
-import {betResultToRadioButtonValue} from '../../js/utils.js';
+import enums from '../../js/enums';
 import './Bet.css';
 
 class Bet extends Component{
@@ -23,7 +23,7 @@ class Bet extends Component{
       name: bet.name,
       stake: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.betResult)
+      betResult: bet.betResult
     }
   }
 
@@ -36,7 +36,7 @@ class Bet extends Component{
       name: bet.name,
       stake: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.betResult)
+      betResult: bet.betResult
     });
   }
 
@@ -68,13 +68,31 @@ class Bet extends Component{
             <FormControl type="number" value={state.stake} onChange={this.setValue.bind(this, "stake")}/>
             <Form.Label>Odd</Form.Label>
             <FormControl type="number" value={state.odd} onChange={this.setValue.bind(this, "odd")}/>
-            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={state.betResult}>
-              <FormCheck name="radioGroup" type="radio" value={-1} label="Unresolved" inline
-                defaultChecked={parseInt(state.betResult) === -1}/>
-              <FormCheck name="radioGroup" type="radio" value={1} inline label="Won"
-                defaultChecked={parseInt(state.betResult) === 1}/>
-              <FormCheck name="radioGroup" type="radio" value={0} inline label="Lost"
-                defaultChecked={parseInt(state.betResult) === 0}/>
+            <FormGroup value={state.betResult}>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={-1} 
+                label="Unresolved" 
+                inline
+                checked={parseInt(state.betResult) === enums.betResult.unresolved}/>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={1} 
+                inline 
+                label="Won"
+                checked={parseInt(state.betResult) === enums.betResult.won}/>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={0} 
+                inline 
+                label="Lost"
+                checked={parseInt(state.betResult) === enums.betResult.lost}/>
             </FormGroup>
           </FormGroup>
         </Form>

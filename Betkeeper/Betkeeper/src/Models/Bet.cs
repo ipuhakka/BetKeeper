@@ -44,7 +44,6 @@ namespace Betkeeper.Models
 
         public Bet(DataRow row)
         {
-            // TODO: Pyöristä datetime sekunteihin
             BetResult = row.ToBetResult("bet_won");
             Name = row["name"].ToString();
             Odd = row.ToDouble("odd");
@@ -69,7 +68,6 @@ namespace Betkeeper.Models
                 Odd = bet.odd;
 
                 Stake = bet.stake;
-                // TODO: Pyöristä DateTime sekunteihin
                 PlayedDate = playedDate;
                 Owner = userId;
 

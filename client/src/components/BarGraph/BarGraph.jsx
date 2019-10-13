@@ -28,8 +28,8 @@ class BarGraph extends Component {
   				<ResponsiveContainer>
   					<BarChart barSize={20} barGap={2} data={this.props.data.slice()}>
   						<CartesianGrid strokeDasharray="3 3" />
-  						<XAxis dataKey="folder" />
-  						<YAxis />
+  						<XAxis interval={0} dataKey="folder" />
+  						<YAxis/>
   						<Legend />
   						<Bar name={this.props.graphOptions[this.state.selectedVariable].labelName} dataKey={this.props.graphOptions[this.state.selectedVariable].variableName} fill="#8884d8" />
   					</BarChart>

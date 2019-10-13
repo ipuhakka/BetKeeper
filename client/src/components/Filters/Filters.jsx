@@ -4,8 +4,9 @@ import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import _ from 'lodash';
-import Filter from '../../components/Filter/Filter.jsx';
-import {filterList} from '../../js/filter.js';
+import Filter from '../../components/Filter/Filter';
+import {filterList} from '../../js/filter';
+import enums from '../../js/enums';
 import './Filters.css';
 
 class Filters extends Component
@@ -59,24 +60,24 @@ class Filters extends Component
     const { props } = this;
 
     const filters = [
-      { key: 'bet', label: 'Bet', type:'number'},
+      { key: 'stake', label: 'Bet', type: 'number'},
       { key: 'odd', label: 'Odd', type: 'number'},
       { key: 'name', label: 'Name', type: 'string'},
       { key: 'betResult', label: 'Result', type: 'valueList', valueList: [
         {
-          value: null,
+          value: enums.betResult.unresolved,
           legend: 'Unresolved'
         },
         {
-          value: false,
+          value: enums.betResult.lost,
           legend: 'Lost'
         },
         {
-          value: true,
+          value: enums.betResult.won,
           legend: 'Won'
         }
     ]},
-    { key: 'datetime', label: 'Played', type: 'dateTime'}
+    { key: 'playedDate', label: 'Played', type: 'dateTime'}
     ];
 
    return <Fragment>

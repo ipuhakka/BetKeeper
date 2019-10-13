@@ -22,7 +22,8 @@ namespace Betkeeper.Classes
             var serializerSettings = SerializeAsCamelCase
                 ? new JsonSerializerSettings
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
                 }
                 : new JsonSerializerSettings();
 
