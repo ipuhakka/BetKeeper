@@ -1,7 +1,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-import {isValidDouble, isValidString, deepCopy, shallowEquals} from '../../../client/src/js/utils';
+import {isValidDouble, isValidString, deepCopy, shallowEquals} from '../../src/js/utils';
 
 describe('shallowEquals', function(){
 

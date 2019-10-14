@@ -3,7 +3,7 @@ var expect = chai.expect;
 var moment = require('moment');
 var _ = require('lodash');
 
-import {filterList, getFilterOptions} from '../../../client/src/js/filter';
+import {filterList, getFilterOptions} from '../../src/js/filter';
 
 const mockBetList = [
     {
