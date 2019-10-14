@@ -8,22 +8,31 @@ Resolved on response with status 200 OK with bets array as parameter,
 rejects on any other response, with response
 status as parameter.
 */
-export function getFinishedBets(){
-  return new Promise(function(resolve, reject){
+export function getFinishedBets()
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
           resolve(JSON.parse(xmlHttp.responseText));
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
     });
+
     xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
+
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+
     xmlHttp.send();
   });
 }
@@ -35,22 +44,31 @@ export function getFinishedBets(){
   rejects on any other response, with response
   status as parameter.
 */
-export function getUnresolvedBets(){
-  return new Promise(function(resolve, reject){
+export function getUnresolvedBets()
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
           resolve(JSON.parse(xmlHttp.responseText));
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
     });
+
     xmlHttp.open("GET", ConstVars.URI + "bets?finished=false");
+
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+
     xmlHttp.send();
   });
 }
@@ -87,16 +105,22 @@ Resolved on response with status 200 OK with bets array as parameter,
 rejects on any other response, with response
 status as parameter.
 */
-export function getAllBetsByUser(){
-  return new Promise(function(resolve, reject){
+export function getAllBetsByUser()
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
           resolve(JSON.parse(xmlHttp.responseText));
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
@@ -119,12 +143,12 @@ and with 200 OK if bet was only deleted from specified folders.
 In such a case, returns array of folders from which bet was deleted.
 Rejects on any other response, with response status as parameter.
 */
-export function deleteBet(bet_id, folders){
+export function deleteBet(betId, folders){
   return new Promise(function(resolve, reject){
-    var uri = ConstVars.URI + "bets/" + bet_id;
+    var uri = ConstVars.URI + "bets/" + betId;
 
     if (folders.length > 0){
-      uri = uri + '?folders=' + JSON.stringify(folders);
+      uri = uri + '?folders=' + folders;
     }
     var xmlHttp = new XMLHttpRequest();
 
@@ -150,7 +174,7 @@ export function deleteBet(bet_id, folders){
 /*
 POST-request to create a new bet to the database.
   var data = {
-    bet_won: nullable boolean, null=bet not played, false=bet lost, true=bet won
+    beResult: number, -1: bet not resolved, 0: bet lost, 1: bet won
     odd: decimal value indicating odd for the bet.
     bet: decimal, stake for the bet.
     name: string, optional name to identify the bet.
@@ -185,14 +209,14 @@ export function postBet(data){
 /*
 PUT-request to create a new bet to the database.
   var data = {
-    bet_won: number, -1: bet not resolved, 0: bet lost, 1: bet won
+    betResult: number, -1: bet not resolved, 0: bet lost, 1: bet won
   }
 
   Resolved on response with status 200 OK,
   rejects on any other response, with response
   status as parameter.
 */
-export function putBet(bet_id, data){
+export function putBet(betId, data){
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
 
@@ -206,7 +230,7 @@ export function putBet(bet_id, data){
         }
       }
     });
-    xmlHttp.open("PUT", ConstVars.URI + "bets/" + bet_id);
+    xmlHttp.open("PUT", ConstVars.URI + "bets/" + betId);
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
     xmlHttp.setRequestHeader('Content-type', 'application/json');
     xmlHttp.send(JSON.stringify(data));

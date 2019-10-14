@@ -76,8 +76,8 @@ class StatisticsContainer extends Component{
     verifiedReturn = Stats.roundByTwo(Stats.verifiedReturn(betFolder.bets));
     oddMedian = Stats.roundByTwo(Stats.median(betFolder.bets, "odd"));
     oddMean = Stats.roundByTwo(Stats.mean(betFolder.bets, "odd"));
-    betMedian = Stats.roundByTwo(Stats.median(betFolder.bets, "bet"));
-    betMean = Stats.roundByTwo(Stats.mean(betFolder.bets, "bet"));
+    betMedian = Stats.roundByTwo(Stats.median(betFolder.bets, "stake"));
+    betMean = Stats.roundByTwo(Stats.mean(betFolder.bets, "stake"));
 
     let folderStats = {
         folder: name,

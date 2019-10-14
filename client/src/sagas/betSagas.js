@@ -212,7 +212,7 @@ export function* modifyBet(action)
   try 
   {
     yield put(setLoading(true));
-    yield call(putBet, action.payload.bet_id, action.payload.data);
+    yield call(putBet, action.payload.betId, action.payload.data);
 
     if (action.showAlert)
     {
@@ -256,7 +256,7 @@ export function* modifyBet(action)
 export function* removeBet(action){
   try {
     yield put(setLoading(true));
-    let res = yield call(deleteBet, action.payload.bet_id, action.payload.folders);
+    let res = yield call(deleteBet, action.payload.betId, action.payload.folders);
     yield put(fetchFoldersOfBetSuccess([]));
     if (res === undefined){
       yield put(setAlertStatus(204, "Bet deleted successfully"));

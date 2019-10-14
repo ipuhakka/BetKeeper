@@ -24,9 +24,9 @@ export const deleteFolder = (folderToDelete) => ({
   folderToDelete
 });
 
-export const fetchFoldersOfBet = (bet_id) => ({
+export const fetchFoldersOfBet = (betId) => ({
   type: "FETCH_FOLDERS_OF_BET",
-  bet_id
+  betId
 });
 
 export const fetchFoldersOfBetSuccess = (folders) => ({

@@ -70,7 +70,7 @@ class BetsContainer extends Component {
   getBetsFolders = (id) => 
   {
     store.dispatch({type: 'FETCH_FOLDERS_OF_BET', payload: {
-        bet_id: id
+      betId: id
       }
     });
   }
@@ -113,7 +113,7 @@ class BetsContainer extends Component {
 
 		if (state.selectedBet !== key){ //set key and get folders.
 			value = key;
-			this.getBetsFolders(bets[key].bet_id);
+			this.getBetsFolders(bets[key].betId);
 		}
 
 		else {

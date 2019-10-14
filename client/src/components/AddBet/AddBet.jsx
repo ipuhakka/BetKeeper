@@ -9,7 +9,8 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import Modal from 'react-bootstrap/Modal';
 import Tag from '../Tag/Tag.jsx';
 import Search from '../Search/Search.jsx';
-import {isValidDouble, isValidString} from '../../js/utils.js';
+import {isValidDouble, isValidString} from '../../js/utils';
+import enums from '../../js/enums';
 import './AddBet.css';
 
 class AddBet extends Component
@@ -20,7 +21,7 @@ class AddBet extends Component
 
     this.state = {
       selected: [],
-      bet: 0.0,
+      stake: 0.0,
       odd: 0.0,
       name: "",
       betResult: -1,
@@ -49,8 +50,8 @@ class AddBet extends Component
               <Form.Label>{"Bet"}</Form.Label>
               <FormControl
                 type="number"
-                value={state.bet}
-                onChange={this.setValue.bind(this, "bet")}
+                value={state.stake}
+                onChange={this.setValue.bind(this, "stake")}
                 />
               <Form.Label>{"Odd"}</Form.Label>
               <FormControl
@@ -63,10 +64,34 @@ class AddBet extends Component
                 value={this.state.name}
                 onChange={this.setValue.bind(this, "name")}/>
             </FormGroup>
-            <FormGroup id="checkResult" className="formMargins" onChange={this.setValue.bind(this, "betResult")} value={this.state.betResult}>
-              <Form.Check name="betResult" id="check-1" value={-1} inline type="radio" label='Unresolved' defaultChecked={parseInt(this.state.betResult) === -1} />
-              <Form.Check name="betResult" id="check-2" value={1} inline type="radio" label='Won' defaultChecked={parseInt(this.state.betResult) === 1} />
-              <Form.Check name="betResult" id="check-3" value={0} inline type="radio" label='Lost' defaultChecked={parseInt(this.state.betResult) === 0} />
+            <FormGroup id="checkResult" className="formMargins" value={this.state.betResult}>
+              <Form.Check 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="betResult" 
+                id="check-1" 
+                value={enums.betResult.unresolved} 
+                inline 
+                type="radio" 
+                label='Unresolved' 
+                checked={parseInt(this.state.betResult) === enums.betResult.unresolved} />
+              <Form.Check 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="betResult" 
+                id="check-2" 
+                value={enums.betResult.won} 
+                inline 
+                type="radio" 
+                label='Won' 
+                checked={parseInt(this.state.betResult) === enums.betResult.won} />
+              <Form.Check 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="betResult" 
+                id="check-3" 
+                value={enums.betResult.lost} 
+                inline 
+                type="radio" 
+                label='Lost' 
+                checked={parseInt(this.state.betResult) === enums.betResult.lost} />
             </FormGroup>
           </Form>
 
@@ -80,7 +105,6 @@ class AddBet extends Component
             onClickResult={this.selectFolder} 
             placeholder="Search folders"/>
           <Button 
-            disabled={state.betResult === null} 
             variant="primary" 
             className="button" 
             onClick={this.addBet}>New bet</Button>
@@ -195,7 +219,7 @@ class AddBet extends Component
       return;
     }
 
-    if (!isValidDouble(this.state.bet) || !isValidDouble(this.state.odd))
+    if (!isValidDouble(this.state.stake) || !isValidDouble(this.state.odd))
     {
       store.dispatch({type: 'SET_ALERT_STATUS',
         status: -1,
@@ -208,9 +232,9 @@ class AddBet extends Component
 		var selectedFolders = this.state.selected;
 
 		var data = {
-			bet_won: parseInt(this.state.betResult, 10),
+			betResult: parseInt(this.state.betResult, 10),
 			odd: parseFloat(this.state.odd),
-			bet: parseFloat(this.state.bet),
+			stake: parseFloat(this.state.stake),
 			name: this.state.name,
 			folders: selectedFolders
     }
@@ -221,7 +245,7 @@ class AddBet extends Component
     });
     
 		this.setState({
-      bet: 0.0,
+      stake: 0.0,
       odd: 0.0,
       name: "",
       betResult: null

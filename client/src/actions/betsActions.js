@@ -68,7 +68,7 @@ export const putBet = (data) => ({
   data
 });
 
-export const deleteBet = (bet_id, folders) => ({
+export const deleteBet = (betId, folders) => ({
   type: "DELETE_BET",
-  bet_id, folders
+  betId, folders
 });

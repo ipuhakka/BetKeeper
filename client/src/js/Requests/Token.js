@@ -15,19 +15,29 @@ export function postToken(username, password){
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
-          resolve({token:JSON.parse(xmlHttp.responseText).token, owner: JSON.parse(xmlHttp.responseText).owner, username: username});
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
+          resolve({
+              token: JSON.parse(xmlHttp.responseText).tokenString, 
+              owner: JSON.parse(xmlHttp.responseText).owner, username: username
+            });
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
     });
+
     xmlHttp.open("POST", ConstVars.URI + "token");
+
     xmlHttp.setRequestHeader('Content-Type', 'application/json');
     xmlHttp.setRequestHeader('Authorization', password);
+    
     xmlHttp.send(JSON.stringify({username: username}));
   });
 }

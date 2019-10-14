@@ -124,13 +124,13 @@ class Bets extends Component
 			else
 				isSelected = false;
 
-			var result = "Unresolved";
-
-			if (bets[i].bet_won)
+      var result = "Unresolved";
+      
+			if (bets[i].betResult === 1)
 				result = "Won";
-			else if (!bets[i].bet_won)
+			else if (bets[i].betResult === 0)
 				result = "Lost";
-			if (bets[i].bet_won === null || bets[i].bet_won.toString() === 'null')
+			if (bets[i].betResult === -1)
 				result = "Unresolved";
 
       betItems.push(<ListGroup.Item 
@@ -138,8 +138,8 @@ class Bets extends Component
         onClick={this.handleBetListClick.bind(this, i)} 
         variant={isSelected ?  'info': null}
         key={i}>     
-        <div>{`${bets[i].name} ${bets[i].datetime} ${result}`}</div>
-        <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].bet}`}</div>
+        <div>{`${bets[i].name} ${bets[i].playedDate} ${result}`}</div>
+        <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].stake}`}</div>
         </ListGroup.Item>);
 		}
 
@@ -166,6 +166,7 @@ class Bets extends Component
   handleBetListClick = (i) => 
   {
     this.props.onPressedBet(i);
+
     window.scrollTo({
       left: 0, 
       top: this.betViewRef.current.offsetTop, 

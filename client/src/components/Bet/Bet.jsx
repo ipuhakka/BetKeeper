@@ -7,7 +7,7 @@ import FormCheck from 'react-bootstrap/FormCheck';
 import Confirm from '../Confirm/Confirm.jsx';
 import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
-import {betResultToRadioButtonValue} from '../../js/utils.js';
+import enums from '../../js/enums';
 import './Bet.css';
 
 class Bet extends Component{
@@ -21,9 +21,9 @@ class Bet extends Component{
       showAlert: false,
       deleteFromFolder: null,
       name: bet.name,
-      bet: bet.bet,
+      stake: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.bet_won)
+      betResult: bet.betResult
     }
   }
 
@@ -34,9 +34,9 @@ class Bet extends Component{
 
     this.setState({
       name: bet.name,
-      bet: bet.bet,
+      stake: bet.stake,
       odd: bet.odd,
-      betResult: betResultToRadioButtonValue(bet.bet_won)
+      betResult: bet.betResult
     });
   }
 
@@ -58,23 +58,41 @@ class Bet extends Component{
           </div>         
         </div>
         <h2>{bet.name}</h2>
-        <h2>{bet.datetime}</h2>
+        <h2>{bet.playedDate}</h2>
 
         <Form>
           <FormGroup>
             <Form.Label>Name</Form.Label>
             <FormControl type="text" value={state.name} onChange={this.setValue.bind(this, "name")}/>
             <Form.Label>Bet</Form.Label>
-            <FormControl type="number" value={state.bet} onChange={this.setValue.bind(this, "bet")}/>
+            <FormControl type="number" value={state.stake} onChange={this.setValue.bind(this, "stake")}/>
             <Form.Label>Odd</Form.Label>
             <FormControl type="number" value={state.odd} onChange={this.setValue.bind(this, "odd")}/>
-            <FormGroup onChange={this.setValue.bind(this, "betResult")} value={state.betResult}>
-              <FormCheck name="radioGroup" type="radio" value={-1} label="Unresolved" inline
-                defaultChecked={parseInt(state.betResult) === -1}/>
-              <FormCheck name="radioGroup" type="radio" value={1} inline label="Won"
-                defaultChecked={parseInt(state.betResult) === 1}/>
-              <FormCheck name="radioGroup" type="radio" value={0} inline label="Lost"
-                defaultChecked={parseInt(state.betResult) === 0}/>
+            <FormGroup value={state.betResult}>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={-1} 
+                label="Unresolved" 
+                inline
+                checked={parseInt(state.betResult) === enums.betResult.unresolved}/>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={1} 
+                inline 
+                label="Won"
+                checked={parseInt(state.betResult) === enums.betResult.won}/>
+              <FormCheck 
+                onChange={this.setValue.bind(this, "betResult")} 
+                name="radioGroup" 
+                type="radio" 
+                value={0} 
+                inline 
+                label="Lost"
+                checked={parseInt(state.betResult) === enums.betResult.lost}/>
             </FormGroup>
           </FormGroup>
         </Form>
@@ -125,7 +143,7 @@ class Bet extends Component{
 
     const modifiedBet = {
       name: state.name,
-      bet: state.bet,
+      stake: state.stake,
       odd: state.odd,
       betResult: state.betResult
     }
