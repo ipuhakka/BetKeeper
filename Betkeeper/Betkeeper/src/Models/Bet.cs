@@ -27,14 +27,14 @@ namespace Betkeeper.Models
         public List<string> Folders { get; }
 
         public Bet(
-            bool? betWon,
+            bool? betResult,
             string name,
             double odd,
             double stake,
             DateTime playedDate,
             int userId)
         {
-            BetResult = GetBetResult(betWon);
+            BetResult = GetBetResult(betResult);
             Name = name;
             Odd = odd;
             Stake = stake;
@@ -63,7 +63,7 @@ namespace Betkeeper.Models
         {
             try
             {
-                BetResult = bet.betWon;
+                BetResult = bet.betResult;
                 Name = bet.name;
                 Odd = bet.odd;
 
@@ -101,9 +101,9 @@ namespace Betkeeper.Models
         {
             try
             {
-                if (!(bet.betWon is null))
+                if (!(bet.betResult is null))
                 {
-                    BetResult = bet.betWon;
+                    BetResult = bet.betResult;
                 }
                 else
                 {
@@ -145,13 +145,13 @@ namespace Betkeeper.Models
         /// <summary>
         /// Converts nullable boolean to BetResult.
         /// </summary>
-        /// <param name="betWon"></param>
+        /// <param name="betResult"></param>
         /// <returns></returns>
-        public static Enums.BetResult GetBetResult(bool? betWon)
+        public static Enums.BetResult GetBetResult(bool? betResult)
         {
-            return betWon == null
+            return betResult == null
                 ? Enums.BetResult.Unresolved
-                : (Enums.BetResult)Convert.ToInt32(betWon);
+                : (Enums.BetResult)Convert.ToInt32(betResult);
         }
     }
 }

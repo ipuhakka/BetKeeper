@@ -286,16 +286,16 @@ namespace Test.Betkeeper.Repositories
         }
 
         [Test]
-        public void ModifyBet_BetWonAlwaysModified()
+        public void ModifyBet_betResultAlwaysModified()
         {
-            var betWonDict = new Dictionary<int, Enums.BetResult>
+            var betResultDict = new Dictionary<int, Enums.BetResult>
             {
                 { 1, Enums.BetResult.Won},
                 { 0, Enums.BetResult.Lost},
                 { -1, Enums.BetResult.Unresolved}
             };
             
-            foreach(var betResult in betWonDict)
+            foreach(var betResult in betResultDict)
             {
                 _BetRepository.ModifyBet(
                     betId: 1,

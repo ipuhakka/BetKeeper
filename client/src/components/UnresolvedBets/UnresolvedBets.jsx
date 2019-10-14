@@ -6,6 +6,7 @@ import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
+import enums from '../../js/enums'; 
 
 class UnresolvedBets extends Component{
   constructor(props)
@@ -26,14 +27,14 @@ class UnresolvedBets extends Component{
           <ListGroup>{this.renderBetsList()}</ListGroup>
         <FormGroup 
           className="formMargins"
-          onChange={this.setBetResult} 
           value={this.state.betResult}>
             <Form.Check 
               id="check-1" 
               name="radioGroup" 
               type="radio" 
               label='Won' 
-              defaultChecked={parseInt(this.state.betResult) === 1} 
+              onChange={this.setBetResult} 
+              checked={parseInt(this.state.betResult) === enums.betResult.won} 
               value={1} 
               inline/>
             <Form.Check 
@@ -41,7 +42,8 @@ class UnresolvedBets extends Component{
               name="radioGroup" 
               type="radio" 
               label='Lost' 
-              defaultChecked={parseInt(this.state.betResult) === 0} 
+              onChange={this.setBetResult} 
+              checked={parseInt(this.state.betResult) === enums.betResult.lost} 
               value={0} 
               inline/>
         </FormGroup>
@@ -105,7 +107,7 @@ class UnresolvedBets extends Component{
     result = parseInt(this.state.betResult, 10);
 
     var data = {
-      betWon: result
+      betResult: result
     }
 
     store.dispatch({type: 'PUT_BET', payload: {

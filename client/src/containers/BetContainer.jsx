@@ -17,7 +17,7 @@ class BetContainer extends Component{
 
     let data = {
       folders: [folder],
-      betWon: bet.betResult,
+      betResult: bet.betResult,
       odd: bet.odd,
       bet: bet.stake
     }
@@ -83,7 +83,7 @@ class BetContainer extends Component{
       name: bet.name,
       stake: parseFloat(bet.stake),
       odd: parseFloat(bet.odd),
-      betWon: parseInt(bet.betResult, 10)
+      betResult: parseInt(bet.betResult, 10)
     }
 
     store.dispatch({type: 'PUT_BET', payload: {

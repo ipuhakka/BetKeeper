@@ -174,7 +174,7 @@ export function deleteBet(betId, folders){
 /*
 POST-request to create a new bet to the database.
   var data = {
-    betWon: number, -1: bet not resolved, 0: bet lost, 1: bet won
+    beResult: number, -1: bet not resolved, 0: bet lost, 1: bet won
     odd: decimal value indicating odd for the bet.
     bet: decimal, stake for the bet.
     name: string, optional name to identify the bet.
@@ -209,7 +209,7 @@ export function postBet(data){
 /*
 PUT-request to create a new bet to the database.
   var data = {
-    betWon: number, -1: bet not resolved, 0: bet lost, 1: bet won
+    betResult: number, -1: bet not resolved, 0: bet lost, 1: bet won
   }
 
   Resolved on response with status 200 OK,

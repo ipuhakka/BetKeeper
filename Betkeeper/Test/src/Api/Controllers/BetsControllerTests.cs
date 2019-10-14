@@ -120,7 +120,7 @@ namespace Test.Api.Controllers
                 ControllerContext = Tools.MockHttpControllerContext(
                     dataContent: new
                     {
-                        betWon = 1,
+                        betResult = 1,
                         name = "testBet",
                         odd = 2.1,
                         stake = 2.2,
@@ -183,7 +183,7 @@ namespace Test.Api.Controllers
                 ControllerContext = Tools.MockHttpControllerContext(
                     dataContent: new
                     {
-                        betWon = 1,
+                        betResult = 1,
                         name = "testBet",
                         odd = 2.1,
                         stake = 2.2,
@@ -215,7 +215,7 @@ namespace Test.Api.Controllers
                 ControllerContext = Tools.MockHttpControllerContext(
                     dataContent: new
                     {
-                        betWon = 1,
+                        betResult = 1,
                         name = "testBet",
                         stake = 2.2
                     },
@@ -405,7 +405,7 @@ namespace Test.Api.Controllers
                         stake = "not double",
                         odd = 2.0,
                         name = "testName",
-                        betWon = (int)Enums.BetResult.Won
+                        betResult = (int)Enums.BetResult.Won
                     },
                     headers: new Dictionary<string, string>
                     {
@@ -453,7 +453,7 @@ namespace Test.Api.Controllers
                         stake = 2.2,
                         odd = 2.0,
                         name = "testName",
-                        betWon = (int)Enums.BetResult.Won
+                        betResult = (int)Enums.BetResult.Won
                     },
                     headers: new Dictionary<string, string>
                     {
@@ -584,7 +584,7 @@ namespace Test.Api.Controllers
                         stake = 2.2,
                         odd = 2.0,
                         name = "testName",
-                        betWon = Enums.BetResult.Won,
+                        betResult = Enums.BetResult.Won,
                         folders = new List<string>
                         {
                             "folder1",

@@ -35,13 +35,13 @@ namespace Betkeeper.Repositories
 
             string query = "INSERT INTO bets " +
                 "(bet_won, name, odd, bet, date_time, owner) " +
-                "VALUES (@betWon, @name, @odd, @bet, @dateTime, @owner);";
+                "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);";
 
             return Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
-                    {"betWon", (int)betResult },
+                    {"betResult", (int)betResult },
                     {"name", name },
                     {"odd", odd },
                     {"bet", stake },

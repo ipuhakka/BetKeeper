@@ -232,7 +232,7 @@ class AddBet extends Component
 		var selectedFolders = this.state.selected;
 
 		var data = {
-			betWon: parseInt(this.state.betResult, 10),
+			betResult: parseInt(this.state.betResult, 10),
 			odd: parseFloat(this.state.odd),
 			stake: parseFloat(this.state.stake),
 			name: this.state.name,
