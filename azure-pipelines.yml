@@ -20,3 +20,13 @@ steps:
     npm run build
   displayName: 'npm install and build'
   workingDirectory: 'client'
+
+- task: Npm@1
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Run javascript tests'
+
+- script: |
+    npm test
+  displayName: 'npm test'
+  workingDirectory: 'client'
