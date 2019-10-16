@@ -21,12 +21,7 @@ steps:
   displayName: 'npm install and build'
   workingDirectory: 'client'
 
-- task: Npm@1
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Run javascript tests'
-
 - script: |
     npm test
-  displayName: 'npm test'
+  displayName: 'Npm test'
   workingDirectory: 'client'
