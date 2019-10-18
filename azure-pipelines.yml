@@ -51,3 +51,9 @@ steps:
     npm test
   displayName: 'Test javascript'
   workingDirectory: 'client'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'drop' 
+    publishLocation: 'Container'
