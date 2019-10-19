@@ -69,7 +69,8 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var token = TokenLog.CreateToken(userId);
+            var token = TokenLog.GetExistingToken(userId) 
+                ?? TokenLog.CreateToken(userId);
 
             return Http.CreateResponse(HttpStatusCode.OK, token);
         }

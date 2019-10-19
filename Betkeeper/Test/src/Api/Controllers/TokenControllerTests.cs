@@ -12,6 +12,12 @@ namespace Test.Api.Controllers
     [TestFixture]
     public class TokenControllerTests
     {
+        [TearDown]
+        public void TearDown()
+        {
+            TokenLog.ClearTokenLog();
+        }
+
         [Test]
         public void Post_AuthenticationFails_ReturnsUnauthorized()
         {
@@ -70,6 +76,40 @@ namespace Test.Api.Controllers
 
             Assert.AreEqual(HttpStatusCode.OK, request.StatusCode);
             Assert.AreEqual(12, responseBody.tokenString.ToString().Length);
+            Assert.AreEqual(1, (int)responseBody.owner);
+        }
+
+        [Test]
+        public void Post_UserAlreadyHasToken_ExistingTokenReturned()
+        {
+            var mock = new Mock<IUserRepository>();
+
+            mock.Setup(userRepository =>
+                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+
+            mock.Setup(userRepository =>
+                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
+
+            var testToken = TokenLog.CreateToken(1);
+
+            var testData = new { username = "user" };
+
+            var controller = new TokenController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    testData,
+                    new Dictionary<string, string>
+                    {
+                        { "Authorization", "fakePassword"}
+                    }),
+                _UserRepository = mock.Object
+            };
+
+            var request = controller.Post();
+            var responseBody = Http.GetHttpContent(request);
+
+            Assert.AreEqual(HttpStatusCode.OK, request.StatusCode);
+            Assert.AreEqual(testToken.TokenString, responseBody.tokenString.ToString());
             Assert.AreEqual(1, (int)responseBody.owner);
         }
 
