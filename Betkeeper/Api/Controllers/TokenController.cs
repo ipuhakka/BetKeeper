@@ -19,6 +19,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
+        [Route("api/token/{userId}")]
         public HttpResponseMessage Get(int userId)
         {
             var tokenString = Request.Headers.Authorization?.ToString();
