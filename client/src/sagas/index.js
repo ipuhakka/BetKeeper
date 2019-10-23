@@ -20,6 +20,7 @@ export default function* rootSaga() {
     betSagas.watchDeleteBet(),
     alertSagas.watchClearAlert(),
     sessionSagas.watchLogin(),
-    sessionSagas.watchLogOut()
+    sessionSagas.watchLogOut(),
+    sessionSagas.watchCheckLogin()
   ]);
 }

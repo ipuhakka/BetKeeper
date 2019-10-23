@@ -10,6 +10,12 @@ namespace Api.Classes
     {
         static readonly List<Token> TokensInUse = new List<Token>();
 
+        public static Token GetExistingToken(int userId)
+        {
+            return TokensInUse.FirstOrDefault(token =>
+                token.Owner == userId);
+        }
+
         public static Token CreateToken(int userId)
         {
             var token = new Token(userId);
@@ -81,6 +87,11 @@ namespace Api.Classes
                 .FirstOrDefault(token =>
                     token.TokenString == tokenString)
                 ?.Owner;
+        }
+
+        public static void ClearTokenLog()
+        {
+            TokensInUse.Clear();
         }
     }
 }
