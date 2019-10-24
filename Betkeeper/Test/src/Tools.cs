@@ -62,7 +62,7 @@ namespace Test
         /// <param name="commandText"></param>
         public static void ExecuteNonQuery(string commandText)
         {
-            SQLiteConnection con = new SQLiteConnection(Settings.GetConnectionString());
+            SQLiteConnection con = new SQLiteConnection(Settings.GetSQLiteConnectionString());
             con.Open();
 
             SQLiteCommand command = new SQLiteCommand(commandText, con);

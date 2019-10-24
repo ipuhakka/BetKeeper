@@ -37,7 +37,7 @@ namespace Betkeeper.Repositories
                 "(bet_won, name, odd, bet, date_time, owner) " +
                 "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);";
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -78,7 +78,7 @@ namespace Betkeeper.Repositories
                 var query = "INSERT INTO bet_in_bet_folder VALUES (@folder, @userId, @betId)";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = Database.ExecuteCommand(
+                var modifiedRowCount = new SQLiteDatabase().ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -107,7 +107,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bets WHERE bet_id = @betId";
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -143,7 +143,7 @@ namespace Betkeeper.Repositories
                     "WHERE bet_id = @betId AND folder = @folder";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = Database.ExecuteCommand(
+                var modifiedRowCount = new SQLiteDatabase().ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -207,7 +207,7 @@ namespace Betkeeper.Repositories
             query += " WHERE bet_id = @betId";
             queryParameters.Add("betId", betId);
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 query,
                 queryParameters);
         }
@@ -222,7 +222,7 @@ namespace Betkeeper.Repositories
         {
             var query = "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId";
 
-            var betDatatable = Database.ExecuteQuery(
+            var betDatatable = new SQLiteDatabase().ExecuteQuery(
                 query,
                 new Dictionary<string, object>
                 {
@@ -280,7 +280,7 @@ namespace Betkeeper.Repositories
             }
 
             return DatatableToBetList(
-                Database.ExecuteQuery(
+                new SQLiteDatabase().ExecuteQuery(
                     query,
                     queryParameters));
         }
@@ -307,7 +307,7 @@ namespace Betkeeper.Repositories
             }      
 
             return DatatableToBetList(
-                Database.ExecuteQuery(
+                new SQLiteDatabase().ExecuteQuery(
                     query,
                     queryParameters));
     }

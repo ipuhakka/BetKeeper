@@ -37,7 +37,7 @@ namespace Betkeeper.Repositories
                 parameters.Add("bet_id", betId);
             }
 
-            var datatable = Database.ExecuteQuery(
+            var datatable = new SQLiteDatabase().ExecuteQuery(
                 query,
                 parameters);
 
@@ -54,7 +54,7 @@ namespace Betkeeper.Repositories
                 "SELECT 1 FROM bet_folders " +
                 "WHERE owner = @userId AND folder_name = @folderName))";
 
-            return Database.ReadBoolean(
+            return new SQLiteDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -70,7 +70,7 @@ namespace Betkeeper.Repositories
                 "WHERE owner = @userId AND folder = @folderName " +
                     "AND bet_id=@betId))";
 
-            return Database.ReadBoolean(
+            return new SQLiteDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -81,7 +81,7 @@ namespace Betkeeper.Repositories
         }
 
         /// <summary>
-        /// Adds a new folder to database.
+        /// Adds a new folder to new SQLiteDatabase().
         /// </summary>
         /// <param name="folderName"></param>
         /// <param name="userId"></param>
@@ -97,7 +97,7 @@ namespace Betkeeper.Repositories
 
             var query = "INSERT INTO bet_folders VALUES (@folder, @userId)";
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -122,7 +122,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bet_folders WHERE owner = @userId AND folder_name = @folderName";
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {

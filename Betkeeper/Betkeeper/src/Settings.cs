@@ -10,12 +10,17 @@ namespace Betkeeper
 
         public static string GetConnectionString()
         {
+            throw new NotFoundException("No connection string");
+        }
+
+        public static string GetSQLiteConnectionString()
+        {
             if (DatabasePath == null)
             {
                 throw new ConfigurationException("Database path not set");
             }
 
-            return string.Format("Data Source = {0}; Version = 3; foreign keys = {1};", 
+            return string.Format("Data Source = {0}; Version = 3; foreign keys = {1};",
                 DatabasePath, UseForeignKeys ?? true);
         }
     }

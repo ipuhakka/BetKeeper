@@ -28,7 +28,7 @@ namespace Betkeeper.Repositories
             var commandText = "INSERT INTO users(username, password) " +
                 "VALUES(@username, @password)";
 
-            return Database.ExecuteCommand(
+            return new SQLiteDatabase().ExecuteCommand(
                 commandText,
                 new Dictionary<string, object>
                 {
@@ -54,7 +54,7 @@ namespace Betkeeper.Repositories
             var queryText = "SELECT user_id FROM users " +
                     "WHERE username=@username";
 
-            return Database.ReadInt(
+            return new SQLiteDatabase().ReadInt(
                 queryText,
                 new Dictionary<string, object>
                 {
@@ -74,7 +74,7 @@ namespace Betkeeper.Repositories
                 "FROM users " +
                 "WHERE user_id = @user_id AND password=@password))";
 
-            return Database.ReadBoolean(
+            return new SQLiteDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -89,7 +89,7 @@ namespace Betkeeper.Repositories
                 "FROM users " +
                 "WHERE username = @username))";
 
-            return Database.ReadBoolean(
+            return new SQLiteDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -108,7 +108,7 @@ namespace Betkeeper.Repositories
                 "FROM users " +
                 "WHERE user_id = @userId))";
 
-            return Database.ReadBoolean(
+            return new SQLiteDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
