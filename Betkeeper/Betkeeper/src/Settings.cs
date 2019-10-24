@@ -10,7 +10,11 @@ namespace Betkeeper
 
         public static string GetConnectionString()
         {
-            throw new NotFoundException("No connection string");
+            // TODO: Asetuksista
+            return "Data Source=betkeeper.database.windows.net;" +
+                "Initial Catalog=betkeeper;" +
+                "User id=betkeeper_admin;" +
+                "Password=************;";
         }
 
         public static string GetSQLiteConnectionString()

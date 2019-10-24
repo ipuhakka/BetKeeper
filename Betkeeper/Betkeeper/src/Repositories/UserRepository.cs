@@ -28,7 +28,7 @@ namespace Betkeeper.Repositories
             var commandText = "INSERT INTO users(username, password) " +
                 "VALUES(@username, @password)";
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return new SQLDatabase().ExecuteCommand(
                 commandText,
                 new Dictionary<string, object>
                 {
@@ -54,7 +54,7 @@ namespace Betkeeper.Repositories
             var queryText = "SELECT user_id FROM users " +
                     "WHERE username=@username";
 
-            return new SQLiteDatabase().ReadInt(
+            return new SQLDatabase().ReadInt(
                 queryText,
                 new Dictionary<string, object>
                 {
@@ -70,11 +70,12 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public bool Authenticate(int userId, string password)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE user_id = @user_id AND password=@password))";
+            var query = "IF EXISTS (SELECT * FROM users " +
+                "WHERE user_id = @user_id AND password = @password)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return new SQLiteDatabase().ReadBoolean(
+            return new SQLDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -85,11 +86,11 @@ namespace Betkeeper.Repositories
 
         public bool UsernameInUse(string username)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE username = @username))";
+            var query = "IF EXISTS (SELECT * FROM users WHERE username = @username)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return new SQLiteDatabase().ReadBoolean(
+            return new SQLDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -104,9 +105,9 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public bool UserIdExists(int userId)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE user_id = @userId))";
+            var query = "IF EXISTS (SELECT * FROM users WHERE user_id = @user_id)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
             return new SQLiteDatabase().ReadBoolean(
                 query,
