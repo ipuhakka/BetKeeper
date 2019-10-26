@@ -8,14 +8,10 @@ namespace Betkeeper
 
         public static bool? UseForeignKeys { get; set; }
 
-        public static string GetConnectionString()
-        {
-            // TODO: Asetuksista
-            return "Data Source=betkeeper.database.windows.net;" +
-                "Initial Catalog=betkeeper;" +
-                "User id=betkeeper_admin;" +
-                "Password=************;";
-        }
+        /// <summary>
+        /// SQL connection string
+        /// </summary>
+        public static string ConnectionString { get; set; }
 
         public static string GetSQLiteConnectionString()
         {

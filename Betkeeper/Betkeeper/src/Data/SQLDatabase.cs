@@ -10,7 +10,7 @@ namespace Betkeeper.Data
         public int ExecuteCommand(string query, Dictionary<string, object> parameters, bool returnLastInsertedRowId = false)
         {
             using (var connection = new SqlConnection(
-                Settings.GetConnectionString()))
+                Settings.ConnectionString))
             {
                 connection.Open();
 
@@ -42,7 +42,7 @@ namespace Betkeeper.Data
         public DataTable ExecuteQuery(string query, Dictionary<string, object> parameters = null)
         {
             using (var connection = new SqlConnection(
-               Settings.GetConnectionString()))
+               Settings.ConnectionString))
             {
                 connection.Open();
 
@@ -69,7 +69,7 @@ namespace Betkeeper.Data
         public bool ReadBoolean(string query, Dictionary<string, object> parameters)
         {
             using (var connection = new SqlConnection(
-                Settings.GetConnectionString()))
+                Settings.ConnectionString))
             {
                 connection.Open();
 
@@ -98,7 +98,7 @@ namespace Betkeeper.Data
         public int ReadInt(string query, Dictionary<string, object> parameters)
         {
             using (var connection = new SqlConnection(
-                Settings.GetConnectionString()))
+                Settings.ConnectionString))
             {
                 connection.Open();
 
