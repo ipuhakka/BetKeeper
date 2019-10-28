@@ -7,6 +7,17 @@ namespace Betkeeper.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        public IDatabase _Database;
+
+        public UserRepository(IDatabase database)
+        {
+            _Database = database;
+        }
+
+        public UserRepository()
+        {
+            _Database = new SQLDatabase();
+        }
 
         /// <summary>
         /// Adds a new user.
@@ -28,7 +39,7 @@ namespace Betkeeper.Repositories
             var commandText = "INSERT INTO users(username, password) " +
                 "VALUES(@username, @password)";
 
-            return new SQLDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 commandText,
                 new Dictionary<string, object>
                 {
@@ -90,7 +101,7 @@ namespace Betkeeper.Repositories
                 "BEGIN SELECT 1 END " +
                 "ELSE BEGIN SELECT 0 END";
 
-            return new SQLDatabase().ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
