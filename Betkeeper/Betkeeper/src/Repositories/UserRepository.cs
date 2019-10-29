@@ -65,7 +65,7 @@ namespace Betkeeper.Repositories
             var queryText = "SELECT user_id FROM users " +
                     "WHERE username=@username";
 
-            return new SQLDatabase().ReadInt(
+            return _Database.ReadInt(
                 queryText,
                 new Dictionary<string, object>
                 {
@@ -120,7 +120,7 @@ namespace Betkeeper.Repositories
                 "BEGIN SELECT 1 END " +
                 "ELSE BEGIN SELECT 0 END";
 
-            return new SQLiteDatabase().ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {

@@ -10,6 +10,18 @@ namespace Betkeeper.Repositories
 {
     public class BetRepository : IBetRepository
     {
+        IUserRepository _UserRepository;
+
+        public BetRepository()
+        {
+            _UserRepository = new UserRepository();
+        }
+
+        public BetRepository(IUserRepository userRepository)
+        {
+            _UserRepository = userRepository;
+        }
+
         /// <summary>
         /// Inserts a new bet to table bets.
         /// </summary>
@@ -28,7 +40,7 @@ namespace Betkeeper.Repositories
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!new UserRepository().UserIdExists((int)userId))
+            if (!_UserRepository.UserIdExists((int)userId))
             {
                 throw new NotFoundException("UserId not found");
             }

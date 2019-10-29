@@ -11,29 +11,6 @@ namespace Test.Betkeeper.Repositories
     [TestFixture]
     public class UserRepositoryTests
     {
-        //UserRepository _UserRepository;
-
-        //[OneTimeSetUp]
-        //public void OneTimeSetup()
-        //{
-        //    _UserRepository = new UserRepository(new SQLDatabase());
-        //    Tools.CreateTestDatabase();
-
-        //    var setUpCommand = 
-        //        "INSERT OR REPLACE INTO users (username, password, user_id) " +
-        //            "VALUES ('username1', 'password1', 1);" +
-        //        "INSERT INTO users (username, password, user_id) " +
-        //            "VALUES ('username2', 'password2', 2);";
-                
-        //    Tools.ExecuteNonQuery(setUpCommand);
-        //}
-
-        //[OneTimeTearDown]
-        //public void OneTimeTearDown()
-        //{
-        //    Tools.DeleteTestDatabase();
-        //}
-
         [Test]
         public void AddUser_UsernameInUse_ThrowsUsernameInUseException()
         {
@@ -85,62 +62,53 @@ namespace Test.Betkeeper.Repositories
                 Times.Once);
         }
 
-        //[Test]
-        //public void UserIdExists_DoesNotExist_ReturnsFalse()
-        //{
-        //    Assert.IsFalse(_UserRepository.UserIdExists(999));
-        //}
+        [Test]
+        public void GetUserId_UsernameDoesNotExist_Throws_NotFoundException()
+        {
+            var mock = new Mock<IDatabase>();
 
-        //[Test]
-        //public void UserIdExists_ReturnsTrue()
-        //{
-        //    Assert.IsTrue(_UserRepository.UserIdExists(1));
-        //}
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(false);
 
-        //[Test]
-        //public void UserNameInUse_InUse_ReturnsTrue()
-        //{
-        //    Assert.IsTrue(_UserRepository.UsernameInUse("username1"));
-        //}
+            var userRepository = new UserRepository(mock.Object);
 
-        //[Test]
-        //public void UserNameInUse_NotInUse_ReturnsFalse()
-        //{
-        //    Assert.IsFalse(_UserRepository.UsernameInUse("UnexistingUserName"));
-        //}
+            Assert.Throws<NotFoundException>(() =>
+                userRepository.GetUserId("username"));
+        }
 
-        //[Test]
-        //public void Authenticate_PasswordMatchesUserId_ReturnsTrue()
-        //{
-        //    Assert.IsTrue(_UserRepository.Authenticate(1, "password1"));
-        //}
+        [Test]
+        public void GetUserId_UsernameExists_CorrectQueryFormed()
+        {
+            var mock = new Mock<IDatabase>();
 
-        //[Test]
-        //public void Authenticate_PasswordDoesNotMatchUserId_ReturnsFalse()
-        //{
-        //    Assert.IsFalse(_UserRepository.Authenticate(1, "password2"));
-        //}
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(true);
 
-        //[Test]
-        //public void Authenticate_UserIdDoesNotExist_ReturnsFalse()
-        //{
-        //    Assert.IsFalse(_UserRepository.Authenticate(-1, "password2"));
-        //}
+            mock.Setup(database =>
+                database.ReadInt(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(1);
 
-        //[Test]
-        //public void AddUser_UsernameExists_ThrowsUsernameInUseException()
-        //{
-        //    Assert.Throws<UsernameInUseException>(() =>
-        //        _UserRepository.AddUser("username1", "password"));
-        //}
+            var userRepository = new UserRepository(mock.Object);
 
-        //[Test]
-        //public void AddUser_UsernameDoesNotExist_ReturnsUserId()
-        //{
-        //    var result = _UserRepository.AddUser("username3", "password3");
+            userRepository.GetUserId("username");
 
-        //    Assert.AreEqual(1, result);
-        //}
+            mock.Verify(database =>
+                database.ReadInt("SELECT user_id FROM users " +
+                    "WHERE username=@username",
+                new Dictionary<string, object>
+                    {
+                        {"username", "username" }
+                    }),
+                Times.Once);
+        }
 
         //[Test]
         //public void GetUserId_UsernameDoesNotExitsThrowsNotFoundException()

@@ -4,6 +4,7 @@ using Betkeeper;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
+using Moq;
 
 namespace Test.Betkeeper.Repositories
 {
@@ -182,8 +183,17 @@ namespace Test.Betkeeper.Repositories
         [Test]
         public void CreateBet_UserDoesNotExist_ThrowsNotFoundException()
         {
+            var mock = new Mock<IUserRepository>();
+
+            mock.Setup(userRepo =>
+                userRepo.UserIdExists(
+                    1))
+                .Returns(false);
+
+            var betRepository = new BetRepository(mock.Object);
+
             Assert.Throws<NotFoundException>(() =>
-             _BetRepository.CreateBet(
+             betRepository.CreateBet(
                 betResult: Enums.BetResult.Unresolved,
                 name: "testName",
                 odd: 2.5,
@@ -195,7 +205,16 @@ namespace Test.Betkeeper.Repositories
         [Test]
         public void CreateBet_OnSuccess_BetAddedReturnsLastInsertedId()
         {
-            Assert.AreEqual(6, _BetRepository.CreateBet(
+            var mock = new Mock<IUserRepository>();
+
+            mock.Setup(userRepo =>
+                userRepo.UserIdExists(
+                    1))
+                .Returns(true);
+
+            var betRepository = new BetRepository(mock.Object);
+
+            Assert.AreEqual(6, betRepository.CreateBet(
                 betResult: Enums.BetResult.Won,
                 name: "testName",
                 odd: 2.5,
@@ -203,7 +222,7 @@ namespace Test.Betkeeper.Repositories
                 playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
                 userId: 1));
 
-            var addedBet = _BetRepository.GetBet(6, 1);
+            var addedBet = betRepository.GetBet(6, 1);
 
             Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
             Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);
