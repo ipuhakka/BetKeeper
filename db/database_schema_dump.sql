@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS bets(
 	FOREIGN KEY(owner) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS users(
-	username TEXT UNIQUE,
-	password TEXT,
+CREATE TABLE users(
+	username NVARCHAR(MAX) UNIQUE,
+	password ,
 	user_id INTEGER PRIMARY KEY
 );
 
@@ -36,3 +36,22 @@ CREATE TABLE IF NOT EXISTS bet_in_bet_folder(
 
 COMMIT;
 PRAGMA foreign_keys=ON;
+
+#SQL
+
+CREATE TABLE bets(
+	bet_won INTEGER NOT NULL,
+	name NVARCHAR(MAX),
+	odd DECIMAL(18, 4) NOT NULL,
+	bet DECIMAL(18, 4) NOT NULL,
+	date_time DATETIME2,
+	owner INTEGER,
+	bet_id INTEGER IDENTITY PRIMARY KEY,
+	FOREIGN KEY(owner) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE users(
+	username NVARCHAR(MAX) UNIQUE,
+	password NVARCHAR(MAX),
+	user_id INTEGER IDENTITY PRIMARY KEY 
+);

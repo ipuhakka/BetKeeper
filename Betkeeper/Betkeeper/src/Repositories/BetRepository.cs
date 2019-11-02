@@ -11,15 +11,18 @@ namespace Betkeeper.Repositories
     public class BetRepository : IBetRepository
     {
         IUserRepository _UserRepository;
+        public IDatabase _Database;
 
         public BetRepository()
         {
             _UserRepository = new UserRepository();
+            _Database = new SQLDatabase();
         }
 
-        public BetRepository(IUserRepository userRepository)
+        public BetRepository(IUserRepository userRepository = null, IDatabase database = null)
         {
-            _UserRepository = userRepository;
+            _UserRepository = userRepository ?? new UserRepository();
+            _Database = database ?? new SQLDatabase();
         }
 
         /// <summary>
@@ -40,7 +43,7 @@ namespace Betkeeper.Repositories
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!_UserRepository.UserIdExists((int)userId))
+            if (!_UserRepository.UserIdExists(userId))
             {
                 throw new NotFoundException("UserId not found");
             }
@@ -49,7 +52,7 @@ namespace Betkeeper.Repositories
                 "(bet_won, name, odd, bet, date_time, owner) " +
                 "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);";
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {

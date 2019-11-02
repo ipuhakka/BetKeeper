@@ -7,6 +7,14 @@ namespace Betkeeper.Data
 {
     public class SQLDatabase : IDatabase
     {
+        /// <summary>
+        /// Executes a command and returns either affectedRows 
+        /// or the last inserted id.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="parameters"></param>
+        /// <param name="returnLastInsertedRowId"></param>
+        /// <returns></returns>
         public int ExecuteCommand(string query, Dictionary<string, object> parameters, bool returnLastInsertedRowId = false)
         {
             using (var connection = new SqlConnection(
@@ -21,20 +29,15 @@ namespace Betkeeper.Data
                         command.Parameters.AddWithValue(parameter.Key, parameter.Value);
                     }
 
-                    var affectedRows = command.ExecuteNonQuery();
-
                     if (returnLastInsertedRowId)
                     {
-                        using (var command2 = new SqlCommand(
-                        @"select last_insert_rowid()",
-                        connection))
-                        {
-                            var lastInsertedId = (long)command2.ExecuteScalar();
-                            return (int)lastInsertedId;
-                        }
-                    }
+                        command.CommandText += " SELECT SCOPE_IDENTITY();";
 
-                    return affectedRows;
+                        return int.Parse(
+                            command.ExecuteScalar().ToString());
+                    }
+                    
+                    return command.ExecuteNonQuery();         
                 }
             }
         }

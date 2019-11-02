@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Betkeeper;
+using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
@@ -205,31 +206,49 @@ namespace Test.Betkeeper.Repositories
         [Test]
         public void CreateBet_OnSuccess_BetAddedReturnsLastInsertedId()
         {
-            var mock = new Mock<IUserRepository>();
+            var userRepoMock = new Mock<IUserRepository>();
 
-            mock.Setup(userRepo =>
+            userRepoMock.Setup(userRepo =>
                 userRepo.UserIdExists(
-                    1))
+                    3))
                 .Returns(true);
 
-            var betRepository = new BetRepository(mock.Object);
+            var databaseMock = new Mock<IDatabase>();
 
-            Assert.AreEqual(6, betRepository.CreateBet(
-                betResult: Enums.BetResult.Won,
-                name: "testName",
-                odd: 2.5,
-                stake: 2.2,
-                playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
-                userId: 1));
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, object>>(),
+                It.IsAny<bool>()))
+                .Returns(1);
 
-            var addedBet = betRepository.GetBet(6, 1);
+            var betRepository = new BetRepository(
+                userRepoMock.Object, 
+                databaseMock.Object);
 
-            Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
-            Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);
-            Assert.AreEqual(2.5, addedBet.Odd);
-            Assert.AreEqual(2.2, addedBet.Stake);
-            Assert.AreEqual("testName", addedBet.Name);
-            Assert.AreEqual(1, addedBet.Owner);
+            betRepository.CreateBet(
+                Enums.BetResult.Unresolved,
+                "testi",
+                2.8,
+                2.4,
+                new DateTime(2019, 1, 1),
+                3);
+
+            databaseMock.Verify(database =>
+                database.ExecuteCommand(
+                    "INSERT INTO bets " +
+                "(bet_won, name, odd, bet, date_time, owner) " +
+                "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);",
+                new Dictionary<string, object>
+                {
+                    {"betResult", (int)Enums.BetResult.Unresolved },
+                    {"name", "testi" },
+                    {"odd", 2.8 },
+                    {"bet", 2.4 },
+                    {"dateTime", new DateTime(2019, 1, 1) },
+                    {"owner", 3 }
+                },
+                true),
+                Times.Once);
         }
 
         [Test]

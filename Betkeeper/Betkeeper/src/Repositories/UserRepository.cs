@@ -116,7 +116,7 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public bool UserIdExists(int userId)
         {
-            var query = "IF EXISTS (SELECT * FROM users WHERE user_id = @user_id)" +
+            var query = "IF EXISTS (SELECT * FROM users WHERE user_id = @userId)" +
                 "BEGIN SELECT 1 END " +
                 "ELSE BEGIN SELECT 0 END";
 
