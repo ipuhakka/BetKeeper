@@ -11,18 +11,24 @@ namespace Betkeeper.Repositories
     public class BetRepository : IBetRepository
     {
         IUserRepository _UserRepository;
+        IFolderRepository _FolderRepository;
         public IDatabase _Database;
 
         public BetRepository()
         {
             _UserRepository = new UserRepository();
             _Database = new SQLDatabase();
+            _FolderRepository = new FolderRepository();
         }
 
-        public BetRepository(IUserRepository userRepository = null, IDatabase database = null)
+        public BetRepository(
+            IUserRepository userRepository = null, 
+            IDatabase database = null,
+            IFolderRepository folderRepository = null)
         {
             _UserRepository = userRepository ?? new UserRepository();
             _Database = database ?? new SQLDatabase();
+            _FolderRepository = folderRepository ?? new FolderRepository();
         }
 
         /// <summary>
@@ -75,6 +81,7 @@ namespace Betkeeper.Repositories
         /// <returns>List of folders to which bet was added</returns>
         public List<string> AddBetToFolders(int betId, int userId, List<string> folders)
         {
+            // TODO: Implement and verify when folder addings are done
             var addedToFoldersList = new List<string>();
             var queryParameters = new Dictionary<string, object>();
             queryParameters.Add("betId", betId);
@@ -93,7 +100,7 @@ namespace Betkeeper.Repositories
                 var query = "INSERT INTO bet_in_bet_folder VALUES (@folder, @userId, @betId)";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = new SQLiteDatabase().ExecuteCommand(
+                var modifiedRowCount = _Database.ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -122,7 +129,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bets WHERE bet_id = @betId";
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -139,6 +146,7 @@ namespace Betkeeper.Repositories
         /// <returns>List of folders from which bet was deleted</returns>
         public List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
         {
+            // TODO: Verify when folder deleting is implemented
             var deletedFromFoldersList = new List<string>();
             var queryParameters = new Dictionary<string, object>();
             queryParameters.Add("betId", betId);
@@ -158,7 +166,7 @@ namespace Betkeeper.Repositories
                     "WHERE bet_id = @betId AND folder = @folder";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = new SQLiteDatabase().ExecuteCommand(
+                var modifiedRowCount = _Database.ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -222,7 +230,7 @@ namespace Betkeeper.Repositories
             query += " WHERE bet_id = @betId";
             queryParameters.Add("betId", betId);
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 queryParameters);
         }
@@ -237,7 +245,7 @@ namespace Betkeeper.Repositories
         {
             var query = "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId";
 
-            var betDatatable = new SQLiteDatabase().ExecuteQuery(
+            var betDatatable = _Database.ExecuteQuery(
                 query,
                 new Dictionary<string, object>
                 {
@@ -253,7 +261,9 @@ namespace Betkeeper.Repositories
         }
 
         /// <summary>
-        /// Gets a list of bets matching parameters
+        /// Gets a list of bets matching parameters.
+        /// Bets are searched from folders only if 
+        /// user id is given.
         /// </summary>
         /// <param name="betFinished"></param>
         /// <param name="userId"></param>
@@ -272,9 +282,10 @@ namespace Betkeeper.Repositories
             var queryParameters = new Dictionary<string, object>();
             var whereConditions = new List<string>();
 
+            // TODO: ehtojen muodostamisesta oma funktio
             if (userId != null)
             {
-                whereConditions.Add("owner=@userId");
+                whereConditions.Add("owner = @userId");
 
                 queryParameters.Add("userId", userId);
             }
@@ -295,13 +306,14 @@ namespace Betkeeper.Repositories
             }
 
             return DatatableToBetList(
-                new SQLiteDatabase().ExecuteQuery(
+                _Database.ExecuteQuery(
                     query,
                     queryParameters));
         }
 
         private List<Bet> GetBetsFromFolder(int userId, string folder, bool? betFinished)
         {
+            // TODO: Verify after folders implementation
             var queryParameters = new Dictionary<string, object>();
 
             var query = "SELECT * " +
@@ -312,6 +324,7 @@ namespace Betkeeper.Repositories
             queryParameters.Add("userId", userId);
             queryParameters.Add("folder", folder);
 
+            // TODO: queryn muodostamisesta oma funktio
             if (betFinished != null)
             {
                 query += string.Format(" AND {0}", (bool)betFinished
@@ -322,7 +335,7 @@ namespace Betkeeper.Repositories
             }      
 
             return DatatableToBetList(
-                new SQLiteDatabase().ExecuteQuery(
+                _Database.ExecuteQuery(
                     query,
                     queryParameters));
     }
