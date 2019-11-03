@@ -6,7 +6,7 @@ using Betkeeper.Exceptions;
 using NUnit.Framework;
 using Moq;
 
-namespace Test.Betkeeper.Repositories
+namespace Betkeeper.Test.Repositories
 {
     [TestFixture]
     public class UserRepositoryTests

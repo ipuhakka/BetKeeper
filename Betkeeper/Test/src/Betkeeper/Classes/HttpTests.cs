@@ -6,7 +6,7 @@ using Betkeeper.Exceptions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Classes
+namespace Betkeeper.Test.Classes
 {
     [TestFixture]
     public class HttpTests

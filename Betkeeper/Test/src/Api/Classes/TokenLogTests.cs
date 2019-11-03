@@ -3,7 +3,7 @@ using Api.Classes;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
-namespace Test.Api.Classes
+namespace Api.Test.Classes
 {
     [TestFixture]
     public class TokenLogTests

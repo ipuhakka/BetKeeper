@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Web.Http.Controllers;
-using Betkeeper;
 using NUnit.Framework;
 using Newtonsoft.Json;
+using Betkeeper;
 
-namespace Test
+namespace TestTools
 {
     public static class Tools
     {

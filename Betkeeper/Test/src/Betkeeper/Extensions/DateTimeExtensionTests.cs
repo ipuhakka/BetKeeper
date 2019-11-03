@@ -2,7 +2,7 @@
 using Betkeeper.Extensions;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Extensions
+namespace Betkeeper.Test.Extensions
 {
     [TestFixture]
     public class DateTimeExtensionTests

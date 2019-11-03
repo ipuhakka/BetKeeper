@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Betkeeper;
+using System.Data;
+using Betkeeper.Models;
 using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 using Moq;
+using TestTools;
 
-namespace Test.Betkeeper.Repositories
+namespace Betkeeper.Test.Repositories
 {
     public class BetRepositoryTests
     {

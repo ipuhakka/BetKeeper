@@ -2,8 +2,9 @@
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
+using TestTools;
 
-namespace Test.Betkeeper.Repositories
+namespace Betkeeper.Test.Repositories
 {
     [TestFixture]
     public class FolderRepositoryTests
