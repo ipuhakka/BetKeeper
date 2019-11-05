@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
+using Moq;
 using TestTools;
 
 namespace Betkeeper.Test.Repositories
@@ -100,15 +102,27 @@ namespace Betkeeper.Test.Repositories
         }
 
         [Test]
-        public void UserHasFolder_UserDoesNotHaveFolder_ReturnsFalse()
+        public void UserHasFolder_QueriedWithValidParameters()
         {
-            Assert.IsFalse(_FolderRepository.UserHasFolder(userId: 1, folderName: "testFolder3"));
-        }
+            var mock = new Mock<IDatabase>();
 
-        [Test]
-        public void UserHasFolder_UserHasFolder_ReturnsTrue()
-        {
-            Assert.IsTrue(_FolderRepository.UserHasFolder(userId: 1, folderName: "testFolder1"));
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(true);
+
+            var folderRepository = new FolderRepository(database: mock.Object);
+
+            folderRepository.UserHasFolder(1, "testFolder");
+
+            mock.Verify(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.Is<Dictionary<string, object>>(dict =>
+                        (int)dict["userId"] == 1
+                        && dict["folderName"].ToString() == "testFolder")),
+                    Times.Once);
         }
 
         [Test]
@@ -126,15 +140,51 @@ namespace Betkeeper.Test.Repositories
         [Test]
         public void AddNewFolder_FolderExists_ThrowsFolderExistsException()
         {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(true);
+
+            var folderRepository = new FolderRepository(database: mock.Object);
+
             Assert.Throws<FolderExistsException>(() =>
-                _FolderRepository.AddNewFolder(1, "testFolder1"));
+                folderRepository.AddNewFolder(1, "testFolder1"));
         }
 
         [Test]
-        public void AddNewFolder_UserDoesNotHaveFolder_Returns1()
+        public void AddNewFolder_UserDoesNotHaveFolder_InsertQueryCalled()
         {
-            Assert.AreEqual(1, _FolderRepository.AddNewFolder(3, "testFolder1"));
-            _FolderRepository.DeleteFolder(3, "testFolder1");
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(false);
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var folderRepository = new FolderRepository(database: mock.Object);
+
+            folderRepository.AddNewFolder(3, "testFolder1");
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    It.Is<string>(query => query.Contains(
+                        "INSERT INTO bet_folders")),
+                    It.Is<Dictionary<string, object>>(dict =>
+                        dict["folder"].ToString() == "testFolder1"
+                        && (int)dict["userId"] == 3),
+                    false),
+                    Times.Once);
         }
 
         [Test]

@@ -8,6 +8,19 @@ namespace Betkeeper.Repositories
 {
     public class FolderRepository : IFolderRepository
     {
+        public IDatabase _Database { get; }
+
+
+        public FolderRepository()
+        {
+            _Database = new SQLDatabase();
+        }
+
+        public FolderRepository(IDatabase database)
+        {
+            _Database = database;
+        }
+
         /// <summary>
         /// Gets folders for specified user.
         /// </summary>
@@ -50,11 +63,13 @@ namespace Betkeeper.Repositories
 
         public bool UserHasFolder(int userId, string folderName)
         {
-            var query = "SELECT(EXISTS(" +
-                "SELECT 1 FROM bet_folders " +
-                "WHERE owner = @userId AND folder_name = @folderName))";
+            var query = "IF EXISTS (SELECT " +
+                "* FROM bet_folders " +
+                "WHERE owner = @userId AND folder_name = @folderName) " +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return new SQLiteDatabase().ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -92,12 +107,15 @@ namespace Betkeeper.Repositories
             if (UserHasFolder(userId, folderName))
             {
                 throw new FolderExistsException(
-                    string.Format("{0} already has folder named {1}", userId, folderName));
+                    string.Format(
+                        "{0} already has folder named {1}", 
+                        userId, 
+                        folderName));
             }
 
             var query = "INSERT INTO bet_folders VALUES (@folder, @userId)";
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
