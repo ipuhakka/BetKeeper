@@ -29,6 +29,7 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public List<string> GetUsersFolders(int userId, int? betId = null)
         {
+            // TODO: testit
             var query = "";
             var parameters = new Dictionary<string, object>();
 
@@ -50,7 +51,7 @@ namespace Betkeeper.Repositories
                 parameters.Add("bet_id", betId);
             }
 
-            var datatable = new SQLiteDatabase().ExecuteQuery(
+            var datatable = _Database.ExecuteQuery(
                 query,
                 parameters);
 
@@ -80,12 +81,15 @@ namespace Betkeeper.Repositories
 
         public bool FolderHasBet(int userId, string folderName, int betId)
         {
-            var query = "SELECT(EXISTS(" +
-                "SELECT 1 FROM bet_in_bet_folder " +
+            // TODO: Testit
+            var query = "IF EXISTS (SELECT " +
+                "* FROM bet_in_bet_folder " +
                 "WHERE owner = @userId AND folder = @folderName " +
-                    "AND bet_id=@betId))";
+                "AND bet_id = @betId) " +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return new SQLiteDatabase().ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -140,7 +144,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bet_folders WHERE owner = @userId AND folder_name = @folderName";
 
-            return new SQLiteDatabase().ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {

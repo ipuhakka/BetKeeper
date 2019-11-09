@@ -190,18 +190,50 @@ namespace Betkeeper.Test.Repositories
         [Test]
         public void DeleteFolder_UserDoesNotHaveFolder_ThrowsNotFoundException()
         {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(false);
+
             Assert.Throws<NotFoundException>(() =>
-                _FolderRepository.DeleteFolder(3, "testFolder1"));
+                new FolderRepository(database: mock.Object)
+                    .DeleteFolder(3, "testFolder1"));
         }
 
         [Test]
         public void DeleteFolder_UserHasFolder_FolderDeleted()
         {
-            var userId = 3;
-            var folderName = "testFolder1";
+            var mock = new Mock<IDatabase>();
 
-            _FolderRepository.AddNewFolder(userId, folderName);
-            Assert.AreEqual(1, _FolderRepository.DeleteFolder(userId, folderName));
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(true);
+
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            new FolderRepository(database: mock.Object)
+                .DeleteFolder(1, "folderToDelete");
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    "DELETE FROM bet_folders " +
+                    "WHERE owner = @userId AND folder_name = @folderName",
+                    It.Is<Dictionary<string, object>>(dict =>
+                        (int)dict["userId"] == 1
+                        && dict["folderName"].ToString() == "folderToDelete"),
+                    false), 
+                Times.Once);
         }
     }
 }

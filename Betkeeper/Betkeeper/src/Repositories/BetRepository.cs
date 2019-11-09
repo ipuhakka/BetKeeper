@@ -10,8 +10,9 @@ namespace Betkeeper.Repositories
 {
     public class BetRepository : IBetRepository
     {
-        IUserRepository _UserRepository;
-        IFolderRepository _FolderRepository;
+        IUserRepository _UserRepository { get; }
+        IFolderRepository _FolderRepository { get; }
+
         public IDatabase _Database;
 
         public BetRepository()
@@ -81,18 +82,17 @@ namespace Betkeeper.Repositories
         /// <returns>List of folders to which bet was added</returns>
         public List<string> AddBetToFolders(int betId, int userId, List<string> folders)
         {
-            // TODO: Implement and verify when folder addings are done
             var addedToFoldersList = new List<string>();
-            var queryParameters = new Dictionary<string, object>();
-            queryParameters.Add("betId", betId);
-            queryParameters.Add("userId", userId);
-
-            var folderModel = new FolderRepository();
+            var queryParameters = new Dictionary<string, object>
+            {
+                { "betId", betId },
+                { "userId", userId }
+            };
 
             foreach(var folder in folders)
             {
-                if (!folderModel.UserHasFolder(userId, folder)
-                    || folderModel.FolderHasBet(userId, folder, betId))
+                if (!_FolderRepository.UserHasFolder(userId, folder)
+                    || _FolderRepository.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -146,18 +146,18 @@ namespace Betkeeper.Repositories
         /// <returns>List of folders from which bet was deleted</returns>
         public List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
         {
-            // TODO: Verify when folder deleting is implemented
             var deletedFromFoldersList = new List<string>();
-            var queryParameters = new Dictionary<string, object>();
-            queryParameters.Add("betId", betId);
-            queryParameters.Add("userId", userId);
 
-            var folderModel = new FolderRepository();
+            var queryParameters = new Dictionary<string, object>
+            {
+                { "betId", betId },
+                { "userId", userId }
+            };
 
             foreach(var folder in folders)
             {
-                if (!folderModel.UserHasFolder(userId, folder)
-                    || !folderModel.FolderHasBet(userId, folder, betId))
+                if (!_FolderRepository.UserHasFolder(userId, folder)
+                    || !_FolderRepository.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -313,7 +313,6 @@ namespace Betkeeper.Repositories
 
         private List<Bet> GetBetsFromFolder(int userId, string folder, bool? betFinished)
         {
-            // TODO: Verify after folders implementation
             var queryParameters = new Dictionary<string, object>();
 
             var query = "SELECT * " +

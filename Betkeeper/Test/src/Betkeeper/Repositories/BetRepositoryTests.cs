@@ -325,33 +325,107 @@ namespace Betkeeper.Test.Repositories
         }
 
         [Test]
-        public void DeleteFromFolders_ReturnsFoldersWhereBetIs()
+        public void DeleteFromFolders_ReturnsFoldersWhereBetWas()
         {
-            // TODO: FIX
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns(true);
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns((int userId, string folderName, int betId) =>
+                {
+                    if (folderName == "betNotInFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
             var deleteFromFolders = new List<string>
             {
-                "testFolder1",
-                "testFolder2"
+                "delete1",
+                "betNotInFolder",
+                "delete2"
             };
 
-            var deletedFrom = _BetRepository.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object)
+                    .DeleteBetFromFolders(1, 1, deleteFromFolders);
 
-            Assert.AreEqual(1, deletedFrom.Count);
-            Assert.AreEqual("testFolder1", deletedFrom[0]);
+            Assert.AreEqual(2, deletedFrom.Count);
+            Assert.AreEqual("delete1", deletedFrom[0]);
+            Assert.AreEqual("delete2", deletedFrom[1]);
         }
 
         [Test]
         public void DeleteFromFolder_DoesNotDeleteBetFromOtherUsersFolder()
         {
-            // TODO: FIX
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns((int userId, string folderName) =>
+                {
+                    if (folderName == "notUsersFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns(true);
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
             var deleteFromFolders = new List<string>
             {
-                "someTestFolder"
+                "delete1",
+                "notUsersFolder",
+                "delete2",
             };
 
-            var deletedFrom = _BetRepository.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object)
+                .DeleteBetFromFolders(1, 1, deleteFromFolders);
 
-            Assert.AreEqual(0, deletedFrom.Count);
+            Assert.AreEqual(2, deletedFrom.Count);
+            Assert.AreEqual("delete1", deletedFrom[0]);
+            Assert.AreEqual("delete2", deletedFrom[1]);
         }
 
         [Test]
@@ -427,33 +501,101 @@ namespace Betkeeper.Test.Repositories
         [Test]
         public void AddBetToFolders_AddsBetOnlyToUsersFolders()
         {
-            // TODO: FIX
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns((int userId, string folderName) =>
+                {
+                    if (folderName == "notUsersFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var betRepository = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object);
+
             var testFolders = new List<string>
             {
+                "testFolder1",
                 "testFolder2",
-                "someTestFolder"
+                "notUsersFolder"
             };
 
-            var addedToFolders = _BetRepository.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = betRepository.AddBetToFolders(1, 1, testFolders);
 
-            Assert.AreEqual(1, addedToFolders.Count);
-            Assert.AreEqual("testFolder2", addedToFolders[0]);
+            Assert.AreEqual(2, addedToFolders.Count);
+            Assert.AreEqual("testFolder1", addedToFolders[0]);
+            Assert.AreEqual("testFolder2", addedToFolders[1]);
         }
 
         [Test]
         public void AddBetToFolders_AddsBetOnlyToFoldersWhereItIsNot()
         {
-            // TODO: FIX
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns(true);
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns((int userId, string folderName, int betId) =>
+                {
+                    // Bet already in folder
+                    if (folderName == "alreadyContainsBet") 
+                    {
+                        return true;
+                    }
+
+                    return false;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var betRepository = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object);
+            
             var testFolders = new List<string>
             {
                 "testFolder1",
-                "testFolder2"
+                "testFolder2",
+                "alreadyContainsBet"
             };
 
-            var addedToFolders = _BetRepository.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = betRepository.AddBetToFolders(1, 1, testFolders);
 
-            Assert.AreEqual(1, addedToFolders.Count);
-            Assert.AreEqual("testFolder2", addedToFolders[0]);
+            Assert.AreEqual(2, addedToFolders.Count);
+            Assert.AreEqual("testFolder1", addedToFolders[0]);
+            Assert.AreEqual("testFolder2", addedToFolders[1]);
         }
 
         [Test]
