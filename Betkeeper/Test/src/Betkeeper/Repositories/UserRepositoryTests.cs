@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;

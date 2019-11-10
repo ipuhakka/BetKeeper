@@ -5,50 +5,12 @@ using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 using Moq;
-using TestTools;
 
 namespace Betkeeper.Test.Repositories
 {
     [TestFixture]
     public class FolderRepositoryTests
     {
-        FolderRepository _FolderRepository;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _FolderRepository = new FolderRepository();
-
-            Tools.CreateTestDatabase();
-
-            var setUpCommand =
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES ('testi', 'salasana', 1);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä2', 'salasana2', 2);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä3', 'salasana3', 3);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder1', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder2', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder3', 2);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder4', 1);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES (NULL, 2.64, 3, datetime('now', 'localTime'), 1, 0, 1);" +
-                "INSERT OR REPLACE INTO bets(name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES(NULL, 3.13, 3, datetime('now', 'localTime'), 2, 0, 2); " + 
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder1', 1, 1);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('someTestFolder', 2, 2);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder2', 1, 1);";
-
-            Tools.ExecuteNonQuery(setUpCommand);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Tools.DeleteTestDatabase();
-        }
-
         [Test]
         public void GetUsersFolders_betIdNull_FormsCorrectQuery()
         {

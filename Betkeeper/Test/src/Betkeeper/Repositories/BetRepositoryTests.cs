@@ -7,69 +7,11 @@ using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 using Moq;
-using TestTools;
 
 namespace Betkeeper.Test.Repositories
 {
     public class BetRepositoryTests
     {
-        BetRepository _BetRepository;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            _BetRepository = new BetRepository();
-            Tools.CreateTestDatabase();
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Tools.DeleteTestDatabase();
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            var setUpCommand =
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES ('testi', 'salasana', 1);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä2', 'salasana2', 2);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä3', 'salasana3', 3);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, 0, 1);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2, 4, datetime('now', 'localTime'), 1, 1, 3);" +
-                 "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 4, 5, datetime('now', 'localTime'), 1, 1, 4);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, -1, 5);" +
-                "INSERT OR REPLACE INTO bets(name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES(NULL, 3.13, 3, datetime('now', 'localTime'), 2, 0, 2); " +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder1', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder2', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('someTestFolder', 2);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder1', 1, 1);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('someTestFolder', 2, 2);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder2', 3, 2);";
-
-            Tools.ExecuteNonQuery(setUpCommand);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Tools.ClearTables(new List<string>
-            {
-                "bets",
-                "bet_in_bet_folder",
-                "bet_folders",
-                "users"
-            });
-        }
-
         [Test]
         public void GetBet_NoBetsFound_ReturnsNull()
         {
