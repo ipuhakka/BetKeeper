@@ -42,7 +42,7 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install
+    npm install --only=prod
     npm run build
   displayName: 'npm install and build'
   workingDirectory: 'client'
@@ -54,11 +54,13 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\WebApp.zip' 
     artifactName: 'drop' 
     publishLocation: 'Container'
+  displayName: "Publish api artifacts"
 
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: dist
-    pathtoPublish: 'dist'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
+  displayName: "Publish client artifacts"
