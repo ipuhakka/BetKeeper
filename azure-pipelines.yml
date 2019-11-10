@@ -60,5 +60,5 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    artifactName: build
-    pathtoPublish: 'build'
+    artifactName: dist
+    pathtoPublish: 'dist'
