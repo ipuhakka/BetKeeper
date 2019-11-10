@@ -7,6 +7,17 @@ namespace Betkeeper.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        public IDatabase _Database;
+
+        public UserRepository(IDatabase database)
+        {
+            _Database = database;
+        }
+
+        public UserRepository()
+        {
+            _Database = new SQLDatabase();
+        }
 
         /// <summary>
         /// Adds a new user.
@@ -28,7 +39,7 @@ namespace Betkeeper.Repositories
             var commandText = "INSERT INTO users(username, password) " +
                 "VALUES(@username, @password)";
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 commandText,
                 new Dictionary<string, object>
                 {
@@ -54,7 +65,7 @@ namespace Betkeeper.Repositories
             var queryText = "SELECT user_id FROM users " +
                     "WHERE username=@username";
 
-            return Database.ReadInt(
+            return _Database.ReadInt(
                 queryText,
                 new Dictionary<string, object>
                 {
@@ -70,11 +81,12 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public bool Authenticate(int userId, string password)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE user_id = @user_id AND password=@password))";
+            var query = "IF EXISTS (SELECT * FROM users " +
+                "WHERE user_id = @user_id AND password = @password)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return Database.ReadBoolean(
+            return new SQLDatabase().ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -85,11 +97,11 @@ namespace Betkeeper.Repositories
 
         public bool UsernameInUse(string username)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE username = @username))";
+            var query = "IF EXISTS (SELECT * FROM users WHERE username = @username)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return Database.ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -104,11 +116,11 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public bool UserIdExists(int userId)
         {
-            var query = "SELECT(EXISTS(SELECT 1 " +
-                "FROM users " +
-                "WHERE user_id = @userId))";
+            var query = "IF EXISTS (SELECT * FROM users WHERE user_id = @userId)" +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return Database.ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {

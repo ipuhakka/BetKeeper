@@ -6,8 +6,9 @@ using Api.Classes;
 using Api.Controllers;
 using NUnit.Framework;
 using Moq;
+using TestTools;
 
-namespace Test.Api.Controllers
+namespace Api.Test.Controllers
 {
 
     [TestFixture]

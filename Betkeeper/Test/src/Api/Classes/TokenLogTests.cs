@@ -3,11 +3,35 @@ using Api.Classes;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
 
-namespace Test.Api.Classes
+namespace Api.Test.Classes
 {
     [TestFixture]
     public class TokenLogTests
     {
+
+        [TearDown]
+        public void TearDown()
+        {
+            TokenLog.ClearTokenLog();
+        }
+
+        [Test]
+        public void GetExistingToken_UserHasToken_ReturnsToken()
+        {
+            var testToken = TokenLog.CreateToken(1);
+
+            Assert.AreEqual(testToken.TokenString, 
+                TokenLog.GetExistingToken(1).TokenString);
+            Assert.AreEqual(testToken.Owner, 1);
+        }
+
+        [Test]
+        public void GetExistingToken_UserDoesNotHaveToken_ReturnsNull()
+        {
+            TokenLog.CreateToken(1);
+
+            Assert.IsNull(TokenLog.GetExistingToken(2));
+        }
 
         [Test]
         public void GetTokenOwner_ReturnsTokenOwner()

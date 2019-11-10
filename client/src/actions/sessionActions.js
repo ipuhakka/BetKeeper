@@ -17,3 +17,19 @@ export const loginSuccess = () => ({
 export const logOut = () => ({
   type: 'LOGOUT'
 });
+
+/**
+ * Checks if current login information is still valid.
+ * 
+ * @param {*} userId 
+ * @param {*} tokenString 
+ */
+export const checkCurrentLoginCredentials = (userId, tokenString, redirectToOnSuccess, history) => ({
+  type: 'CHECK_LOGIN',
+  payload: {
+    userId: userId,
+    tokenString: tokenString,
+    redirectTo: redirectToOnSuccess,
+    history: history
+  }
+});

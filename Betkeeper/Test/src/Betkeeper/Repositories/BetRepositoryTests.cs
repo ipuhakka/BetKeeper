@@ -1,189 +1,389 @@
 ﻿using System;
 using System.Collections.Generic;
-using Betkeeper;
+using System.Data;
+using Betkeeper.Models;
+using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
+using Moq;
 
-namespace Test.Betkeeper.Repositories
+namespace Betkeeper.Test.Repositories
 {
     public class BetRepositoryTests
     {
-        BetRepository _BetRepository;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
+        [Test]
+        public void GetBet_NoBetsFound_ReturnsNull()
         {
-            _BetRepository = new BetRepository();
-            Tools.CreateTestDatabase();
-        }
+            var mock = new Mock<IDatabase>();
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            Tools.DeleteTestDatabase();
-        }
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
 
-        [SetUp]
-        public void Setup()
-        {
-            var setUpCommand =
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES ('testi', 'salasana', 1);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä2', 'salasana2', 2);" +
-                "INSERT OR REPLACE INTO users(username, password, user_id) " +
-                    "VALUES('käyttäjä3', 'salasana3', 3);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, 0, 1);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2, 4, datetime('now', 'localTime'), 1, 1, 3);" +
-                 "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 4, 5, datetime('now', 'localTime'), 1, 1, 4);" +
-                "INSERT OR REPLACE INTO bets (name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES ('testiveto', 2.64, 3, datetime('now', 'localTime'), 1, -1, 5);" +
-                "INSERT OR REPLACE INTO bets(name, odd, bet, date_time, owner, bet_won, bet_id) " +
-                    "VALUES(NULL, 3.13, 3, datetime('now', 'localTime'), 2, 0, 2); " +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder1', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('testFolder2', 1);" +
-                "INSERT OR REPLACE INTO bet_folders VALUES('someTestFolder', 2);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder1', 1, 1);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('someTestFolder', 2, 2);" +
-                "INSERT OR REPLACE INTO bet_in_bet_folder VALUES('testFolder2', 3, 2);";
+            var betRepository = new BetRepository(database: mock.Object);
 
-            Tools.ExecuteNonQuery(setUpCommand);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Tools.ClearTables(new List<string>
-            {
-                "bets",
-                "bet_in_bet_folder",
-                "bet_folders",
-                "users"
-            });
+            Assert.IsNull(betRepository.GetBet(1, 1));
         }
 
         [Test]
-        public void GetBet_BetIdOfAnotherOwner_ReturnsNull()
+        public void GetBet_ReturnsFirstBetInDataTable()
         {
-            Assert.IsNull(_BetRepository.GetBet(2, 1));
+            var mock = new Mock<IDatabase>();
+
+            var mockDataTable = MockDataTable(
+                new List<Bet>
+                {
+                    new Bet(true, "testi", 2, 2, new DateTime(), 1),
+                    new Bet(false, "testi2", 3, 3, new DateTime(), 1)
+                });
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(mockDataTable);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            var resultBet = betRepository.GetBet(1, 1);
+
+            Assert.AreEqual("testi", resultBet.Name);
+            Assert.AreEqual(Enums.BetResult.Won, resultBet.BetResult);
         }
 
         [Test]
-        public void GetBet_OwnerHasBet_ReturnsCorrectData()
+        public void GetBets_FolderNull_SelectAllBetsQueryCalled()
         {
-            var bet = _BetRepository.GetBet(1, 1);
+            var mock = new Mock<IDatabase>();
 
-            Assert.AreEqual("testiveto", bet.Name);
-            Assert.AreEqual(2.64, bet.Odd);
-            Assert.AreEqual(3, bet.Stake);
-            Assert.AreEqual(1, bet.BetId);
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: null, 
+                folder: null);
+
+            mock.Verify(database => 
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => query.Contains("SELECT * FROM bets")),
+                    It.IsAny<Dictionary<string, object>>()), 
+                Times.Once);
         }
 
         [Test]
-        public void GetBets_UserIdGiven_ReturnsUsersBets()
+        public void GetBets_BetFinishedQueryValid()
         {
-            Assert.AreEqual(4, _BetRepository.GetBets(userId: 1).Count);
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: true,
+                folder: null);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: false,
+                folder: null);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: null,
+                folder: null);
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => query.Contains("bet_won != @betFinished")),
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once);
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => query.Contains("bet_won = @betFinished")),
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once);
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => !query.Contains("bet_won")),
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once);
+        }
+
+        /// <summary>
+        /// Tests that user id is used correctly.
+        /// GetBetsFromFolder is not called if userId is null.
+        /// </summary>
+        [Test]
+        public void GetBets_UserIdQueryValid()
+        {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: null,
+                folder: null);
+
+            betRepository.GetBets(
+                userId: null,
+                betFinished: null,
+                folder: null);
+
+            betRepository.GetBets(
+                userId: null,
+                betFinished: null,
+                folder: "not null");
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: null,
+                folder: "not null");
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => query.Contains("owner = @userId")),
+                    It.Is<Dictionary<string, object>>(
+                        dictionary => dictionary.ContainsKey("userId")
+                            && (int)dictionary["userId"] == 1)),
+                Times.Exactly(2),
+                "With user id called incorrect amount");
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => !query.Contains("owner = @userId")),
+                    It.Is<Dictionary<string, object>>(
+                        dictionary => !dictionary.ContainsKey("userId"))),
+                Times.Exactly(2),
+                "Without user id called incorrect amount");
         }
 
         [Test]
-        public void GetBets_NoParameters_ReturnsAllBets()
+        public void GetBets_FolderNotNull_GetBetsFromFoldersQueryCalled()
         {
-            Assert.AreEqual(5, _BetRepository.GetBets().Count);
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.GetBets(
+                userId: 1,
+                betFinished: null,
+                folder: "folder");
+
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(
+                        query => query.Contains("SELECT * FROM bet_in_bet_folder")),
+                    It.IsAny<Dictionary<string, object>>()),
+                Times.Once);
         }
 
         [Test]
-        public void GetBets_WhereBetFinishedAndUserId_ReturnsUsersFinishedBets()
+        public void DeleteBet_BetNotFound_ThrowsNotFoundException()
         {
-            Assert.AreEqual(3, _BetRepository.GetBets(userId: 1, betFinished: true).Count);
-        }
+            var mock = new Mock<IDatabase>();
 
-        [Test]
-        public void GetBets_WhereBetFinished_ReturnsAllFinishedBets()
-        {
-            Assert.AreEqual(4, _BetRepository.GetBets(betFinished: true).Count);
-        }
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
 
-        [Test]
-        public void GetBets_WhereBetUnfinished_ReturnsAllUnfinishedBets()
-        {
-            Assert.AreEqual(1, _BetRepository.GetBets(betFinished: false).Count);
-        }
-
-        [Test]
-        public void GetBets_WhereFolder_ReturnsOnlyFoldersBets()
-        {
-            var bets = _BetRepository.GetBets(1, null, "testFolder1");
-
-            Assert.AreEqual(1, bets.Count);
-        }
-
-        [Test]
-        public void GetBets_WhereFolderAndFinishedTrue_ReturnsFoldersFinishedBets()
-        {
-            var bets = _BetRepository.GetBets(1, true, "testFolder1");
-
-            Assert.AreEqual(1, bets.Count);
-        }
-
-        [Test]
-        public void GetBets_WhereFolderAndFinishedFalse_ReturnsFoldersUnfinishedBets()
-        {
-            var bets = _BetRepository.GetBets(1, false, "testFolder1");
-
-            Assert.AreEqual(0, bets.Count);
-        }
-
-        [Test]
-        public void DeleteBet_BetNotUsers_ThrowsNotFoundException()
-        {
             Assert.Throws<NotFoundException>(() =>
-                _BetRepository.DeleteBet(2, 1));
+                new BetRepository(database: mock.Object).DeleteBet(2, 1));
         }
 
         [Test]
-        public void DeleteBet_UsersBet_Returns1BetDeleted()
+        public void DeleteBet_BetFound_DeleteQueryCalled()
         {
-            Assert.AreEqual(1, _BetRepository.DeleteBet(1, 1));
-            Assert.IsNull(_BetRepository.GetBet(1, 1));
+            var mock = new Mock<IDatabase>();
+
+            var mockDataTable = MockDataTable(
+                new List<Bet>
+                {
+                    new Bet(true, "testi", 2, 2, new DateTime(), 1)
+                });
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(mockDataTable);
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    It.IsAny<bool>()))
+                .Returns(1);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.DeleteBet(1, 2);
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    "DELETE FROM bets WHERE bet_id = @betId",
+                    new Dictionary<string, object>{
+                        {"betId", 1}
+                    },
+                    false),
+                    Times.Once);
         }
 
         [Test]
-        public void DeleteFromFolders_ReturnsFoldersWhereBetIs()
+        public void DeleteFromFolders_ReturnsFoldersWhereBetWas()
         {
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns(true);
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns((int userId, string folderName, int betId) =>
+                {
+                    if (folderName == "betNotInFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
             var deleteFromFolders = new List<string>
             {
-                "testFolder1",
-                "testFolder2"
+                "delete1",
+                "betNotInFolder",
+                "delete2"
             };
 
-            var deletedFrom = _BetRepository.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object)
+                    .DeleteBetFromFolders(1, 1, deleteFromFolders);
 
-            Assert.AreEqual(1, deletedFrom.Count);
-            Assert.AreEqual("testFolder1", deletedFrom[0]);
+            Assert.AreEqual(2, deletedFrom.Count);
+            Assert.AreEqual("delete1", deletedFrom[0]);
+            Assert.AreEqual("delete2", deletedFrom[1]);
         }
 
         [Test]
         public void DeleteFromFolder_DoesNotDeleteBetFromOtherUsersFolder()
         {
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns((int userId, string folderName) =>
+                {
+                    if (folderName == "notUsersFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns(true);
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
             var deleteFromFolders = new List<string>
             {
-                "someTestFolder"
+                "delete1",
+                "notUsersFolder",
+                "delete2",
             };
 
-            var deletedFrom = _BetRepository.DeleteBetFromFolders(1, 1, deleteFromFolders);
+            var deletedFrom = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object)
+                .DeleteBetFromFolders(1, 1, deleteFromFolders);
 
-            Assert.AreEqual(0, deletedFrom.Count);
+            Assert.AreEqual(2, deletedFrom.Count);
+            Assert.AreEqual("delete1", deletedFrom[0]);
+            Assert.AreEqual("delete2", deletedFrom[1]);
         }
 
         [Test]
         public void CreateBet_UserDoesNotExist_ThrowsNotFoundException()
         {
+            var mock = new Mock<IUserRepository>();
+
+            mock.Setup(userRepo =>
+                userRepo.UserIdExists(
+                    1))
+                .Returns(false);
+
+            var betRepository = new BetRepository(mock.Object);
+
             Assert.Throws<NotFoundException>(() =>
-             _BetRepository.CreateBet(
+             betRepository.CreateBet(
                 betResult: Enums.BetResult.Unresolved,
                 name: "testName",
                 odd: 2.5,
@@ -195,117 +395,264 @@ namespace Test.Betkeeper.Repositories
         [Test]
         public void CreateBet_OnSuccess_BetAddedReturnsLastInsertedId()
         {
-            Assert.AreEqual(6, _BetRepository.CreateBet(
-                betResult: Enums.BetResult.Won,
-                name: "testName",
-                odd: 2.5,
-                stake: 2.2,
-                playedDate: new DateTime(2019, 1, 1, 14, 25, 12),
-                userId: 1));
+            var userRepoMock = new Mock<IUserRepository>();
 
-            var addedBet = _BetRepository.GetBet(6, 1);
+            userRepoMock.Setup(userRepo =>
+                userRepo.UserIdExists(
+                    3))
+                .Returns(true);
 
-            Assert.AreEqual(Enums.BetResult.Won, addedBet.BetResult);
-            Assert.AreEqual(new DateTime(2019, 1, 1, 14, 25, 12), addedBet.PlayedDate);
-            Assert.AreEqual(2.5, addedBet.Odd);
-            Assert.AreEqual(2.2, addedBet.Stake);
-            Assert.AreEqual("testName", addedBet.Name);
-            Assert.AreEqual(1, addedBet.Owner);
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(It.IsAny<string>(),
+                It.IsAny<Dictionary<string, object>>(),
+                It.IsAny<bool>()))
+                .Returns(1);
+
+            var betRepository = new BetRepository(
+                userRepoMock.Object, 
+                databaseMock.Object);
+
+            betRepository.CreateBet(
+                Enums.BetResult.Unresolved,
+                "testi",
+                2.8,
+                2.4,
+                new DateTime(2019, 1, 1),
+                3);
+
+            databaseMock.Verify(database =>
+                database.ExecuteCommand(
+                    "INSERT INTO bets " +
+                "(bet_won, name, odd, bet, date_time, owner) " +
+                "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);",
+                new Dictionary<string, object>
+                {
+                    {"betResult", (int)Enums.BetResult.Unresolved },
+                    {"name", "testi" },
+                    {"odd", 2.8 },
+                    {"bet", 2.4 },
+                    {"dateTime", new DateTime(2019, 1, 1) },
+                    {"owner", 3 }
+                },
+                true),
+                Times.Once);
         }
 
         [Test]
         public void AddBetToFolders_AddsBetOnlyToUsersFolders()
         {
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns((int userId, string folderName) =>
+                {
+                    if (folderName == "notUsersFolder")
+                    {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var betRepository = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object);
+
             var testFolders = new List<string>
             {
+                "testFolder1",
                 "testFolder2",
-                "someTestFolder"
+                "notUsersFolder"
             };
 
-            var addedToFolders = _BetRepository.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = betRepository.AddBetToFolders(1, 1, testFolders);
 
-            Assert.AreEqual(1, addedToFolders.Count);
-            Assert.AreEqual("testFolder2", addedToFolders[0]);
+            Assert.AreEqual(2, addedToFolders.Count);
+            Assert.AreEqual("testFolder1", addedToFolders[0]);
+            Assert.AreEqual("testFolder2", addedToFolders[1]);
         }
 
         [Test]
         public void AddBetToFolders_AddsBetOnlyToFoldersWhereItIsNot()
         {
+            var folderMock = new Mock<IFolderRepository>();
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.UserHasFolder(
+                    1,
+                    It.IsAny<string>()))
+                .Returns(true);
+
+            folderMock.Setup(folderRepo =>
+                folderRepo.FolderHasBet(
+                    1,
+                    It.IsAny<string>(),
+                    It.IsAny<int>()))
+                .Returns((int userId, string folderName, int betId) =>
+                {
+                    // Bet already in folder
+                    if (folderName == "alreadyContainsBet") 
+                    {
+                        return true;
+                    }
+
+                    return false;
+                });
+
+            var databaseMock = new Mock<IDatabase>();
+
+            databaseMock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var betRepository = new BetRepository(
+                database: databaseMock.Object,
+                folderRepository: folderMock.Object);
+            
             var testFolders = new List<string>
             {
                 "testFolder1",
-                "testFolder2"
+                "testFolder2",
+                "alreadyContainsBet"
             };
 
-            var addedToFolders = _BetRepository.AddBetToFolders(1, 1, testFolders);
+            var addedToFolders = betRepository.AddBetToFolders(1, 1, testFolders);
 
-            Assert.AreEqual(1, addedToFolders.Count);
-            Assert.AreEqual("testFolder2", addedToFolders[0]);
+            Assert.AreEqual(2, addedToFolders.Count);
+            Assert.AreEqual("testFolder1", addedToFolders[0]);
+            Assert.AreEqual("testFolder2", addedToFolders[1]);
         }
 
         [Test]
         public void ModifyBet_UserDoesNotHaveBet_ThrowsNotFoundException()
         {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(new DataTable());
+
             Assert.Throws<NotFoundException>(() =>
-                _BetRepository.ModifyBet(2, 1, Enums.BetResult.Won));
+                new BetRepository(database: mock.Object)
+                .ModifyBet(2, 1, Enums.BetResult.Won));
         }
 
         [Test]
-        public void ModifyBet_ModifiesInputtedParameters()
+        public void ModifyBet_QueryDoesNotIncludeNullParameters()
         {
-            _BetRepository.ModifyBet(
-                betId: 1,
-                userId: 1,
-                betResult: Enums.BetResult.Won,
-                stake: 5.2,
-                odd: 1.2,
-                name: "modifyTest");
+            var mock = new Mock<IDatabase>();
 
-            var modifiedBet = _BetRepository.GetBet(1, 1);
+            var mockDataTable = MockDataTable(
+                new List<Bet>
+                {
+                    new Bet(true, "testi", 2, 2, new DateTime(), 1)
+                });
 
-            Assert.AreEqual(modifiedBet.Stake, 5.2);
-            Assert.AreEqual(modifiedBet.Odd, 1.2);
-            Assert.AreEqual(modifiedBet.BetResult, Enums.BetResult.Won);
-            Assert.AreEqual(modifiedBet.Name, "modifyTest");
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(mockDataTable);
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(1);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            betRepository.ModifyBet(
+                1, 
+                1, 
+                Enums.BetResult.Lost, 
+                stake: 2.1);
+
+            betRepository.ModifyBet(
+                1,
+                1,
+                Enums.BetResult.Lost,
+                odd: 2.1);
+
+            betRepository.ModifyBet(
+                1,
+                1,
+                Enums.BetResult.Lost,
+                name: "modified");
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.Is<Dictionary<string, object>>(parameters =>
+                        !parameters.ContainsKey("odd")),
+                    false),
+                    Times.Exactly(2));
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.Is<Dictionary<string, object>>(parameters =>
+                        !parameters.ContainsKey("stake")),
+                    false),
+                    Times.Exactly(2));
+
+            mock.Verify(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.Is<Dictionary<string, object>>(parameters =>
+                        !parameters.ContainsKey("name")),
+                    false),
+                    Times.Exactly(2));
         }
 
-        [Test]
-        public void ModifyBet_DoesNotModifyNullParameters()
+        private DataTable MockDataTable(List<Bet> bets)
         {
-            _BetRepository.ModifyBet(
-                betId: 1,
-                userId: 1,
-                betResult: Enums.BetResult.Lost);
+            var datatable = new DataTable();
 
-            var modifiedBet = _BetRepository.GetBet(1, 1);
+            datatable.Columns.Add(new DataColumn("bet_won"));
+            datatable.Columns.Add(new DataColumn("bet"));
+            datatable.Columns.Add(new DataColumn("odd"));
+            datatable.Columns.Add(new DataColumn("date_time"));
+            datatable.Columns.Add(new DataColumn("bet_id"));
+            datatable.Columns.Add(new DataColumn("owner"));
+            datatable.Columns.Add(new DataColumn("name"));
 
-            Assert.AreEqual(modifiedBet.Stake, 3);
-            Assert.AreEqual(modifiedBet.Odd, 2.64);
-            Assert.AreEqual(modifiedBet.BetResult, Enums.BetResult.Lost);
-            Assert.AreEqual(modifiedBet.Name, "testiveto");
-        }
-
-        [Test]
-        public void ModifyBet_betResultAlwaysModified()
-        {
-            var betResultDict = new Dictionary<int, Enums.BetResult>
+            foreach (var bet in bets)
             {
-                { 1, Enums.BetResult.Won},
-                { 0, Enums.BetResult.Lost},
-                { -1, Enums.BetResult.Unresolved}
-            };
-            
-            foreach(var betResult in betResultDict)
-            {
-                _BetRepository.ModifyBet(
-                    betId: 1,
-                    userId: 1,
-                    betResult: betResult.Value);
+                var row = datatable.NewRow();
 
-                var modifiedBet = _BetRepository.GetBet(1, 1);
+                row["bet_won"] = (int)bet.BetResult;
+                row["bet"] = bet.Stake;
+                row["odd"] = bet.Odd;
+                row["name"] = bet.Name;
+                row["date_time"] = bet.PlayedDate;
+                row["owner"] = bet.Owner;
+                row["bet_id"] = bet.BetId;
 
-                Assert.AreEqual(modifiedBet.BetResult, (Enums.BetResult)betResult.Key);
+                datatable.Rows.Add(row);
             }
+
+            return datatable;
         }
     }
 }

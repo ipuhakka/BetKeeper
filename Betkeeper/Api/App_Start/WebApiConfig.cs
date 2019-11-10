@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Web.Http;
 using Betkeeper;
 
@@ -12,8 +11,21 @@ namespace Api
     {
         public static void Register(HttpConfiguration config)
         {
-            // Set database connection 
+            // TODO: Turha kun kanta vaihtuu
             Settings.DatabasePath = ConfigurationManager.AppSettings["databasePath"];
+
+            // Set database connection
+            Settings.ConnectionString = ConfigurationManager
+                .ConnectionStrings["sql"]?.ConnectionString 
+                ?? File.ReadAllText(
+                    ConfigurationManager
+                    .AppSettings.Get("devSecretsPath"));
+
+            if (string.IsNullOrEmpty(Settings.ConnectionString))
+            {
+                throw new Betkeeper.Exceptions.ConfigurationException(
+                    "Connection string was not given");
+            }
 
             // Web API configuration and services
             config.EnableCors();

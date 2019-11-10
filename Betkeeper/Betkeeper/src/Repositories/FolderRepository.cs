@@ -8,6 +8,19 @@ namespace Betkeeper.Repositories
 {
     public class FolderRepository : IFolderRepository
     {
+        public IDatabase _Database { get; }
+
+
+        public FolderRepository()
+        {
+            _Database = new SQLDatabase();
+        }
+
+        public FolderRepository(IDatabase database)
+        {
+            _Database = database;
+        }
+
         /// <summary>
         /// Gets folders for specified user.
         /// </summary>
@@ -31,13 +44,13 @@ namespace Betkeeper.Repositories
             {
                 query = "SELECT DISTINCT folder " +
                     "FROM  bet_in_bet_folder bf " +
-                    "WHERE bf.owner = @owner AND bet_id = @bet_id; ";
+                    "WHERE bf.owner = @owner AND bet_id = @betId; ";
 
                 parameters.Add("owner", userId);
-                parameters.Add("bet_id", betId);
+                parameters.Add("betId", betId);
             }
 
-            var datatable = Database.ExecuteQuery(
+            var datatable = _Database.ExecuteQuery(
                 query,
                 parameters);
 
@@ -50,11 +63,13 @@ namespace Betkeeper.Repositories
 
         public bool UserHasFolder(int userId, string folderName)
         {
-            var query = "SELECT(EXISTS(" +
-                "SELECT 1 FROM bet_folders " +
-                "WHERE owner = @userId AND folder_name = @folderName))";
+            var query = "IF EXISTS (SELECT " +
+                "* FROM bet_folders " +
+                "WHERE owner = @userId AND folder_name = @folderName) " +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return Database.ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -65,12 +80,14 @@ namespace Betkeeper.Repositories
 
         public bool FolderHasBet(int userId, string folderName, int betId)
         {
-            var query = "SELECT(EXISTS(" +
-                "SELECT 1 FROM bet_in_bet_folder " +
+            var query = "IF EXISTS (SELECT " +
+                "* FROM bet_in_bet_folder " +
                 "WHERE owner = @userId AND folder = @folderName " +
-                    "AND bet_id=@betId))";
+                "AND bet_id = @betId) " +
+                "BEGIN SELECT 1 END " +
+                "ELSE BEGIN SELECT 0 END";
 
-            return Database.ReadBoolean(
+            return _Database.ReadBoolean(
                 query,
                 new Dictionary<string, object>
                 {
@@ -81,7 +98,7 @@ namespace Betkeeper.Repositories
         }
 
         /// <summary>
-        /// Adds a new folder to database.
+        /// Adds a new folder to new SQLiteDatabase().
         /// </summary>
         /// <param name="folderName"></param>
         /// <param name="userId"></param>
@@ -92,12 +109,15 @@ namespace Betkeeper.Repositories
             if (UserHasFolder(userId, folderName))
             {
                 throw new FolderExistsException(
-                    string.Format("{0} already has folder named {1}", userId, folderName));
+                    string.Format(
+                        "{0} already has folder named {1}", 
+                        userId, 
+                        folderName));
             }
 
             var query = "INSERT INTO bet_folders VALUES (@folder, @userId)";
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -122,7 +142,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bet_folders WHERE owner = @userId AND folder_name = @folderName";
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {

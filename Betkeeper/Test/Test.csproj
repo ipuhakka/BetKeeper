@@ -87,6 +87,7 @@
     <Compile Include="src\Api\Controllers\BetsControllerTests.cs" />
     <Compile Include="src\Api\Controllers\FoldersControllerTests.cs" />
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
+    <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DataRowExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DateTimeExtensionTests.cs" />
