@@ -49,7 +49,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)\WebApp.zip' 
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'drop' 
     publishLocation: 'Container'
   displayName: "Publish api artifacts"
@@ -57,5 +57,5 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: dist
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
   displayName: "Publish client artifacts"
