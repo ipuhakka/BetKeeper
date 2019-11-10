@@ -10,6 +10,28 @@ namespace Betkeeper.Repositories
 {
     public class BetRepository : IBetRepository
     {
+        IUserRepository _UserRepository { get; }
+        IFolderRepository _FolderRepository { get; }
+
+        public IDatabase _Database;
+
+        public BetRepository()
+        {
+            _UserRepository = new UserRepository();
+            _Database = new SQLDatabase();
+            _FolderRepository = new FolderRepository();
+        }
+
+        public BetRepository(
+            IUserRepository userRepository = null, 
+            IDatabase database = null,
+            IFolderRepository folderRepository = null)
+        {
+            _UserRepository = userRepository ?? new UserRepository();
+            _Database = database ?? new SQLDatabase();
+            _FolderRepository = folderRepository ?? new FolderRepository();
+        }
+
         /// <summary>
         /// Inserts a new bet to table bets.
         /// </summary>
@@ -28,7 +50,7 @@ namespace Betkeeper.Repositories
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!new UserRepository().UserIdExists((int)userId))
+            if (!_UserRepository.UserIdExists(userId))
             {
                 throw new NotFoundException("UserId not found");
             }
@@ -37,7 +59,7 @@ namespace Betkeeper.Repositories
                 "(bet_won, name, odd, bet, date_time, owner) " +
                 "VALUES (@betResult, @name, @odd, @bet, @dateTime, @owner);";
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -61,16 +83,16 @@ namespace Betkeeper.Repositories
         public List<string> AddBetToFolders(int betId, int userId, List<string> folders)
         {
             var addedToFoldersList = new List<string>();
-            var queryParameters = new Dictionary<string, object>();
-            queryParameters.Add("betId", betId);
-            queryParameters.Add("userId", userId);
-
-            var folderModel = new FolderRepository();
+            var queryParameters = new Dictionary<string, object>
+            {
+                { "betId", betId },
+                { "userId", userId }
+            };
 
             foreach(var folder in folders)
             {
-                if (!folderModel.UserHasFolder(userId, folder)
-                    || folderModel.FolderHasBet(userId, folder, betId))
+                if (!_FolderRepository.UserHasFolder(userId, folder)
+                    || _FolderRepository.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -78,7 +100,7 @@ namespace Betkeeper.Repositories
                 var query = "INSERT INTO bet_in_bet_folder VALUES (@folder, @userId, @betId)";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = Database.ExecuteCommand(
+                var modifiedRowCount = _Database.ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -107,7 +129,7 @@ namespace Betkeeper.Repositories
 
             var query = "DELETE FROM bets WHERE bet_id = @betId";
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 new Dictionary<string, object>
                 {
@@ -125,16 +147,17 @@ namespace Betkeeper.Repositories
         public List<string> DeleteBetFromFolders(int betId, int userId, List<string> folders)
         {
             var deletedFromFoldersList = new List<string>();
-            var queryParameters = new Dictionary<string, object>();
-            queryParameters.Add("betId", betId);
-            queryParameters.Add("userId", userId);
 
-            var folderModel = new FolderRepository();
+            var queryParameters = new Dictionary<string, object>
+            {
+                { "betId", betId },
+                { "userId", userId }
+            };
 
             foreach(var folder in folders)
             {
-                if (!folderModel.UserHasFolder(userId, folder)
-                    || !folderModel.FolderHasBet(userId, folder, betId))
+                if (!_FolderRepository.UserHasFolder(userId, folder)
+                    || !_FolderRepository.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -143,7 +166,7 @@ namespace Betkeeper.Repositories
                     "WHERE bet_id = @betId AND folder = @folder";
                 queryParameters["folder"] = folder;
 
-                var modifiedRowCount = Database.ExecuteCommand(
+                var modifiedRowCount = _Database.ExecuteCommand(
                     query,
                     queryParameters);
 
@@ -207,7 +230,7 @@ namespace Betkeeper.Repositories
             query += " WHERE bet_id = @betId";
             queryParameters.Add("betId", betId);
 
-            return Database.ExecuteCommand(
+            return _Database.ExecuteCommand(
                 query,
                 queryParameters);
         }
@@ -222,7 +245,7 @@ namespace Betkeeper.Repositories
         {
             var query = "SELECT * FROM bets WHERE bet_id = @betId AND owner = @userId";
 
-            var betDatatable = Database.ExecuteQuery(
+            var betDatatable = _Database.ExecuteQuery(
                 query,
                 new Dictionary<string, object>
                 {
@@ -238,7 +261,9 @@ namespace Betkeeper.Repositories
         }
 
         /// <summary>
-        /// Gets a list of bets matching parameters
+        /// Gets a list of bets matching parameters.
+        /// Bets are searched from folders only if 
+        /// user id is given.
         /// </summary>
         /// <param name="betFinished"></param>
         /// <param name="userId"></param>
@@ -257,9 +282,10 @@ namespace Betkeeper.Repositories
             var queryParameters = new Dictionary<string, object>();
             var whereConditions = new List<string>();
 
+            // TODO: ehtojen muodostamisesta oma funktio
             if (userId != null)
             {
-                whereConditions.Add("owner=@userId");
+                whereConditions.Add("owner = @userId");
 
                 queryParameters.Add("userId", userId);
             }
@@ -280,7 +306,7 @@ namespace Betkeeper.Repositories
             }
 
             return DatatableToBetList(
-                Database.ExecuteQuery(
+                _Database.ExecuteQuery(
                     query,
                     queryParameters));
         }
@@ -297,6 +323,7 @@ namespace Betkeeper.Repositories
             queryParameters.Add("userId", userId);
             queryParameters.Add("folder", folder);
 
+            // TODO: queryn muodostamisesta oma funktio
             if (betFinished != null)
             {
                 query += string.Format(" AND {0}", (bool)betFinished
@@ -307,7 +334,7 @@ namespace Betkeeper.Repositories
             }      
 
             return DatatableToBetList(
-                Database.ExecuteQuery(
+                _Database.ExecuteQuery(
                     query,
                     queryParameters));
     }

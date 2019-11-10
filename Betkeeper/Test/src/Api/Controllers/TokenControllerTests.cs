@@ -6,8 +6,9 @@ using Betkeeper.Classes;
 using Betkeeper.Repositories;
 using NUnit.Framework;
 using Moq;
+using TestTools;
 
-namespace Test.Api.Controllers
+namespace Api.Test.Controllers
 {
     [TestFixture]
     public class TokenControllerTests
