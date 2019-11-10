@@ -29,7 +29,6 @@ namespace Betkeeper.Repositories
         /// <returns></returns>
         public List<string> GetUsersFolders(int userId, int? betId = null)
         {
-            // TODO: testit
             var query = "";
             var parameters = new Dictionary<string, object>();
 
@@ -45,10 +44,10 @@ namespace Betkeeper.Repositories
             {
                 query = "SELECT DISTINCT folder " +
                     "FROM  bet_in_bet_folder bf " +
-                    "WHERE bf.owner = @owner AND bet_id = @bet_id; ";
+                    "WHERE bf.owner = @owner AND bet_id = @betId; ";
 
                 parameters.Add("owner", userId);
-                parameters.Add("bet_id", betId);
+                parameters.Add("betId", betId);
             }
 
             var datatable = _Database.ExecuteQuery(
@@ -81,7 +80,6 @@ namespace Betkeeper.Repositories
 
         public bool FolderHasBet(int userId, string folderName, int betId)
         {
-            // TODO: Testit
             var query = "IF EXISTS (SELECT " +
                 "* FROM bet_in_bet_folder " +
                 "WHERE owner = @userId AND folder = @folderName " +

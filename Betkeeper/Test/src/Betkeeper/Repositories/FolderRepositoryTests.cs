@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Data;
+using System.Collections.Generic;
 using Betkeeper.Data;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
@@ -49,56 +50,71 @@ namespace Betkeeper.Test.Repositories
         }
 
         [Test]
-        public void GetUsersFolders_ReturnsUsersFolders()
+        public void GetUsersFolders_betIdNull_FormsCorrectQuery()
         {
-            var expectedFolderList = new List<string>
-            {
-                "testFolder1",
-                "testFolder2",
-                "testFolder4"
-            };
+            var mock = new Mock<IDatabase>();
 
-            var folders = _FolderRepository.GetUsersFolders(userId: 1);
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(MockDataTable(new List<string>()));
 
-            Assert.AreEqual(3, folders.Count);
+            new FolderRepository(database: mock.Object)
+                .GetUsersFolders(userId: 1, betId: null);
 
-            folders.ForEach(folder =>
-            {
-                Assert.IsTrue(expectedFolderList.Contains(folder));
-            });
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(query =>
+                        query.Contains(
+                            "SELECT DISTINCT folder_name " +
+                            "FROM bet_folders ")),
+                    It.Is<Dictionary<string, object>>(
+                        dict => (int)dict["owner"] == 1
+                            && dict.Count == 1)),
+                    Times.Once);
         }
 
         [Test]
-        public void GetUsersFolders_WhereBet_ReturnsCorrectResults()
+        public void GetUsersFolders_betIdNotNull_FormsCorrectQuery()
         {
-            var expectedFolderList = new List<string>
-            {
-                "testFolder1",
-                "testFolder2"
-            };
+            var mock = new Mock<IDatabase>();
 
-            var folders = _FolderRepository.GetUsersFolders(userId: 1, betId: 1);
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(MockDataTable(new List<string>()));
 
-            Assert.AreEqual(2, folders.Count);
+            new FolderRepository(database: mock.Object)
+                .GetUsersFolders(userId: 1, betId: 2);
 
-            folders.ForEach(folder =>
-            {
-                Assert.IsTrue(expectedFolderList.Contains(folder));
-            });
-        }
-
-        [Test]
-        public void GetUsersFolders_WhereBet_BetDoesNotBelongToUser_ReturnsNone()
-        {
-            var folders = _FolderRepository.GetUsersFolders(userId: 1, betId: 2);
-
-            Assert.AreEqual(0, folders.Count);
+            mock.Verify(database =>
+                database.ExecuteQuery(
+                    It.Is<string>(query =>
+                        query.Contains(
+                            "SELECT DISTINCT folder " +
+                            "FROM  bet_in_bet_folder bf" )),
+                    It.Is<Dictionary<string, object>>(
+                        dict => (int)dict["owner"] == 1
+                            && (int)dict["betId"] == 2
+                            && dict.Count == 2)),
+                    Times.Once);
         }
 
         [Test]
         public void GetUsersFolders_NoFolders_ReturnsNone()
         {
-            Assert.AreEqual(0, _FolderRepository.GetUsersFolders(userId: 3).Count);
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(MockDataTable(new List<string>()));
+
+            Assert.AreEqual(0, new FolderRepository(database: mock.Object)
+                .GetUsersFolders(userId: 3).Count);
         }
 
         [Test]
@@ -126,15 +142,33 @@ namespace Betkeeper.Test.Repositories
         }
 
         [Test]
-        public void FolderHasBet_ReturnsTrue()
+        public void FolderHasBet_FormsValidQuery()
         {
-            Assert.IsTrue(_FolderRepository.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 1));
-        }
+            var mock = new Mock<IDatabase>();
 
-        [Test]
-        public void FolderHasBet_BetNotInFolder_ReturnsFalse()
-        {
-            Assert.IsFalse(_FolderRepository.FolderHasBet(userId: 1, folderName: "testFolder1", betId: 2));
+            mock.Setup(database =>
+                database.ReadBoolean(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(true);
+
+            var folderRepository = new FolderRepository(database: mock.Object);
+
+            folderRepository.FolderHasBet(1, "testFolder", 2);
+
+            mock.Verify(database =>
+                database.ReadBoolean(
+                    "IF EXISTS (SELECT " +
+                    "* FROM bet_in_bet_folder " +
+                    "WHERE owner = @userId AND folder = @folderName " +
+                    "AND bet_id = @betId) " +
+                    "BEGIN SELECT 1 END " +
+                    "ELSE BEGIN SELECT 0 END",
+                    It.Is<Dictionary<string, object>>(dict =>
+                        (int)dict["userId"] == 1
+                        && dict["folderName"].ToString() == "testFolder"
+                        && (int)dict["betId"] == 2)),
+                    Times.Once);
         }
 
         [Test]
@@ -234,6 +268,24 @@ namespace Betkeeper.Test.Repositories
                         && dict["folderName"].ToString() == "folderToDelete"),
                     false), 
                 Times.Once);
+        }
+
+        private DataTable MockDataTable(List<string> folders)
+        {
+            var datatable = new DataTable();
+
+            datatable.Columns.Add(new DataColumn("folder_name"));
+
+            foreach (var folder in folders)
+            {
+                var row = datatable.NewRow();
+
+                row["folder_name"] = folder;
+
+                datatable.Rows.Add(row);
+            }
+
+            return datatable;
         }
     }
 }
