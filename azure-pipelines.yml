@@ -63,5 +63,5 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: build
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build' 
+    pathtoPublish: 'build' 
   displayName: 'Publish client artifacts'
