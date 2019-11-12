@@ -30,11 +30,7 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-  displayName: ".NET test"
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+  displayName: '.NET test'
 
 - task: NodeTool@0
   inputs:
