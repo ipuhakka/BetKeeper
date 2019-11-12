@@ -9,37 +9,22 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-
 steps:
-- task: NuGetToolInstaller@1
-  displayName: "Install NuGetToolInstaller"
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-  displayName: "NuGetCommand"
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\drop\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: ".NET build"
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: ".NET test"
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'client'
+  displayName: 'npm install'
+
 - script: |
-    npm install
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'npm build'
   workingDirectory: 'client'
 
 - script: |
