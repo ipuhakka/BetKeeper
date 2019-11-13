@@ -58,7 +58,7 @@ steps:
     rootFolderOrFile: 'client\build'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/build/client.zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
     replaceExistingArchive: true
   displayName: 'Archive js'
 
