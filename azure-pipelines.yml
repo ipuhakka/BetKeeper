@@ -53,6 +53,15 @@ steps:
   displayName: 'Test javascript'
   workingDirectory: 'client'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: |
+      **\*.js
+      package.json
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  displayName: "Copy js files"
+
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
@@ -63,5 +72,5 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: build
-    pathtoPublish: 'build' 
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
   displayName: 'Publish client artifacts'
