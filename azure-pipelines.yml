@@ -55,7 +55,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(System.DefaultWorkingDirectory)\build'
+    SourceFolder: 'build'
     Contents: |
       **\*.js
       package.json
