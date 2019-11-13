@@ -55,7 +55,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'build'
+    SourceFolder: 'client\build'
     Contents: |
       **\*.js
       package.json
