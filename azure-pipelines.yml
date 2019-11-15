@@ -53,17 +53,9 @@ steps:
   displayName: 'npm build'
   workingDirectory: 'client'
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'client'
-    Contents: |
-      build\*.js
-      package.json
-    TargetFolder: '$(Build.ArtifactStagingDirectory)\build'
-
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)\build'
+    rootFolderOrFile: 'client\build'
     includeRootFolder: true
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
