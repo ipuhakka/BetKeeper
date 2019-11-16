@@ -1,15 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import store from '../../store';
 import Header from '../../components/Header/Header.jsx';
 import Info from '../../components/Info/Info.jsx';
 import Login from '../../components/Login/Login.jsx';
 import SignUp from '../../components/SignUp/SignUp.jsx';
+import { checkCurrentLoginCredentials } from '../../actions/sessionActions';
 import './loginView.css';
 
 class LoginView extends Component 
 {
+  componentDidMount()
+  {
+    const loggedUserId = window.sessionStorage.getItem('loggedUserId');
+    const tokenString = window.sessionStorage.getItem('token');
+
+    if (!_.isNil(loggedUserId) 
+      && !_.isNil(tokenString))
+      {
+        store.dispatch(checkCurrentLoginCredentials(
+          loggedUserId, 
+          tokenString, 
+          '/home', 
+          this.props.history));
+      }
+  }
 
   render() 
   {

@@ -1,0 +1,76 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+
+- task: NuGetToolInstaller@1
+  displayName: "Install NuGetToolInstaller"
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+  displayName: "NuGetCommand"
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\drop\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+  displayName: ".NET build"
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+  displayName: '.NET test'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'client'
+  displayName: 'npm install'
+
+- script: |
+    npm test
+  displayName: 'Test javascript'
+  workingDirectory: 'client'
+
+- script: |
+    npm run build
+  displayName: 'npm build'
+  workingDirectory: 'client'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'client\build'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
+    replaceExistingArchive: true
+  displayName: 'Archive js'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
+    artifactName: 'drop' 
+    publishLocation: 'Container'
+  displayName: "Publish api artifacts"
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    artifactName: build
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
+  displayName: 'Publish client artifacts'

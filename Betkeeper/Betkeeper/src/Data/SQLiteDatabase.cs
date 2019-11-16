@@ -5,7 +5,7 @@ using System.Data.SQLite;
 
 namespace Betkeeper.Data
 {
-    public static class Database
+    public class SQLiteDatabase : IDatabase
     {
 
         /// <summary>
@@ -14,11 +14,12 @@ namespace Betkeeper.Data
         /// <param name="parameters"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static DataTable ExecuteQuery(
-            string query, 
+        public DataTable ExecuteQuery(
+            string query,
             Dictionary<string, object> parameters = null)
         {
-            using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
+            using (var connection = new SQLiteConnection(
+                Settings.GetSQLiteConnectionString()))
             {
                 connection.Open();
 
@@ -48,11 +49,12 @@ namespace Betkeeper.Data
         /// <param name="query"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public static bool ReadBoolean(
+        public bool ReadBoolean(
             string query,
             Dictionary<string, object> parameters)
         {
-            using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
+            using (var connection = new SQLiteConnection(
+                Settings.GetSQLiteConnectionString()))
             {
                 connection.Open();
 
@@ -78,11 +80,12 @@ namespace Betkeeper.Data
             }
         }
 
-        public static int ReadInt(
-            string query,
-            Dictionary<string, object> parameters)
+        public int ReadInt(
+           string query,
+           Dictionary<string, object> parameters)
         {
-            using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
+            using (var connection = new SQLiteConnection(
+                Settings.GetSQLiteConnectionString()))
             {
                 connection.Open();
 
@@ -112,12 +115,13 @@ namespace Betkeeper.Data
         /// Executes a command.
         /// </summary>
         /// <returns></returns>
-        public static int ExecuteCommand(
+        public int ExecuteCommand(
             string query,
             Dictionary<string, object> parameters,
             bool returnLastInsertedRowId = false)
         {
-            using (var connection = new SQLiteConnection(Settings.GetConnectionString()))
+            using (var connection = new SQLiteConnection(
+                Settings.GetSQLiteConnectionString()))
             {
                 connection.Open();
 
@@ -142,7 +146,7 @@ namespace Betkeeper.Data
                     }
 
                     return affectedRows;
-                }             
+                }
             }
         }
     }

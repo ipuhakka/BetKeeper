@@ -6,11 +6,11 @@ using Api.Classes;
 using Betkeeper;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
-using Betkeeper.Models;
 using NUnit.Framework;
 using Moq;
+using TestTools;
 
-namespace Test.Api.Controllers
+namespace Api.Test.Controllers
 {
     [TestFixture]
     public class BetsControllerTests
