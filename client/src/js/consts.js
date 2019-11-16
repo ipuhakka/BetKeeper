@@ -1,5 +1,7 @@
 const ConstVars = {
-	URI: "https://localhost:44324/api/",
+	URI: process.env.NODE_ENV === 'development'
+		? "https://localhost:44324/api/"
+		: "http://betkeeper-api.azurewebsites.net/api/",
 	DATETIME_FORMAT: 'yyyy-MM-dd HH:mm:ss'
 }
 
