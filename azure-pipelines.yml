@@ -1,8 +1,3 @@
-# Node.js with React
-# Build a Node.js project that uses React.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
 - master
 
@@ -14,8 +9,8 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-
 steps:
+
 - task: NuGetToolInstaller@1
   displayName: "Install NuGetToolInstaller"
 
@@ -26,7 +21,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\drop\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
   displayName: ".NET build"
@@ -35,25 +30,48 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-  displayName: ".NET test"
+  displayName: '.NET test'
+
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-  workingDirectory: 'client'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'client'
+  displayName: 'npm install'
 
 - script: |
     npm test
   displayName: 'Test javascript'
   workingDirectory: 'client'
 
+- script: |
+    npm run build
+  displayName: 'npm build'
+  workingDirectory: 'client'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'client\build'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
+    replaceExistingArchive: true
+  displayName: 'Archive js'
+
+
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
     artifactName: 'drop' 
     publishLocation: 'Container'
+  displayName: "Publish api artifacts"
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    artifactName: build
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
+  displayName: 'Publish client artifacts'
