@@ -53,16 +53,10 @@ steps:
   displayName: 'npm build'
   workingDirectory: 'client'
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'client'
-    Contents: 'web.config'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/build'
-
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: 'client\build'
-    includeRootFolder: true
+    includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
     replaceExistingArchive: true
