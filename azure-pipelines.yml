@@ -53,6 +53,12 @@ steps:
   displayName: 'npm build'
   workingDirectory: 'client'
 
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'client'
+    Contents: 'web.config'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/build'
+
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: 'client\build'
@@ -61,7 +67,6 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
     replaceExistingArchive: true
   displayName: 'Archive js'
-
 
 - task: PublishBuildArtifacts@1
   inputs:
