@@ -56,12 +56,11 @@ steps:
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: 'client\build'
-    includeRootFolder: true
+    includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/build/webapp.zip'
     replaceExistingArchive: true
   displayName: 'Archive js'
-
 
 - task: PublishBuildArtifacts@1
   inputs:
