@@ -71,7 +71,7 @@ class Filter extends Component{
             endDate={state.upperLimit}
             onChange={(date) => this.setDateTime(date, 'lowerLimit')}
             onChangeRaw={(input) => this.setDateTime(input, 'lowerLimit')}
-            dateFormat={consts.DATETIME_FORMAT}/>
+            dateFormat={consts.DATEPICKER_FORMAT}/>
 
           <DatePicker
             className='datetime-input'
@@ -84,7 +84,7 @@ class Filter extends Component{
             endDate={state.upperLimit}
             onChange={(date) => this.setDateTime(date, 'upperLimit')}       
             onChangeRaw={(input) => this.setDateTime(input, 'upperLimit')}
-            dateFormat={consts.DATETIME_FORMAT}/>
+            dateFormat={consts.DATEPICKER_FORMAT}/>
           </div>
       </div>;
   }
@@ -177,7 +177,7 @@ class Filter extends Component{
       return;
     }
 
-    const newDateAsMoment = moment(newDate, consts.DATETIME_FORMAT);
+    const newDateAsMoment = moment(newDate, consts.DATEPICKER_FORMAT);
 
     if (newDateAsMoment.isValid())
     {

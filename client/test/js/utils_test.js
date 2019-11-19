@@ -1,7 +1,21 @@
+import moment from 'moment';
+import {isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime} from '../../src/js/utils';
+
 var chai = require('chai');
 var expect = chai.expect;
 
-import {isValidDouble, isValidString, deepCopy, shallowEquals} from '../../src/js/utils';
+describe('formatDateTime', function()
+{
+  it('Formats datetime as utc to local time', function(done)
+  {
+    const moment = moment();
+    const localMoment = moment(formatDateTime(utcMoment)).local();
+
+    expect(localMoment.isSame(utcMoment, 'seconds'));
+
+    done();
+  })
+});
 
 describe('shallowEquals', function(){
 

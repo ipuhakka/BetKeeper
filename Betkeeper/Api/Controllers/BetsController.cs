@@ -66,8 +66,7 @@ namespace Api.Controllers
                 bet = new Bet(
                     content,
                     (int)userId,
-                    DateTime.Now
-                    );
+                    DateTime.UtcNow);
             }
             catch (ParsingException)
             {

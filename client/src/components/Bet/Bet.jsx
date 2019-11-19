@@ -9,6 +9,7 @@ import Search from '../Search/Search.jsx';
 import Tag from '../Tag/Tag.jsx';
 import enums from '../../js/enums';
 import './Bet.css';
+import { formatDateTime } from '../../js/utils';
 
 class Bet extends Component{
   constructor(props)
@@ -58,7 +59,7 @@ class Bet extends Component{
           </div>         
         </div>
         <h2>{bet.name}</h2>
-        <h2>{bet.playedDate}</h2>
+        <h2>{formatDateTime(bet.playedDate)}</h2>
 
         <Form>
           <FormGroup>

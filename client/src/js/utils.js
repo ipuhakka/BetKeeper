@@ -1,4 +1,14 @@
+import consts from './consts';
+import moment from 'moment';
 
+/**
+ * Formats a utc datetime to local time string.
+ * @param {*} momentValue 
+ */
+export function formatDateTime(momentValue)
+{
+  return moment.utc(momentValue).local().format(consts.DATETIME_FORMAT);
+}
 /*
   Shallow equality comparison.
 */

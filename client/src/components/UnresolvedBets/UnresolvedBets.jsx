@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
 import enums from '../../js/enums'; 
+import { formatDateTime } from '../../js/utils';
 
 class UnresolvedBets extends Component{
   constructor(props)
@@ -65,7 +66,7 @@ class UnresolvedBets extends Component{
       items.push(<ListGroupItem action key={i}
         onClick={this.handleListClick.bind(this, i)} 
         variant={this.state.selectedBet === i ? 'info' : null}>
-            <div>{bets[i].name + " " + bets[i].playedDate}</div>
+            <div>{bets[i].name + " " + formatDateTime(bets[i].playedDate)}</div>
             <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].stake}</div>
             </ListGroupItem>)
     }
