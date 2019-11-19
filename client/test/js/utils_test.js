@@ -8,7 +8,7 @@ describe('formatDateTime', function()
 {
   it('Formats datetime as utc to local time', function(done)
   {
-    const moment = moment();
+    const utcMoment = moment();
     const localMoment = moment(formatDateTime(utcMoment)).local();
 
     expect(localMoment.isSame(utcMoment, 'seconds'));
