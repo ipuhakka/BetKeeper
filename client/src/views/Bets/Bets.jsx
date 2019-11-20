@@ -14,7 +14,6 @@ import Menu from '../../components/Menu/Menu';
 import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets';
 import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv';
 import './Bets.css';
-import { formatDateTime } from '../../js/utils';
 
 class Bets extends Component
 {
@@ -139,7 +138,7 @@ class Bets extends Component
         onClick={this.handleBetListClick.bind(this, i)} 
         variant={isSelected ?  'info': null}
         key={i}>     
-        <div>{`${bets[i].name} ${formatDateTime(bets[i].playedDate)} ${result}`}</div>
+        <div>{`${bets[i].name} ${bets[i].playedDate} ${result}`}</div>
         <div className='small-betInfo'>{`Odd: ${bets[i].odd} Bet:  ${bets[i].stake}`}</div>
         </ListGroup.Item>);
 		}

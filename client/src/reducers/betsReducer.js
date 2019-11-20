@@ -1,4 +1,19 @@
+import _ from 'lodash';
 import * as betsActions from '../actions/betsActions';
+import { formatDateTime } from '../js/utils';
+
+/**
+ * Processes played date values. Converts utc date to local time.
+ * @param {*} bets 
+ */
+function processBets(bets)
+{
+  return _.forEach(bets, bet => {
+    bet.playedDate = formatDateTime(bet.playedDate);
+
+    return bet;
+  });
+}
 
 const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]}, betsFromAllFolders:[], finishedBets: [], unresolvedBets: []}, action ) => {
   switch (action.type) {
@@ -9,7 +24,7 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
     case betsActions.FETCH_BETS_SUCCESS:
       return {
         ...state,
-        allBets: action.bets
+        allBets: processBets(action.bets)
       };
     case betsActions.FETCH_BETS_FROM_FOLDER:
       return {
@@ -18,7 +33,7 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
     case betsActions.FETCH_BETS_FROM_FOLDER_SUCCESS:
       return {
         ...state,
-        betsFromFolder: action.bets
+        betsFromFolder: processBets(action.bets)
       };
       case betsActions.FETCH_BETS_FROM_ALL_FOLDERS:
         return {
@@ -36,7 +51,7 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
     case betsActions.FETCH_UNRESOLVED_BETS_SUCCESS:
       return {
         ...state,
-        unresolvedBets: action.bets
+        unresolvedBets: processBets(action.bets)
       }
     case betsActions.FETCH_FINISHED_BETS:
       return {
@@ -45,7 +60,7 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
     case betsActions.FETCH_FINISHED_BETS_SUCCESS:
       return {
         ...state,
-        finishedBets: action.bets
+        finishedBets: processBets(action.bets)
       }
     case betsActions.POST_BET:
       return {
