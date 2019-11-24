@@ -5,3 +5,44 @@
   width: 30px;
   height:30px;
 }
+
+.nav-tabs {
+  display: -webkit-box;
+}
+
+.menu-div {
+  display: -webkit-box;
+  overflow-x: hidden;
+}
+
+.scroll-button {
+  display: flex;
+  align-items: center;
+  font-size: 1.3em;
+  background: white;
+  border: none;
+  height: 2em; 
+  width: 1.5em;
+  position: absolute;
+  padding-left: 10px;
+}
+
+.scroll-button:hover {
+  background: #e2e5ea;
+}
+
+.scroll-button:active {
+  background: #e2e5ea;
+}
+
+.right {
+  right: 0;
+}
+
+.left {
+  left: 0;
+}
+
+.hidden {
+  display: none;
+}
