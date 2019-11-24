@@ -121,6 +121,22 @@ namespace Api.Test.Controllers
         }
 
         [Test]
+        public void Post_FolderLengthOver50_ReturnsBadRequest()
+        {
+            var tooLongFolderName = "This folder name has over 50 characters. " +
+                "Column in SQLtable accepts up to 50 characters.";
+
+            var controller = new FoldersController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext()
+            };
+
+            var response = controller.Post(tooLongFolderName);
+
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+        [Test]
         public void Post_InvalidToken_ReturnsUnauthorized()
         {
             var controller = new FoldersController()

@@ -42,7 +42,7 @@ namespace Api.Controllers
         {
             _FolderRepository = _FolderRepository ?? new FolderRepository();
 
-            if (folder == null)
+            if (folder == null || folder.Length > 50)
             {
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }

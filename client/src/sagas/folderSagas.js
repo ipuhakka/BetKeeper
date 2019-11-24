@@ -67,23 +67,29 @@ export function* createFolder(action){
     yield call(fetchFolders);
     yield put(setAlertStatus(201, "Folder added successfully"));
   }
-  catch(error){
-      switch(error){
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 409:
-          yield put(setAlertStatus(error, "You already have a folder with given name, please select another name or delete old folder."));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
-      }
+  catch(error)
+  {
+    switch(error)
+    {
+      case 400:
+        yield put(setAlertStatus(error, "Folder name contained over 50 characters"));
+        break;
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 409:
+        yield put(setAlertStatus(error, "You already have a folder with given name, please select another name or delete old folder."));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
   }
-  finally{
+  finally
+  {
     yield put(setLoading(false));
   }
 }
