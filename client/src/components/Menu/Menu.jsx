@@ -28,7 +28,11 @@ class Menu extends Component{
 	}
 
 	render(){
+		const { loading, disable } = this.props;
 		const {scrollLeft, scrollRight} = this.state;
+		document.body.className = loading 
+			? 'loading'
+			: '';
 
 		return(
 			<div ref={this.menuRef} className='menu-div'>
@@ -39,21 +43,21 @@ class Menu extends Component{
 					: ' hidden'}`}>{'<'}</button>
 				<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
 					<Nav.Item as="li">
-						<Nav.Link eventKey={0} disabled={this.props.disable[0]}>Home</Nav.Link>
+						<Nav.Link eventKey={0} disabled={disable[0]}>Home</Nav.Link>
 					</Nav.Item>
 					<Nav.Item as="li">
-						<Nav.Link eventKey={1} disabled={this.props.disable[1]}>Bets</Nav.Link>
+						<Nav.Link eventKey={1} disabled={disable[1]}>Bets</Nav.Link>
 					</Nav.Item>
 					<Nav.Item as="li">
-						<Nav.Link eventKey={2} disabled={this.props.disable[2]}>Statistics</Nav.Link>
+						<Nav.Link eventKey={2} disabled={disable[2]}>Statistics</Nav.Link>
 					</Nav.Item>
 					<Nav.Item as="li">
-						<Nav.Link eventKey={3} disabled={this.props.disable[3]}>Folders</Nav.Link>
+						<Nav.Link eventKey={3} disabled={disable[3]}>Folders</Nav.Link>
 					</Nav.Item>
 					<Nav.Item as="li">
-						<Nav.Link eventKey={4} disabled={this.props.disable[4]}>Logout</Nav.Link>
+						<Nav.Link eventKey={4} disabled={disable[4]}>Logout</Nav.Link>
 					</Nav.Item>
-					<Spinner as="li" className="spinner" active={this.props.loading}/>
+					<Spinner as="li" className="spinner" active={loading}/>
 				</Nav>
 				<button
 					onClick={() => this.scrollTo('right')}  

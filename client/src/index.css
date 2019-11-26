@@ -4,6 +4,20 @@ body {
   font-family: sans-serif;
 }
 
+/* Loading effects. Spinner is defined in Menu component. */
+.loading {
+  background: #f8f9fa;
+}
+
+.spinner{
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  width: 100px;
+  height:100px;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 5px;
 }
@@ -20,6 +34,7 @@ body {
     background:  white;
 }
 
+/* Global table styles */
 th{
 	text-align:center;
 }
