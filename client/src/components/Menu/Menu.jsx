@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import store from '../../store';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
-import Spinner from '../Spinner/Spinner.jsx';
 import './Menu.css';
 import _ from 'lodash';
 
@@ -28,11 +26,8 @@ class Menu extends Component{
 	}
 
 	render(){
-		const { loading, disable } = this.props;
+		const { disable } = this.props;
 		const {scrollLeft, scrollRight} = this.state;
-		document.body.className = loading 
-			? 'loading'
-			: '';
 
 		return(
 			<div ref={this.menuRef} className='menu-div'>
@@ -57,7 +52,6 @@ class Menu extends Component{
 					<Nav.Item as="li">
 						<Nav.Link eventKey={4} disabled={disable[4]}>Logout</Nav.Link>
 					</Nav.Item>
-					<Spinner as="li" className="spinner" active={loading}/>
 				</Nav>
 				<button
 					onClick={() => this.scrollTo('right')}  
@@ -164,8 +158,4 @@ Menu.propTypes = {
   disable: PropTypes.array
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return { ...state.loading};
-};
-
-export default connect(mapStateToProps)(withRouter(Menu));
+export default withRouter(Menu);
