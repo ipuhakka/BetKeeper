@@ -46,8 +46,11 @@ export function* fetchBetsFromFolder(action)
   try 
   {
     yield put(setLoading(true));
+
     let bets = yield call(getBetsFromFolder, action.payload.folder);
+
     yield put(fetchBetsFromFolderSuccess({folder: action.payload.folder, bets: bets}));
+
     if (action.callback !== undefined)
     {
       action.callback({folder: action.payload.folder, bets: bets});

@@ -16,56 +16,71 @@ function processBets(bets)
 }
 
 const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]}, betsFromAllFolders:[], finishedBets: [], unresolvedBets: []}, action ) => {
-  switch (action.type) {
+  switch (action.type) 
+  {
     case betsActions.FETCH_BETS:
       return {
         ...state
       };
+
     case betsActions.FETCH_BETS_SUCCESS:
       return {
         ...state,
         allBets: processBets(action.bets)
       };
+
     case betsActions.FETCH_BETS_FROM_FOLDER:
       return {
         ...state
       };
+
     case betsActions.FETCH_BETS_FROM_FOLDER_SUCCESS:
       return {
         ...state,
-        betsFromFolder: processBets(action.bets)
+        betsFromFolder: {
+          folder: action.bets.folder,
+          bets: processBets(action.bets.bets)
+        }
       };
+
       case betsActions.FETCH_BETS_FROM_ALL_FOLDERS:
         return {
           ...state
         };
+
       case betsActions.FETCH_BETS_FROM_ALL_FOLDERS_SUCCESS:
         return {
           ...state,
           betsFromAllFolders: action.betFolders
         };
+
     case betsActions.FETCH_UNRESOLVED_BETS:
       return {
         ...state
       }
+
     case betsActions.FETCH_UNRESOLVED_BETS_SUCCESS:
       return {
         ...state,
         unresolvedBets: processBets(action.bets)
       }
+
     case betsActions.FETCH_FINISHED_BETS:
       return {
         ...state,
       }
+
     case betsActions.FETCH_FINISHED_BETS_SUCCESS:
       return {
         ...state,
         finishedBets: processBets(action.bets)
       }
+
     case betsActions.POST_BET:
       return {
         ...state
       }
+
     default:
       return state;
   }
