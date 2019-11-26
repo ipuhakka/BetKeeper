@@ -46,21 +46,28 @@ export function postToken(username, password){
 Logout event. Delete's a token from api. Resolves on 204 No content,
 rejects on other responses.
 */
-export function deleteToken(){
-  return new Promise(function(resolve, reject){
+export function deleteToken()
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 204){
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 204)
+        {
           resolve();
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
     });
-    xmlHttp.open("DELETE", ConstVars.URI + "token/" + sessionStorage.getItem("loggedUserID"));
+
+    xmlHttp.open("DELETE", ConstVars.URI + "token/" + sessionStorage.getItem("loggedUserId"));
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
     xmlHttp.send();
   });
