@@ -14,7 +14,8 @@ body {
   top: 45%;
   left: 45%;
   width: 100px;
-  height:100px;
+  height: 100px;
+  margin-left: -25px;
 }
 
 /* Scrollbar */
