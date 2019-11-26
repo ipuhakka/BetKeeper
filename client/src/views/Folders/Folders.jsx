@@ -74,16 +74,22 @@ class Folders extends Component {
 		});
 	}
 
-	renderFoldersList = () => {
+	renderFoldersList = () => 
+	{
 		var items = [];
 		for (var i = 0; i < this.state.folders.length; i++){
 			items.push(<ListGroupItem action onClick={this.clickedListItem.bind(this, i)} key={i} variant={this.state.folders[i].selected ? 'info': null}>{this.state.folders[i].name}</ListGroupItem>)
 		}
-		if (items.length > 0){
+		if (items.length > 0)
+		{
 			return items;
-		} else {
-			return <Alert>You don't have any folders: perhaps start by adding some?</Alert>;
+		} 
+		else if (!this.props.loading)
+		{
+			return <Alert variant='info'>You don't have any folders: perhaps start by adding some?</Alert>;
 		}
+
+		return null;
 	}
 
 	clickedListItem = (key) => {
@@ -165,8 +171,8 @@ class Folders extends Component {
 	}
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return { ...state.folders}
+const mapStateToProps = (state) => {
+  return { ...state.folders, ...state.loading}
 };
 
 const mapDispatchToProps = (dispatch) => ({
