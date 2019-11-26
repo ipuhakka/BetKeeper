@@ -6,7 +6,8 @@ import './Spinner.css';
 class Spinner extends Component {
 
   render(){
-    if (!this.props.active){
+    if (!this.props.active)
+    {
       return null;
     }
 

@@ -2,6 +2,7 @@ import { call, put, takeEvery} from 'redux-saga/effects';
 import {logOut} from '../actions/sessionActions.js';
 import {postToken, deleteToken, getToken} from '../js/Requests/Token.js';
 import {setAlertStatus} from '../actions/alertActions';
+import {setLoading} from '../actions/loadingActions';
 
 function clearCredentials()
 {
@@ -11,10 +12,11 @@ function clearCredentials()
 }
 
 export function* handleLogin(action){
-
   const { username, password, history, redirectTo} = action.payload;
 
-  try {
+  try 
+  {
+    yield put(setLoading(true));
 
     let res = yield call(postToken, username, password);
 
@@ -27,11 +29,12 @@ export function* handleLogin(action){
       history.push(redirectTo);
     }
   }
-  catch (error){
-
+  catch (error)
+  {
     yield call(logOut);
 
-    switch(error){
+    switch(error)
+    {
       case 401:
         yield put(setAlertStatus(error, "Username or password given was incorrect"));
         break;
@@ -42,6 +45,10 @@ export function* handleLogin(action){
         yield put(setAlertStatus(error, "Unexpected error occurred"));
       }
   }
+  finally 
+  {
+    yield put(setLoading(false));
+  }
 
 }
 
@@ -50,6 +57,7 @@ function* handleLogOut()
 
   try 
   {
+    yield put(setLoading(true));
     yield call(deleteToken);
   }
   catch (e)
@@ -58,6 +66,7 @@ function* handleLogOut()
   }
   finally 
   {
+    yield put(setLoading(false));
     clearCredentials();
   }
 }
@@ -68,12 +77,17 @@ function* checkLogin(action)
 
   try 
   {
+    yield put(setLoading(true));
     yield call(getToken, tokenString, userId);
     history.push(redirectTo);
   }
   catch (e)
   {
     clearCredentials();
+  }
+  finally 
+  {
+    yield put(setLoading(false));
   }
 }
 
