@@ -46,6 +46,7 @@ class Statistics extends Component{
 						</Col>
 						<Col md={6} xs={12}>
 							<Dropdown
+								className='dropdown-selection'
 								variant="primary"
 								title={"Show folder"}
 								id={2}
@@ -69,6 +70,9 @@ class Statistics extends Component{
 		);
 	}
 
+	/**
+	 * Renders object table to show statistics of a folder.
+	 */
 	renderTable = () => {
 		const {folderSelected} = this.state;
 		const { graphOptions, betStatistics} = this.props;

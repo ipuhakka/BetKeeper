@@ -33,7 +33,7 @@ class ScatterPlot extends Component{
       <div>
         <div className='selection-div'>
           <Dropdown
-            className='margin-right'
+            className='margin-right selection-dropdown'
             variant="primary"
             title={"Y"}
             selectedItemAsTitle
@@ -45,6 +45,7 @@ class ScatterPlot extends Component{
           </Dropdown>
           <Dropdown
             variant="primary"
+            className='selection-dropdown'
             title={"X"}
             id={4}       
             selectedItemAsTitle

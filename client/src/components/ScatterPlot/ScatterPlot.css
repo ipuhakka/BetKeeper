@@ -7,6 +7,10 @@
     margin-right: 3px;
 }
 
+.selection-dropdown {
+    margin-bottom: 0.4em;
+}
+
 .scatterplot-div .recharts-legend-wrapper {
     position: relative !important;
     bottom: 15px !important;
