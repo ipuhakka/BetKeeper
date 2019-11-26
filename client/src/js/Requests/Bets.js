@@ -185,20 +185,27 @@ POST-request to create a new bet to the database.
   rejects on any other response, with response
   status as parameter.
 */
-export function postBet(data){
-  return new Promise(function(resolve, reject){
+export function postBet(data)
+{
+  return new Promise(function(resolve, reject)
+  {
     var xmlHttp = new XMLHttpRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 201){
+    xmlHttp.onreadystatechange =( () => 
+    {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 201)
+        {
           resolve();
         }
-        else {
+        else 
+        {
           reject(xmlHttp.status);
         }
       }
     });
+
     xmlHttp.open("POST", ConstVars.URI + "bets/");
     xmlHttp.setRequestHeader('Content-type', 'application/json');
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
