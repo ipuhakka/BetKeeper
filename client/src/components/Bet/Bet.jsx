@@ -45,12 +45,12 @@ class Bet extends Component{
   {
     const {props, state} = this;
     const { bet } = props;
-
     return (
       <div>
         <Confirm visible={state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.onDeleteBet}
           cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
+          <i className="fas fa-arrow-left back-button" onClick={props.onClose}></i>
           <Button className='image-button' variant='outline-danger'>
             <i className="far fa-trash-alt" onClick={this.onPressedDelete.bind(this, null)}></i>
           </Button>

@@ -93,8 +93,13 @@ class Bets extends Component
       let key = props.selectedBet;
       let bet = props.betListFromFolder ? props.betsFromFolder.bets[key] : props.allBets[key];
 
-      return <BetContainer bet={bet} allFolders={props.folders} foldersOfBet={props.foldersOfBet}
-       onDelete={props.onDeleteBet} updateFolders={props.getBetsFolders}></BetContainer>;
+      return <BetContainer 
+        onClose={() => this.handleBetListClick(props.selectedBet)} 
+        bet={bet} 
+        allFolders={props.folders} 
+        foldersOfBet={props.foldersOfBet}
+        onDelete={props.onDeleteBet} 
+        updateFolders={props.getBetsFolders}></BetContainer>;
     }
     else 
     {

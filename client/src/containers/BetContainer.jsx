@@ -7,7 +7,11 @@ class BetContainer extends Component{
 
   render(){
     return (
-      <Bet {...this.props} onUpdateBet={this.updateBet} onDelete={this.deleteBet} onAddFolder={this.onPressedAddFolder}/>
+      <Bet {...this.props} 
+        onUpdateBet={this.updateBet} 
+        onDelete={this.deleteBet} 
+        onAddFolder={this.onPressedAddFolder}
+        onClose={this.props.onClose}/>
     );
   }
 
