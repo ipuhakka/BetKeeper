@@ -1,23 +1,19 @@
-.imageB{
+.image-button{
+  display: flex;
+  justify-content: center;
   cursor: pointer;
+  padding: .375rem .425rem;
+  font-size: 1.3em;
+}
+
+.save-button {
   margin-left: 3px;
+  font-size: 1.4em;
 }
 
 .actionsDiv{
   display: flex;
   justify-content: flex-end;
-}
-
-.save-div {
-  margin-top: 1.5px;
-}
-
-.trash{
-  color: red;
-}
-
-.save{
-  color:green;
 }
 
 .listItem{

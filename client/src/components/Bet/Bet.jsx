@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import FormGroup from 'react-bootstrap/FormGroup';
@@ -50,12 +51,12 @@ class Bet extends Component{
         <Confirm visible={state.showAlert} variant="warning" headerText="Delete bet?" confirmAction={this.onDeleteBet}
           cancelAction={this.handleDismiss}/>
         <div className="actionsDiv">
-          <div>
-            <i className="imageB trash far fa-trash-alt fa-2x" onClick={this.onPressedDelete.bind(this, null)}></i>
-          </div>
-          <div className='save-div'>
-            <i className="imageB save far fa-save fa-2x" onClick={this.updateBet}></i>
-          </div>         
+          <Button className='image-button' variant='outline-danger'>
+            <i className="far fa-trash-alt" onClick={this.onPressedDelete.bind(this, null)}></i>
+          </Button>
+          <Button className='save-button image-button' variant='outline-primary'>
+            <i className="far fa-save" onClick={this.updateBet}></i>
+          </Button>         
         </div>
         <h2>{bet.name}</h2>
         <h2>{bet.playedDate}</h2>
