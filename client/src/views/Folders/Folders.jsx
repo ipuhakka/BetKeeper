@@ -39,12 +39,12 @@ class Folders extends Component {
 	render(){
 		var folders = this.renderFoldersList();
 		return(
-			<div className="content" onLoad={this.onLoad}>
+			<div onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={this.state.disabled}></Menu>
 				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
-				<Row>
+				<Row className="content">
 					<Col lg={6} sm={12}>
 						<ScrollableDiv className='list margins'>						
 							<ListGroup>{folders}</ListGroup>

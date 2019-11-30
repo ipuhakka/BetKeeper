@@ -31,11 +31,11 @@ class Statistics extends Component{
 		const {state, props} = this;
 
 		return(
-			<div className="content">
+			<div>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disable={state.disabled}></Menu>
 				<Info></Info>
-				<div>
+				<div className="content">
 					<Row>
 						<Col md={6} xs={12}>
 							<BarGraph 
