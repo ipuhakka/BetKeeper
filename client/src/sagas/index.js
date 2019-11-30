@@ -21,6 +21,7 @@ export default function* rootSaga() {
     alertSagas.watchClearAlert(),
     sessionSagas.watchLogin(),
     sessionSagas.watchLogOut(),
-    sessionSagas.watchCheckLogin()
+    sessionSagas.watchCheckLogin(),
+    sessionSagas.watchSignUp()
   ]);
 }

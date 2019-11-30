@@ -1,6 +1,7 @@
 import { call, put, takeEvery} from 'redux-saga/effects';
 import {logOut} from '../actions/sessionActions.js';
-import {postToken, deleteToken, getToken} from '../js/Requests/Token.js';
+import {postToken, deleteToken, getToken} from '../js/Requests/Token';
+import { postUser } from '../js/Requests/Users';
 import {setAlertStatus} from '../actions/alertActions';
 import {setLoading} from '../actions/loadingActions';
 
@@ -91,6 +92,37 @@ function* checkLogin(action)
   }
 }
 
+function* signUp(action)
+{
+  const {username, password, callback} = action.payload;
+
+  try 
+  {
+    yield put(setLoading(true));
+
+    let user = yield call(postUser, username, password);
+    
+    callback(user.username, user.password);
+  } 
+  catch (error)
+  {
+    switch(error)
+    {
+      case 409:
+        yield put(setAlertStatus(error, "User with same username already exists"));
+        break;
+
+      default:
+        yield put(setAlertStatus(error, "Something went wrong with the request"));
+        break;
+    }
+  }
+  finally 
+  {
+    yield put(setLoading(false));
+  }
+}
+
 export function* watchLogin()
 {
   yield takeEvery('LOGIN', handleLogin);
@@ -104,4 +136,9 @@ export function* watchLogOut()
 export function* watchCheckLogin()
 {
   yield takeEvery('CHECK_LOGIN', checkLogin);
+}
+
+export function* watchSignUp()
+{
+  yield takeEvery('SIGNUP', signUp);
 }
