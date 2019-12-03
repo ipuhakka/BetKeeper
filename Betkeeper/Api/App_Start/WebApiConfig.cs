@@ -11,9 +11,6 @@ namespace Api
     {
         public static void Register(HttpConfiguration config)
         {
-            // TODO: Turha kun kanta vaihtuu
-            Settings.DatabasePath = ConfigurationManager.AppSettings["databasePath"];
-
             // Set database connection
             Settings.ConnectionString = ConfigurationManager
                 .ConnectionStrings["sql"]?.ConnectionString 

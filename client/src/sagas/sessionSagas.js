@@ -4,6 +4,7 @@ import {postToken, deleteToken, getToken} from '../js/Requests/Token';
 import { postUser } from '../js/Requests/Users';
 import {setAlertStatus} from '../actions/alertActions';
 import {setLoading} from '../actions/loadingActions';
+import _ from 'lodash';
 
 function clearCredentials()
 {
@@ -75,6 +76,11 @@ function* handleLogOut()
 function* checkLogin(action)
 {
   const {userId, tokenString, redirectTo, history} = action.payload;
+
+  if (_.isNil(tokenString) || userId.toString() === '-1')
+  {
+    return;
+  }
 
   try 
   {

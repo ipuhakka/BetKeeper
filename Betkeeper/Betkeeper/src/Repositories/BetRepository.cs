@@ -282,7 +282,6 @@ namespace Betkeeper.Repositories
             var queryParameters = new Dictionary<string, object>();
             var whereConditions = new List<string>();
 
-            // TODO: ehtojen muodostamisesta oma funktio
             if (userId != null)
             {
                 whereConditions.Add("owner = @userId");
@@ -323,7 +322,6 @@ namespace Betkeeper.Repositories
             queryParameters.Add("userId", userId);
             queryParameters.Add("folder", folder);
 
-            // TODO: queryn muodostamisesta oma funktio
             if (betFinished != null)
             {
                 query += string.Format(" AND {0}", (bool)betFinished

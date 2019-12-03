@@ -17,7 +17,7 @@ namespace Api.Test.Controllers
     {
 
         [Test]
-        public void Get_InvalidAuthorizationToken_ReturnsUnauhtorized()
+        public void Get_InvalidAuthorizationToken_ReturnsUnauthorized()
         {
             TokenLog.CreateToken(1);
 
