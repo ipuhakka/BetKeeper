@@ -1,12 +1,7 @@
-﻿using System;
-using System.Data.SQLite;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http.Controllers;
-using NUnit.Framework;
 using Newtonsoft.Json;
-using Betkeeper;
 
 namespace TestTools
 {

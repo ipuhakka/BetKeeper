@@ -98,7 +98,7 @@ namespace Betkeeper.Repositories
         }
 
         /// <summary>
-        /// Adds a new folder to new SQLiteDatabase().
+        /// Adds a new folder database.
         /// </summary>
         /// <param name="folderName"></param>
         /// <param name="userId"></param>
