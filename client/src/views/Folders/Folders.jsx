@@ -30,9 +30,13 @@ class Folders extends Component {
 		};
 	}
 
-	componentWillReceiveProps(nextProps){
-		if (nextProps.folders.length !== this.state.folders.length){
-			this.setFolders(nextProps.folders);
+	componentDidUpdate()
+	{
+		const {props} = this;
+		
+		if (props.folders.length !== this.state.folders.length)
+		{
+			this.setFolders(props.folders);
 		}
 	}
 

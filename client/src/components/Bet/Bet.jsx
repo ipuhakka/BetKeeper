@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
@@ -28,10 +29,15 @@ class Bet extends Component{
     }
   }
 
-  componentWillReceiveProps(nextProps)
+  componentDidUpdate(prevProps)
   {
-    const {props} = this;
-    const {bet} = props;
+    const { props } = this;
+    const { bet } = props;
+
+    if (_.isEqual(prevProps, props))
+    {
+      return;
+    }
 
     this.setState({
       name: bet.name,

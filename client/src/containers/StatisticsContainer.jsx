@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import store from '../store';
 import {fetchFolders} from '../actions/foldersActions';
 import {fetchFinishedBets} from '../actions/betsActions';
@@ -8,7 +9,8 @@ import * as Stats from '../js/stats.js';
 
 class StatisticsContainer extends Component{
 
-  componentDidMount(){
+  componentDidMount()
+  {
 		this.props.fetchFinishedBets();
 		this.props.fetchFolders();
 	}
@@ -37,21 +39,26 @@ class StatisticsContainer extends Component{
     };
   }
 
-  componentWillReceiveProps(nextProps){
-		if (this.props.folders !== nextProps.folders){
-			this.getBetsFromFolders(nextProps.folders);
+  componentDidUpdate(prevProps)
+  {
+    const { folders, betsFromAllFolders, finishedBets} = this.props;
+    if (!_.isEqual(folders, prevProps.folders))
+    {
+			this.getBetsFromFolders(folders);
 		}
 
-		if (this.props.betsFromAllFolders !== nextProps.betsFromAllFolders){
-			nextProps.betsFromAllFolders.forEach(folder => {
+    if (!_.isEqual(betsFromAllFolders, prevProps.betsFromAllFolders))
+    {
+			betsFromAllFolders.forEach(folder => {
 				this.updateTable(folder);
 			});
 		}
 
-		if (this.props.finishedBets !== nextProps.finishedBets){
-			this.handleGetAllFinishedBets(nextProps.finishedBets);
+    if (!_.isEqual(finishedBets, prevProps.finishedBets))
+    {
+			this.handleGetAllFinishedBets(finishedBets);
 		}
-	}
+  }
 
   render(){
     return <Statistics {...this.props} {...this.state}/>;

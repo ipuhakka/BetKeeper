@@ -1,37 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import * as Sort from '../../js/sort.js';
-import {deepCopy} from '../../js/utils.js';
 
 class OverviewTable extends Component{
   constructor(props){
     super(props);
 
     this.state = {
-        sortedOverviewItems: [],
         sortOrderHigh: false,
-        lastSortedKey: '',
+        sortKey: null,
         defaultSortOrder: []
     }
   }
 
-  componentWillReceiveProps(nextProps){
-    const {defaultSortOrder} = this.state;
-
-    let defaultOrder = defaultSortOrder.length === 0 ?
-      nextProps.overviewItems : defaultSortOrder;
-
-    if ('overviewItems' in nextProps){
-      this.setState({
-        sortedOverviewItems: deepCopy(nextProps.overviewItems),
-        defaultSortOrder: defaultOrder
-      })
-    }
-  }
-
-  render(){
-    const {sortedOverviewItems} = this.state;
+  render()
+  {
+    const sortedOverviewItems = this.sortItems();
 
     const tableItems = [];
 
@@ -49,40 +35,48 @@ class OverviewTable extends Component{
   	return(<Table size="sm" hover>
   					<thead>
   						<tr>
-  							<th className="clickable" onClick={this.sort.bind(this, Sort.alphabetically, "folder")}>{"Folder"}</th>
-  							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "moneyReturned")}>{"Money returned"}</th>
-  							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "verifiedReturn")}>{"Return percentage"}</th>
-  							<th className="clickable" onClick={this.sort.bind(this, Sort.byRank, "winPercentage")}>{"Win percentage"}</th>
+  							<th className="clickable" onClick={this.changeSortParams.bind(this, "folder")}>{"Folder"}</th>
+  							<th className="clickable" onClick={this.changeSortParams.bind(this, "moneyReturned")}>{"Money returned"}</th>
+  							<th className="clickable" onClick={this.changeSortParams.bind(this, "verifiedReturn")}>{"Return percentage"}</th>
+  							<th className="clickable" onClick={this.changeSortParams.bind(this, "winPercentage")}>{"Win percentage"}</th>
   						</tr>
   					</thead>
   					<tbody>{tableItems}</tbody>
 				</Table>);
   }
 
-  sort = (func, param) => {
-    const { state, props } = this;
+  sortItems()
+  {
+    const { overviewItems } = this.props;
+    const { sortKey, sortOrderHigh } = this.state;
 
-    var sortOrderHigh = state.lastSortedKey === param ? !state.sortOrderHigh : true;
+    const sortBy = _.isNil(sortKey)
+      ? Object.keys(overviewItems)[0]
+      : sortKey;
 
-    if (sortOrderHigh
-      && state.lastSortedKey === param
-      && props.defaultSort !== undefined){
-
-      this.setState({
-        sortedOverviewItems: deepCopy(props.defaultSort),
-        lastSortedKey: '',
-        sortOrderHigh: false
-      });
-
-      return;
+    switch (sortBy)
+    {
+      case 'folder':
+        return Sort.alphabetically(overviewItems, sortBy, sortOrderHigh);
+      
+      default:
+        return Sort.byRank(overviewItems, sortBy, sortOrderHigh);
     }
+  }
 
-    var sorted = func(this.state.sortedOverviewItems, param, sortOrderHigh);
+  /**
+   * Changes sorting parameters. If key is not different from last key,
+   * sort order is changed.
+   * @param {string} key 
+   */
+  changeSortParams = (newSortKey) => {
+    const { sortKey } = this.state;
+
+    var sortOrderHigh = sortKey === newSortKey ? !this.state.sortOrderHigh : true;
 
     this.setState({
-      sortedOverviewItems: sorted,
-      sortOrderHigh: sortOrderHigh,
-      lastSortedKey: param
+      sortKey: newSortKey,
+      sortOrderHigh
     });
   }
 };

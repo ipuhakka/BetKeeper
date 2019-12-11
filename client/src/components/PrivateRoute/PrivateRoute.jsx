@@ -6,7 +6,8 @@ import {loginCredentialsExist} from '../../js/utils.js';
 
 class PrivateRoute extends Component{
 
-  componentWillMount(){
+  componentDidMount()
+  {
     store.dispatch({type: 'CHECK_LOGIN_STATUS'});
   }
 

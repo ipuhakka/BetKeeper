@@ -20,7 +20,7 @@ class BetsContainer extends Component {
     };
 	}
 
-  componentWillMount()
+  componentDidMount()
   {
     this.updateData();
   }
