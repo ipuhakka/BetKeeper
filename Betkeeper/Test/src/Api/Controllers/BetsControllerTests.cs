@@ -508,7 +508,6 @@ namespace Api.Test.Controllers
                     ))
                 .Returns(1);
 
-
             TokenLog.CreateToken(1);
             var token = TokenLog.CreateToken(1);
 
@@ -612,6 +611,148 @@ namespace Api.Test.Controllers
                         "folder2"
                     }),
                     Times.Once);
+        }
+
+        [Test]
+        public void PutBets_InvalidAuthorizationToken_ReturnsUnauthorized()
+        {
+            var controller = new BetsController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", "InvalidToken" }
+                    })
+            };
+
+            var response = controller.Put(new List<int>());
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void PutBets_InvalidOddAndStake_ReturnsBadRequest()
+        {
+            var token = TokenLog.CreateToken(1);
+
+            var invalidData = new
+            {
+                odd = "not double",
+                stake = "not double"
+            };
+
+            var controller = new BetsController
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    },
+                    dataContent: invalidData)
+            };
+
+            var response = controller.Put(new List<int>());
+
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        /// <summary>
+        /// When no bets belong to user, modifybets returns 0 as nothing was modified.
+        /// </summary>
+        [Test]
+        public void PutBets_NoBetsBelongToUser_ReturnsUnauthorized()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.GetBets(
+                    It.IsAny<int>(),
+                    It.IsAny<bool?>(),
+                    It.IsAny<string>()))
+                .Returns(new List<Betkeeper.Models.Bet>());
+
+            mock.Setup(betRepository =>
+                betRepository.ModifyBets(
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<double>(),
+                    It.IsAny<double>(),
+                    It.IsAny<string>()
+                    ))
+                .Returns(0);
+
+            var token = TokenLog.CreateToken(1);
+
+            var data = new
+            {
+                betResult = 1,
+                odd = 2,
+                stake = 2.1
+            };
+
+            var controller = new BetsController
+            {
+                _BetRepository = mock.Object,
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    },
+                    dataContent: data)
+            };
+
+            var response = controller.Put(new List<int> { 1, 2 });
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Test]
+        public void PutBets_ValidRequest_ReturnsOK()
+        {
+            var mock = new Mock<IBetRepository>();
+
+            mock.Setup(betRepository =>
+                betRepository.GetBets(
+                    It.IsAny<int>(),
+                    It.IsAny<bool?>(),
+                    It.IsAny<string>()))
+                .Returns(new List<Betkeeper.Models.Bet>());
+
+            mock.Setup(betRepository =>
+                betRepository.ModifyBets(
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<double>(),
+                    It.IsAny<double>(),
+                    It.IsAny<string>()
+                    ))
+                .Returns(1);
+
+            var token = TokenLog.CreateToken(1);
+
+            var data = new
+            {
+                betResult = 1,
+                odd = 2,
+                stake = 2.1
+            };
+
+            var controller = new BetsController
+            {
+                _BetRepository = mock.Object,
+                ControllerContext = Tools.MockHttpControllerContext(
+                    headers: new Dictionary<string, string>
+                    {
+                        { "Authorization", token.TokenString }
+                    },
+                    dataContent: data)
+            };
+
+            var response = controller.Put(new List<int> { 1, 2 });
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

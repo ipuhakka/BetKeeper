@@ -93,7 +93,8 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
-        /// Constructor for bet to be modified
+        /// Constructor for creating a bet with modify data.
+        /// Returns null if bet cannot be created.
         /// </summary>
         /// <param name="bet"></param>
         /// <param name="userId"></param>

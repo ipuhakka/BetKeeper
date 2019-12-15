@@ -670,13 +670,48 @@ namespace Betkeeper.Test.Repositories
                 Enums.BetResult.Won);
 
             mock.Verify(database => database.ExecuteCommand(
-                It.Is<string>(query => query.Contains("IN (@betIds)")),
+                It.Is<string>(query => query.Contains("IN (@intValue2, @intValue3)")),
                 It.Is<Dictionary<string, object>>(dict =>
-                    dict["betIds"].ToString() == "2,3"),
+                    (int)dict["intValue2"] == 2
+                    && (int)dict["intValue3"] == 3),
                 false),
                 Times.Once);
 
             Assert.AreEqual(2, modifiedBets);
+        }
+
+        [Test]
+        public void ModifyBets_GetBetsReturns0Bets_ExecuteCommandNotCalled()
+        {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(MockDataTable(new List<Bet>()));
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(2);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            var modifiedBets = betRepository.ModifyBets(
+                new List<int> { 1, 2, 3 },
+                1,
+                Enums.BetResult.Won);
+
+            mock.Verify(database => database.ExecuteCommand(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, object>>(),
+                false),
+                Times.Never);
+
+            Assert.AreEqual(0, modifiedBets);
         }
 
         private DataTable MockDataTable(List<Bet> bets)

@@ -243,6 +243,11 @@ namespace Betkeeper.Repositories
                     allUsersBets.Any(bet => bet.BetId == betId))
                 .ToList();
 
+            if (existingBetIds.Count == 0)
+            {
+                return 0;
+            }
+
             var query = CreateParametersForModifyQuery(
                 existingBetIds,
                 betResult,
@@ -363,8 +368,7 @@ namespace Betkeeper.Repositories
                 odd,
                 name);
 
-            query.QueryString += " WHERE bet_id IN (@betIds)";
-            query.QueryParameters.Add("betIds", string.Join(",", betIds));
+            query.AddIntParameterList("bet_id", betIds);
 
             return query;
         }

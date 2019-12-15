@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data.SqlClient;
 
 namespace Betkeeper.Classes
 {
@@ -17,6 +17,35 @@ namespace Betkeeper.Classes
         {
             QueryString = query;
             QueryParameters = queryParameters;
+        }
+
+        public void AddIntParameterList(
+            string columnKey,
+            List<int> intList)
+        {
+            if (intList == null
+                || intList.Count == 0)
+            {
+                return;
+            }
+
+            var intParametersInQuery = new List<string>();
+
+            QueryString += QueryString.Contains(" WHERE ")
+                ? " AND "
+                : " WHERE ";
+
+            QueryString += $"{columnKey} IN (";
+
+            intList.ForEach(intValue =>
+            {
+                intParametersInQuery.Add($"@intValue{intValue}");
+                QueryParameters.Add($"intValue{intValue}", intValue);
+            });
+
+            QueryString += string.Join(", ", intParametersInQuery);
+
+            QueryString += ")";
         }
     }
 }

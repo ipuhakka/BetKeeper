@@ -140,6 +140,58 @@ namespace Api.Controllers
             return Http.CreateResponse(HttpStatusCode.OK);
         }
 
+        /// <summary>
+        /// Mass update for bets.
+        /// </summary>
+        /// <param name="betIds"></param>
+        /// <returns></returns>
+        public HttpResponseMessage Put([FromUri]List<int> betIds)
+        {
+            _BetRepository = _BetRepository ?? new BetRepository();
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            Bet bet;
+            var content = Http.GetHttpContent(Request);
+
+            try
+            {
+                bet = new Bet(
+                    content,
+                    (int)userId
+                    );
+            }
+            catch (ParsingException)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var modifiedCount = _BetRepository.ModifyBets(
+                betIds,
+                bet.Owner,
+                bet.BetResult,
+                bet.Stake,
+                bet.Odd,
+                bet.Name);
+
+            // TODO: Kansioihin lisäys?
+
+            return modifiedCount == 0
+                ? Http.CreateResponse(
+                    HttpStatusCode.Unauthorized,
+                    "No bets could be modified")
+                : Http.CreateResponse(
+                    HttpStatusCode.OK,
+                    modifiedCount == 1
+                        ? "Bet updated successfully"
+                        : $"Updated: {modifiedCount} bets");
+        }
+
         // DELETE: api/Bets/5
         /// <summary>
         /// Deletes a bet

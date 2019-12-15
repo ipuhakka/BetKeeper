@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -17,21 +18,11 @@ namespace Betkeeper.Classes
         public static HttpResponseMessage CreateResponse(
             HttpStatusCode httpStatusCode, 
             object data = null, 
-            bool SerializeAsCamelCase = true)
+            bool serializeAsCamelCase = true)
         {
-            var serializerSettings = SerializeAsCamelCase
-                ? new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
-                }
-                : new JsonSerializerSettings();
-
             var response = new HttpResponseMessage(httpStatusCode)
             {
-                Content = new StringContent(JsonConvert.SerializeObject(
-                    data,
-                    serializerSettings))
+                Content = SetHttpContent(data, serializeAsCamelCase)
             };
 
             return response;
@@ -70,6 +61,25 @@ namespace Betkeeper.Classes
             string jsonContent = content.ReadAsStringAsync().Result;
 
             return JsonConvert.DeserializeObject(jsonContent, serializerSettings);
+        }
+
+        private static HttpContent SetHttpContent(object data, bool serializeAsCamelCase)
+        {
+            var serializerSettings = serializeAsCamelCase
+                ? new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
+                }
+                : new JsonSerializerSettings();
+
+            return data?.GetType() == typeof(string)
+                ? new StringContent(data.ToString())
+                : new StringContent(JsonConvert.SerializeObject(
+                    data,
+                    serializerSettings),
+                    Encoding.UTF8,
+                    "application/json");
         }
     }
 }

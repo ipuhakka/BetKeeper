@@ -38,7 +38,7 @@ namespace Betkeeper.Test.Classes
             var response = Http.CreateResponse(
                 HttpStatusCode.OK,
                 camelCaseData,
-                SerializeAsCamelCase: false);
+                serializeAsCamelCase: false);
 
             var dataAsDynamic = Http.GetHttpContent(response);
 
@@ -57,7 +57,7 @@ namespace Betkeeper.Test.Classes
             var response = Http.CreateResponse(
                 HttpStatusCode.OK,
                 camelCaseData,
-                SerializeAsCamelCase: true);
+                serializeAsCamelCase: true);
 
             var dataAsDynamic = Http.GetHttpContent(response);
 
