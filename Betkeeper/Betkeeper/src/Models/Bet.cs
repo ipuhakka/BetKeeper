@@ -22,10 +22,11 @@ namespace Betkeeper.Models
 
         public int Owner { get; set; }
 
-        public int BetId { get; }
+        public int BetId { get; set; }
 
         public List<string> Folders { get; }
 
+        // TODO: Eroon bool?:sta, käytä enumia
         public Bet(
             bool? betResult,
             string name,

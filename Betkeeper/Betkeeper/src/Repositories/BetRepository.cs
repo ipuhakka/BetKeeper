@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Betkeeper.Classes;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
@@ -204,35 +205,52 @@ namespace Betkeeper.Repositories
                 throw new NotFoundException("Bet not found");
             }
 
-            var queryParameters = new Dictionary<string, object>();
-            var query = "UPDATE bets SET bet_won = @betResult";
-
-            queryParameters.Add("betResult", betResult);                     
-
-            if (stake != null)
-            {
-                query += ", bet = @stake";
-                queryParameters.Add("stake", stake);
-            }
-
-            if (odd != null)
-            {
-                query += ", odd = @odd";
-                queryParameters.Add("odd", odd);
-            }
-
-            if (name != null)
-            {
-                query += ", name = @name";
-                queryParameters.Add("name", name);
-            }
-
-            query += " WHERE bet_id = @betId";
-            queryParameters.Add("betId", betId);
+            var query = CreateParametersForModifyQuery(
+                betId,
+                betResult,
+                stake,
+                odd,
+                name);
 
             return _Database.ExecuteCommand(
-                query,
-                queryParameters);
+                query.QueryString,
+                query.QueryParameters);
+        }
+
+        /// <summary>
+        /// Modifies specified bets.
+        /// </summary>
+        /// <param name="betIds"></param>
+        /// <param name="userId"></param>
+        /// <param name="betResult"></param>
+        /// <param name="stake"></param>
+        /// <param name="odd"></param>
+        /// <param name="name"></param>
+        /// <returns>Number of successfully modified bets.</returns>
+        public int ModifyBets(
+            List<int> betIds,
+            int userId,
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
+            double? stake = null,
+            double? odd = null,
+            string name = null)
+        {
+            // TODO: Paranna GetBetsiä niin että voitaisiin tehdä täsmähaku?
+            var allUsersBets = GetBets(userId);
+
+            var existingBetIds = betIds
+                .Where(betId =>
+                    allUsersBets.Any(bet => bet.BetId == betId))
+                .ToList();
+
+            var query = CreateParametersForModifyQuery(
+                existingBetIds,
+                betResult,
+                stake,
+                odd,
+                name);
+
+            return _Database.ExecuteCommand(query.QueryString, query.QueryParameters);
         }
 
         /// <summary>
@@ -308,6 +326,87 @@ namespace Betkeeper.Repositories
                 _Database.ExecuteQuery(
                     query,
                     queryParameters));
+        }
+
+        /// <summary>
+        /// Creates parameters for bet update.
+        /// </summary>
+        private Query CreateParametersForModifyQuery(
+            int betId,
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
+            double? stake = null,
+            double? odd = null,
+            string name = null)
+        {
+            var query = CreateModifyQueryDataParameters(
+                betResult,
+                stake,
+                odd,
+                name);
+
+            query.QueryString += " WHERE bet_id = @betId";
+            query.QueryParameters.Add("betId", betId);
+
+            return query;
+        }
+
+        private Query CreateParametersForModifyQuery(
+            List<int> betIds,
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
+            double? stake = null,
+            double? odd = null,
+            string name = null)
+        {
+            var query = CreateModifyQueryDataParameters(
+                betResult,
+                stake,
+                odd,
+                name);
+
+            query.QueryString += " WHERE bet_id IN (@betIds)";
+            query.QueryParameters.Add("betIds", string.Join(",", betIds));
+
+            return query;
+        }
+
+        /// <summary>
+        /// Handles data specific query parameters.
+        /// </summary>
+        /// <param name="betResult"></param>
+        /// <param name="stake"></param>
+        /// <param name="odd"></param>
+        /// <param name="name"></param>
+        /// <returns>Query object with bet data parameters.</returns>
+        private Query CreateModifyQueryDataParameters(
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
+            double? stake = null,
+            double? odd = null,
+            string name = null)
+        {
+            var queryParameters = new Dictionary<string, object>();
+            var query = "UPDATE bets SET bet_won = @betResult";
+
+            queryParameters.Add("betResult", betResult);
+
+            if (stake != null)
+            {
+                query += ", bet = @stake";
+                queryParameters.Add("stake", stake);
+            }
+
+            if (odd != null)
+            {
+                query += ", odd = @odd";
+                queryParameters.Add("odd", odd);
+            }
+
+            if (name != null)
+            {
+                query += ", name = @name";
+                queryParameters.Add("name", name);
+            }
+
+            return new Query(query, queryParameters);
         }
 
         private List<Bet> GetBetsFromFolder(int userId, string folder, bool? betFinished)
