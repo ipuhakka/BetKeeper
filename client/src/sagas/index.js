@@ -18,6 +18,7 @@ export default function* rootSaga() {
     betSagas.watchPostBet(),
     betSagas.watchPutBet(),
     betSagas.watchDeleteBet(),
+    betSagas.watchPutBets(),
     alertSagas.watchClearAlert(),
     sessionSagas.watchLogin(),
     sessionSagas.watchLogOut(),

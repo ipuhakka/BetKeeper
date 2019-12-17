@@ -1,4 +1,5 @@
 import ConstVars from '../consts.js';
+import _ from 'lodash';
 
 /*
 GET-request to uri/bets?finished=true.
@@ -238,6 +239,36 @@ export function putBet(betId, data){
       }
     });
     xmlHttp.open("PUT", ConstVars.URI + "bets/" + betId);
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.setRequestHeader('Content-type', 'application/json');
+    xmlHttp.send(JSON.stringify(data));
+  });
+}
+
+/**
+ * Mass update bets.
+ * @param {array} betIds
+ * @param {object} data
+ */
+export function putBets(betIds, data){
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
+          resolve(xmlHttp);
+        }
+        else 
+        {
+          reject(xmlHttp);
+        }
+      }
+    });
+
+    xmlHttp.open("PUT", `${ConstVars.URI}bets?betIds=${_.join(betIds, '&betIds=')}`);
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
     xmlHttp.setRequestHeader('Content-type', 'application/json');
     xmlHttp.send(JSON.stringify(data));

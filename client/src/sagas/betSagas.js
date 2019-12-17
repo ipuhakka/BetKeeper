@@ -2,10 +2,12 @@ import { call, put, select, takeLatest } from 'redux-saga/effects';
 import {fetchBetsSuccess, fetchBetsFromFolderSuccess,
   fetchUnresolvedBetsSuccess, fetchBetsFromAllFoldersSuccess, fetchFinishedBetsSuccess,
   FETCH_BETS, FETCH_BETS_FROM_FOLDER,FETCH_BETS_FROM_ALL_FOLDERS, FETCH_FINISHED_BETS,
-  FETCH_UNRESOLVED_BETS, POST_BET, PUT_BET, DELETE_BET}
+  FETCH_UNRESOLVED_BETS, POST_BET, PUT_BET, PUT_BETS, DELETE_BET}
    from '../actions/betsActions';
 import {fetchFoldersOfBetSuccess} from '../actions/foldersActions';
-import {getAllBetsByUser, getBetsFromFolder, getFinishedBets, getUnresolvedBets, postBet, putBet, deleteBet}
+import {
+  getAllBetsByUser, getBetsFromFolder, getFinishedBets, 
+  getUnresolvedBets, postBet, putBet, putBets, deleteBet}
   from '../js/Requests/Bets.js';
 import {setLoading} from '../actions/loadingActions';
 import {setAlertStatus} from '../actions/alertActions';
@@ -210,6 +212,45 @@ export function* createBet(action)
   }
 }
 
+export function* modifyBets(action)
+{
+  try 
+  {
+    yield put(setLoading(true));
+    const response = yield call(putBets, action.payload.betIds, action.payload.betsData);
+
+    yield put(setAlertStatus(response.status, response.responseText));
+
+    yield call(fetchAllBets);
+    let usedFolder = yield select(getUsedFolder);
+
+    if (usedFolder !== "")
+    {
+      yield call(fetchBetsFromFolder, usedFolder);
+    }
+    yield call(fetchUnresolvedBets);
+  }
+  catch (errorResponse)
+  {
+    switch(errorResponse)
+    {
+      case 401:
+        yield put(setAlertStatus(errorResponse.status, errorResponse.responseText));
+        break;
+      case 0:
+        yield put(setAlertStatus(errorResponse.status, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(errorResponse.status, "Unexpected error occurred"));
+        break;
+    }
+  }
+  finally 
+  {
+    yield put(setLoading(false));
+  }
+}
+
 export function* modifyBet(action)
 {
   try 
@@ -323,6 +364,11 @@ export function* watchPostBet(){
 
 export function* watchPutBet(){
   yield takeLatest(PUT_BET, modifyBet);
+}
+
+export function* watchPutBets()
+{
+  yield takeLatest(PUT_BETS, modifyBets);
 }
 
 export function* watchDeleteBet(){
