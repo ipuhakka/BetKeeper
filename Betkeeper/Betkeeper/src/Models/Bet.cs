@@ -22,10 +22,11 @@ namespace Betkeeper.Models
 
         public int Owner { get; set; }
 
-        public int BetId { get; }
+        public int BetId { get; set; }
 
         public List<string> Folders { get; }
 
+        // TODO: Eroon bool?:sta, käytä enumia
         public Bet(
             bool? betResult,
             string name,
@@ -92,7 +93,8 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
-        /// Constructor for bet to be modified
+        /// Constructor for creating a bet with modify data.
+        /// Returns null if bet cannot be created.
         /// </summary>
         /// <param name="bet"></param>
         /// <param name="userId"></param>

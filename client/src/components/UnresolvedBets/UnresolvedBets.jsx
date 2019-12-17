@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import store from '../../store';
+import _ from 'lodash';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import FormGroup from 'react-bootstrap/FormGroup';
+import { putBets } from '../../actions/betsActions';
 import enums from '../../js/enums'; 
 
 class UnresolvedBets extends Component{
@@ -15,6 +17,7 @@ class UnresolvedBets extends Component{
 
     this.state = {
       selectedBet: -1,
+      selectedBetKeys: [],
       betResult: null
     };
   }
@@ -48,7 +51,8 @@ class UnresolvedBets extends Component{
               inline/>
         </FormGroup>
         <Button 
-          disabled={this.state.betResult === null || this.state.selectedBet === -1} 
+          disabled={this.state.betResult === null 
+            || this.state.selectedBetKeys.length < 1} 
           variant="primary" 
           className="button" 
           onClick={this.updateResult}>Update result</Button>
@@ -64,7 +68,7 @@ class UnresolvedBets extends Component{
     {
       items.push(<ListGroupItem action key={i}
         onClick={this.handleListClick.bind(this, i)} 
-        variant={this.state.selectedBet === i ? 'info' : null}>
+        variant={_.includes(this.state.selectedBetKeys, i) ? 'info' : null}>
             <div>{bets[i].name + " " + bets[i].playedDate}</div>
             <div className='small-betInfo'>{"Odd: " + bets[i].odd + " Bet: " + bets[i].stake}</div>
             </ListGroupItem>)
@@ -74,18 +78,23 @@ class UnresolvedBets extends Component{
 
   handleListClick = (key) =>
   {
-    if (key === this.state.selectedBet)
+    const { selectedBetKeys } = this.state;
+    
+    let updatedBetKeys = [];
+
+    if (_.includes(selectedBetKeys, key))
     {
-      this.setState({
-        selectedBet: -1
-      });
+      updatedBetKeys = _.filter(selectedBetKeys, betKey =>
+        betKey !== key);
     }
     else 
     {
-      this.setState({
-        selectedBet: key
-      });
+      updatedBetKeys = _.concat(selectedBetKeys, [key]);
     }
+
+    this.setState({
+      selectedBetKeys: updatedBetKeys
+    });
   }
 
   setBetResult = (e) => 
@@ -98,11 +107,9 @@ class UnresolvedBets extends Component{
   //Changes unresolved bet to solved.
   updateResult = () => 
   {
-    if (this.state.selectedBet === -1)
-    {
-      this.setAlertState("No bet selected", "Invalid input");
-      return;
-    }
+    const { selectedBetKeys } = this.state;
+    const { bets } = this.props;
+
     let result = -1;
     result = parseInt(this.state.betResult, 10);
 
@@ -110,15 +117,16 @@ class UnresolvedBets extends Component{
       betResult: result
     }
 
-    store.dispatch({type: 'PUT_BET', payload: {
-        data: data,
-        betId: this.props.bets[this.state.selectedBet].betId
-      },
-      showAlert: true
-    });
+    const betIds = _.map(selectedBetKeys, betKey =>
+      {
+        return bets[betKey].betId;
+      });
+
+    store.dispatch(putBets(betIds, data));
     
     this.setState({
-      betResult: null
+      betResult: null,
+      selectedBetKeys: []
     });
   }
 };

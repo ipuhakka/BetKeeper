@@ -606,7 +606,8 @@ namespace Betkeeper.Test.Repositories
                     It.Is<Dictionary<string, object>>(parameters =>
                         !parameters.ContainsKey("odd")),
                     false),
-                    Times.Exactly(2));
+                    Times.Exactly(2),
+                    "Odd parameter update called unexpected amount");
 
             mock.Verify(database =>
                 database.ExecuteCommand(
@@ -614,7 +615,8 @@ namespace Betkeeper.Test.Repositories
                     It.Is<Dictionary<string, object>>(parameters =>
                         !parameters.ContainsKey("stake")),
                     false),
-                    Times.Exactly(2));
+                    Times.Exactly(2),
+                    "Stake parameter update called unexpected amount");
 
             mock.Verify(database =>
                 database.ExecuteCommand(
@@ -622,7 +624,94 @@ namespace Betkeeper.Test.Repositories
                     It.Is<Dictionary<string, object>>(parameters =>
                         !parameters.ContainsKey("name")),
                     false),
-                    Times.Exactly(2));
+                    Times.Exactly(2),
+                    "Name parameter update called unexpected amount");
+        }
+
+        /// <summary>
+        /// Test should return 2, as one bet is not found and two are.
+        /// </summary>
+        [Test]
+        public void ModifyBets_ReturnsUpdatedBetCount()
+        {
+            var mock = new Mock<IDatabase>();
+
+            var mockDataTable = MockDataTable(
+                new List<Bet>
+                {
+                    new Bet(null, "testi", 2, 2, new DateTime(), 1)
+                    {
+                        BetId = 2
+                    },
+                    new Bet(null, "testi", 2, 2, new DateTime(), 1)
+                    {
+                        BetId = 3
+                    }
+                });
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(mockDataTable);
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(2);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            var modifiedBets = betRepository.ModifyBets(
+                new List<int> { 1, 2, 3 },
+                1,
+                Enums.BetResult.Won);
+
+            mock.Verify(database => database.ExecuteCommand(
+                It.Is<string>(query => query.Contains("IN (@intValue2, @intValue3)")),
+                It.Is<Dictionary<string, object>>(dict =>
+                    (int)dict["intValue2"] == 2
+                    && (int)dict["intValue3"] == 3),
+                false),
+                Times.Once);
+
+            Assert.AreEqual(2, modifiedBets);
+        }
+
+        [Test]
+        public void ModifyBets_GetBetsReturns0Bets_ExecuteCommandNotCalled()
+        {
+            var mock = new Mock<IDatabase>();
+
+            mock.Setup(database =>
+                database.ExecuteQuery(
+                    "SELECT * FROM bets WHERE owner = @userId",
+                    It.IsAny<Dictionary<string, object>>()))
+                .Returns(MockDataTable(new List<Bet>()));
+
+            mock.Setup(database =>
+                database.ExecuteCommand(
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, object>>(),
+                    false))
+                .Returns(2);
+
+            var betRepository = new BetRepository(database: mock.Object);
+
+            var modifiedBets = betRepository.ModifyBets(
+                new List<int> { 1, 2, 3 },
+                1,
+                Enums.BetResult.Won);
+
+            mock.Verify(database => database.ExecuteCommand(
+                It.IsAny<string>(),
+                It.IsAny<Dictionary<string, object>>(),
+                false),
+                Times.Never);
+
+            Assert.AreEqual(0, modifiedBets);
         }
 
         private DataTable MockDataTable(List<Bet> bets)

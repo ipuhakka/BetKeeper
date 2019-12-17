@@ -65,6 +65,24 @@ namespace Betkeeper.Repositories
             string name = null);
 
         /// <summary>
+        /// Mass updates users bets.
+        /// </summary>
+        /// <param name="betIds"></param>
+        /// <param name="userId"></param>
+        /// <param name="betResult"></param>
+        /// <param name="stake"></param>
+        /// <param name="odd"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        int ModifyBets(
+            List<int> betIds,
+            int userId,
+            Enums.BetResult betResult = Enums.BetResult.Unresolved,
+            double? stake = null,
+            double? odd = null,
+            string name = null);
+
+        /// <summary>
         /// Gets a bet.
         /// </summary>
         /// <param name="userId"></param>
