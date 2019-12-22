@@ -5,6 +5,39 @@
   justify-content: center;
 }
 
+.valueList-check-div {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+.valueList-check {
+  margin-left: 0.8em;
+}
+
+.check {
+  position: initial;
+  padding-left: 0;
+  margin: auto;
+}
+
+.label {
+  flex: 0 1 auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.inputs {
+  display: flex;
+  margin-left: auto;
+  max-width: 66%;
+}
+
+.datetime-inputs {
+  margin-left: auto;
+}
+
 .datetime-input {
   font-size: small;
 }
@@ -31,29 +64,4 @@
   .react-datepicker__triangle {
     visibility: collapse;
   }
-}
-
-.valueList-check-div {
-  display: flex;
-}
-
-.valueList-check {
-  margin-left: 0.8em;
-}
-
-.check {
-  position: initial;
-  padding-left: 0;
-  margin: auto;
-}
-
-.label {
-  flex: 0 1 auto;
-  margin: auto;
-}
-
-.inputs {
-  display: flex;
-  margin-left: auto;
-  max-width: 200px;
 }
