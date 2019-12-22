@@ -62,7 +62,8 @@ class Filters extends Component
     const filters = [
       { key: 'stake', label: 'Bet', type: 'number'},
       { key: 'odd', label: 'Odd', type: 'number'},
-      { key: 'name', label: 'Name', type: 'string'},
+      { key: 'name', label: 'Name', type: 'string'},  
+      { key: 'playedDate', label: 'Played', type: 'dateTime'},
       { key: 'betResult', label: 'Result', type: 'valueList', valueList: [
         {
           value: enums.betResult.unresolved,
@@ -76,8 +77,7 @@ class Filters extends Component
           value: enums.betResult.won,
           legend: 'Won'
         }
-    ]},
-    { key: 'playedDate', label: 'Played', type: 'dateTime'}
+    ]}
     ];
 
    return <Fragment>

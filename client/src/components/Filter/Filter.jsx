@@ -47,6 +47,7 @@ class Filter extends Component{
 
       case 'dateTime':
         return this.renderDateTimeFilter();
+
       default:
         return null;
     }
@@ -59,7 +60,7 @@ class Filter extends Component{
       return <div className='filter'>
         <Form.Label className='label'>{props.label}</Form.Label>
 
-        <div>
+        <div className='datetime-inputs'>
           <DatePicker
             className='datetime-input'
             selected={state.lowerLimit}
@@ -91,7 +92,7 @@ class Filter extends Component{
 
   renderValueListFilter = () =>
   {
-    const {state, props} = this;
+    const {props} = this;
 
     if (_.isNil(props.valueList))
     {
@@ -110,7 +111,7 @@ class Filter extends Component{
     });
 
     return(
-      <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
+      <div className='filter'>
         {checks}
     </div>);
   }
@@ -120,15 +121,18 @@ class Filter extends Component{
     const {state, props} = this;
 
     const filters = <div className='inputs'>
-          <Form.Control disabled={!state.filterOn} type="number"
-           value={state.lowerLimit} onChange={this.setValueFromEvent.bind(this, "lowerLimit")}/>
-          <Form.Control disabled={!state.filterOn} type="number"
-            value={state.upperLimit} onChange={this.setValueFromEvent.bind(this, "upperLimit")}/>
+          <Form.Control 
+            type="number"
+            value={state.lowerLimit} 
+            onChange={this.setValueFromEvent.bind(this, "lowerLimit")}/>
+          <Form.Control 
+            type="number"
+            value={state.upperLimit} 
+            onChange={this.setValueFromEvent.bind(this, "upperLimit")}/>
         </div>;
 
     return(
-        <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
-            <Form.Check className="check" onChange={this.toggleChecked}/>
+        <div className='filter'>
             <Form.Label className='label'>{props.label}</Form.Label>
             {filters}
         </div>);
@@ -139,10 +143,9 @@ class Filter extends Component{
     const {props, state} = this;
 
     return(
-      <div className={state.filterOn ? 'filter checked' : 'filter unchecked'}>
-        <Form.Check className="check" onChange={this.toggleChecked}/>
+      <div className='filter'>
         <Form.Label className='label'>{props.label}</Form.Label>
-        <Form.Control className='inputs' disabled={!state.filterOn} type="text" value={state.stringFilter}
+        <Form.Control className='inputs' type="text" value={state.stringFilter}
           onChange={this.setValueFromEvent.bind(this, "stringFilter")}/>
     </div>);
   }

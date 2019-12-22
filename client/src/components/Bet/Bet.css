@@ -3,7 +3,8 @@
   justify-content: center;
   cursor: pointer;
   padding: .375rem .425rem;
-  font-size: 1.3em;
+  font-size: 1.3em; 
+  margin-top: 0.5em;
 }
 
 .save-button {

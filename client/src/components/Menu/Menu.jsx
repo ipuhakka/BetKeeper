@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import store from '../../store';
+import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import PropTypes from 'prop-types';
 import './Menu.css';
@@ -25,7 +26,8 @@ class Menu extends Component{
 		this.handleOverflow();
 	}
 
-	render(){
+	render()
+	{
 		const { disable } = this.props;
 		const {scrollLeft, scrollRight} = this.state;
 
@@ -36,23 +38,25 @@ class Menu extends Component{
 					className={`scroll-button left${scrollLeft
 					? ''
 					: ' hidden'}`}>{'<'}</button>
-				<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
-					<Nav.Item as="li">
-						<Nav.Link eventKey={0} disabled={disable[0]}>Home</Nav.Link>
-					</Nav.Item>
-					<Nav.Item as="li">
-						<Nav.Link eventKey={1} disabled={disable[1]}>Bets</Nav.Link>
-					</Nav.Item>
-					<Nav.Item as="li">
-						<Nav.Link eventKey={2} disabled={disable[2]}>Statistics</Nav.Link>
-					</Nav.Item>
-					<Nav.Item as="li">
-						<Nav.Link eventKey={3} disabled={disable[3]}>Folders</Nav.Link>
-					</Nav.Item>
-					<Nav.Item as="li">
-						<Nav.Link eventKey={4} disabled={disable[4]}>Logout</Nav.Link>
-					</Nav.Item>
-				</Nav>
+				<Navbar bg='none'>
+					<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
+						<Nav.Item as="li">
+							<Nav.Link eventKey={0} disabled={disable[0]}>Home</Nav.Link>
+						</Nav.Item>
+						<Nav.Item as="li">
+							<Nav.Link eventKey={1} disabled={disable[1]}>Bets</Nav.Link>
+						</Nav.Item>
+						<Nav.Item as="li">
+							<Nav.Link eventKey={2} disabled={disable[2]}>Statistics</Nav.Link>
+						</Nav.Item>
+						<Nav.Item as="li">
+							<Nav.Link eventKey={3} disabled={disable[3]}>Folders</Nav.Link>
+						</Nav.Item>
+						<Nav.Item as="li">
+							<Nav.Link eventKey={4} disabled={disable[4]}>Logout</Nav.Link>
+						</Nav.Item>
+					</Nav>
+				</Navbar>
 				<button
 					onClick={() => this.scrollTo('right')}  
 					className={`scroll-button right${scrollRight
@@ -91,15 +95,17 @@ class Menu extends Component{
 	/**
 	 * Handles menu overflow.
 	 */
-	handleOverflow = () => {
+	handleOverflow = () => 
+	{
 		if (_.isNil(this.menuRef.current))
-		{
+		{			
 			return;
 		}
 
 		const { scrollWidth, clientWidth, scrollLeft } = this.menuRef.current;
 
-		const overflows = scrollWidth - clientWidth;
+		const overflows = scrollWidth > clientWidth;
+		console.log(`${scrollWidth} > ${clientWidth}`);
 
 		if (overflows)
 		{
