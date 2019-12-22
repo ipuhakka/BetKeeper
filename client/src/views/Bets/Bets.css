@@ -5,7 +5,7 @@
 .addButton {
   position: relative;
   float: right;
-  margin-top: 4px;
+  margin-top: 0.5em;
   margin-right: 2px;
   cursor: pointer;
 }
