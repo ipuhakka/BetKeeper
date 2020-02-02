@@ -2,6 +2,9 @@
 using System.Net.Http;
 using System.Web.Http.Controllers;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Betkeeper.Data;
+using Betkeeper.Models;
 
 namespace TestTools
 {
@@ -27,6 +30,31 @@ namespace TestTools
             {
                 Request = request
             };
+        }
+
+        public static void CreateTestData(
+            List<Participator> participators = null,
+            List<Competition> competitions = null)
+        {
+            using (var context = new BetkeeperDataContext(
+                new DbContextOptionsBuilder().UseInMemoryDatabase("testDatabase")))
+            {
+                context.Database.EnsureCreated();
+
+                if (participators != null)
+                {
+                    participators.ForEach(participator =>
+                        context.Participators.Add(participator));
+                }
+
+                if (competitions != null)
+                {
+                    competitions.ForEach(competition =>
+                        context.Competitions.Add(competition));
+                }
+
+                context.SaveChanges();
+            }
         }
     }
 }
