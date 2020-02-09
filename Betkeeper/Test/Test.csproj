@@ -162,6 +162,7 @@
     <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\QueryTests.cs" />
+    <Compile Include="src\Betkeeper\Classes\StringUtilsTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DataRowExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
