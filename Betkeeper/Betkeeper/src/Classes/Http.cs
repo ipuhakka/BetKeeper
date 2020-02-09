@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
@@ -48,6 +49,18 @@ namespace Betkeeper.Classes
             HttpContent requestContent = response.Content;
 
             return DeserializeHttpContent(requestContent);
+        }
+
+        /// <summary>
+        /// Returns content as a object dictionary.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static Dictionary<string, object> GetContentAsDictionary(HttpRequestMessage request)
+        {
+            string jsonContent = request.Content.ReadAsStringAsync().Result;
+
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
         }
 
         private static dynamic DeserializeHttpContent(HttpContent content)
