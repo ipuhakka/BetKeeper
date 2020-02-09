@@ -58,9 +58,14 @@ namespace Betkeeper.Models
                 throw new ArgumentOutOfRangeException();
             }
 
-            if (NameOrJoinCodeInUse(competition))
+            if (GetCompetitions(name: competition.Name).Count != 0)
             {
-                throw new ArgumentException("Name or join code already in use");
+                throw new ArgumentException("Name already in use");
+            }
+
+            if (GetCompetitions(joinCode: competition.JoinCode).Count != 0)
+            {
+                throw new ArgumentException("Join code already in use");
             }
 
             using (var context = new BetkeeperDataContext(OptionsBuilder))
@@ -92,36 +97,13 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
-        /// Validates a competition
-        /// </summary>
-        /// <param name="competition"></param>
-        /// <returns></returns>
-        private bool Validate(Competition competition)
-        {
-            return competition != null
-                && Enum.IsDefined(typeof(Enums.CompetitionState), competition.State)
-                && !string.IsNullOrEmpty(competition.Name)
-                && !string.IsNullOrEmpty(competition.JoinCode);
-        }
-
-        private bool NameOrJoinCodeInUse(Competition competition)
-        {
-            if (GetCompetitions(name: competition.Name).Count != 0)
-            {
-                return true;
-            }
-
-            return GetCompetitions(joinCode: competition.JoinCode).Count != 0;
-        }
-
-        /// <summary>
         /// Gets competitions from database.
         /// </summary>
         /// <param name="competitionId"></param>
         /// <param name="joinCode"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        private List<Competition> GetCompetitions(
+        public List<Competition> GetCompetitions(
             int? competitionId = null,
             string name = null,
             string joinCode = null)
@@ -172,6 +154,19 @@ namespace Betkeeper.Models
 
                 return query.FirstOrDefault();
             }
+        }
+
+        /// <summary>
+        /// Validates a competition
+        /// </summary>
+        /// <param name="competition"></param>
+        /// <returns></returns>
+        private bool Validate(Competition competition)
+        {
+            return competition != null
+                && Enum.IsDefined(typeof(Enums.CompetitionState), competition.State)
+                && !string.IsNullOrEmpty(competition.Name)
+                && !string.IsNullOrEmpty(competition.JoinCode);
         }
     }
 }

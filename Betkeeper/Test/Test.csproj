@@ -160,6 +160,7 @@
     <Compile Include="src\Api\Controllers\FoldersControllerTests.cs" />
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
     <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
+    <Compile Include="src\Betkeeper\Actions\CompetitionActionsTest.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\QueryTests.cs" />
     <Compile Include="src\Betkeeper\Classes\StringUtilsTests.cs" />
