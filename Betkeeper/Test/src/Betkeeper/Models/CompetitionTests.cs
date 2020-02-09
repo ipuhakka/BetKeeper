@@ -34,6 +34,44 @@ namespace Test.Betkeeper.Models
         }
 
         [Test]
+        public void AddCompetition_NameOrJoinCodeInUse_ThrowsArgumentException()
+        {
+            var inDatabaseCompetitions = new List<Competition>
+            {
+                new Competition()
+                {
+                    Name = "InUseName",
+                    State = 1,
+                    JoinCode = "123"
+                }
+            };
+
+            var testCompetitions = new List<Competition>
+            {
+                new Competition()
+                {
+                    Name = "InUseName",
+                    State = 1,
+                    JoinCode = "456"
+                },
+                new Competition()
+                {
+                    Name = "NotInUse",
+                    State = 1,
+                    JoinCode = "123"
+                }
+            };
+
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
+
+            var repository = new TestRepository(OptionsBuilder);
+
+            testCompetitions.ForEach(competition =>
+                Assert.Throws<ArgumentException>(() =>
+                    repository.AddCompetition(competition)));
+        }
+
+        [Test]
         public void AddCompetition_InvalidArgument_ThrowsArgumentOutOfRangeException()
         {
             var testCompetitions = new List<Competition>

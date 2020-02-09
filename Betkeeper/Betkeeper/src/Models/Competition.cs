@@ -58,6 +58,11 @@ namespace Betkeeper.Models
                 throw new ArgumentOutOfRangeException();
             }
 
+            if (NameOrJoinCodeInUse(competition))
+            {
+                throw new ArgumentException("Name or join code already in use");
+            }
+
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
                 context.Competitions.Add(competition);
@@ -99,12 +104,27 @@ namespace Betkeeper.Models
                 && !string.IsNullOrEmpty(competition.JoinCode);
         }
 
+        private bool NameOrJoinCodeInUse(Competition competition)
+        {
+            if (GetCompetitions(name: competition.Name).Count != 0)
+            {
+                return true;
+            }
+
+            return GetCompetitions(joinCode: competition.JoinCode).Count != 0;
+        }
+
         /// <summary>
         /// Gets competitions from database.
         /// </summary>
         /// <param name="competitionId"></param>
+        /// <param name="joinCode"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        private List<Competition> GetCompetitions(int? competitionId = null)
+        private List<Competition> GetCompetitions(
+            int? competitionId = null,
+            string name = null,
+            string joinCode = null)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
@@ -113,6 +133,16 @@ namespace Betkeeper.Models
                 if (competitionId != null)
                 {
                     query = query.Where(competition => competition.CompetitionId == competitionId);
+                }
+
+                if (name != null)
+                {
+                    query = query.Where(competition => competition.Name == name);
+                }
+
+                if (joinCode != null)
+                {
+                    query = query.Where(competition => competition.JoinCode == joinCode);
                 }
 
                 return query.ToList();
@@ -124,7 +154,7 @@ namespace Betkeeper.Models
         /// </summary>
         /// <param name="competitionId"></param>
         /// <returns></returns>
-        public Competition GetCompetition(int? competitionId = null)
+        public Competition GetCompetition(int? competitionId = null, string name = null)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
@@ -133,6 +163,11 @@ namespace Betkeeper.Models
                 if (competitionId != null)
                 {
                     query = query.Where(competition => competition.CompetitionId == competitionId);
+                }
+
+                if (name != null)
+                {
+                    query = query.Where(competition => competition.Name == name);
                 }
 
                 return query.FirstOrDefault();
