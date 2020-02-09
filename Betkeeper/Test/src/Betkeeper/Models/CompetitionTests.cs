@@ -12,22 +12,17 @@ namespace Test.Betkeeper.Models
     [TestFixture]
     public class CompetitionTests
     {
-        DbContextOptionsBuilder OptionsBuilder;
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
-
-            OptionsBuilder = new DbContextOptionsBuilder()
-                .UseInMemoryDatabase("testDatabase");
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
             {
                 context.Database.EnsureDeleted();
             }
@@ -64,7 +59,7 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: inDatabaseCompetitions);
 
-            var repository = new TestRepository(OptionsBuilder);
+            var repository = new TestRepository();
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentException>(() =>
@@ -130,7 +125,7 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: testCompetitions);
 
-            var repository = new TestRepository(OptionsBuilder);
+            var repository = new TestRepository();
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -148,7 +143,7 @@ namespace Test.Betkeeper.Models
                 State = 1
             };
 
-            var repository = new TestRepository(OptionsBuilder);
+            var repository = new TestRepository();
 
             Assert.DoesNotThrow(() => repository.AddCompetition(competition));
         }
@@ -169,7 +164,7 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: competitions);
 
-            var repository = new TestRepository(OptionsBuilder);
+            var repository = new TestRepository();
 
             Assert.Throws<InvalidOperationException>(() =>
                 repository.DeleteCompetition(competitionId: 5));
@@ -191,7 +186,7 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: competitions);
 
-            var repository = new TestRepository(OptionsBuilder);
+            var repository = new TestRepository();
 
             Assert.DoesNotThrow(() =>
                 repository.DeleteCompetition(competitionId: 3));
@@ -208,7 +203,7 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: competitions);
 
-            Assert.IsNull(new TestRepository(OptionsBuilder).GetCompetition(3));
+            Assert.IsNull(new TestRepository().GetCompetition(3));
         }
 
         [Test]
@@ -222,16 +217,16 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: competitions);
 
-            var competition = new TestRepository(OptionsBuilder).GetCompetition(1);
+            var competition = new TestRepository().GetCompetition(1);
 
             Assert.AreEqual("Description 1", competition.Description);
         }
 
         private class TestRepository: CompetitionRepository
         {
-            public TestRepository(DbContextOptionsBuilder optionsBuilder)
+            public TestRepository()
             {
-                OptionsBuilder = optionsBuilder;
+                OptionsBuilder = Tools.GetTestOptionsBuilder();
             }
         }
     }

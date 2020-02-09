@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http.Controllers;
 using Newtonsoft.Json;
@@ -37,7 +38,7 @@ namespace TestTools
             List<Competition> competitions = null)
         {
             using (var context = new BetkeeperDataContext(
-                new DbContextOptionsBuilder().UseInMemoryDatabase("testDatabase")))
+               GetTestOptionsBuilder()))
             {
                 context.Database.EnsureCreated();
 
@@ -55,6 +56,12 @@ namespace TestTools
 
                 context.SaveChanges();
             }
+        }
+
+        public static DbContextOptionsBuilder GetTestOptionsBuilder()
+        {
+            return new DbContextOptionsBuilder()
+                .UseInMemoryDatabase("TestDatabase");
         }
     }
 }

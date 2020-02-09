@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Betkeeper;
 using Betkeeper.Models;
 using NUnit.Framework;
-using Betkeeper;
 using Betkeeper.Data;
 using TestTools;
 
@@ -13,22 +12,18 @@ namespace Test.Betkeeper.Models
 {
     public class ParticipatorTests
     {
-        DbContextOptionsBuilder OptionsBuilder;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
-
-            OptionsBuilder = new DbContextOptionsBuilder()
-                .UseInMemoryDatabase("testDatabase");
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
             {
                 context.Database.EnsureDeleted();
             }
@@ -38,7 +33,7 @@ namespace Test.Betkeeper.Models
         public void AddParticipator_CompetitionDoesNotExist_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>
-                new TestParticipatorRepository(OptionsBuilder).AddParticipator(
+                new TestParticipatorRepository().AddParticipator(
                     userId: 1, competitionId: 1, Enums.CompetitionRole.Host));
         }
 
@@ -57,10 +52,10 @@ namespace Test.Betkeeper.Models
 
             Tools.CreateTestData(competitions: competitions);
 
-            new TestParticipatorRepository(OptionsBuilder).AddParticipator(
+            new TestParticipatorRepository().AddParticipator(
                 userId: 1, competitionId: 1, Enums.CompetitionRole.Host);
 
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
             {
                 Assert.AreEqual(1, context.Participators.ToList().Count);
             }
@@ -68,17 +63,17 @@ namespace Test.Betkeeper.Models
 
         private class TestParticipatorRepository : ParticipatorRepository
         {
-            public TestParticipatorRepository(DbContextOptionsBuilder optionsBuilder)
+            public TestParticipatorRepository()
             {
-                OptionsBuilder = optionsBuilder;
-                CompetitionHandler = new TestCompetitionRepository(optionsBuilder);
+                OptionsBuilder = Tools.GetTestOptionsBuilder();
+                CompetitionHandler = new TestCompetitionRepository();
             }
 
             private class TestCompetitionRepository : CompetitionRepository
             {
-                public TestCompetitionRepository(DbContextOptionsBuilder optionsBuilder)
+                public TestCompetitionRepository()
                 {
-                    OptionsBuilder = optionsBuilder;
+                    OptionsBuilder = Tools.GetTestOptionsBuilder();
                 }
             }
         }
