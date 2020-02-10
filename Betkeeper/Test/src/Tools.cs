@@ -64,4 +64,27 @@ namespace TestTools
                 .UseInMemoryDatabase("TestDatabase");
         }
     }
+
+    /// <summary>
+    /// Testable implementation of competition repository.
+    /// </summary>
+    internal class TestCompetitionRepository : CompetitionRepository
+    {
+        internal TestCompetitionRepository()
+        {
+            OptionsBuilder = Tools.GetTestOptionsBuilder();
+        }
+    }
+
+    /// <summary>
+    /// Testable implementation of participator repository.
+    /// </summary>
+    internal class TestParticipatorRepository : ParticipatorRepository
+    {
+        internal TestParticipatorRepository()
+        {
+            OptionsBuilder = Tools.GetTestOptionsBuilder();
+            CompetitionHandler = new TestCompetitionRepository();
+        }
+    }
 }

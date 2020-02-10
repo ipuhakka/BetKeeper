@@ -1,14 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Api.Classes;
+using Betkeeper.Actions;
+using Betkeeper.Classes;
+using Betkeeper.Extensions;
 
 namespace Api.Controllers
 {
     public class CompetitionsController : ApiController
     {
+        protected CompetitionAction CompetitionAction { get; set; }
+
+        public CompetitionsController()
+        {
+            CompetitionAction = new CompetitionAction();
+        }
+
         // GET: api/Competitions
         public IEnumerable<string> Get()
         {
@@ -22,8 +32,42 @@ namespace Api.Controllers
         }
 
         // POST: api/Competitions
-        public void Post([FromBody]string value)
+        /// <summary>
+        /// Create a new competition.
+        /// </summary>
+        /// <returns></returns>
+        public HttpResponseMessage Post()
         {
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            var data = Http.GetContentAsDictionary(Request);
+
+            var startTime = data.GetDateTime("startTime");
+
+            if (startTime == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var name = data.GetString("name");
+
+            if (string.IsNullOrEmpty(name))
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            CompetitionAction.CreateCompetition(
+                (int)userId,
+                name,
+                data.GetString("description"),
+                (DateTime)startTime);
+
+            return Http.CreateResponse(HttpStatusCode.OK);
         }
 
         // PUT: api/Competitions/5

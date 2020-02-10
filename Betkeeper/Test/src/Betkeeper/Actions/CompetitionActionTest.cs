@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Betkeeper.Test.Actions
 {
     [TestFixture]
-    public class CompetitionActionsTest
+    public class CompetitionActionTest
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -70,23 +70,6 @@ namespace Betkeeper.Test.Actions
             {
                 CompetitionRepository = new TestCompetitionRepository();
                 ParticipatorRepository = new TestParticipatorRepository();
-            }
-        }
-
-        private class TestCompetitionRepository : CompetitionRepository
-        {
-            public TestCompetitionRepository()
-            {
-                OptionsBuilder = Tools.GetTestOptionsBuilder();
-            }
-        }
-
-        private class TestParticipatorRepository : ParticipatorRepository
-        {
-            public TestParticipatorRepository()
-            {
-                OptionsBuilder = Tools.GetTestOptionsBuilder();
-                CompetitionHandler = new TestCompetitionRepository();
             }
         }
     }
