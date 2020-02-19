@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import _ from 'lodash';
 import * as pageActions from '../actions/pageActions';
 import Page from '../views/Page/Page';
 
 class PageContainer extends Component 
-{
-    constructor(props)
-    {
-        super(props);
-        
-        this.state = {
-            pageKey: ''
-        }
-    }
-
+{   
     componentDidMount()
     {
-        // TODO: Aseta pageKey tilaan pathnamen perusteella. 
-        // Katso myös sisältääkö pages proppi jo oikean rakenteen, tällöin hae vain data.
-        pageActions.getPage(window.location.pathname);
+
+        if (_.isNil(this.props.page))
+        {
+            pageActions.getPage(window.location.pathname);
+        }
     }
 
     render()
@@ -26,6 +21,16 @@ class PageContainer extends Component
     }
 };
 
-// TODO: Page propsit mukaan
+const mapStateToProps = (state) => 
+{
+    const pathname = window.location.pathname;
+    // Parse page name from path
+    const pageKey = pathname.substring(pathname.lastIndexOf('/') + 1);
 
-export default PageContainer;
+    return {
+        page: _.find(state.pages.pages, page =>
+            page.key === pageKey)
+    };
+};
+
+export default connect(mapStateToProps)(PageContainer);

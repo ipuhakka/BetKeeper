@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Betkeeper.Classes;
+using Betkeeper.Page;
 
 namespace Api.Controllers
 {
@@ -16,7 +17,7 @@ namespace Api.Controllers
         [Route("api/page/{page}")]
         public HttpResponseMessage Get([FromUri]string page)
         {
-            return Http.CreateResponse(HttpStatusCode.OK);
+            return Http.CreateResponse(HttpStatusCode.OK, new PageResponse(page));
         }
     }
 }

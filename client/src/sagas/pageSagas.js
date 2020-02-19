@@ -11,8 +11,8 @@ export function* getPage(action)
     try 
     {
         const response = yield call(pageApi.getPage, action.payload.pathname);
-        // TODO: Tarviiko parsea json?
-        yield call(pageActions.getPageSuccess, response.responseText);
+
+        yield call(pageActions.getPageSuccess, JSON.parse(response.responseText));
     }
     catch (error)
     {

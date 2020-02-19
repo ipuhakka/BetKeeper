@@ -28,10 +28,11 @@ const PageReducer = (state = { pages: []}, action ) => {
     switch (action.type) 
     {
       case pageActions.GET_PAGE_SUCCESS:
-        const pages = handleGetPageSuccess();
+        const newPages = handleGetPageSuccess(state, action.payload.structure);
+
         return {
             ...state,
-            pages: pages
+            pages: newPages
         };
 
       default:
