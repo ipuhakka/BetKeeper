@@ -176,6 +176,7 @@
     <Compile Include="Controllers\Competitions.cs" />
     <Compile Include="Controllers\Folders.cs" />
     <Compile Include="Controllers\Home.cs" />
+    <Compile Include="Controllers\Page.cs" />
     <Compile Include="Controllers\Token.cs" />
     <Compile Include="Controllers\Users.cs" />
     <Compile Include="Global.asax.cs">
