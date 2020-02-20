@@ -21,6 +21,9 @@ export function* getPage(action)
           case 401:
             yield put(setAlertStatus(error, "Session expired, please login again"));
             break;
+          case 404:
+            yield put(setAlertStatus(error, "Requested page was not found"));
+            break;
           case 0:
             yield put(setAlertStatus(error, "Connection refused, server is likely down"));
             break;

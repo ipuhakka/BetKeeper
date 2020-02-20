@@ -159,6 +159,7 @@
     <Compile Include="src\Api\Controllers\BetsControllerTests.cs" />
     <Compile Include="src\Api\Controllers\CompetitionsControllerTests.cs" />
     <Compile Include="src\Api\Controllers\FoldersControllerTests.cs" />
+    <Compile Include="src\Api\Controllers\PageControllerTests.cs" />
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
     <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
     <Compile Include="src\Betkeeper\Actions\CompetitionActionTest.cs" />
