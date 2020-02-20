@@ -18,12 +18,11 @@ namespace Betkeeper.Classes
         /// <returns></returns>
         public static HttpResponseMessage CreateResponse(
             HttpStatusCode httpStatusCode, 
-            object data = null, 
-            bool serializeAsCamelCase = true)
+            object data = null)
         {
             var response = new HttpResponseMessage(httpStatusCode)
             {
-                Content = SetHttpContent(data, serializeAsCamelCase)
+                Content = SetHttpContent(data)
             };
 
             return response;
@@ -76,15 +75,13 @@ namespace Betkeeper.Classes
             return JsonConvert.DeserializeObject(jsonContent, serializerSettings);
         }
 
-        private static HttpContent SetHttpContent(object data, bool serializeAsCamelCase)
+        private static HttpContent SetHttpContent(object data)
         {
-            var serializerSettings = serializeAsCamelCase
-                ? new JsonSerializerSettings
+            var serializerSettings = new JsonSerializerSettings
                 {
                     ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     DateFormatString = "yyyy-MM-dd HH:mm:ss"
-                }
-                : new JsonSerializerSettings();
+                };
 
             return data?.GetType() == typeof(string)
                 ? new StringContent(data.ToString())

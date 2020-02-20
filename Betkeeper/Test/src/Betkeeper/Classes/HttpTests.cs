@@ -28,7 +28,7 @@ namespace Betkeeper.Test.Classes
         }
 
         [Test]
-        public void CreateResponse_SerializeAsCamelCaseFalse_CasingIgnored()
+        public void CreateResponse_CasingChangedToCamelCase()
         {
             var camelCaseData = new
             {
@@ -37,27 +37,7 @@ namespace Betkeeper.Test.Classes
 
             var response = Http.CreateResponse(
                 HttpStatusCode.OK,
-                camelCaseData,
-                serializeAsCamelCase: false);
-
-            var dataAsDynamic = Http.GetHttpContent(response);
-
-            Assert.AreEqual(1, (int)dataAsDynamic.TestVar1);
-            Assert.IsNull(dataAsDynamic.testVar1);
-        }
-
-        [Test]
-        public void CreateResponse_SerializeAsCamelCaseTrue_CasingChangedToCamelCase()
-        {
-            var camelCaseData = new
-            {
-                TestVar1 = 1
-            };
-
-            var response = Http.CreateResponse(
-                HttpStatusCode.OK,
-                camelCaseData,
-                serializeAsCamelCase: true);
+                camelCaseData);
 
             var dataAsDynamic = Http.GetHttpContent(response);
 
