@@ -33,7 +33,7 @@ namespace Betkeeper.Page.Components
             : base(ComponentType.Button)
         {
             Text = text;
-            ButtonType = ButtonType;
+            ButtonType = buttonType;
             Style = style;
         }
     }
@@ -75,18 +75,32 @@ namespace Betkeeper.Page.Components
         public string ActionUrl { get; }
 
         /// <summary>
-        /// Modal fields. Key is the key to be sent in data.
+        /// Modal fields.
         /// </summary>
-        public Dictionary<string, FieldType> ModalFields { get; }
+        public List<ModalField> ModalFields { get; }
 
         public ModalActionButton(
             string actionUrl, 
-            Dictionary<string, FieldType> modalFields,
+            List<ModalField> modalFields,
             string text)
             : base(ButtonType.ModalAction, text)
         {
             ActionUrl = actionUrl;
             ModalFields = modalFields;
+        }
+    }
+
+    public class ModalField
+    {
+        public string Key { get; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public FieldType FieldType { get; }
+
+        public ModalField(string key, FieldType fieldType)
+        {
+            Key = key;
+            FieldType = fieldType;
         }
     }
 }
