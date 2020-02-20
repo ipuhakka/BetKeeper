@@ -5,6 +5,13 @@ import RBButton from 'react-bootstrap/Button';
 class Button extends Component
 {
 
+    constructor(props)
+    {
+        super(props);
+
+        this.onClick = this.onClick.bind(this);
+    }
+
     onClick()
     {
         const { props } = this;
@@ -20,10 +27,11 @@ class Button extends Component
         {
             // TODO: Handlaa modaaliaction clicki.
             /** Handleri PageViewiin jossa modaalin renderöinti. Parametreinä fieldit ja actionUrl. */
+            this.props.onClick(props.actionUrl, props.modalFields);
         }
         else if (props.buttonType === 'Navigation')
         {
-            // TODO: Handlaa navigointi
+            // TODO: Handlaa navigointi containerista asti clickifunktio
             console.log('clicked navigation');
         }
     }
@@ -31,6 +39,7 @@ class Button extends Component
     render()
     {
         const { props } = this;
+        console.log(props);
 
         return <RBButton
             variant={props.style}
@@ -46,7 +55,9 @@ Button.propTypes = {
     style: PropTypes.string.isRequired,
     actionUrl: PropTypes.string,
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
-    navigateTo: PropTypes.string
+    modalFields: PropTypes.array,
+    navigateTo: PropTypes.string,
+    onClick: PropTypes.func.isRequired
 };
 
 export default Button;
