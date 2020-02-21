@@ -14,8 +14,6 @@ class Page extends Component
 		super(props);
 
 		this.state = {
-            // TODO: Toteuta toisella tapaa. Ei toimi heti kun lisätään uusia sivuja
-            menuDisabled: [false, false, false, false, true, false],
             actionModalOpen: false,
             actionModalProps: {}
         };
@@ -78,6 +76,15 @@ class Page extends Component
     {
         const { state } = this;
 
+        const pathname = window.location.pathname;
+        // Parse page name from path and convert first char to upper
+        let pageKey = pathname
+            .substring(pathname.lastIndexOf('/') + 1);
+
+        pageKey = pageKey
+            .charAt(0)
+            .toUpperCase() + pageKey.slice(1);
+
         return <div className="content">
             <Modal 
                 onClose={() => 
@@ -87,7 +94,7 @@ class Page extends Component
                 show={state.actionModalOpen} 
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-			<Menu disable={state.menuDisabled}></Menu>
+			<Menu disableValue={pageKey}></Menu>
             <Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
             {this.renderComponents()}
         </div>;

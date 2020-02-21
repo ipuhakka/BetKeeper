@@ -22,18 +22,17 @@ class Statistics extends Component{
 		super(props);
 
 		this.state = {
-			disabled: [false, false, true, false, false],
 			folderSelected: 0
 		};
 	}
 
 	render(){
-		const {state, props} = this;
+		const { props } = this;
 
 		return(
 			<div>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-				<Menu disable={state.disabled}></Menu>
+				<Menu disableValue='Statistics'></Menu>
 				<Info></Info>
 				<div className="content">
 					<Row>

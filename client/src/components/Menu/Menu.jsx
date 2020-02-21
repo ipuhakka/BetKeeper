@@ -28,7 +28,7 @@ class Menu extends Component{
 
 	render()
 	{
-		const { disable } = this.props;
+		const { disableValue } = this.props;
 		const {scrollLeft, scrollRight} = this.state;
 
 		const items = [
@@ -52,7 +52,7 @@ class Menu extends Component{
 						{_.map(items, item =>
 							{
 								return <Nav.Item key={`nav-item-${item.value}`} as='li'>
-									<Nav.Link eventKey={item.key} disabled={disable[item.key]}>
+									<Nav.Link eventKey={item.key} disabled={disableValue === item.value}>
 										{item.value}
 									</Nav.Link>
 								</Nav.Item>
@@ -138,7 +138,12 @@ class Menu extends Component{
 	handleSelect = async (key) => {
 		const {history} = this.props;
 
-		switch(parseInt(key)){
+		this.setState({
+			disabled: key
+		});
+
+		switch(parseInt(key))
+		{
 			case 0:
 				history.push('/home');
 				break;
@@ -165,7 +170,7 @@ class Menu extends Component{
 }
 
 Menu.propTypes = {
-  disable: PropTypes.array
+  disableValue: PropTypes.string
 };
 
 export default withRouter(Menu);
