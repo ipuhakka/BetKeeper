@@ -17,11 +17,11 @@ namespace Betkeeper.Page
                 new Input("TestInput", InputType.TextBox),
                 new ModalActionButton(
                     "competitions/post", 
-                    new List<ModalField>
+                    new List<Field>
                     {
-                        new ModalField("Name", "Name", FieldType.TextBox),
-                        new ModalField("StartTime", "Start time", FieldType.DateTime),
-                        new ModalField("Description", "Description", FieldType.TextArea)
+                        new Field("Name", "Name", FieldType.TextBox),
+                        new Field("StartTime", "Start time", FieldType.DateTime),
+                        new Field("Description", "Description", FieldType.TextArea)
                     },
                     "Create a competition")
             };

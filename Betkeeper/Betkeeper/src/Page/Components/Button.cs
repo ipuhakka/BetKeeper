@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page.Components
 {
@@ -9,15 +10,6 @@ namespace Betkeeper.Page.Components
         PageAction,
         ModalAction,
         Navigation
-    }
-
-    public enum FieldType
-    {
-        DateTime,
-        Integer,
-        Double,
-        TextBox,
-        TextArea
     }
 
     public class Button : Component
@@ -77,33 +69,16 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Modal fields.
         /// </summary>
-        public List<ModalField> ModalFields { get; }
+        public List<Field> ModalFields { get; }
 
         public ModalActionButton(
             string actionUrl, 
-            List<ModalField> modalFields,
+            List<Field> fields,
             string text)
             : base(ButtonType.ModalAction, text)
         {
             ActionUrl = actionUrl;
-            ModalFields = modalFields;
-        }
-    }
-
-    public class ModalField
-    {
-        public string Key { get; }
-
-        public string Label { get; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public FieldType FieldType { get; }
-
-        public ModalField(string key, string label, FieldType fieldType)
-        {
-            Key = key;
-            Label = label;
-            FieldType = fieldType;
+            ModalFields = fields;
         }
     }
 }
