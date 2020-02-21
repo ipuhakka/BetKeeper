@@ -1,0 +1,25 @@
+.input-field-wrapper {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+.input-label {
+    flex: 0 0 5em;
+    margin-right: 1em;
+}
+
+.input-wrapper {
+    flex: 1 0 auto;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container {
+    width: 100%;
+}
+
+.datetime-input {
+    width: 100%;
+}

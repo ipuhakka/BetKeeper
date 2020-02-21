@@ -35,7 +35,6 @@ class Modal extends Component
     {
       const { actionFields } = this.props;
 
-      console.log(actionFields);
       return _.map(actionFields, field => {
         return <Input 
           onChange={this.onChangeInputValue}
