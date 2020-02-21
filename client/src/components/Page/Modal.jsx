@@ -1,29 +1,71 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Input from './Input';
 
+/** Action modal. */
 class Modal extends Component 
 {
+    constructor(props)
+    {
+      super(props);
+
+      this.state = {
+        actionResponseValues: {}
+      }
+
+      this.onChangeInputValue = this.onChangeInputValue.bind(this);
+    }
+
+    onChangeInputValue(key, newValue)
+    {
+      const actionResponse = {...this.state.actionResponseValues};
+
+      actionResponse[key] = newValue;
+
+      console.log(actionResponse);
+      this.setState({
+        actionResponseValues: actionResponse
+      });
+    }
+
+    renderFields()
+    {
+      const { actionFields } = this.props;
+
+      console.log(actionFields);
+      return _.map(actionFields, field => {
+        return <Input 
+          onChange={this.onChangeInputValue}
+          type={field.fieldType} 
+          label={field.label}
+          fieldKey={field.key}
+          key={field.key} />
+      });
+    }
 
     render()
     {
         const { props } = this;
 
         return <RBModal show={props.show} onHide={props.onClose}>
-        <RBModal.Header closeButton>
-          <RBModal.Title>{props.title}</RBModal.Title>
-        </RBModal.Header>
-      
-        <RBModal.Body>
-          <p>Modal body text goes here.</p>
-        </RBModal.Body>
-      
-        <RBModal.Footer>
-          <Button variant="outline-secondary" onClick={props.onClose}>Close</Button>
-          <Button variant="primary">Ok</Button>
-        </RBModal.Footer>
-      </RBModal>;
+          <RBModal.Header closeButton>
+            <RBModal.Title>{props.title}</RBModal.Title>
+          </RBModal.Header>
+        
+          <RBModal.Body>
+            <div>
+              {this.renderFields()}
+            </div>
+          </RBModal.Body>
+        
+          <RBModal.Footer>
+            <Button variant="outline-secondary" onClick={props.onClose}>Close</Button>
+            <Button variant="outline-primary">Ok</Button>
+          </RBModal.Footer>
+        </RBModal>;
     }
 };
 

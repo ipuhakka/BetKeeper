@@ -39,7 +39,6 @@ class Button extends Component
     render()
     {
         const { props } = this;
-        console.log(props);
 
         return <RBButton
             variant={props.style}
