@@ -38,7 +38,46 @@ export function* getPage(action)
     }
 }
 
+export function* callModalAction(action)
+{
+  const { parameters, actionUrl } = action.payload;
+    
+  setLoading(true);
+  
+  try 
+  {
+    yield call(pageApi.postAction, actionUrl, parameters);
+  }
+  catch (error)
+  {
+    switch (error.statusCode)
+    {
+      case 401:
+        yield put(setAlertStatus(error, "Session expired, please login again"));
+        break;
+      case 404:
+        yield put(setAlertStatus(error, "Requested page was not found"));
+        break;
+      case 0:
+        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        break;
+      default:
+        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        break;
+    }
+  }
+  finally
+  {
+    setLoading(false);
+  }
+}
+
 export function* watchGetPage()
 {
     yield takeLatest(pageActions.GET_PAGE, getPage);
+}
+
+export function* watchCallModalAction()
+{
+  yield takeLatest(pageActions.CALL_MODAL_ACTION, callModalAction);
 }

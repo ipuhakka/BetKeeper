@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import * as pageActions from '../../actions/pageActions';
 import Input from './Input';
 
 /** Action modal. */
@@ -47,7 +48,7 @@ class Modal extends Component
 
     render()
     {
-        const { props } = this;
+        const { props, state } = this;
 
         return <RBModal show={props.show} onHide={props.onClose}>
           <RBModal.Header closeButton>
@@ -61,8 +62,15 @@ class Modal extends Component
           </RBModal.Body>
         
           <RBModal.Footer>
-            <Button variant="outline-secondary" onClick={props.onClose}>Close</Button>
-            <Button variant="outline-primary">Ok</Button>
+            <Button 
+              variant="outline-secondary" 
+              onClick={props.onClose}>Close</Button>
+            <Button 
+              variant="outline-primary" 
+              onClick={() => 
+              {
+                pageActions.callModalAction(props.actionUrl, state.actionResponseValues);
+              }}>Ok</Button>
           </RBModal.Footer>
         </RBModal>;
     }

@@ -25,6 +25,7 @@ export default function* rootSaga() {
     sessionSagas.watchLogOut(),
     sessionSagas.watchCheckLogin(),
     sessionSagas.watchSignUp(),
-    pageSagas.watchGetPage()
+    pageSagas.watchGetPage(),
+    pageSagas.watchCallModalAction()
   ]);
 }
