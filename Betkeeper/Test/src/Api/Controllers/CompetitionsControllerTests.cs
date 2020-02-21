@@ -89,7 +89,7 @@ namespace Api.Test.Controllers
         }
 
         [Test]
-        public void Post_ValidRequest_ReturnsOK()
+        public void Post_ValidRequest_ReturnsCreated()
         {
             var token = TokenLog.CreateToken(1);
 
@@ -110,7 +110,7 @@ namespace Api.Test.Controllers
 
             var response = controller.Post();
 
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
 
             var competitions = new TestCompetitionRepository().GetCompetitions();
 

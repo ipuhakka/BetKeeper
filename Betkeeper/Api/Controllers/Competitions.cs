@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using Api.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Classes;
@@ -10,6 +11,7 @@ using Betkeeper.Extensions;
 
 namespace Api.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class CompetitionsController : ApiController
     {
         protected CompetitionAction CompetitionAction { get; set; }
@@ -67,7 +69,7 @@ namespace Api.Controllers
                 data.GetString("description"),
                 (DateTime)startTime);
 
-            return Http.CreateResponse(HttpStatusCode.OK);
+            return Http.CreateResponse(HttpStatusCode.Created);
         }
 
         // PUT: api/Competitions/5
