@@ -4,6 +4,7 @@ import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Button from '../../components/Page/Button';
 import Modal from '../../components/Page/Modal';
+import Info from '../../components/Info/Info.jsx';
 import './Page.css';
 
 class Page extends Component
@@ -22,13 +23,14 @@ class Page extends Component
         this.clickModalAction = this.clickModalAction.bind(this);
     }
 
-    clickModalAction(actionUrl, actionFields)
+    clickModalAction(actionUrl, actionFields, title)
     {
         this.setState({
             actionModalOpen: true,
             actionModalProps: {
                 actionUrl,
-                actionFields
+                actionFields,
+                title
             }
         });
     }
@@ -39,7 +41,6 @@ class Page extends Component
      */
     getButtonClick(button)
     {
-        console.log(button);
         if (button.buttonType === 'ModalAction')
         {
             return this.clickModalAction;
@@ -75,17 +76,19 @@ class Page extends Component
     
     render()
     {
-        console.log(this.state);
+        const { state } = this;
+
         return <div className="content">
             <Modal 
                 onClose={() => 
                 {
                     this.setState({ actionModalOpen: false });
                 }} 
-                show={this.state.actionModalOpen} 
-                {...this.state.actionModalProps}/>
+                show={state.actionModalOpen} 
+                {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-			<Menu disable={this.state.menuDisabled}></Menu>
+			<Menu disable={state.menuDisabled}></Menu>
+            <Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
             {this.renderComponents()}
         </div>;
     }

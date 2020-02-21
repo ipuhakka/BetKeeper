@@ -94,12 +94,15 @@ namespace Betkeeper.Page.Components
     {
         public string Key { get; }
 
+        public string Label { get; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; }
 
-        public ModalField(string key, FieldType fieldType)
+        public ModalField(string key, string label, FieldType fieldType)
         {
             Key = key;
+            Label = label;
             FieldType = fieldType;
         }
     }

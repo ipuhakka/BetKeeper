@@ -27,7 +27,7 @@ class Button extends Component
         {
             // TODO: Handlaa modaaliaction clicki.
             /** Handleri PageViewiin jossa modaalin renderöinti. Parametreinä fieldit ja actionUrl. */
-            this.props.onClick(props.actionUrl, props.modalFields);
+            this.props.onClick(props.actionUrl, props.modalFields, props.text);
         }
         else if (props.buttonType === 'Navigation')
         {

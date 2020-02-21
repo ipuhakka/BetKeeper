@@ -19,9 +19,9 @@ namespace Betkeeper.Page
                     "competitions/post", 
                     new List<ModalField>
                     {
-                        new ModalField("Name", FieldType.TextBox),
-                        new ModalField("StartTime", FieldType.DateTime),
-                        new ModalField("Description", FieldType.TextArea)
+                        new ModalField("Name", "Name", FieldType.TextBox),
+                        new ModalField("StartTime", "Start time", FieldType.DateTime),
+                        new ModalField("Description", "Description", FieldType.TextArea)
                     },
                     "Create a competition")
             };

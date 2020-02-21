@@ -20,7 +20,6 @@ class PageContainer extends Component
 
     render()
     {
-        console.log(this.props.page);
         return <Page {...this.props.page}/>;
     }
 };

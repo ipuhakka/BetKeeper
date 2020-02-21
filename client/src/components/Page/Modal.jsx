@@ -12,7 +12,7 @@ class Modal extends Component
 
         return <RBModal show={props.show} onHide={props.onClose}>
         <RBModal.Header closeButton>
-          <RBModal.Title>Modal title</RBModal.Title>
+          <RBModal.Title>{props.title}</RBModal.Title>
         </RBModal.Header>
       
         <RBModal.Body>
@@ -21,10 +21,29 @@ class Modal extends Component
       
         <RBModal.Footer>
           <Button variant="outline-secondary" onClick={props.onClose}>Close</Button>
-          <Button variant="primary">Save changes</Button>
+          <Button variant="primary">Ok</Button>
         </RBModal.Footer>
       </RBModal>;
     }
+};
+
+Modal.defaultProps = {
+  actionUrl: '',
+  actionFields: [],
+  title: ''
+};
+
+Modal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
+  actionUrl: PropTypes.string.isRequired,
+  actionFields: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      fieldType: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired
+  })),
+  title: PropTypes.string.isRequired
 };
 
 export default Modal;
