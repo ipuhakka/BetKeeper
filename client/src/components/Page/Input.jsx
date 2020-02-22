@@ -4,7 +4,8 @@ import _ from 'lodash';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import Form from 'react-bootstrap/Form';
-import consts from '../../js/consts.js';
+import consts from '../../js/consts';
+import * as utils from '../../js/utils';
 import './Input.css';
 
 class Input extends Component
@@ -17,7 +18,8 @@ class Input extends Component
         this.setDateTime = this.setDateTime.bind(this);
         
         this.state = {
-            value: null
+            value: '',
+            isValid: true
         };
     }
 
@@ -47,11 +49,26 @@ class Input extends Component
      */
     onChange(newValue)
     {
+        const { props } = this;
+
+        const isValid = props.type === 'Integer'
+        ? newValue.length <= 0  || utils.isInteger(newValue)
+        : true;
+
         this.setState({
-            value: newValue
+            value: newValue,
+            isValid
         });
 
-        this.props.onChange(this.props.fieldKey, newValue);
+        if (isValid)
+        {
+            props.onChange(props.fieldKey, newValue);
+        }
+        else 
+        {
+            props.onError();
+        }
+        
     }
 
     renderDateTimeInput()
@@ -75,7 +92,7 @@ class Input extends Component
         const type = _.includes(['Integer', 'Double'], props.type)
             ? 'number'
             : 'text'
-
+            
         const as = props.type === 'TextArea'
             ? 'textarea'
             : 'input';
@@ -83,6 +100,7 @@ class Input extends Component
         return <Form.Control 
             type={type}
             as={as}
+            isInvalid={!state.isValid}
             value={state.value || ''}
             onChange={(e) => 
             {
@@ -96,22 +114,20 @@ class Input extends Component
 
         let input;
 
-        // TODO: Numeeriset tyypit ja validaattorit
         switch (type)
         {
             default: 
                 throw new Error(`Non implemented input type ${type}`);
 
-            case 'DateTime':
-                input = this.renderDateTimeInput();
-                break;
-
+            case "Integer":
+            case "Double":
             case 'TextArea':
-                input = this.renderInput();
-                break;
-
             case 'TextBox':
                 input = this.renderInput();
+                break;
+
+            case 'DateTime':
+                input = this.renderDateTimeInput();
                 break;
         }
 
@@ -131,7 +147,8 @@ Input.propTypes = {
         "TextArea"]).isRequired,
     label: PropTypes.string.isRequired,
     fieldKey: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    onError: PropTypes.func.isRequired
 };
 
 export default Input;

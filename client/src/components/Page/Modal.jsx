@@ -14,7 +14,8 @@ class Modal extends Component
       super(props);
 
       this.state = {
-        actionResponseValues: {}
+        actionResponseValues: {},
+        hasInvalidInputs: false
       }
 
       this.onChangeInputValue = this.onChangeInputValue.bind(this);
@@ -26,9 +27,9 @@ class Modal extends Component
 
       actionResponse[key] = newValue;
 
-      console.log(actionResponse);
       this.setState({
-        actionResponseValues: actionResponse
+        actionResponseValues: actionResponse,
+        hasInvalidInputs: false
       });
     }
 
@@ -39,6 +40,12 @@ class Modal extends Component
       return _.map(actionFields, field => {
         return <Input 
           onChange={this.onChangeInputValue}
+          onError={() => 
+            {
+              this.setState({
+                hasInvalidInputs: true
+              });
+            }}
           type={field.fieldType} 
           label={field.label}
           fieldKey={field.key}
@@ -66,7 +73,8 @@ class Modal extends Component
               variant="outline-secondary" 
               onClick={props.onClose}>Close</Button>
             <Button 
-              variant="outline-primary" 
+              variant="outline-primary"
+              disabled={state.hasInvalidInputs}
               onClick={() => 
               {
                 pageActions.callModalAction(props.actionUrl, state.actionResponseValues);

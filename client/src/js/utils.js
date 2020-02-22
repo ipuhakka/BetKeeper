@@ -78,3 +78,8 @@ export function loginCredentialsExist(){
   return sessionStorage.getItem('token') != null &&
     sessionStorage.getItem('token').toString() !== 'null';
 }
+
+export function isInteger(value)
+{
+  return /^\+?(0|[1-9]\d*)$/.test(value);
+}
