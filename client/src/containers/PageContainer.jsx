@@ -2,17 +2,37 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 import * as pageActions from '../actions/pageActions';
 import Page from '../views/Page/Page';
 
 class PageContainer extends Component 
 {   
+    constructor(props)
+    {
+        super(props);
+
+        this.state = {
+            pathname: window.location.pathname
+        };
+    }
+
     /**
      * Load page structure 
      */
     componentDidMount()
     {
         if (_.isNil(this.props.page))
+        {
+            pageActions.getPage(window.location.pathname);
+        }
+    }
+
+    componentDidUpdate()
+    {
+        const { state } = this;
+
+        if (state.pathname !== window.location.pathname)
         {
             pageActions.getPage(window.location.pathname);
         }
@@ -45,4 +65,4 @@ PageContainer.propTypes = {
     })
 };
 
-export default connect(mapStateToProps)(PageContainer);
+export default withRouter(connect(mapStateToProps)(PageContainer));

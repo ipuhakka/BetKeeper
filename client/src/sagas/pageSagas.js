@@ -53,16 +53,16 @@ export function* callModalAction(action)
     switch (error.statusCode)
     {
       case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
+        yield put(setAlertStatus(error.statusCode, "Session expired, please login again"));
         break;
       case 404:
-        yield put(setAlertStatus(error, "Requested page was not found"));
+        yield put(setAlertStatus(error.statusCode, "Requested page was not found"));
         break;
       case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        yield put(setAlertStatus(error.statusCode, "Connection refused, server is likely down"));
         break;
       default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        yield put(setAlertStatus(error.statusCode, "Unexpected error occurred"));
         break;
     }
   }

@@ -50,7 +50,11 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<string> ActionDataKeys { get; }
 
-        public PageActionButton(string actionUrl, List<string> actionDataKeys, string text, string style)
+        public PageActionButton(
+            string actionUrl, 
+            List<string> actionDataKeys, 
+            string text, 
+            string style)
             : base(ButtonType.PageAction, text, style)
         {
             ActionUrl = actionUrl;
@@ -74,8 +78,9 @@ namespace Betkeeper.Page.Components
         public ModalActionButton(
             string actionUrl, 
             List<Field> fields,
-            string text)
-            : base(ButtonType.ModalAction, text)
+            string text,
+            string style = "primary")
+            : base(ButtonType.ModalAction, text, style)
         {
             ActionUrl = actionUrl;
             ModalFields = fields;

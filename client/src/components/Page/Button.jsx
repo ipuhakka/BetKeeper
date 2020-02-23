@@ -25,14 +25,11 @@ class Button extends Component
         }
         else if (props.buttonType === 'ModalAction')
         {
-            // TODO: Handlaa modaaliaction clicki.
-            /** Handleri PageViewiin jossa modaalin renderöinti. Parametreinä fieldit ja actionUrl. */
-            this.props.onClick(props.actionUrl, props.modalFields, props.text);
+            props.onClick(props.actionUrl, props.modalFields, props.text);
         }
         else if (props.buttonType === 'Navigation')
         {
-            // TODO: Handlaa navigointi containerista asti clickifunktio
-            console.log('clicked navigation');
+            props.onClick(props.navigateTo);
         }
     }
 

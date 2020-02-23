@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Button from '../../components/Page/Button';
@@ -19,6 +20,7 @@ class Page extends Component
         };
         
         this.clickModalAction = this.clickModalAction.bind(this);
+        this.clickNavigationButton = this.clickNavigationButton.bind(this);
     }
 
     clickModalAction(actionUrl, actionFields, title)
@@ -33,6 +35,11 @@ class Page extends Component
         });
     }
 
+    clickNavigationButton(navigateTo)
+    {
+        this.props.history.push(navigateTo);
+    }
+
     /**
      * Returns function for button click event handling.
      * @param {object} button 
@@ -42,6 +49,11 @@ class Page extends Component
         if (button.buttonType === 'ModalAction')
         {
             return this.clickModalAction;
+        }
+
+        if (button.buttonType === 'Navigation')
+        {
+            return this.clickNavigationButton;
         }
 
         return null;
@@ -101,4 +113,4 @@ class Page extends Component
     }
 };
 
-export default Page;
+export default withRouter(Page);

@@ -142,6 +142,8 @@ class Menu extends Component{
 			disabled: key
 		});
 
+		history.push('/');
+		
 		switch(parseInt(key))
 		{
 			case 0:
