@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Betkeeper.Data;
+using Betkeeper.Exceptions;
 
 namespace Betkeeper.Models
 {
@@ -60,7 +61,7 @@ namespace Betkeeper.Models
 
             if (GetCompetitions(name: competition.Name).Count != 0)
             {
-                throw new ArgumentException("Name already in use");
+                throw new NameInUseException("Name already in use");
             }
 
             if (GetCompetitions(joinCode: competition.JoinCode).Count != 0)
@@ -70,7 +71,7 @@ namespace Betkeeper.Models
 
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
-                context.Competitions.Add(competition);
+                context.Competition.Add(competition);
                 context.SaveChanges();
             }
         }
@@ -91,7 +92,7 @@ namespace Betkeeper.Models
 
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
-                context.Competitions.Remove(competition);
+                context.Competition.Remove(competition);
                 context.SaveChanges();
             }
         }
@@ -110,7 +111,7 @@ namespace Betkeeper.Models
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
-                var query = context.Competitions.AsQueryable();
+                var query = context.Competition.AsQueryable();
 
                 if (competitionId != null)
                 {
@@ -140,7 +141,7 @@ namespace Betkeeper.Models
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
-                var query = context.Competitions.AsQueryable();
+                var query = context.Competition.AsQueryable();
 
                 if (competitionId != null)
                 {

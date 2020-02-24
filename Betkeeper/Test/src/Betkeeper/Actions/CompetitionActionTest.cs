@@ -5,6 +5,7 @@ using Betkeeper.Data;
 using Betkeeper.Models;
 using TestTools;
 using NUnit.Framework;
+using Betkeeper.Exceptions;
 
 namespace Betkeeper.Test.Actions
 {
@@ -28,7 +29,7 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void CreateCompetition_NameInUse_ThrowsArgumentException()
+        public void CreateCompetition_NameInUse_ThrowsNameInUseExceptionException()
         {
             var inDatabaseCompetitions = new List<Competition>
             {
@@ -44,7 +45,7 @@ namespace Betkeeper.Test.Actions
 
             var testAction = new TestAction();
 
-           Assert.Throws<ArgumentException>(() =>
+           Assert.Throws<NameInUseException>(() =>
             testAction.CreateCompetition(1, "InUseName", "Description", new DateTime(2000, 1, 1)));
         }
 

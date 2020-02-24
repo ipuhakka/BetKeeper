@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using Betkeeper.Models;
 using Betkeeper.Data;
-using Betkeeper;
+using Betkeeper.Exceptions;
 using NUnit.Framework;
 using TestTools;
 
@@ -29,7 +28,7 @@ namespace Betkeeper.Test.Models
         }
 
         [Test]
-        public void AddCompetition_NameOrJoinCodeInUse_ThrowsArgumentException()
+        public void AddCompetition_NameInUse_ThrowsNameInUseException()
         {
             var inDatabaseCompetitions = new List<Competition>
             {
@@ -37,7 +36,7 @@ namespace Betkeeper.Test.Models
                 {
                     Name = "InUseName",
                     State = 1,
-                    JoinCode = "123"
+                    JoinCode = "679"
                 }
             };
 
@@ -48,10 +47,36 @@ namespace Betkeeper.Test.Models
                     Name = "InUseName",
                     State = 1,
                     JoinCode = "456"
-                },
+                }
+            };
+
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
+
+            var repository = new TestRepository();
+
+            testCompetitions.ForEach(competition =>
+                Assert.Throws<NameInUseException>(() =>
+                    repository.AddCompetition(competition)));
+        }
+
+        [Test]
+        public void AddCompetition_JoinCodeInUse_ThrowsArgumentException()
+        {
+            var inDatabaseCompetitions = new List<Competition>
+            {
                 new Competition()
                 {
-                    Name = "NotInUse",
+                    Name = "NotInUseName",
+                    State = 1,
+                    JoinCode = "123"
+                }
+            };
+
+            var testCompetitions = new List<Competition>
+            {
+                new Competition()
+                {
+                    Name = "Name",
                     State = 1,
                     JoinCode = "123"
                 }

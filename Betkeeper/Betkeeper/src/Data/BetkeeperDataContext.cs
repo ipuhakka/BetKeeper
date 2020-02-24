@@ -5,9 +5,9 @@ namespace Betkeeper.Data
 {
     public class BetkeeperDataContext : DbContext
     {
-        public DbSet<Competition> Competitions { get; set; }
+        public DbSet<Competition> Competition { get; set; }
 
-        public DbSet<Participator> Participators { get; set; }
+        public DbSet<Participator> Participator { get; set; }
 
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)

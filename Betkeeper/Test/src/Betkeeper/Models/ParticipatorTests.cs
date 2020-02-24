@@ -55,7 +55,7 @@ namespace Betkeeper.Test.Models
 
             using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
             {
-                Assert.AreEqual(1, context.Participators.ToList().Count);
+                Assert.AreEqual(1, context.Participator.ToList().Count);
             }
         }
 

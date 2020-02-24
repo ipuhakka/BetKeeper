@@ -6,6 +6,7 @@ using Betkeeper.Actions;
 using Betkeeper.Classes;
 using Betkeeper.Page.Components;
 using Betkeeper.Extensions;
+using Betkeeper.Exceptions;
 
 namespace Betkeeper.Page
 {
@@ -18,7 +19,7 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public HttpResponseMessage GetCompetitionResponse(string pageKey)
+        public HttpResponseMessage GetResponse(string pageKey)
         {
             var components = new List<Component>
             {
@@ -78,13 +79,22 @@ namespace Betkeeper.Page
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            CompetitionAction.CreateCompetition(
-                action.UserId,
-                name,
-                action.Parameters.GetString("Description"),
-                (DateTime)startTime);
+            try
+            {
+                CompetitionAction.CreateCompetition(
+                    action.UserId,
+                    name,
+                    action.Parameters.GetString("Description"),
+                    (DateTime)startTime);
+            }
+            catch (NameInUseException)
+            {
+                return Http.CreateResponse(
+                    HttpStatusCode.Conflict,
+                    "A tournament with specified name already exists");
+            }
 
-            return Http.CreateResponse(HttpStatusCode.Created);
+            return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully");
         }
     }
 }

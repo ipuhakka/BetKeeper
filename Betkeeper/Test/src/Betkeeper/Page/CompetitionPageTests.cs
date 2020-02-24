@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Betkeeper.Actions;
 using Betkeeper.Data;
+using Betkeeper.Models;
 using Betkeeper.Page;
 using NUnit.Framework;
 using TestTools;
@@ -79,6 +80,35 @@ namespace Betkeeper.Test.Page
             Assert.AreEqual("Testi nimi", competitions[0].Name);
             Assert.AreEqual("Kuvaus", competitions[0].Description);
         }
+
+        [Test]
+        public void Post_CompetitionNameAlreadyInUse_ReturnsConflict()
+        {
+            var inDatabaseCompetitions = new List<Competition>
+            {
+                new Competition()
+                {
+                    CompetitionId = 1,
+                    Name = "Nimi",
+                    JoinCode = "213"
+                }
+            };
+
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "StartTime", new DateTime(2019, 1, 1, 14, 45, 0) },
+                { "Name", "Nimi" },
+                { "Description", "Kuvaus" }
+            };
+
+            var response = new TestCompetitionPage().HandleAction(
+                new PageAction(1, "competitions", "Post", parameters));
+
+            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+        }
+
 
         private class TestCompetitionPage : CompetitionPage
         {

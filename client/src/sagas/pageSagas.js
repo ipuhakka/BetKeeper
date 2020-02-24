@@ -46,7 +46,8 @@ export function* callModalAction(action)
   
   try 
   {
-    yield call(pageApi.postAction, page, actionName, parameters);
+    const response = yield call(pageApi.postAction, page, actionName, parameters);
+    yield put(setAlertStatus(response.status, response.responseText));
   }
   catch (error)
   {
@@ -60,6 +61,9 @@ export function* callModalAction(action)
         break;
       case 0:
         yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
+        break;
+      case 409:
+        yield put(setAlertStatus(error.status, error.responseText));
         break;
       default:
         yield put(setAlertStatus(error.status, "Unexpected error occurred"));

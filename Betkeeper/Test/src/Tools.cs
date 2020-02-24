@@ -45,13 +45,13 @@ namespace TestTools
                 if (participators != null)
                 {
                     participators.ForEach(participator =>
-                        context.Participators.Add(participator));
+                        context.Participator.Add(participator));
                 }
 
                 if (competitions != null)
                 {
                     competitions.ForEach(competition =>
-                        context.Competitions.Add(competition));
+                        context.Competition.Add(competition));
                 }
 
                 context.SaveChanges();

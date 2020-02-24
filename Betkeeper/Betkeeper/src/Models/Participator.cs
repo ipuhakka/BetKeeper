@@ -48,7 +48,7 @@ namespace Betkeeper.Models
 
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
-                context.Participators.Add(new Participator
+                context.Participator.Add(new Participator
                 {
                     UserId = userId,
                     Competition = competitionId,

@@ -31,7 +31,7 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return new CompetitionPage().GetCompetitionResponse(pageKey);
+                    return new CompetitionPage().GetResponse(pageKey);
             }
         }
 
