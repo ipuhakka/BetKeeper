@@ -62,7 +62,11 @@ class Input extends Component
 
         if (isValid)
         {
-            props.onChange(props.fieldKey, newValue);
+            const dataValue = props.type === 'DateTime'
+                ? moment(newValue).utc()
+                : newValue;
+
+            props.onChange(props.fieldKey, dataValue);
         }
         else 
         {

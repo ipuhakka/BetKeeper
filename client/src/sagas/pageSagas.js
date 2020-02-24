@@ -16,19 +16,19 @@ export function* getPage(action)
     }
     catch (error)
     {
-        switch(error.statusCode)
+        switch(error.status)
         {
           case 401:
-            yield put(setAlertStatus(error, "Session expired, please login again"));
+            yield put(setAlertStatus(error.status, "Session expired, please login again"));
             break;
           case 404:
-            yield put(setAlertStatus(error, "Requested page was not found"));
+            yield put(setAlertStatus(error.status, "Requested page was not found"));
             break;
           case 0:
-            yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+            yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
             break;
           default:
-            yield put(setAlertStatus(error, "Unexpected error occurred"));
+            yield put(setAlertStatus(error.status, "Unexpected error occurred"));
             break;
         }
     }
@@ -40,29 +40,29 @@ export function* getPage(action)
 
 export function* callModalAction(action)
 {
-  const { parameters, actionUrl } = action.payload;
+  const { parameters, actionName, page } = action.payload;
     
   setLoading(true);
   
   try 
   {
-    yield call(pageApi.postAction, actionUrl, parameters);
+    yield call(pageApi.postAction, page, actionName, parameters);
   }
   catch (error)
   {
-    switch (error.statusCode)
+    switch (error.status)
     {
       case 401:
-        yield put(setAlertStatus(error.statusCode, "Session expired, please login again"));
+        yield put(setAlertStatus(error.status, "Session expired, please login again"));
         break;
       case 404:
-        yield put(setAlertStatus(error.statusCode, "Requested page was not found"));
+        yield put(setAlertStatus(error.status, "Requested page was not found"));
         break;
       case 0:
-        yield put(setAlertStatus(error.statusCode, "Connection refused, server is likely down"));
+        yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
         break;
       default:
-        yield put(setAlertStatus(error.statusCode, "Unexpected error occurred"));
+        yield put(setAlertStatus(error.status, "Unexpected error occurred"));
         break;
     }
   }

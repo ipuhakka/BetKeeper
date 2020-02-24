@@ -19,13 +19,13 @@ class Button extends Component
         if (props.buttonType === 'PageAction')
         {
             /** TODO: Handlaa page action clicki. Proppina actionhandler
-             * ja sille parametreinä actionUrl ja actionDataKeys.
+             * ja sille parametreinä action ja actionDataKeys.
              */
             console.log('clicked action');
         }
         else if (props.buttonType === 'ModalAction')
         {
-            props.onClick(props.actionUrl, props.modalFields, props.text);
+            props.onClick(props.action, props.modalFields, props.text);
         }
         else if (props.buttonType === 'Navigation')
         {
@@ -49,7 +49,7 @@ Button.propTypes = {
     buttonType: PropTypes.oneOf(['ModalAction', 'PageAction', 'Navigation']).isRequired,
     text: PropTypes.string.isRequired,
     style: PropTypes.string.isRequired,
-    actionUrl: PropTypes.string,
+    action: PropTypes.string,
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
     modalFields: PropTypes.array,
     navigateTo: PropTypes.string,

@@ -31,7 +31,26 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return CompetitionPage.GetCompetitionResponse(pageKey);
+                    return new CompetitionPage().GetCompetitionResponse(pageKey);
+            }
+        }
+
+        /// <summary>
+        /// Executes a page action.
+        /// </summary>
+        /// <param name="page">Page</param>
+        /// <param name="action">Action name.</param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public static HttpResponseMessage HandlePageAction(PageAction action)
+        {
+            switch (action.Page)
+            {
+                default:
+                    return Http.CreateResponse(HttpStatusCode.NotFound);
+
+                case "competitions":
+                    return new CompetitionPage().HandleAction(action);
             }
         }
     }

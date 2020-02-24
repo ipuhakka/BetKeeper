@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page.Components
 {
@@ -43,7 +42,7 @@ namespace Betkeeper.Page.Components
 
     public class PageActionButton : Button
     {
-        public string ActionUrl { get; }
+        public string Action { get; }
 
         /// <summary>
         /// Keys for data to be sent in action request.
@@ -51,13 +50,13 @@ namespace Betkeeper.Page.Components
         public List<string> ActionDataKeys { get; }
 
         public PageActionButton(
-            string actionUrl, 
+            string action, 
             List<string> actionDataKeys, 
             string text, 
             string style)
             : base(ButtonType.PageAction, text, style)
         {
-            ActionUrl = actionUrl;
+            Action = action;
             ActionDataKeys = actionDataKeys;
         }
     }
@@ -68,7 +67,7 @@ namespace Betkeeper.Page.Components
     /// </summary>
     public class ModalActionButton : Button
     {
-        public string ActionUrl { get; }
+        public string Action { get; }
 
         /// <summary>
         /// Modal fields.
@@ -76,13 +75,13 @@ namespace Betkeeper.Page.Components
         public List<Field> ModalFields { get; }
 
         public ModalActionButton(
-            string actionUrl, 
+            string action, 
             List<Field> fields,
             string text,
             string style = "primary")
             : base(ButtonType.ModalAction, text, style)
         {
-            ActionUrl = actionUrl;
+            Action = action;
             ModalFields = fields;
         }
     }

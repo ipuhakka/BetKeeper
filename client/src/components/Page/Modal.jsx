@@ -77,7 +77,7 @@ class Modal extends Component
               disabled={state.hasInvalidInputs}
               onClick={() => 
               {
-                pageActions.callModalAction(props.actionUrl, state.actionResponseValues);
+                pageActions.callModalAction(props.page, props.action, state.actionResponseValues);
               }}>Ok</Button>
           </RBModal.Footer>
         </RBModal>;
@@ -85,7 +85,7 @@ class Modal extends Component
 };
 
 Modal.defaultProps = {
-  actionUrl: '',
+  action: '',
   actionFields: [],
   title: ''
 };
@@ -93,7 +93,8 @@ Modal.defaultProps = {
 Modal.propTypes = {
   onClose: PropTypes.func.isRequired,
   show: PropTypes.bool.isRequired,
-  actionUrl: PropTypes.string.isRequired,
+  page: PropTypes.string.isRequired,
+  action: PropTypes.string.isRequired,
   actionFields: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,

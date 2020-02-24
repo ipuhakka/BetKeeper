@@ -29,7 +29,7 @@ export function getPage(pathname)
       });
 }
 
-export function postAction(actionUrl, content)
+export function postAction(page, action, parameters)
 {
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
@@ -48,10 +48,11 @@ export function postAction(actionUrl, content)
       }
     });
 
-    xmlHttp.open("POST", `${ConstVars.URI}${actionUrl}`);
+
+    xmlHttp.open("POST", `${ConstVars.URI}pageaction/${page.toLowerCase()}/${action}`);
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
     xmlHttp.setRequestHeader('Content-type', 'application/json');
 
-    xmlHttp.send(JSON.stringify(content));
+    xmlHttp.send(JSON.stringify(parameters));
   });
 }

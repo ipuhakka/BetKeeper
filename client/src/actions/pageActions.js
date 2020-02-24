@@ -18,13 +18,14 @@ export function getPage(pathname)
       });
 }
 
-export function callModalAction(actionUrl, requestParameters)
+export function callModalAction(page, action, requestParameters)
 {
     store.dispatch({
         type: CALL_MODAL_ACTION,
         payload: {
             parameters: requestParameters,
-            actionUrl
+            actionName: action,
+            page
           }
       });
 }

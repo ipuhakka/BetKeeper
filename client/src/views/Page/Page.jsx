@@ -23,12 +23,12 @@ class Page extends Component
         this.clickNavigationButton = this.clickNavigationButton.bind(this);
     }
 
-    clickModalAction(actionUrl, actionFields, title)
+    clickModalAction(action, actionFields, title)
     {
         this.setState({
             actionModalOpen: true,
             actionModalProps: {
-                actionUrl,
+                action,
                 actionFields,
                 title
             }
@@ -103,6 +103,7 @@ class Page extends Component
                 {
                     this.setState({ actionModalOpen: false });
                 }} 
+                page={pageKey}
                 show={state.actionModalOpen} 
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
