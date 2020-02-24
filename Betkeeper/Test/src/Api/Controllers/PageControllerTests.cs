@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Api.Controllers;
 using Api.Classes;
 using NUnit.Framework;
 using System.Net;
 using TestTools;
 
-namespace Test.Api.Controllers
+namespace Api.Test.Controllers
 {
     [TestFixture]
     public class PageControllerTests

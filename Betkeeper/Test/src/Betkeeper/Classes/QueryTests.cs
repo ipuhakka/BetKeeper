@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Betkeeper.Classes;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Classes
+namespace Betkeeper.Test.Classes
 {
 
     [TestFixture]

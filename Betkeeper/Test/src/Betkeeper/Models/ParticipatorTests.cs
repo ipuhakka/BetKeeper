@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Betkeeper;
 using Betkeeper.Models;
 using NUnit.Framework;
 using Betkeeper.Data;
 using TestTools;
 
-namespace Test.Betkeeper.Models
+namespace Betkeeper.Test.Models
 {
     public class ParticipatorTests
     {

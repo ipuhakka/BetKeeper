@@ -7,7 +7,7 @@ using Betkeeper;
 using NUnit.Framework;
 using TestTools;
 
-namespace Test.Betkeeper.Models
+namespace Betkeeper.Test.Models
 {
     [TestFixture]
     public class CompetitionTests
