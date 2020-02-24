@@ -157,7 +157,6 @@
     <Compile Include="src\Api\Classes\TokenLogTests.cs" />
     <Compile Include="src\Api\Classes\TokenTests.cs" />
     <Compile Include="src\Api\Controllers\BetsControllerTests.cs" />
-    <Compile Include="src\Api\Controllers\CompetitionsControllerTests.cs" />
     <Compile Include="src\Api\Controllers\FoldersControllerTests.cs" />
     <Compile Include="src\Api\Controllers\PageControllerTests.cs" />
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
