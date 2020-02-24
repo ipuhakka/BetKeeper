@@ -35,6 +35,8 @@ class PageContainer extends Component
         if (state.pathname !== window.location.pathname)
         {
             pageActions.getPage(window.location.pathname);
+         
+            this.setState({ pathname: window.location.pathname });
         }
     }
 
