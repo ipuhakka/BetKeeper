@@ -74,8 +74,8 @@ class Page extends Component
                             onClick={this.getButtonClick(component)} 
                             {...component} />;
 
-                    case 'Input':
-                        return <div key={`input-${i}`}>Insert input here</div>;
+                    case 'Field':
+                        return <div key={`field-${i}`}>Insert field here</div>;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

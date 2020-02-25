@@ -6,9 +6,9 @@ import moment from 'moment';
 import Form from 'react-bootstrap/Form';
 import consts from '../../js/consts';
 import * as utils from '../../js/utils';
-import './Input.css';
+import './Field.css';
 
-class Input extends Component
+class Field extends Component
 {
     constructor(props)
     {
@@ -142,7 +142,7 @@ class Input extends Component
     }
 };
 
-Input.propTypes = {
+Field.propTypes = {
     type: PropTypes.oneOf([
         "Integer", 
         "Double", 
@@ -155,4 +155,4 @@ Input.propTypes = {
     onError: PropTypes.func.isRequired
 };
 
-export default Input;
+export default Field;

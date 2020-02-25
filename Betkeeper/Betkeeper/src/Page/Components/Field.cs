@@ -12,19 +12,41 @@ namespace Betkeeper.Page.Components
         TextArea
     }
 
-    public class Field
+    public class Field : Component
     {
         public string Key { get; }
 
         public string Label { get; }
 
+        public bool ReadOnly { get; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; }
 
         public Field(string key, string label, FieldType fieldType)
+            : base(ComponentType.Field)
         {
             Key = key;
             Label = label;
+            FieldType = fieldType;
+            ReadOnly = false;
+        }
+
+        /// <summary>
+        /// Constructor for data bound field.
+        /// </summary>
+        /// <param name="dataKey"></param>
+        /// <param name="readOnly"></param>
+        /// <param name="fieldType"></param>
+        public Field(
+            string dataKey, 
+            string label, 
+            bool readOnly, 
+            FieldType fieldType)
+            : base(ComponentType.DataField)
+        {
+            Key = dataKey;
+            ReadOnly = readOnly;
             FieldType = fieldType;
         }
     }

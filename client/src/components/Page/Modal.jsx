@@ -4,7 +4,7 @@ import _ from 'lodash';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as pageActions from '../../actions/pageActions';
-import Input from './Input';
+import Field from './Field';
 
 /** Action modal. */
 class Modal extends Component 
@@ -38,7 +38,7 @@ class Modal extends Component
       const { actionFields } = this.props;
 
       return _.map(actionFields, field => {
-        return <Input 
+        return <Field 
           onChange={this.onChangeInputValue}
           onError={() => 
             {

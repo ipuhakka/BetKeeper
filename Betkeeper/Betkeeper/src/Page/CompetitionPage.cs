@@ -23,7 +23,6 @@ namespace Betkeeper.Page
         {
             var components = new List<Component>
             {
-                new Input("TestInput", InputType.TextBox),
                 new ModalActionButton(
                     "Post", 
                     new List<Field>

@@ -15,12 +15,14 @@ namespace Betkeeper.Page
 
         public Dictionary<string, object> Data { get; set; }
 
-        public PageResponse(string pageKey, List<Component> components)
+        public PageResponse(
+            string pageKey, 
+            List<Component> components,
+            Dictionary<string, object> data)
         {
             Key = pageKey;
             Components = components;
-            // TODO: Data voisi olla aina oma luokkarakenteensa joka vastaukselle.
-            Data = new Dictionary<string, object>();
+            Data = data;
         }
 
         public static HttpResponseMessage GetResponseMessage(string pageKey, int userId)

@@ -8,7 +8,18 @@ namespace Betkeeper.Page.Components
     public enum ComponentType
     {
         Button,
-        Input,
+
+        /// <summary>
+        /// Field not containing preliminary data
+        /// </summary>
+        Field,
+
+        /// <summary>
+        /// Field connected to existing data
+        /// </summary>
+        DataField,
+
+        Table
     }
 
     public class Component
