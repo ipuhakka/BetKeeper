@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Betkeeper.Classes;
 using Betkeeper.Models;
 
@@ -54,6 +56,21 @@ namespace Betkeeper.Actions
             ParticipatorRepository
                 .AddParticipator(
                     userId, (int)competitionId, Enums.CompetitionRole.Admin);
+        }
+
+        /// <summary>
+        /// Returns competitions where user is involved in.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public List<Competition> GetUsersCompetitions(int userId)
+        {
+            var competitionIds = ParticipatorRepository
+                .GetParticipators(userId: userId)
+                .Select(participator => participator.Competition)
+                .ToList();
+
+            return CompetitionRepository.GetCompetitionsById(competitionIds);
         }
     }
 }

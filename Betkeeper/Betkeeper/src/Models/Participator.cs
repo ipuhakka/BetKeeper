@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Betkeeper;
 using Betkeeper.Data;
+using System.Linq;
 
 namespace Betkeeper.Models
 {
@@ -34,6 +35,28 @@ namespace Betkeeper.Models
                     .UseSqlServer(connectionString);
 
             CompetitionHandler = new CompetitionRepository();
+        }
+
+        public List<Participator> GetParticipators(
+            int? userId = null, 
+            int? competitionId = null)
+        {
+            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            {
+                var query = context.Participator.AsQueryable();
+
+                if (userId != null)
+                {
+                    query = query.Where(participator => participator.UserId == userId);
+                }
+
+                if (competitionId != null)
+                {
+                    query = query.Where(participator => participator.Competition == competitionId);
+                }
+
+                return query.ToList();
+            }
         }
 
         public void AddParticipator(int userId, int competitionId, Enums.CompetitionRole role)

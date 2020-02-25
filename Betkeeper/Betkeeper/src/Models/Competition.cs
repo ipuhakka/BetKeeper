@@ -43,15 +43,6 @@ namespace Betkeeper.Models
                     .UseSqlServer(connectionString);
         }
 
-        /// <summary>
-        /// Get competitions were user is involved in.
-        /// </summary>
-        /// <returns></returns>
-        public List<Competition> GetUsersCompetitions()
-        {
-            throw new NotImplementedException();
-        }
-
         public void AddCompetition(Competition competition)
         {
             if (!Validate(competition))
@@ -129,6 +120,23 @@ namespace Betkeeper.Models
                 }
 
                 return query.ToList();
+            }
+        }
+
+        /// <summary>
+        /// Get competitions by competitions ids.
+        /// </summary>
+        /// <param name="competitionIds"></param>
+        /// <returns></returns>
+        public List<Competition> GetCompetitionsById(List<int> competitionIds)
+        {
+            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            {
+                return context
+                    .Competition
+                    .Where(competition =>
+                        competitionIds.Contains(competition.CompetitionId))
+                    .ToList();
             }
         }
 

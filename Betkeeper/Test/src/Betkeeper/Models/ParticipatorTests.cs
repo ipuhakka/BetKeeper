@@ -28,6 +28,59 @@ namespace Betkeeper.Test.Models
         }
 
         [Test]
+        public void GetParticipators_FiltersCorrectly()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition()
+                {
+                    JoinCode = "joincode",
+                    Name = "Name",
+                    CompetitionId = 1
+                },
+                new Competition()
+                {
+                    JoinCode = "joincode2",
+                    Name = "Name2",
+                    CompetitionId = 2
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1
+                },
+                new Participator
+                {
+                    Competition = 2,
+                    UserId = 1
+                },
+                new Participator
+                {
+                    Competition = 2,
+                    UserId = 2
+                },
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 2
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions, participators: participators);
+
+            var testRepo = new TestParticipatorRepository();
+
+            Assert.AreEqual(4, testRepo.GetParticipators().Count);
+            Assert.AreEqual(2, testRepo.GetParticipators(competitionId: 2).Count);
+            Assert.AreEqual(2, testRepo.GetParticipators(userId: 2).Count);
+            Assert.AreEqual(1, testRepo.GetParticipators(userId: 1, competitionId: 1).Count);
+        }
+
+        [Test]
         public void AddParticipator_CompetitionDoesNotExist_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>

@@ -42,8 +42,13 @@ namespace Betkeeper.Page
             };
 
             // TODO: Hae data.
+            var dataDictionary = new Dictionary<string, object>();
 
-            return Http.CreateResponse(HttpStatusCode.OK, new PageResponse(pageKey, components));
+            dataDictionary.Add("Competitions", CompetitionAction.GetUsersCompetitions(userId));
+
+            return Http.CreateResponse(
+                HttpStatusCode.OK, 
+                new PageResponse(pageKey, components, dataDictionary));
         }
 
         public HttpResponseMessage HandleAction(PageAction action)

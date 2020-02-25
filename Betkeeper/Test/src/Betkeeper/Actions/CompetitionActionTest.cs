@@ -29,6 +29,58 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
+        public void GetUsersCompetitions_ReturnsUsersCompetitions()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1
+                },
+                new Competition
+                {
+                    CompetitionId = 2
+                },
+                new Competition
+                {
+                    CompetitionId = 3
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    UserId = 1,
+                    Competition = 1
+                },
+                new Participator
+                {
+                    UserId = 2,
+                    Competition = 3
+                },
+                new Participator
+                {
+                    UserId = 1,
+                    Competition = 2
+                },
+                new Participator
+                {
+                    UserId = 2,
+                    Competition = 2
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            var resultCompetitions = new TestAction().GetUsersCompetitions(1);
+
+            Assert.AreEqual(2, resultCompetitions.Count);
+            Assert.AreEqual(1, resultCompetitions[0].CompetitionId);
+            Assert.AreEqual(2, resultCompetitions[1].CompetitionId);
+        }
+
+        [Test]
         public void CreateCompetition_NameInUse_ThrowsNameInUseExceptionException()
         {
             var inDatabaseCompetitions = new List<Competition>

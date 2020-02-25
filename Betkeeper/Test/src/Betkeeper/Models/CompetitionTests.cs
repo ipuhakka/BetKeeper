@@ -27,6 +27,35 @@ namespace Betkeeper.Test.Models
             }
         }
 
+        public void GetCompetitionsById_ReturnsCompetitionsWithIdInList()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1
+                },
+                new Competition
+                {
+                    CompetitionId = 2
+                },
+                new Competition
+                {
+                    CompetitionId = 3
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            var results = new TestCompetitionRepository()
+                .GetCompetitionsById(new List<int> { 1, 3, 4 });
+
+            Assert.AreEqual(2, results.Count);
+
+            Assert.AreEqual(1, results[0].CompetitionId);
+            Assert.AreEqual(3, results[1].CompetitionId);
+        }
+
         [Test]
         public void AddCompetition_NameInUse_ThrowsNameInUseException()
         {
