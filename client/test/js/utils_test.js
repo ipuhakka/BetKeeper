@@ -19,7 +19,7 @@ describe('camelCaseToText', function()
     done();
   });
 
-  it('Returns camel cased string splitted with spaces', function(done)
+  it('Returns string splitted with spaces with first word capitalized', function(done)
   {
     const result = camelCaseToText('camelCasedText');
     expect(result.split(' ').length).to.equal(3);
@@ -27,8 +27,8 @@ describe('camelCaseToText', function()
     const splitted = result.split(' ');
 
     expect(splitted[0]).to.equal('Camel');
-    expect(splitted[1]).to.equal('Cased');
-    expect(splitted[2]).to.equal('Text');
+    expect(splitted[1]).to.equal('cased');
+    expect(splitted[2]).to.equal('text');
 
     done();
   });

@@ -16,15 +16,15 @@ namespace Betkeeper.Models
         [Key]
         public int CompetitionId { get; set; }
 
-        public string JoinCode { get; set; }
+        public string Name { get; set; }
 
         public DateTime StartTime { get; set; }
 
         public int State { get; set; }
 
-        public string Description { get; set; }
+        public string JoinCode { get; set; }
 
-        public string Name { get; set; }
+        public string Description { get; set; }
     }
 
     /// <summary>

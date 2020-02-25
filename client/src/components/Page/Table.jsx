@@ -7,18 +7,42 @@ import * as utils from '../../js/utils';
 
 class Table extends Component
 {
+    getVisibleColumns()
+    {
+        const { data, dataKey, hiddenKeys } = this.props;
+
+        return _.filter(Object.keys(data[dataKey][0]), key =>
+        {
+            return !_.includes(hiddenKeys, key);
+        });
+    }
+
     getHeaders()
     {
-        const { data, dataKey } = this.props;
-
-        // Get keys from first row
-        const keys = Object.keys(data[dataKey][0]);
+        const keys = this.getVisibleColumns();
 
         return <tr>
             {_.map(keys, key => {
-                return <th>{utils.camelCaseToText(key)}</th>;
+                return <th key={`table-header-${key}`}>{utils.camelCaseToText(key)}</th>;
             })}
         </tr>
+    }
+
+    getRows()
+    {
+        const { data, dataKey } = this.props;
+
+        return _.map(data[dataKey], (dataRow, i) =>
+        {
+            const keys = this.getVisibleColumns();
+
+            const cells = _.map(keys, (key, i) =>
+            {
+                return <td key={`data-row-td-${i}-key`}>{dataRow[key]}</td>;
+            })
+
+            return <tr key={`data-row-tr-${i}-key`}>{cells}</tr>;
+        });
     }
 
     render()
@@ -30,17 +54,22 @@ class Table extends Component
             throw new Error(`Specified data key ${dataKey} not found`);
         }
 
-        return <RBTable>
+        // TODO: Table body
+        return <RBTable hover responsive striped>
             <thead>
                 {this.getHeaders()}
             </thead>
+            <tbody>
+                {this.getRows()}
+            </tbody>
         </RBTable>
     }
 };
 
 Table.propTypes = {
     dataKey: PropTypes.string.isRequired,
-    data: PropTypes.object
+    data: PropTypes.object,
+    hiddenKeys: PropTypes.arrayOf(PropTypes.string)
 };
 
 const mapStateToProps = (state) => 

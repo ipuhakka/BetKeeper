@@ -2,7 +2,9 @@ import consts from './consts';
 import moment from 'moment';
 import _ from 'lodash';
 
-/** Converts a camel cased string into a string from which each capital letter starts a new word. */
+/** Converts a camel cased string into a string from which each capital letter starts a new word.
+ * First word is capitalized.
+ */
 export function camelCaseToText(camelCasedString)
 {
   if (_.isNil(camelCasedString)
@@ -16,12 +18,11 @@ export function camelCaseToText(camelCasedString)
 
   let asText = ''; 
 
-  // Etsi kaikki caps letter indeksit
   _.forEach(text, (char, index) =>
   {
     if (char === char.toUpperCase() && index !== 0)
     {
-      asText += ` ${char}`;
+      asText += ` ${char.toLowerCase()}`;
     }
     else
     {

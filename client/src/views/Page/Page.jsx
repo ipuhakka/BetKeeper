@@ -79,7 +79,7 @@ class Page extends Component
                         return <div key={`field-${i}`}>Insert field here</div>;
 
                     case 'Table':
-                        return <Table key={`itemlist-${i}`} dataKey={component.dataKey} />;
+                        return <Table key={`itemlist-${i}`} {...component} />;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

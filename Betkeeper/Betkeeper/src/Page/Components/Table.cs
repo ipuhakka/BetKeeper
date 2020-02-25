@@ -6,10 +6,16 @@ namespace Betkeeper.Page.Components
     {
         public string DataKey { get; }
 
-        public Table(string dataKey)
+        /// <summary>
+        /// Keys not shown in table.
+        /// </summary>
+        public List<string> HiddenKeys { get; }
+
+        public Table(string dataKey, List<string> hiddenKeys = null)
             : base(ComponentType.Table)
         {
             DataKey = dataKey;
+            HiddenKeys = hiddenKeys;
         }
     }
 }

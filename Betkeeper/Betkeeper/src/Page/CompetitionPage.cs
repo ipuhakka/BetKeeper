@@ -24,7 +24,7 @@ namespace Betkeeper.Page
         {
             var components = new List<Component>
             {
-                new Table("competitions"),
+                new Table("competitions", new List<string>{ "competitionId", "joinCode", "description"}),
                 new ModalActionButton(
                     "Post", 
                     new List<Field>
