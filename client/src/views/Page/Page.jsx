@@ -5,6 +5,7 @@ import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Button from '../../components/Page/Button';
 import Modal from '../../components/Page/Modal';
+import Table from '../../components/Page/Table';
 import Info from '../../components/Info/Info.jsx';
 import './Page.css';
 
@@ -76,6 +77,9 @@ class Page extends Component
 
                     case 'Field':
                         return <div key={`field-${i}`}>Insert field here</div>;
+
+                    case 'Table':
+                        return <Table key={`itemlist-${i}`} dataKey={component.dataKey} />;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

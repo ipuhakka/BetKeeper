@@ -7,6 +7,7 @@ using Betkeeper.Classes;
 using Betkeeper.Page.Components;
 using Betkeeper.Extensions;
 using Betkeeper.Exceptions;
+using Betkeeper.Models;
 
 namespace Betkeeper.Page
 {
@@ -19,10 +20,11 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public HttpResponseMessage GetResponse(string pageKey)
+        public HttpResponseMessage GetResponse(string pageKey, int userId)
         {
             var components = new List<Component>
             {
+                new Table("competitions"),
                 new ModalActionButton(
                     "Post", 
                     new List<Field>
