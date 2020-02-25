@@ -1,8 +1,38 @@
 import moment from 'moment';
-import {isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime} from '../../src/js/utils';
+import {isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime, camelCaseToText} from '../../src/js/utils';
 
 var chai = require('chai');
 var expect = chai.expect;
+
+describe('camelCaseToText', function()
+{
+  it('Capitalizes first letter', function(done)
+  {
+    expect(camelCaseToText('test')).to.equal('Test');
+    done();
+  });
+
+  it('Returns empty string on null and empty input', function(done)
+  {
+    expect(camelCaseToText('')).to.equal('');
+    expect(camelCaseToText(null)).to.equal('');
+    done();
+  });
+
+  it('Returns camel cased string splitted with spaces', function(done)
+  {
+    const result = camelCaseToText('camelCasedText');
+    expect(result.split(' ').length).to.equal(3);
+
+    const splitted = result.split(' ');
+
+    expect(splitted[0]).to.equal('Camel');
+    expect(splitted[1]).to.equal('Cased');
+    expect(splitted[2]).to.equal('Text');
+
+    done();
+  });
+});
 
 describe('formatDateTime', function()
 {

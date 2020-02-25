@@ -1,5 +1,36 @@
 import consts from './consts';
 import moment from 'moment';
+import _ from 'lodash';
+
+/** Converts a camel cased string into a string from which each capital letter starts a new word. */
+export function camelCaseToText(camelCasedString)
+{
+  if (_.isNil(camelCasedString)
+    ||camelCasedString.length === 0 
+    || typeof camelCasedString !== 'string')
+  {
+    return '';
+  }
+
+  let text = camelCasedString.charAt(0).toUpperCase() + camelCasedString.slice(1);
+
+  let asText = ''; 
+
+  // Etsi kaikki caps letter indeksit
+  _.forEach(text, (char, index) =>
+  {
+    if (char === char.toUpperCase() && index !== 0)
+    {
+      asText += ` ${char}`;
+    }
+    else
+    {
+      asText += char;
+    }
+  });
+
+  return asText;
+}
 
 /**
  * Formats a utc datetime to local time string.
