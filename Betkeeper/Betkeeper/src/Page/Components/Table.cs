@@ -11,11 +11,20 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<string> HiddenKeys { get; }
 
-        public Table(string dataKey, List<string> hiddenKeys = null)
+        /// <summary>
+        /// Data key which is used in url to open a row.
+        /// </summary>
+        public string NavigationKey { get; }
+
+        public Table(
+            string dataKey, 
+            List<string> hiddenKeys = null,
+            string navigationKey = null)
             : base(ComponentType.Table)
         {
             DataKey = dataKey;
             HiddenKeys = hiddenKeys;
+            NavigationKey = navigationKey;
         }
     }
 }

@@ -7,7 +7,6 @@ using Betkeeper.Classes;
 using Betkeeper.Page.Components;
 using Betkeeper.Extensions;
 using Betkeeper.Exceptions;
-using Betkeeper.Models;
 
 namespace Betkeeper.Page
 {
@@ -24,7 +23,10 @@ namespace Betkeeper.Page
         {
             var components = new List<Component>
             {
-                new Table("competitions", new List<string>{ "competitionId", "joinCode", "description"}),
+                new Table(
+                    "competitions", 
+                    new List<string>{ "competitionId", "joinCode", "description"},
+                    "competitionId"),
                 new ModalActionButton(
                     "Post", 
                     new List<Field>

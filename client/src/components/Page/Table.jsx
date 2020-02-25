@@ -30,7 +30,21 @@ class Table extends Component
 
     getRows()
     {
-        const { data, dataKey } = this.props;
+        const { data, dataKey, navigationKey, onRowClick } = this.props;
+
+        const onClick = (rowIndex) => 
+        {
+            if (_.isNil(navigationKey))
+            {
+                return;
+            }
+
+            const pathname = window.location.pathname;
+
+            const itemKey = data[dataKey][rowIndex][navigationKey];
+
+            onRowClick(`${pathname}/${itemKey}`);
+        }
 
         return _.map(data[dataKey], (dataRow, i) =>
         {
@@ -41,7 +55,11 @@ class Table extends Component
                 return <td key={`data-row-td-${i}-key`}>{dataRow[key]}</td>;
             })
 
-            return <tr key={`data-row-tr-${i}-key`}>{cells}</tr>;
+            return <tr onClick={() =>
+            {
+                onClick(i);
+            }} 
+            key={`data-row-tr-${i}-key`}>{cells}</tr>;
         });
     }
 
@@ -69,7 +87,9 @@ class Table extends Component
 Table.propTypes = {
     dataKey: PropTypes.string.isRequired,
     data: PropTypes.object,
-    hiddenKeys: PropTypes.arrayOf(PropTypes.string)
+    hiddenKeys: PropTypes.arrayOf(PropTypes.string),
+    navigationKey: PropTypes.string,
+    onRowClick: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => 
