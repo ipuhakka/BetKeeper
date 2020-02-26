@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import * as pageActions from '../../actions/pageActions';
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Button from '../../components/Page/Button';
+import Field from '../../components/Page/Field';
 import Modal from '../../components/Page/Modal';
 import Table from '../../components/Page/Table';
 import Info from '../../components/Info/Info.jsx';
@@ -17,11 +19,43 @@ class Page extends Component
 
 		this.state = {
             actionModalOpen: false,
-            actionModalProps: {}
+            actionModalProps: {},
+            data: {}
         };
         
         this.clickModalAction = this.clickModalAction.bind(this);
         this.clickNavigationButton = this.clickNavigationButton.bind(this);
+        this.clickPageAction = this.clickPageAction.bind(this);
+        this.onDataChange = this.onDataChange.bind(this);
+    }
+
+    onDataChange(key, newValue)
+    {
+        this.setState({
+            data: {
+                ...this.state.data,
+                [key]: newValue
+            }
+        });
+    }
+
+    clickPageAction(action, actionDataKeys)
+    {
+        const { state } = this;
+
+        const parameters = {};
+
+        _.forEach(actionDataKeys, dataKey => 
+        {
+            parameters[dataKey] = state.data[dataKey];
+        });
+
+        const pathname = window.location.pathname;
+        // Parse page name from path and convert first char to upper
+        let pageKey = pathname
+            .substring(pathname.lastIndexOf('/') + 1);
+
+        pageActions.callAction(pageKey, action, parameters);
     }
 
     clickModalAction(action, actionFields, title)
@@ -52,6 +86,11 @@ class Page extends Component
             return this.clickModalAction;
         }
 
+        if (button.buttonType === 'PageAction')
+        {
+            return this.clickPageAction;
+        }
+
         if (button.buttonType === 'Navigation')
         {
             return this.clickNavigationButton;
@@ -60,23 +99,29 @@ class Page extends Component
         return null;
     }
 
-    renderComponents()
+    renderComponents(components, classname)
     {
-        const { components } = this.props;
-
-        return <div className='page-content'>
+        return <div key={classname} className={classname}>
             {_.map(components, (component, i) => 
             {
                 switch (component.componentType)
                 {
+                    case 'Container':
+                        return this.renderComponents(component.children, 'container-div');
+
                     case 'Button':
                         return <Button 
-                            key={`button-${i}`}
+                            key={`button-${component.action}`}
                             onClick={this.getButtonClick(component)} 
                             {...component} />;
 
                     case 'Field':
-                        return <div key={`field-${i}`}>Insert field here</div>;
+                        return <Field 
+                            onChange={this.onDataChange}
+                            key={`field-${component.key}`} 
+                            type={component.fieldType} 
+                            fieldKey={component.key} 
+                            {...component} />;
 
                     case 'Table':
                         return <Table onRowClick={this.clickNavigationButton} key={`itemlist-${i}`} {...component} />;
@@ -90,7 +135,7 @@ class Page extends Component
     
     render()
     {
-        const { state } = this;
+        const { state, props } = this;
 
         const pathname = window.location.pathname;
         // Parse page name from path and convert first char to upper
@@ -112,8 +157,8 @@ class Page extends Component
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
-            <Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
-            {this.renderComponents()}
+            <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert}></Info>
+            {this.renderComponents(props.components, 'page-content')}
         </div>;
     }
 };

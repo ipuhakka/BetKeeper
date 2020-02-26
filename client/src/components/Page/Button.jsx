@@ -18,10 +18,7 @@ class Button extends Component
 
         if (props.buttonType === 'PageAction')
         {
-            /** TODO: Handlaa page action clicki. Proppina actionhandler
-             * ja sille parametreinä action ja actionDataKeys.
-             */
-            console.log('clicked action');
+            props.onClick(props.action, props.actionDataKeys);
         }
         else if (props.buttonType === 'ModalAction')
         {

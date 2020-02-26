@@ -38,7 +38,7 @@ export function* getPage(action)
     }
 }
 
-export function* callModalAction(action)
+export function* callAction(action)
 {
   const { parameters, actionName, page } = action.payload;
     
@@ -83,5 +83,5 @@ export function* watchGetPage()
 
 export function* watchCallModalAction()
 {
-  yield takeLatest(pageActions.CALL_MODAL_ACTION, callModalAction);
+  yield takeLatest(pageActions.CALL_ACTION, callAction);
 }

@@ -2,8 +2,8 @@ import store from '../store';
 
 export const GET_PAGE = "GET_PAGE";
 export const GET_PAGE_SUCCESS = "GET_PAGE_SUCCESS";
-export const CALL_MODAL_ACTION = "CALL_MODAL_ACTION";
-export const CALL_MODAL_ACTION_SUCCESS = "CALL_MODAL_ACTION_SUCCESS";
+export const CALL_ACTION = "CALL_MODAL_ACTION";
+export const CALL_ACTION_SUCCESS = "CALL_MODAL_ACTION_SUCCESS";
 
 /**
  * Get page structure.
@@ -18,10 +18,10 @@ export function getPage(pathname)
       });
 }
 
-export function callModalAction(page, action, requestParameters)
+export function callAction(page, action, requestParameters)
 {
     store.dispatch({
-        type: CALL_MODAL_ACTION,
+        type: CALL_ACTION,
         payload: {
             parameters: requestParameters,
             actionName: action,
