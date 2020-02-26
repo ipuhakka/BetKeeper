@@ -1,3 +1,15 @@
 .page-content {
     margin-bottom: 0.5em;
 }
+
+.container-div {
+    display: flex;
+}
+
+.container-div div {
+    display: contents;
+}
+
+.container-div button {
+    flex: 1 0 auto;
+}

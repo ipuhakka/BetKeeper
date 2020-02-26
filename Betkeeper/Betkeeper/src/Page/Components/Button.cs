@@ -53,7 +53,7 @@ namespace Betkeeper.Page.Components
             string action, 
             List<string> actionDataKeys, 
             string text, 
-            string style)
+            string style = "outline-primary")
             : base(ButtonType.PageAction, text, style)
         {
             Action = action;

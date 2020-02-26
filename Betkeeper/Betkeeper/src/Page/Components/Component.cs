@@ -19,7 +19,9 @@ namespace Betkeeper.Page.Components
         /// </summary>
         DataField,
 
-        Table
+        Table,
+
+        Container
     }
 
     public class Component

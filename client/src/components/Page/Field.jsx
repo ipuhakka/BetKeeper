@@ -152,7 +152,7 @@ Field.propTypes = {
     label: PropTypes.string.isRequired,
     fieldKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    onError: PropTypes.func.isRequired
+    onError: PropTypes.func
 };
 
 export default Field;
