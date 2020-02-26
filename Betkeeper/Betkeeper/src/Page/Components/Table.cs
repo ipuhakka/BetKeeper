@@ -7,9 +7,9 @@ namespace Betkeeper.Page.Components
         public string DataKey { get; }
 
         /// <summary>
-        /// Keys not shown in table.
+        /// Columns shown in table.
         /// </summary>
-        public List<string> HiddenKeys { get; }
+        public List<DataField> Columns { get; }
 
         /// <summary>
         /// Data key which is used in url to open a row.
@@ -18,12 +18,12 @@ namespace Betkeeper.Page.Components
 
         public Table(
             string dataKey, 
-            List<string> hiddenKeys = null,
+            List<DataField> columns,
             string navigationKey = null)
             : base(ComponentType.Table)
         {
             DataKey = dataKey;
-            HiddenKeys = hiddenKeys;
+            Columns = columns;
             NavigationKey = navigationKey;
         }
     }

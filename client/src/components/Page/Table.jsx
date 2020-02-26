@@ -7,30 +7,20 @@ import * as utils from '../../js/utils';
 
 class Table extends Component
 {
-    getVisibleColumns()
-    {
-        const { data, dataKey, hiddenKeys } = this.props;
-
-        return _.filter(Object.keys(data[dataKey][0]), key =>
-        {
-            return !_.includes(hiddenKeys, key);
-        });
-    }
-
     getHeaders()
     {
-        const keys = this.getVisibleColumns();
+        const { columns } = this.props;
 
         return <tr>
-            {_.map(keys, key => {
-                return <th key={`table-header-${key}`}>{utils.camelCaseToText(key)}</th>;
+            {_.map(columns, columnField => {
+                return <th key={`table-header-${columnField.key}`}>{utils.camelCaseToText(columnField.key)}</th>;
             })}
         </tr>
     }
 
     getRows()
     {
-        const { data, dataKey, navigationKey, onRowClick } = this.props;
+        const { data, dataKey, navigationKey, onRowClick, columns } = this.props;
 
         const onClick = (rowIndex) => 
         {
@@ -48,11 +38,13 @@ class Table extends Component
 
         return _.map(data[dataKey], (dataRow, i) =>
         {
-            const keys = this.getVisibleColumns();
-
-            const cells = _.map(keys, (key, i) =>
+            const cells = _.map(columns, (columnField, i) =>
             {
-                return <td key={`data-row-td-${i}-key`}>{dataRow[key]}</td>;
+                const value = columnField.dataType === 'DateTime'
+                    ? utils.formatDateTime(dataRow[columnField.key])
+                    : dataRow[columnField.key];
+
+                return <td key={`data-row-td-${i}-key`}>{value}</td>;
             })
 
             return <tr onClick={() =>
@@ -87,7 +79,10 @@ class Table extends Component
 Table.propTypes = {
     dataKey: PropTypes.string.isRequired,
     data: PropTypes.object,
-    hiddenKeys: PropTypes.arrayOf(PropTypes.string),
+    columns: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.string.isRequired,
+        dataType: PropTypes.string.isRequired
+    })),
     navigationKey: PropTypes.string,
     onRowClick: PropTypes.func.isRequired
 };

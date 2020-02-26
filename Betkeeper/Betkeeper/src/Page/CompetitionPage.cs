@@ -25,7 +25,12 @@ namespace Betkeeper.Page
             {
                 new Table(
                     "competitions", 
-                    new List<string>{ "competitionId", "joinCode", "description"},
+                    new List<DataField>
+                    {
+                        new DataField("name", DataType.String),
+                        new DataField("startTime", DataType.DateTime),
+                        new DataField("state", DataType.Integer)
+                    },
                     "competitionId"),
                 new Container(
                     new List<Component>
