@@ -43,7 +43,6 @@ namespace Betkeeper.Actions
                 JoinCode = joinCode,
                 Name = name,
                 Description = description,
-                State = (int)Enums.CompetitionState.Open,
                 StartTime = startTime
             });
 

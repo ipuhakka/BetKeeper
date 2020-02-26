@@ -5,6 +5,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Betkeeper.Models
 {
@@ -20,8 +22,13 @@ namespace Betkeeper.Models
 
         public DateTime StartTime { get; set; }
 
-        // TODO: Tilaa ei järkeä pitää kannassa, aseta manuaalisesti? StartTimen ja vetokohteiden mukaan.
-        public int State { get; set; }
+        // TODO: Huomioi valmiiden vetojen määrä finishediä varten.
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Enums.CompetitionState State => StartTime == null 
+            || StartTime > DateTime.UtcNow
+            ? Enums.CompetitionState.Open
+            : Enums.CompetitionState.Ongoing;
 
         public string JoinCode { get; set; }
 

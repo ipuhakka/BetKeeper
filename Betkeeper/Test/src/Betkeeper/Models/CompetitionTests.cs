@@ -64,7 +64,7 @@ namespace Betkeeper.Test.Models
                 new Competition()
                 {
                     Name = "InUseName",
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     JoinCode = "679"
                 }
             };
@@ -74,7 +74,7 @@ namespace Betkeeper.Test.Models
                 new Competition()
                 {
                     Name = "InUseName",
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     JoinCode = "456"
                 }
             };
@@ -96,7 +96,7 @@ namespace Betkeeper.Test.Models
                 new Competition()
                 {
                     Name = "NotInUseName",
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     JoinCode = "123"
                 }
             };
@@ -106,7 +106,7 @@ namespace Betkeeper.Test.Models
                 new Competition()
                 {
                     Name = "Name",
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     JoinCode = "123"
                 }
             };
@@ -125,23 +125,12 @@ namespace Betkeeper.Test.Models
         {
             var testCompetitions = new List<Competition>
             {
-                // State out of range
-                new Competition()
-                {
-                    CompetitionId = 1,
-                    JoinCode = "123",
-                    StartTime = new DateTime(),
-                    State = -1,
-                    Description = "testikuvaus",
-                    Name = "nimi"
-                },
                 // Empty name
                 new Competition()
                 {
                     CompetitionId = 2,
                     JoinCode = "123",
-                    StartTime = new DateTime(),
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     Description = "testikuvaus",
                     Name = ""
                 },
@@ -150,8 +139,7 @@ namespace Betkeeper.Test.Models
                 {
                     CompetitionId = 3,
                     JoinCode = "",
-                    StartTime = new DateTime(),
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     Description = "testikuvaus",
                     Name = "name"
                 },
@@ -160,8 +148,7 @@ namespace Betkeeper.Test.Models
                 {
                     CompetitionId = 4,
                     JoinCode = "123",
-                    StartTime = new DateTime(),
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     Description = "testikuvaus",
                     Name = null
                 },
@@ -170,8 +157,7 @@ namespace Betkeeper.Test.Models
                 {
                     CompetitionId = 5,
                     JoinCode = null,
-                    StartTime = new DateTime(),
-                    State = 1,
+                    StartTime = DateTime.UtcNow.AddDays(-1),
                     Description = "testikuvaus",
                     Name = "sdf"
                 },
@@ -194,7 +180,7 @@ namespace Betkeeper.Test.Models
                 CompetitionId = 1,
                 JoinCode = "123",
                 Name = "Name",
-                State = 1
+                StartTime = DateTime.UtcNow.AddDays(-1)
             };
 
             var repository = new TestRepository();
@@ -212,7 +198,7 @@ namespace Betkeeper.Test.Models
                     CompetitionId = 999,
                     JoinCode = "test",
                     Name = "Name",
-                    State = 2
+                    StartTime = DateTime.UtcNow.AddDays(-1)
                 }
             };
 
@@ -234,7 +220,7 @@ namespace Betkeeper.Test.Models
                     CompetitionId = 3,
                     JoinCode = "test",
                     Name = "Name",
-                    State = 2
+                    StartTime = DateTime.UtcNow.AddDays(-1)
                 }
             };
 

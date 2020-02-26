@@ -107,7 +107,7 @@ namespace Betkeeper.Test.Actions
         {
             var testAction = new TestAction();
 
-            testAction.CreateCompetition(1, "TestName", "Description to remember", new DateTime(2000, 1, 1));
+            testAction.CreateCompetition(1, "TestName", "Description to remember", DateTime.UtcNow.AddDays(1));
 
             var competitions = new TestCompetitionRepository().GetCompetitions();
 
@@ -115,7 +115,7 @@ namespace Betkeeper.Test.Actions
 
             Assert.AreEqual("Description to remember", competitions[0].Description);
 
-            Assert.AreEqual((int)Enums.CompetitionState.Open, competitions[0].State);
+            Assert.AreEqual(Enums.CompetitionState.Open, competitions[0].State);
         }
 
         [Test]
@@ -135,7 +135,8 @@ namespace Betkeeper.Test.Actions
                 new Competition
                 {
                     CompetitionId = 1,
-                    JoinCode = "joincode"
+                    JoinCode = "joincode",
+                    StartTime = DateTime.Now.AddDays(1)
                 },
                 new Competition
                 {
@@ -166,13 +167,13 @@ namespace Betkeeper.Test.Actions
                 {
                     CompetitionId = 1,
                     JoinCode = "joincode1",
-                    State = 1
+                    StartTime = DateTime.UtcNow.AddDays(-1)
                 },
                 new Competition
                 {
                     CompetitionId = 2,
                     JoinCode = "joincode2",
-                    State = 2
+                    StartTime = DateTime.UtcNow.AddDays(-1)
                 }
             };
 

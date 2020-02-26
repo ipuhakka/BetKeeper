@@ -162,7 +162,7 @@ namespace Betkeeper.Test.Page
                 {
                     CompetitionId = 1,
                     JoinCode = "joincode",
-                    State = 1
+                    StartTime = DateTime.UtcNow.AddDays(-1)
                 }
             };
 
@@ -191,7 +191,7 @@ namespace Betkeeper.Test.Page
                 {
                     CompetitionId = 1,
                     JoinCode = "joincode",
-                    State = 0
+                    StartTime = DateTime.UtcNow.AddDays(1)
                 }
             };
 

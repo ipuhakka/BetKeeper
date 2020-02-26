@@ -29,7 +29,7 @@ namespace Betkeeper.Page
                     {
                         new DataField("name", DataType.String),
                         new DataField("startTime", DataType.DateTime),
-                        new DataField("state", DataType.Integer)
+                        new DataField("state", DataType.String)
                     },
                     "competitionId"),
                 new Container(
