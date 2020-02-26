@@ -1,4 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
+import _ from 'lodash';
 import * as pageApi from '../js/Requests/Page';
 import * as pageActions from '../actions/pageActions';
 import {setLoading} from '../actions/loadingActions';
@@ -40,7 +41,7 @@ export function* getPage(action)
 
 export function* callAction(action)
 {
-  const { parameters, actionName, page } = action.payload;
+  const { parameters, actionName, page, callback } = action.payload;
     
   yield put(setLoading(true));
   
@@ -48,6 +49,11 @@ export function* callAction(action)
   {
     const response = yield call(pageApi.postAction, page, actionName, parameters);
     yield put(setAlertStatus(response.status, response.responseText));
+    pageActions.getPage(window.location.pathname);
+    if (!_.isNil(callback))
+    {
+      callback();
+    }
   }
   catch (error)
   {

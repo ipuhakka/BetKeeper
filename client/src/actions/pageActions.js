@@ -18,14 +18,15 @@ export function getPage(pathname)
       });
 }
 
-export function callAction(page, action, requestParameters)
+export function callAction(page, action, requestParameters, callback)
 {
     store.dispatch({
         type: CALL_ACTION,
         payload: {
             parameters: requestParameters,
             actionName: action,
-            page
+            page,
+            callback
           }
       });
 }

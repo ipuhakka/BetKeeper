@@ -77,7 +77,7 @@ class Modal extends Component
               disabled={state.hasInvalidInputs}
               onClick={() => 
               {
-                pageActions.callAction(props.page, props.action, state.actionResponseValues);
+                pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
               }}>Ok</Button>
           </RBModal.Footer>
         </RBModal>;
