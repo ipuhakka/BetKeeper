@@ -6,7 +6,7 @@ import {setAlertStatus} from '../actions/alertActions';
 
 export function* getPage(action)
 {
-    setLoading(true);
+    yield put(setLoading(true));
 
     try 
     {
@@ -34,7 +34,7 @@ export function* getPage(action)
     }
     finally 
     {
-        setLoading(false);
+      yield put(setLoading(false));
     }
 }
 
@@ -42,7 +42,7 @@ export function* callAction(action)
 {
   const { parameters, actionName, page } = action.payload;
     
-  setLoading(true);
+  yield put(setLoading(true));
   
   try 
   {
@@ -72,7 +72,7 @@ export function* callAction(action)
   }
   finally
   {
-    setLoading(false);
+    yield put(setLoading(false));
   }
 }
 
