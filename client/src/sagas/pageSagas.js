@@ -60,10 +60,10 @@ export function* callAction(action)
     switch (error.status)
     {
       case 401:
-        yield put(setAlertStatus(error.status, "Session expired, please login again"));
+        yield put(setAlertStatus(error.status, error.responseText || "Session expired, please login again"));
         break;
       case 404:
-        yield put(setAlertStatus(error.status, "Requested page was not found"));
+        yield put(setAlertStatus(error.status, error.responseText || "Requested page was not found"));
         break;
       case 0:
         yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
@@ -72,7 +72,7 @@ export function* callAction(action)
         yield put(setAlertStatus(error.status, error.responseText));
         break;
       default:
-        yield put(setAlertStatus(error.status, "Unexpected error occurred"));
+        yield put(setAlertStatus(error.status, error.responseText || "Unexpected error occurred"));
         break;
     }
   }

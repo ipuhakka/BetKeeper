@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RBButton from 'react-bootstrap/Button';
+import './Button.css';
 
 class Button extends Component
 {
@@ -35,6 +36,7 @@ class Button extends Component
         const { props } = this;
 
         return <RBButton
+            className='button'
             variant={props.style}
             onClick={this.onClick}>
                 {props.text}

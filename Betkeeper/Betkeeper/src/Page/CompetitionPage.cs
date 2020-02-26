@@ -32,25 +32,22 @@ namespace Betkeeper.Page
                         new DataField("state", DataType.String)
                     },
                     "competitionId"),
-                new Container(
-                    new List<Component>
-                    {
-                        new Field("JoinCode", "Join code", FieldType.TextBox),
-                        new PageActionButton(
-                            "JoinCompetition",
-                            new List<string> { "JoinCode"},
-                            "Join competition")
-                    }),
                 new ModalActionButton(
-                    "Post", 
+                    "JoinCompetition",
+                    new List<Field>
+                    {
+                        new Field("JoinCode", "Join code", FieldType.TextBox)
+                    },
+                    "Join competition"),
+                new ModalActionButton(
+                    "Post",
                     new List<Field>
                     {
                         new Field("Name", "Name", FieldType.TextBox),
                         new Field("StartTime", "Start time", FieldType.DateTime),
                         new Field("Description", "Description", FieldType.TextArea)
                     },
-                    "Create a competition"),
-                
+                    "Create a competition")
             };
 
             var dataDictionary = new Dictionary<string, object>();
