@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Betkeeper.Classes;
 using Betkeeper.Models;
+using Betkeeper.Exceptions;
 
 namespace Betkeeper.Actions
 {
@@ -71,6 +72,28 @@ namespace Betkeeper.Actions
                 .ToList();
 
             return CompetitionRepository.GetCompetitionsById(competitionIds);
+        }
+
+        public void JoinCompetition(string joinCode, int userId)
+        {
+            var competition = CompetitionRepository
+                .GetCompetitions(joinCode: joinCode)
+                .FirstOrDefault();
+
+            if (competition == null)
+            {
+                throw new NotFoundException($"{joinCode} did not match any competition");
+            }
+
+            if ((Enums.CompetitionState)competition.State != Enums.CompetitionState.Open)
+            {
+                throw new InvalidOperationException("Competition not open for new players");
+            }
+
+            ParticipatorRepository.AddParticipator(
+                userId,
+                competition.CompetitionId,
+                Enums.CompetitionRole.Participator);
         }
     }
 }

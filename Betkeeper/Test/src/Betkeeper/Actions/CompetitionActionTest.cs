@@ -6,6 +6,7 @@ using Betkeeper.Models;
 using TestTools;
 using NUnit.Framework;
 using Betkeeper.Exceptions;
+using System.Linq;
 
 namespace Betkeeper.Test.Actions
 {
@@ -115,6 +116,73 @@ namespace Betkeeper.Test.Actions
             Assert.AreEqual("Description to remember", competitions[0].Description);
 
             Assert.AreEqual((int)Enums.CompetitionState.Open, competitions[0].State);
+        }
+
+        [Test]
+        public void JoinCompetition_CompetitionNotFound_ThrowsNotFoundException()
+        {
+            Assert.Throws<NotFoundException>(() =>
+            {
+                new TestAction().JoinCompetition("joincode", 1);
+            });
+        }
+
+        [Test]
+        public void JoinCompetition_CompetitionFound_ParticipatorAdded()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    JoinCode = "joincode"
+                },
+                new Competition
+                {
+                    CompetitionId = 2
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            new TestAction().JoinCompetition("joincode", 1);
+
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
+            {
+                var participators = context.Participator.ToList();
+                Assert.AreEqual(1, participators.Count);
+                Assert.AreEqual(1, participators[0].Competition);
+                Assert.AreEqual(1, participators[0].UserId);
+                Assert.AreEqual(0, participators[0].Role);
+            }
+        }
+
+        [Test]
+        public void JoinCompetition_OnGoingOrFinished_ThrowsInvalidOperationException()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    JoinCode = "joincode1",
+                    State = 1
+                },
+                new Competition
+                {
+                    CompetitionId = 2,
+                    JoinCode = "joincode2",
+                    State = 2
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            competitions.ForEach(competition =>
+            {
+                Assert.Throws<InvalidOperationException>(() =>
+                    new TestAction().JoinCompetition(competition.JoinCode, 1));
+            });
         }
 
         private class TestAction : CompetitionAction

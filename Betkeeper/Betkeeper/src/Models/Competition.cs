@@ -20,6 +20,7 @@ namespace Betkeeper.Models
 
         public DateTime StartTime { get; set; }
 
+        // TODO: Tilaa ei järkeä pitää kannassa, aseta manuaalisesti? StartTimen ja vetokohteiden mukaan.
         public int State { get; set; }
 
         public string JoinCode { get; set; }
