@@ -109,6 +109,107 @@ namespace Betkeeper.Test.Page
             Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
         }
 
+        [Test]
+        public void JoinCompetition_EmptyJoinCode_ReturnsBadRequest()
+        {
+            var actions = new List<PageAction>{
+                new PageAction(
+                    1,
+                    "Competitions",
+                    "JoinCompetition",
+                    new Dictionary<string, object>
+                    {
+                        { "JoinCode", ""}
+                    }),
+                new PageAction(
+                    1,
+                    "Competitions",
+                    "JoinCompetition",
+                    new Dictionary<string, object>()),
+            };
+
+            actions.ForEach(action =>
+            {
+                Assert.AreEqual(
+                    HttpStatusCode.BadRequest,
+                    new TestCompetitionPage().HandleAction(action).StatusCode);
+            });
+        }
+
+        [Test]
+        public void JoinCompetition_CompetitionNotFound_ReturnsNotFound()
+        {
+            var action = new PageAction(
+                1,
+                "Competitions",
+                "JoinCompetition",
+                new Dictionary<string, object>
+                {
+                    { "JoinCode", "joincode"}
+                });
+
+            Assert.AreEqual(
+                HttpStatusCode.NotFound, 
+                new TestCompetitionPage().HandleAction(action).StatusCode);
+        }
+
+        [Test]
+        public void JoinCompetition_CompetitionOnGoing_ReturnsConflict()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    JoinCode = "joincode",
+                    State = 1
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            var action = new PageAction(
+            1,
+            "Competitions",
+            "JoinCompetition",
+            new Dictionary<string, object>
+            {
+                { "JoinCode", "joincode"}
+            });
+
+            Assert.AreEqual(
+                HttpStatusCode.Conflict,
+                new TestCompetitionPage().HandleAction(action).StatusCode);
+        }
+
+        [Test]
+        public void JoinCompetition_CompetitionNotStarted_ReturnsOk()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    JoinCode = "joincode",
+                    State = 0
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            var action = new PageAction(
+            1,
+            "Competitions",
+            "JoinCompetition",
+            new Dictionary<string, object>
+            {
+                { "JoinCode", "joincode"}
+            });
+
+            Assert.AreEqual(
+                HttpStatusCode.OK,
+                new TestCompetitionPage().HandleAction(action).StatusCode);
+        }
 
         private class TestCompetitionPage : CompetitionPage
         {

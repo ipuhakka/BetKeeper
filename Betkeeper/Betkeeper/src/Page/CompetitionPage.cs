@@ -27,24 +27,27 @@ namespace Betkeeper.Page
                     "competitions", 
                     new List<string>{ "competitionId", "joinCode", "description"},
                     "competitionId"),
+                new Container(
+                    new List<Component>
+                    {
+                        new Field("JoinCode", "Join code", FieldType.TextBox),
+                        new PageActionButton(
+                            "JoinCompetition",
+                            new List<string> { "JoinCode"},
+                            "Join competition")
+                    }),
                 new ModalActionButton(
                     "Post", 
                     new List<Field>
                     {
                         new Field("Name", "Name", FieldType.TextBox),
                         new Field("StartTime", "Start time", FieldType.DateTime),
-                        new Field("Description", "Description", FieldType.TextArea),
-                        new Field("TestInt", "Integer field test", FieldType.Integer),
-                        new Field("TestDouble", "Double field test", FieldType.Double)
+                        new Field("Description", "Description", FieldType.TextArea)
                     },
                     "Create a competition"),
-                new NavigationButton(
-                    "/page/competitions/1", 
-                    "Check out this competition", 
-                    "outline-primary")
+                
             };
 
-            // TODO: Hae data.
             var dataDictionary = new Dictionary<string, object>();
 
             dataDictionary.Add("Competitions", CompetitionAction.GetUsersCompetitions(userId));
@@ -60,6 +63,9 @@ namespace Betkeeper.Page
             {
                 case "Post":
                     return Post(action);
+
+                case "JoinCompetition":
+                    return JoinCompetition(action);
 
                 default:
                     throw new NotImplementedException();
@@ -103,6 +109,39 @@ namespace Betkeeper.Page
             }
 
             return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully");
+        }
+
+        private HttpResponseMessage JoinCompetition(PageAction action)
+        {
+            var joinCode = action.Parameters.GetString("JoinCode");
+
+            if (string.IsNullOrEmpty(joinCode))
+            {
+                return Http.CreateResponse(
+                    HttpStatusCode.BadRequest,
+                    "Join code empty");
+            }
+
+            try
+            {
+                CompetitionAction.JoinCompetition(joinCode, action.UserId);
+            }
+            catch (InvalidOperationException)
+            {
+                return Http.CreateResponse(
+                    HttpStatusCode.Conflict,
+                    "Competition has already started and does not accept new players");
+            }
+            catch (NotFoundException)
+            {
+                return Http.CreateResponse(
+                    HttpStatusCode.NotFound,
+                    "Join code did not match any competition");
+            }
+
+            return Http.CreateResponse(
+                    HttpStatusCode.OK,
+                    "Competition has already started and does not accept new players");
         }
     }
 }

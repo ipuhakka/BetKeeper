@@ -37,7 +37,7 @@ export function postAction(page, action, parameters)
     xmlHttp.onreadystatechange =( () => {
       if (xmlHttp.readyState === 4)
       {
-        if (xmlHttp.status === 201)
+        if (xmlHttp.status < 300 && xmlHttp.status >= 200)
         {
           resolve(xmlHttp);
         }
