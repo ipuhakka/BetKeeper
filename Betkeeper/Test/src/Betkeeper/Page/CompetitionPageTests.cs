@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
-using Betkeeper.Actions;
-using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
-using NUnit.Framework;
+using Betkeeper.Data;
 using TestTools;
+using NUnit.Framework;
+using System.Linq;
 
 namespace Betkeeper.Test.Page
 {
+    [TestFixture]
     public class CompetitionPageTests
     {
         [OneTimeSetUp]
@@ -29,203 +29,130 @@ namespace Betkeeper.Test.Page
         }
 
         [Test]
-        public void Post_MissingParameters_ReturnsBadRequest()
+        public void DeleteCompetition_UserNotCompetitionHost_ReturnsUnauthorized()
         {
-            var invalidDicts = new List<Dictionary<string, object>>
+            var competitions = new List<Competition>
             {
-                new Dictionary<string, object>
+                new Competition
                 {
-                    { "StartTime", "Invalid datetime" },
-                    { "Name", "Is valid" }
-                },
-                // Name cannot be empty
-                new Dictionary<string, object>
-                {
-                    { "StartTime", "2019-01-01 14:40:42" },
-                    { "Name", "" }
-                },
-                new Dictionary<string, object>(),
-            };
-
-            invalidDicts.ForEach(dict =>
-            {
-                var response = new TestCompetitionPage().HandleAction(
-                        new PageAction(1, "competitions", "Post", dict));
-
-                Assert.AreEqual(
-                    HttpStatusCode.BadRequest,
-                    response.StatusCode);
-            });
-        }
-
-        [Test]
-        public void Post_ValidRequest_ReturnsCreated()
-        {
-            var parameters = new Dictionary<string, object>
-            {
-                { "StartTime", new DateTime(2019, 1, 1, 14, 45, 0) },
-                { "Name", "Testi nimi" },
-                { "Description", "Kuvaus" }
-            };
-
-            var response = new TestCompetitionPage().HandleAction(
-                new PageAction(1, "competitions", "Post", parameters));
-
-            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
-
-            var competitions = new TestCompetitionRepository().GetCompetitions();
-
-            Assert.AreEqual(1, competitions.Count);
-            Assert.AreEqual(new DateTime(2019, 1, 1, 14, 45, 0), competitions[0].StartTime);
-            Assert.AreEqual("Testi nimi", competitions[0].Name);
-            Assert.AreEqual("Kuvaus", competitions[0].Description);
-        }
-
-        [Test]
-        public void Post_CompetitionNameAlreadyInUse_ReturnsConflict()
-        {
-            var inDatabaseCompetitions = new List<Competition>
-            {
-                new Competition()
-                {
-                    CompetitionId = 1,
-                    Name = "Nimi",
-                    JoinCode = "213"
+                    CompetitionId = 1
                 }
             };
 
-            Tools.CreateTestData(competitions: inDatabaseCompetitions);
-
-            var parameters = new Dictionary<string, object>
+            var participators = new List<Participator>
             {
-                { "StartTime", new DateTime(2019, 1, 1, 14, 45, 0) },
-                { "Name", "Nimi" },
-                { "Description", "Kuvaus" }
+                new Participator
+                {
+                    ParticipatorId = 1,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Participator,
+                    Competition = 1
+                },
+                new Participator
+                {
+                    ParticipatorId = 2,
+                    UserId = 2,
+                    Role = (int)Enums.CompetitionRole.Host,
+                    Competition = 1
+                }
             };
 
-            var response = new TestCompetitionPage().HandleAction(
-                new PageAction(1, "competitions", "Post", parameters));
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
-            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+            var action = new PageAction(
+                1,
+                "Competition",
+                "DeleteCompetition",
+                new Dictionary<string, object>
+                {
+                    { "CompetitionId", 1}
+                });
+
+            var response = new TestCompetitionPage().HandleAction(action);
+
+            Assert.AreEqual(
+                HttpStatusCode.Unauthorized,
+                response.StatusCode);
         }
 
         [Test]
-        public void JoinCompetition_EmptyJoinCode_ReturnsBadRequest()
-        {
-            var actions = new List<PageAction>{
-                new PageAction(
-                    1,
-                    "Competitions",
-                    "JoinCompetition",
-                    new Dictionary<string, object>
-                    {
-                        { "JoinCode", ""}
-                    }),
-                new PageAction(
-                    1,
-                    "Competitions",
-                    "JoinCompetition",
-                    new Dictionary<string, object>()),
-            };
-
-            actions.ForEach(action =>
-            {
-                Assert.AreEqual(
-                    HttpStatusCode.BadRequest,
-                    new TestCompetitionPage().HandleAction(action).StatusCode);
-            });
-        }
-
-        [Test]
-        public void JoinCompetition_CompetitionNotFound_ReturnsNotFound()
+        public void DeleteCompetition_CompetitionIdNull_ReturnsBadRequest()
         {
             var action = new PageAction(
                 1,
-                "Competitions",
-                "JoinCompetition",
+                "Competition",
+                "DeleteCompetition",
                 new Dictionary<string, object>
                 {
-                    { "JoinCode", "joincode"}
+                    { "CompetitionId", null}
                 });
 
+            var response = new TestCompetitionPage().HandleAction(action);
+
             Assert.AreEqual(
-                HttpStatusCode.NotFound, 
-                new TestCompetitionPage().HandleAction(action).StatusCode);
+                HttpStatusCode.BadRequest,
+                response.StatusCode);
         }
 
         [Test]
-        public void JoinCompetition_CompetitionOnGoing_ReturnsConflict()
+        public void DeleteCompetition_UserIsCompetitionHost_ReturnsNoContent()
         {
             var competitions = new List<Competition>
             {
                 new Competition
                 {
-                    CompetitionId = 1,
-                    JoinCode = "joincode",
-                    StartTime = DateTime.UtcNow.AddDays(-1)
+                    CompetitionId = 1
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
-
-            var action = new PageAction(
-            1,
-            "Competitions",
-            "JoinCompetition",
-            new Dictionary<string, object>
+            var participators = new List<Participator>
             {
-                { "JoinCode", "joincode"}
-            });
-
-            Assert.AreEqual(
-                HttpStatusCode.Conflict,
-                new TestCompetitionPage().HandleAction(action).StatusCode);
-        }
-
-        [Test]
-        public void JoinCompetition_CompetitionNotStarted_ReturnsOk()
-        {
-            var competitions = new List<Competition>
-            {
-                new Competition
+                new Participator
                 {
-                    CompetitionId = 1,
-                    JoinCode = "joincode",
-                    StartTime = DateTime.UtcNow.AddDays(1)
+                    ParticipatorId = 1,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Host,
+                    Competition = 1
+                },
+                new Participator
+                {
+                    ParticipatorId = 2,
+                    UserId = 2,
+                    Role = (int)Enums.CompetitionRole.Participator,
+                    Competition = 1
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var action = new PageAction(
-            1,
-            "Competitions",
-            "JoinCompetition",
-            new Dictionary<string, object>
-            {
-                { "JoinCode", "joincode"}
-            });
+                1,
+                "Competition",
+                "DeleteCompetition",
+                new Dictionary<string, object>
+                {
+                    { "CompetitionId", 1}
+                });
+
+            var response = new TestCompetitionPage().HandleAction(action);
 
             Assert.AreEqual(
-                HttpStatusCode.OK,
-                new TestCompetitionPage().HandleAction(action).StatusCode);
+                HttpStatusCode.NoContent,
+                response.StatusCode);
+
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
+            {
+                Assert.AreEqual(0, context.Competition.ToList().Count);
+            }
         }
 
         private class TestCompetitionPage : CompetitionPage
         {
             public TestCompetitionPage()
             {
-                CompetitionAction = new TestAction();
+                CompetitionAction = new TestCompetitionAction();
             }
         }
-
-        private class TestAction : CompetitionAction
-        {
-            public TestAction()
-            {
-                CompetitionRepository = new TestCompetitionRepository();
-                ParticipatorRepository = new TestParticipatorRepository();
-            }
-        }
+        
     }
 }

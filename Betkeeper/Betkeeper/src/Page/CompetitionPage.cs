@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using Betkeeper.Actions;
 using Betkeeper.Classes;
-using Betkeeper.Page.Components;
+using Betkeeper.Actions;
 using Betkeeper.Extensions;
-using Betkeeper.Exceptions;
 
 namespace Betkeeper.Page
 {
-    public class CompetitionPage
+    /// <summary>
+    /// A competition page structure.
+    /// </summary>
+    public class CompetitionPage: Page
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -19,131 +20,47 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public HttpResponseMessage GetResponse(string pageKey, int userId)
+        public override PageResponse GetResponse(string pageKey, int userId)
         {
-            var components = new List<Component>
-            {
-                new Table(
-                    "competitions", 
-                    new List<DataField>
-                    {
-                        new DataField("name", DataType.String),
-                        new DataField("startTime", DataType.DateTime),
-                        new DataField("state", DataType.String)
-                    },
-                    "competitionId"),
-                new ModalActionButton(
-                    "JoinCompetition",
-                    new List<Field>
-                    {
-                        new Field("JoinCode", "Join code", FieldType.TextBox)
-                    },
-                    "Join competition"),
-                new ModalActionButton(
-                    "Post",
-                    new List<Field>
-                    {
-                        new Field("Name", "Name", FieldType.TextBox),
-                        new Field("StartTime", "Start time", FieldType.DateTime),
-                        new Field("Description", "Description", FieldType.TextArea)
-                    },
-                    "Create a competition")
-            };
-
-            var dataDictionary = new Dictionary<string, object>();
-
-            dataDictionary.Add("Competitions", CompetitionAction.GetUsersCompetitions(userId));
-
-            return Http.CreateResponse(
-                HttpStatusCode.OK, 
-                new PageResponse(pageKey, components, dataDictionary));
+            throw new NotImplementedException();
         }
 
-        public HttpResponseMessage HandleAction(PageAction action)
+        public override HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
-                case "Post":
-                    return Post(action);
-
-                case "JoinCompetition":
-                    return JoinCompetition(action);
-
                 default:
-                    throw new NotImplementedException();
+                    return Http.CreateResponse(
+                        HttpStatusCode.NotFound,
+                        "Action not found");
+
+                case "DeleteCompetition":
+                    return DeleteCompetition(action);
             }
         }
 
-        /// <summary>
-        ///  Adds a new competition.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        private HttpResponseMessage Post(PageAction action)
+        private HttpResponseMessage DeleteCompetition(PageAction action)
         {
-            var startTime = action.Parameters.GetDateTime("StartTime");
+            // TODO: Validoi arvot
+            var competitionId = action.Parameters.GetInt("CompetitionId");
 
-            if (startTime == null)
+            if (competitionId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
-            }
-
-            var name = action.Parameters.GetString("Name");
-
-            if (string.IsNullOrEmpty(name))
-            {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(HttpStatusCode.BadRequest, "Missing CompetitionId parameter");
             }
 
             try
             {
-                CompetitionAction.CreateCompetition(
-                    action.UserId,
-                    name,
-                    action.Parameters.GetString("Description"),
-                    (DateTime)startTime);
-            }
-            catch (NameInUseException)
-            {
-                return Http.CreateResponse(
-                    HttpStatusCode.Conflict,
-                    "A tournament with specified name already exists");
-            }
+                CompetitionAction.DeleteCompetition(action.UserId, (int)competitionId);
 
-            return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully");
-        }
-
-        private HttpResponseMessage JoinCompetition(PageAction action)
-        {
-            var joinCode = action.Parameters.GetString("JoinCode");
-
-            if (string.IsNullOrEmpty(joinCode))
-            {
-                return Http.CreateResponse(
-                    HttpStatusCode.BadRequest,
-                    "Join code empty");
-            }
-
-            try
-            {
-                CompetitionAction.JoinCompetition(joinCode, action.UserId);
+                return Http.CreateResponse(HttpStatusCode.NoContent, "Competition deleted successfully");
             }
             catch (InvalidOperationException)
             {
                 return Http.CreateResponse(
-                    HttpStatusCode.Conflict,
-                    "Competition has already started and does not accept new players");
+                    HttpStatusCode.Unauthorized,
+                    "User not allowed to delete competition");
             }
-            catch (NotFoundException)
-            {
-                return Http.CreateResponse(
-                    HttpStatusCode.NotFound,
-                    "Join code did not match any competition");
-            }
-
-            return Http.CreateResponse(
-                    HttpStatusCode.OK,
-                    "Competition has already started and does not accept new players");
         }
     }
 }
