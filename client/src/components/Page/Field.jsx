@@ -91,7 +91,7 @@ class Field extends Component
     renderInput()
     {
         const  { props, state } = this;
-        
+
         const type = _.includes(['Integer', 'Double'], props.type)
             ? 'number'
             : 'text'
@@ -102,6 +102,7 @@ class Field extends Component
 
         return <Form.Control 
             type={type}
+            disabled={props.readOnly}
             as={as}
             isInvalid={!state.isValid}
             value={state.value || ''}

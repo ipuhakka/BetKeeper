@@ -1,11 +1,14 @@
 .input-field-wrapper {
     display: flex;
+    margin-top: 0.2em;
     margin-bottom: 1em;
+    margin-right: 0.3em;
 }
 
 .input-label {
     flex: 0 0 5em;
     margin-right: 1em;
+    align-self: center;
 }
 
 .input-wrapper {
