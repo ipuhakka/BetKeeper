@@ -16,9 +16,8 @@ class Field extends Component
 
         this.onChange = this.onChange.bind(this);
         this.setDateTime = this.setDateTime.bind(this);
-        
         this.state = {
-            value: '',
+            value: props.initialValue,
             isValid: true
         };
     }
@@ -152,7 +151,9 @@ Field.propTypes = {
     label: PropTypes.string.isRequired,
     fieldKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    onError: PropTypes.func
+    onError: PropTypes.func,
+    initialValue: PropTypes.string,
+    readOnly: PropTypes.bool
 };
 
 export default Field;

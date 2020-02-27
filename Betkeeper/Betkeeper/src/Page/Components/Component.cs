@@ -14,11 +14,6 @@ namespace Betkeeper.Page.Components
         /// </summary>
         Field,
 
-        /// <summary>
-        /// Field connected to existing data
-        /// </summary>
-        DataField,
-
         Table,
 
         Container

@@ -127,7 +127,8 @@ class Page extends Component
                             onChange={this.onDataChange}
                             key={`field-${component.key}`} 
                             type={component.fieldType} 
-                            fieldKey={component.key} 
+                            fieldKey={component.key}
+                            initialValue={_.get(this.props.data, component.dataKey, '')} 
                             {...component} />;
 
                     case 'Table':

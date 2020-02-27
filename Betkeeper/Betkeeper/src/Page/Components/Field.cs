@@ -16,6 +16,8 @@ namespace Betkeeper.Page.Components
     {
         public string Key { get; }
 
+        public string DataKey { get; }
+
         public string Label { get; }
 
         public bool ReadOnly { get; }
@@ -39,15 +41,15 @@ namespace Betkeeper.Page.Components
         /// <param name="readOnly"></param>
         /// <param name="fieldType"></param>
         public Field(
-            string dataKey, 
+            string key, 
             string label, 
             bool readOnly, 
-            FieldType fieldType)
-            : base(ComponentType.DataField)
+            FieldType fieldType,
+            string dataKey)
+            : this(key, label, fieldType)
         {
-            Key = dataKey;
             ReadOnly = readOnly;
-            FieldType = fieldType;
+            DataKey = dataKey;
         }
     }
 }

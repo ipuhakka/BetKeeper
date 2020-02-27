@@ -28,6 +28,7 @@ namespace Betkeeper.Page
 
             var components = new List<Component>
             {
+                new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
                 new PageActionButton(
                     "DeleteCompetition",
                     new List<string>{ "competitionId" },
