@@ -7,6 +7,25 @@ using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page
 {
+    public abstract class Page
+    {
+
+        /// <summary>
+        /// Get page structure and data.
+        /// </summary>
+        /// <param name="pageKey"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public abstract PageResponse GetResponse(string pageKey, int userId);
+
+        /// <summary>
+        /// Handles a page action.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public abstract HttpResponseMessage HandleAction(PageAction action);
+    }
+
     public class PageResponse
     {
         public string Key { get; set; }
@@ -33,7 +52,9 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return new CompetitionPage().GetResponse(pageKey, userId);
+                    return Http.CreateResponse(
+                        HttpStatusCode.OK,
+                        new CompetitionsPage().GetResponse(pageKey, userId));
             }
         }
 
@@ -52,7 +73,7 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return new CompetitionPage().HandleAction(action);
+                    return new CompetitionsPage().HandleAction(action);
             }
         }
     }

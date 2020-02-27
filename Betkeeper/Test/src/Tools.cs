@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Web.Http.Controllers;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Betkeeper.Data;
 using Betkeeper.Models;
+using Betkeeper.Actions;
 
 namespace TestTools
 {
@@ -85,6 +85,18 @@ namespace TestTools
         {
             OptionsBuilder = Tools.GetTestOptionsBuilder();
             CompetitionHandler = new TestCompetitionRepository();
+        }
+    }
+
+    /// <summary>
+    /// Testable implementation of competition action.
+    /// </summary>
+    internal class TestCompetitionAction : CompetitionAction
+    {
+        public TestCompetitionAction()
+        {
+            CompetitionRepository = new TestCompetitionRepository();
+            ParticipatorRepository = new TestParticipatorRepository();
         }
     }
 }
