@@ -65,7 +65,7 @@ namespace Betkeeper.Test.Page
                 "DeleteCompetition",
                 new Dictionary<string, object>
                 {
-                    { "CompetitionId", 1}
+                    { "competitionId", 1}
                 });
 
             var response = new TestCompetitionPage().HandleAction(action);
@@ -84,7 +84,7 @@ namespace Betkeeper.Test.Page
                 "DeleteCompetition",
                 new Dictionary<string, object>
                 {
-                    { "CompetitionId", null}
+                    { "competitionId", null}
                 });
 
             var response = new TestCompetitionPage().HandleAction(action);
@@ -131,7 +131,7 @@ namespace Betkeeper.Test.Page
                 "DeleteCompetition",
                 new Dictionary<string, object>
                 {
-                    { "CompetitionId", 1}
+                    { "competitionId", 1}
                 });
 
             var response = new TestCompetitionPage().HandleAction(action);

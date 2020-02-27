@@ -50,7 +50,7 @@ const mapStateToProps = (state) =>
 {
     const pathname = window.location.pathname;
     // Parse page name from path
-    const pageKey = pathname.substring(pathname.lastIndexOf('/') + 1);
+    const pageKey = pathname.split('page/')[1];
 
     return {
         page: _.find(state.pages.pages, page =>

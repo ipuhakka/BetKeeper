@@ -7,7 +7,7 @@ using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page
 {
-    public abstract class Page
+    public interface IPage
     {
 
         /// <summary>
@@ -16,14 +16,14 @@ namespace Betkeeper.Page
         /// <param name="pageKey"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public abstract PageResponse GetResponse(string pageKey, int userId);
+        PageResponse GetResponse(string pageKey, int userId);
 
         /// <summary>
         /// Handles a page action.
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public abstract HttpResponseMessage HandleAction(PageAction action);
+        HttpResponseMessage HandleAction(PageAction action);
     }
 
     public class PageResponse
@@ -44,7 +44,10 @@ namespace Betkeeper.Page
             Data = data;
         }
 
-        public static HttpResponseMessage GetResponseMessage(string pageKey, int userId)
+        public static HttpResponseMessage GetResponseMessage(
+            string pageKey, 
+            int userId, 
+            int? pageId = null)
         {
             switch (pageKey)
             {
@@ -54,7 +57,9 @@ namespace Betkeeper.Page
                 case "competitions":
                     return Http.CreateResponse(
                         HttpStatusCode.OK,
-                        new CompetitionsPage().GetResponse(pageKey, userId));
+                        pageId != null
+                        ? new CompetitionPage().GetResponse(pageId.ToString(), userId)
+                        : new CompetitionsPage().GetResponse(pageKey, userId));
             }
         }
 
@@ -73,6 +78,11 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
+                    if (action.PageId != null)
+                    {
+                        return new CompetitionPage().HandleAction(action);
+                    }
+
                     return new CompetitionsPage().HandleAction(action);
             }
         }

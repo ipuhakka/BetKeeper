@@ -45,7 +45,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            return PageResponse.GetResponseMessage(page, (int)userId);
+            return PageResponse.GetResponseMessage(page, (int)userId, id);
         }
     }
 }

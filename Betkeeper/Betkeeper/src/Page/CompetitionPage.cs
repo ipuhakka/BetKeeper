@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using Betkeeper.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Extensions;
+using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page
 {
     /// <summary>
     /// A competition page structure.
     /// </summary>
-    public class CompetitionPage: Page
+    public class CompetitionPage: IPage
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -20,12 +22,28 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public override PageResponse GetResponse(string pageKey, int userId)
-        {
-            throw new NotImplementedException();
+        public PageResponse GetResponse(string pageId, int userId)
+        { 
+            var competitionId = int.Parse(pageId);
+
+            var components = new List<Component>
+            {
+                new PageActionButton(
+                    "DeleteCompetition",
+                    new List<string>{ "competitionId" },
+                    "Delete competition",
+                    "outline-danger")
+            };
+
+            var data = new Dictionary<string, object>();
+
+            data.Add("CompetitionId", competitionId);
+            data.Add("Competition", CompetitionAction.GetCompetition(competitionId));
+
+            return new PageResponse($"competitions/{pageId}", components, data);
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -41,8 +59,7 @@ namespace Betkeeper.Page
 
         private HttpResponseMessage DeleteCompetition(PageAction action)
         {
-            // TODO: Validoi arvot
-            var competitionId = action.Parameters.GetInt("CompetitionId");
+            var competitionId = action.Parameters.GetInt("competitionId");
 
             if (competitionId == null)
             {

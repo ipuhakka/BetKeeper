@@ -10,7 +10,7 @@ using Betkeeper.Exceptions;
 
 namespace Betkeeper.Page
 {
-    public class CompetitionsPage: Page
+    public class CompetitionsPage: IPage
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -19,7 +19,7 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public override PageResponse GetResponse(string pageKey, int userId)
+        public PageResponse GetResponse(string pageKey, int userId)
         {
             var components = new List<Component>
             {
@@ -57,7 +57,7 @@ namespace Betkeeper.Page
             return new PageResponse(pageKey, components, dataDictionary);
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {

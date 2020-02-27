@@ -41,19 +41,26 @@ class Page extends Component
 
     clickPageAction(action, actionDataKeys)
     {
-        const { state } = this;
+        const { state, props } = this;
 
         const parameters = {};
 
         _.forEach(actionDataKeys, dataKey => 
         {
-            parameters[dataKey] = state.data[dataKey];
+            if (!_.isNil(state.data[dataKey]))
+            {
+                parameters[dataKey] = state.data[dataKey];
+            }
+            // parameter in page data
+            else 
+            {
+                parameters[dataKey] = props.data[dataKey];
+            }
         });
 
         const pathname = window.location.pathname;
-        // Parse page name from path and convert first char to upper
-        let pageKey = pathname
-            .substring(pathname.lastIndexOf('/') + 1);
+        // Parse page name from path
+        const pageKey = pathname.split('page/')[1];
 
         pageActions.callAction(pageKey, action, parameters);
     }

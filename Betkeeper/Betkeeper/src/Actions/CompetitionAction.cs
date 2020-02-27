@@ -18,6 +18,11 @@ namespace Betkeeper.Actions
             ParticipatorRepository = new ParticipatorRepository();
         }
 
+        public Competition GetCompetition(int competitionId)
+        {
+            return CompetitionRepository.GetCompetition(competitionId: competitionId);
+        }
+
         /// <summary>
         /// Creates a new competition.
         /// </summary>
@@ -55,7 +60,7 @@ namespace Betkeeper.Actions
 
             ParticipatorRepository
                 .AddParticipator(
-                    userId, (int)competitionId, Enums.CompetitionRole.Admin);
+                    userId, (int)competitionId, Enums.CompetitionRole.Host);
         }
 
         public void DeleteCompetition(int userId, int competitionId)
