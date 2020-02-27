@@ -23,7 +23,6 @@ namespace Betkeeper.Models
         public DateTime StartTime { get; set; }
 
         // TODO: Huomioi valmiiden vetojen määrä finishediä varten.
-
         [JsonConverter(typeof(StringEnumConverter))]
         public Enums.CompetitionState State => StartTime == null 
             || StartTime > DateTime.UtcNow

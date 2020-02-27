@@ -186,6 +186,99 @@ namespace Betkeeper.Test.Actions
             });
         }
 
+        [Test]
+        public void DeleteCompetition_UserNotHost_ThrowsInvalidOperationException()
+        {
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Admin
+                },
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 2,
+                    Role = (int)Enums.CompetitionRole.Participator
+                }
+            };
+
+            Tools.CreateTestData(participators: participators);
+
+            participators.ForEach(participator =>
+            {
+                Assert.Throws<InvalidOperationException>(() =>
+                    new TestAction().DeleteCompetition(participator.UserId, 1));
+            });
+        }
+
+        [Test]
+        public void DeleteCompetition_UserNotSpecificCompetitionHost_ThrowsInvalidOperationException()
+        {
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 2,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Host
+                }
+            };
+
+            Tools.CreateTestData(participators: participators);
+
+            participators.ForEach(participator =>
+            {
+                Assert.Throws<InvalidOperationException>(() =>
+                    new TestAction().DeleteCompetition(participator.UserId, 1));
+            });
+        }
+
+        [Test]
+        public void DeleteCompetition_UserHost_CompetitionDeleted()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Host
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
+            {
+                var existingCompetitions = context.Competition.ToList();
+
+                Assert.AreEqual(1, existingCompetitions.Count);
+            }
+
+            participators.ForEach(participator =>
+            {
+                new TestAction().DeleteCompetition(participator.UserId, 1);
+
+                using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
+                {
+                    var existingCompetitions = context.Competition.ToList();
+
+                    Assert.AreEqual(0, existingCompetitions.Count);
+                }
+            });
+        }
+
         private class TestAction : CompetitionAction
         {
             public TestAction()

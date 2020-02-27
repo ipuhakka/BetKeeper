@@ -58,6 +58,23 @@ namespace Betkeeper.Actions
                     userId, (int)competitionId, Enums.CompetitionRole.Admin);
         }
 
+        public void DeleteCompetition(int userId, int competitionId)
+        {
+            var participator = ParticipatorRepository
+                .GetParticipators(
+                    userId: userId,
+                    competitionId: competitionId,
+                    role: (int)Enums.CompetitionRole.Host)
+                .FirstOrDefault();
+
+            if (participator == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            CompetitionRepository.DeleteCompetition(competitionId);
+        }
+
         /// <summary>
         /// Returns competitions where user is involved in.
         /// </summary>

@@ -39,7 +39,8 @@ namespace Betkeeper.Models
 
         public List<Participator> GetParticipators(
             int? userId = null, 
-            int? competitionId = null)
+            int? competitionId = null,
+            int? role = null)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
@@ -53,6 +54,11 @@ namespace Betkeeper.Models
                 if (competitionId != null)
                 {
                     query = query.Where(participator => participator.Competition == competitionId);
+                }
+
+                if (role != null)
+                {
+                    query = query.Where(participator => participator.Role == role);
                 }
 
                 return query.ToList();
