@@ -31,5 +31,21 @@ namespace Betkeeper.Extensions
 
             return null;
         }
+
+        public static int? GetInt(this Dictionary<string, object> dictionary, string key)
+        {
+            if (!dictionary.ContainsKey(key) 
+                || dictionary[key] == null)
+            {
+                return null;
+            }
+
+            if (int.TryParse(dictionary[key].ToString(), out int i))
+            {
+                return i;
+            }
+
+            return null;
+        }
     }
 }

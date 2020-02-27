@@ -56,5 +56,51 @@ namespace Betkeeper.Test.Extensions
             Assert.AreEqual(new DateTime(2011, 1, 2, 14, 14, 14), dict.GetDateTime("key1"));
             Assert.AreEqual(new DateTime(2011, 1, 2, 14, 14, 14), dict.GetDateTime("key2"));
         }
+
+        [Test]
+        public void GetInt_ValueNull_ReturnsNull()
+        {
+            var dicts = new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>(),
+                new Dictionary<string, object>
+                {
+                    { "Key", null}
+                }
+            };
+
+            dicts.ForEach(dict =>
+            {
+                Assert.IsNull(dict.GetInt("Key"));
+            });
+        }
+
+        [Test]
+        public void GetInt_ValueNotInt_ReturnsNull()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "Key1", 2.7 },
+                { "Key2", "2.7" },
+                { "Key3", true },
+                { "Key4", "NotInt"}
+            };
+
+            foreach (KeyValuePair<string, object> kvp in dict)
+            {
+                Assert.IsNull(dict.GetInt(kvp.Key));
+            }
+        }
+
+        [Test]
+        public void GetInt_IsInt_ReturnsInt()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "Key", 2}
+            };
+
+            Assert.AreEqual(2, dict.GetInt("Key"));
+        }
     }
 }
