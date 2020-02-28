@@ -17,21 +17,21 @@ export function* getPage(action)
     }
     catch (error)
     {
-        switch(error.status)
-        {
-          case 401:
-            yield put(setAlertStatus(error.status, "Session expired, please login again"));
-            break;
-          case 404:
-            yield put(setAlertStatus(error.status, "Requested page was not found"));
-            break;
-          case 0:
-            yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
-            break;
-          default:
-            yield put(setAlertStatus(error.status, "Unexpected error occurred"));
-            break;
-        }
+      switch(error.status)
+      {
+        case 401:
+          yield put(setAlertStatus(error.status, "Session expired, please login again"));
+          break;
+        case 404:
+          yield put(setAlertStatus(error.status, "Requested page was not found"));
+          break;
+        case 0:
+          yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
+          break;
+        default:
+          yield put(setAlertStatus(error.status, "Unexpected error occurred"));
+          break;
+      }
     }
     finally 
     {

@@ -279,6 +279,56 @@ namespace Betkeeper.Test.Actions
             });
         }
 
+        [Test]
+        public void GetParticipator_UserNotInCompetition_ReturnsNull()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            Assert.IsNull(new TestAction().GetParticipator(1, 1));
+        }
+
+        [Test]
+        public void GetParticipator_ReturnsParticipator()
+        {
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    ParticipatorId = 1,
+                    UserId = 1,
+                    Role = (int)Enums.CompetitionRole.Participator
+                }
+            };
+
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            var participator = new TestAction().GetParticipator(1, 1);
+
+            Assert.AreEqual(1, participator.Competition);
+            Assert.AreEqual(1, participator.ParticipatorId);
+            Assert.AreEqual(1, participator.UserId);
+            Assert.AreEqual(
+                Enums.CompetitionRole.Participator, 
+                (Enums.CompetitionRole)participator.Role);
+        }
+
         private class TestAction : CompetitionAction
         {
             public TestAction()

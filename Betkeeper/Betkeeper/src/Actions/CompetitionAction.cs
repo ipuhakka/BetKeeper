@@ -106,7 +106,7 @@ namespace Betkeeper.Actions
                 throw new NotFoundException($"{joinCode} did not match any competition");
             }
 
-            if ((Enums.CompetitionState)competition.State != Enums.CompetitionState.Open)
+            if (competition.State != Enums.CompetitionState.Open)
             {
                 throw new InvalidOperationException("Competition not open for new players");
             }
@@ -115,6 +115,11 @@ namespace Betkeeper.Actions
                 userId,
                 competition.CompetitionId,
                 Enums.CompetitionRole.Participator);
+        }
+
+        public Participator GetParticipator(int userId, int competitionId)
+        {
+            return ParticipatorRepository.GetParticipators(userId, competitionId).FirstOrDefault();
         }
     }
 }

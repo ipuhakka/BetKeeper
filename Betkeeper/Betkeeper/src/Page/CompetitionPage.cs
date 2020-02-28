@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using Betkeeper.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Extensions;
@@ -22,27 +23,44 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public PageResponse GetResponse(string pageId, int userId)
+        public HttpResponseMessage GetResponse(string pageId, int userId)
         { 
             var competitionId = int.Parse(pageId);
 
+            var participator = CompetitionAction.GetParticipator(userId, competitionId);
+
+            // User does not have rights to competition, redirect
+            if (participator == null)
+            {
+                var response = Http.CreateResponse(HttpStatusCode.Redirect);
+                response.Headers.Add("Location", "../competitions/");
+
+                return response;
+            }
+
             var components = new List<Component>
             {
-                new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
+                new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
+            };
+
+            if (participator.Role == (int)Enums.CompetitionRole.Host)
+            {
                 new PageActionButton(
                     "DeleteCompetition",
-                    new List<string>{ "competitionId" },
+                    new List<string> { "competitionId" },
                     "Delete competition",
                     "outline-danger",
-                    requireConfirm: true)
-            };
+                    requireConfirm: true);
+            }
 
             var data = new Dictionary<string, object>();
 
             data.Add("CompetitionId", competitionId);
             data.Add("Competition", CompetitionAction.GetCompetition(competitionId));
 
-            return new PageResponse($"competitions/{pageId}", components, data);
+            return Http.CreateResponse(
+                HttpStatusCode.OK,
+                new PageResponse($"competitions/{pageId}", components, data));
         }
 
         public HttpResponseMessage HandleAction(PageAction action)

@@ -16,7 +16,7 @@ namespace Betkeeper.Page
         /// <param name="pageKey"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        PageResponse GetResponse(string pageKey, int userId);
+        HttpResponseMessage GetResponse(string pageKey, int userId);
 
         /// <summary>
         /// Handles a page action.
@@ -55,11 +55,9 @@ namespace Betkeeper.Page
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return Http.CreateResponse(
-                        HttpStatusCode.OK,
-                        pageId != null
+                    return pageId != null
                         ? new CompetitionPage().GetResponse(pageId.ToString(), userId)
-                        : new CompetitionsPage().GetResponse(pageKey, userId));
+                        : new CompetitionsPage().GetResponse(pageKey, userId);
             }
         }
 

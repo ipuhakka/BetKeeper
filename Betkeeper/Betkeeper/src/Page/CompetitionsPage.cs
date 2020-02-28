@@ -19,7 +19,7 @@ namespace Betkeeper.Page
             CompetitionAction = new CompetitionAction();
         }
 
-        public PageResponse GetResponse(string pageKey, int userId)
+        public HttpResponseMessage GetResponse(string pageKey, int userId)
         {
             var components = new List<Component>
             {
@@ -47,15 +47,16 @@ namespace Betkeeper.Page
                         new Field("StartTime", "Start time", FieldType.DateTime),
                         new Field("Description", "Description", FieldType.TextArea)
                     },
-                    "Create a competition",
-                    requireConfirm: true)
+                    "Create a competition")
             };
 
             var dataDictionary = new Dictionary<string, object>();
 
             dataDictionary.Add("Competitions", CompetitionAction.GetUsersCompetitions(userId));
 
-            return new PageResponse(pageKey, components, dataDictionary);
+            return Http.CreateResponse(
+                HttpStatusCode.OK,
+                new PageResponse(pageKey, components, dataDictionary));
         }
 
         public HttpResponseMessage HandleAction(PageAction action)
@@ -142,7 +143,7 @@ namespace Betkeeper.Page
 
             return Http.CreateResponse(
                     HttpStatusCode.OK,
-                    "Competition has already started and does not accept new players");
+                    "Joined competition successfully");
         }
     }
 }
