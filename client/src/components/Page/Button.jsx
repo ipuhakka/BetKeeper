@@ -19,7 +19,7 @@ class Button extends Component
 
         if (props.buttonType === 'PageAction')
         {
-            props.onClick(props.action, props.actionDataKeys, props.requireConfirm, props.text, props.style);
+            props.onClick(props.action, props.actionDataKeys, props.requireConfirm, props.text, props.style, props.navigateTo);
         }
         else if (props.buttonType === 'ModalAction')
         {

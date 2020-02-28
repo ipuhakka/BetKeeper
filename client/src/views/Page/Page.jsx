@@ -53,9 +53,10 @@ class Page extends Component
      */
     executePageActionFromConfirm()
     {
+        const { onSuccessNavigateTo } = this.state;
         const {action, actionDataKeys } = this.state.confirm;
 
-        this.executePageAction(action, actionDataKeys)
+        this.executePageAction(action, actionDataKeys, onSuccessNavigateTo)
     }
 
     /**
@@ -63,7 +64,7 @@ class Page extends Component
      * @param {string} action 
      * @param {Array} actionDataKeys 
      */
-    executePageAction(action, actionDataKeys)
+    executePageAction(action, actionDataKeys, onSuccessNavigateTo)
     {
         const { state, props } = this;
 
@@ -86,13 +87,19 @@ class Page extends Component
         // Parse page name from path
         const pageKey = pathname.split('page/')[1];
 
-        pageActions.callAction(pageKey, action, parameters);
+        pageActions.callAction(pageKey, action, parameters, _.isNil(onSuccessNavigateTo)
+            ? null
+            : () => 
+            {
+                this.clickNavigationButton(onSuccessNavigateTo);
+            }
+        );
     }
 
     /** Handles page action button click. Either opens a confirm dialog
      * or calls action directly.
      */
-    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, style)
+    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, style, onSuccessNavigateTo = null)
     {
         if (requireConfirm)
         {
@@ -103,12 +110,13 @@ class Page extends Component
                     actionDataKeys: actionDataKeys,
                     header: confirmHeader,
                     variant: style
-                }
+                },
+                onSuccessNavigateTo
             });
         }
         else 
         {
-            this.executePageAction(action, actionDataKeys);
+            this.executePageAction(action, actionDataKeys, onSuccessNavigateTo);
         }
     }
 

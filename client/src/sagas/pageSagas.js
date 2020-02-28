@@ -48,15 +48,15 @@ export function* callAction(action)
   try 
   {
     const response = yield call(pageApi.postAction, page, actionName, parameters);
-
-    yield put(setAlertStatus(response.status, response.responseText));
-
-    pageActions.getPage(window.location.pathname);
-
+  
     if (!_.isNil(callback))
     {
       callback();
     }
+
+    yield put(setAlertStatus(response.status, response.responseText));
+
+    pageActions.getPage(window.location.pathname);
   }
   catch (error)
   {

@@ -45,12 +45,14 @@ namespace Betkeeper.Page
 
             if (participator.Role == (int)Enums.CompetitionRole.Host)
             {
-                new PageActionButton(
+                components.Add(new PageActionButton(
                     "DeleteCompetition",
                     new List<string> { "competitionId" },
                     "Delete competition",
                     "outline-danger",
-                    requireConfirm: true);
+                    requireConfirm: true,
+                    navigateTo: "../competitions")
+                );
             }
 
             var data = new Dictionary<string, object>();
