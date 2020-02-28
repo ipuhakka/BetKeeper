@@ -95,7 +95,7 @@ namespace Betkeeper.Test.Page
         }
 
         [Test]
-        public void DeleteCompetition_UserIsCompetitionHost_ReturnsNoContent()
+        public void DeleteCompetition_UserIsCompetitionHost_ReturnsOK()
         {
             var competitions = new List<Competition>
             {
@@ -137,7 +137,7 @@ namespace Betkeeper.Test.Page
             var response = new TestCompetitionPage().HandleAction(action);
 
             Assert.AreEqual(
-                HttpStatusCode.NoContent,
+                HttpStatusCode.OK,
                 response.StatusCode);
 
             using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))

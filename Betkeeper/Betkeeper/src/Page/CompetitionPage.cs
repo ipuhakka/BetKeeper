@@ -72,7 +72,7 @@ namespace Betkeeper.Page
             {
                 CompetitionAction.DeleteCompetition(action.UserId, (int)competitionId);
 
-                return Http.CreateResponse(HttpStatusCode.NoContent, "Competition deleted successfully");
+                return Http.CreateResponse(HttpStatusCode.OK, "Competition deleted successfully");
             }
             catch (InvalidOperationException)
             {
