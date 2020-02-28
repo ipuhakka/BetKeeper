@@ -31,7 +31,7 @@ class Page extends Component
         };
         
         this.clickModalAction = this.clickModalAction.bind(this);
-        this.clickNavigationButton = this.clickNavigationButton.bind(this);
+        this.navigateTo = this.navigateTo.bind(this);
         this.clickPageAction = this.clickPageAction.bind(this);
         this.onDataChange = this.onDataChange.bind(this);
         this.executePageAction = this.executePageAction.bind(this);
@@ -63,6 +63,7 @@ class Page extends Component
      * Executes a page action.
      * @param {string} action 
      * @param {Array} actionDataKeys 
+     * @param {string} onSuccessNavigateTo Navigate to this address on success
      */
     executePageAction(action, actionDataKeys, onSuccessNavigateTo)
     {
@@ -91,15 +92,22 @@ class Page extends Component
             ? null
             : () => 
             {
-                this.clickNavigationButton(onSuccessNavigateTo);
+                this.navigateTo(onSuccessNavigateTo);
             }
         );
     }
 
-    /** Handles page action button click. Either opens a confirm dialog
+    /**
+     * Handles page action button click. Either opens a confirm dialog
      * or calls action directly.
+     * @param {string} action action name
+     * @param {Array.<string>} actionDataKeys Data keys used in action.
+     * @param {bool} requireConfirm Will a confirm dialog be displayed before completing action 
+     * @param {string} confirmHeader Header for confirm dialog
+     * @param {string} confirmStyle Confirm dialog style
+     * @param {string} onSuccessNavigateTo If given, redirect to this address after successful action 
      */
-    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, style, onSuccessNavigateTo = null)
+    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, confirmStyle, onSuccessNavigateTo = null)
     {
         if (requireConfirm)
         {
@@ -109,7 +117,7 @@ class Page extends Component
                     action: action,
                     actionDataKeys: actionDataKeys,
                     header: confirmHeader,
-                    variant: style
+                    variant: confirmStyle
                 },
                 onSuccessNavigateTo
             });
@@ -120,7 +128,15 @@ class Page extends Component
         }
     }
 
-    clickModalAction(action, actionFields, title, requireConfirm, style)
+    /**
+     * 
+     * @param {string} action 
+     * @param {Array.<object>} actionFields Fiels to be shown in action modal.
+     * @param {title} title 
+     * @param {bool} requireConfirm 
+     * @param {string} confirmStyle 
+     */
+    clickModalAction(action, actionFields, title, requireConfirm, confirmStyle)
     {
         this.setState({
             actionModalOpen: true,
@@ -129,14 +145,14 @@ class Page extends Component
                 actionFields,
                 title,
                 requireConfirm,
-                confirmVariant: style
+                confirmVariant: confirmStyle
             }
         });
     }
 
-    clickNavigationButton(navigateTo)
+    navigateTo(address)
     {
-        this.props.history.push(navigateTo);
+        this.props.history.push(address);
     }
 
     /**
@@ -157,7 +173,7 @@ class Page extends Component
 
         if (button.buttonType === 'Navigation')
         {
-            return this.clickNavigationButton;
+            return this.navigateTo;
         }
 
         return null;
@@ -189,7 +205,7 @@ class Page extends Component
                             {...component} />;
 
                     case 'Table':
-                        return <Table onRowClick={this.clickNavigationButton} key={`itemlist-${i}`} {...component} />;
+                        return <Table onRowClick={this.navigateTo} key={`itemlist-${i}`} {...component} />;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
