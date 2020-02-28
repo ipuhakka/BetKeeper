@@ -5,12 +5,22 @@ import BetsReducer from './betsReducer';
 import LoadingReducer from './loadingReducer';
 import PageReducer from './pageReducer';
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   folders: FoldersReducer,
   alert: AlertReducer,
   bets: BetsReducer,
   loading: LoadingReducer,
   pages: PageReducer
 });
+
+const rootReducer = (state, action) => 
+{
+  if (action.type === 'LOGOUT') 
+  {
+    state = undefined;
+  }
+
+  return appReducer(state, action);
+}
 
 export default rootReducer;
