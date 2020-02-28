@@ -20,12 +20,19 @@ namespace Betkeeper.Page.Components
 
         public string Style { get; }
 
-        public Button (ButtonType buttonType, string text, string style = "primary")
+        public bool RequireConfirm { get; }
+
+        public Button (
+            ButtonType buttonType, 
+            string text, 
+            string style = "primary", 
+            bool requireConfirm = false)
             : base(ComponentType.Button)
         {
             Text = text;
             ButtonType = buttonType;
             Style = style;
+            RequireConfirm = requireConfirm;
         }
     }
 
@@ -53,8 +60,9 @@ namespace Betkeeper.Page.Components
             string action, 
             List<string> actionDataKeys, 
             string text, 
-            string style = "outline-primary")
-            : base(ButtonType.PageAction, text, style)
+            string style = "outline-primary",
+            bool requireConfirm = false)
+            : base(ButtonType.PageAction, text, style, requireConfirm)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;
@@ -78,8 +86,9 @@ namespace Betkeeper.Page.Components
             string action, 
             List<Field> fields,
             string text,
-            string style = "primary")
-            : base(ButtonType.ModalAction, text, style)
+            string style = "primary",
+            bool requireConfirm = false)
+            : base(ButtonType.ModalAction, text, style, requireConfirm)
         {
             Action = action;
             ModalFields = fields;

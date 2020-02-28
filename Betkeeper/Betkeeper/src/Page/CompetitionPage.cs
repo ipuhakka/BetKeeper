@@ -33,7 +33,8 @@ namespace Betkeeper.Page
                     "DeleteCompetition",
                     new List<string>{ "competitionId" },
                     "Delete competition",
-                    "outline-danger")
+                    "outline-danger",
+                    requireConfirm: true)
             };
 
             var data = new Dictionary<string, object>();

@@ -47,7 +47,8 @@ namespace Betkeeper.Page
                         new Field("StartTime", "Start time", FieldType.DateTime),
                         new Field("Description", "Description", FieldType.TextArea)
                     },
-                    "Create a competition")
+                    "Create a competition",
+                    requireConfirm: true)
             };
 
             var dataDictionary = new Dictionary<string, object>();
