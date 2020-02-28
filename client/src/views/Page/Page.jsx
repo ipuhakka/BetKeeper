@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import * as pageActions from '../../actions/pageActions';
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
+import Confirm from '../../components/Confirm/Confirm';
 import Button from '../../components/Page/Button';
 import Field from '../../components/Page/Field';
 import Modal from '../../components/Page/Modal';
@@ -20,13 +21,21 @@ class Page extends Component
 		this.state = {
             actionModalOpen: false,
             actionModalProps: {},
-            data: {}
+            data: {},
+            confirm: {
+                show: false,
+                action: '',
+                actionDataKeys: [],
+                header: ''
+            }
         };
         
         this.clickModalAction = this.clickModalAction.bind(this);
         this.clickNavigationButton = this.clickNavigationButton.bind(this);
         this.clickPageAction = this.clickPageAction.bind(this);
         this.onDataChange = this.onDataChange.bind(this);
+        this.executePageAction = this.executePageAction.bind(this);
+        this.executePageActionFromConfirm = this.executePageActionFromConfirm.bind(this);
     }
 
     onDataChange(key, newValue)
@@ -39,7 +48,22 @@ class Page extends Component
         });
     }
 
-    clickPageAction(action, actionDataKeys)
+    /**
+     * Executes a page action after confirm.
+     */
+    executePageActionFromConfirm()
+    {
+        const {action, actionDataKeys } = this.state.confirm;
+
+        this.executePageAction(action, actionDataKeys)
+    }
+
+    /**
+     * Executes a page action.
+     * @param {string} action 
+     * @param {Array} actionDataKeys 
+     */
+    executePageAction(action, actionDataKeys)
     {
         const { state, props } = this;
 
@@ -65,14 +89,39 @@ class Page extends Component
         pageActions.callAction(pageKey, action, parameters);
     }
 
-    clickModalAction(action, actionFields, title)
+    /** Handles page action button click. Either opens a confirm dialog
+     * or calls action directly.
+     */
+    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, style)
+    {
+        if (requireConfirm)
+        {
+            this.setState({
+                confirm: {
+                    show: true,
+                    action: action,
+                    actionDataKeys: actionDataKeys,
+                    header: confirmHeader,
+                    variant: style
+                }
+            });
+        }
+        else 
+        {
+            this.executePageAction(action, actionDataKeys);
+        }
+    }
+
+    clickModalAction(action, actionFields, title, requireConfirm, style)
     {
         this.setState({
             actionModalOpen: true,
             actionModalProps: {
                 action,
                 actionFields,
-                title
+                title,
+                requireConfirm,
+                confirmVariant: style
             }
         });
     }
@@ -165,6 +214,22 @@ class Page extends Component
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
+            <Confirm 
+                visible={state.confirm.show}
+                headerText={state.confirm.header}
+                cancelAction={() => 
+                {
+                    this.setState({
+                        confirm: {
+                            show: false,
+                            action: '',
+                            actionDataKeys: [],
+                            header: ''
+                        }
+                    });
+                }}
+                confirmAction={this.executePageActionFromConfirm}
+                variant={state.confirm.variant}/>
             <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert}></Info>
             {this.renderComponents(props.components, 'page-content')}
         </div>;

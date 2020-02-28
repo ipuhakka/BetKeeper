@@ -5,6 +5,7 @@ import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as pageActions from '../../actions/pageActions';
 import Field from './Field';
+import Confirm from '../Confirm/Confirm';
 
 /** Action modal. */
 class Modal extends Component 
@@ -15,7 +16,12 @@ class Modal extends Component
 
       this.state = {
         actionResponseValues: {},
-        hasInvalidInputs: false
+        hasInvalidInputs: false,
+        confirm: {
+          show: false,
+          action: '',
+          actionDataKeys: []
+        }
       }
 
       this.onChangeInputValue = this.onChangeInputValue.bind(this);
@@ -64,6 +70,24 @@ class Modal extends Component
         
           <RBModal.Body>
             <div>
+            <Confirm 
+                visible={state.confirm.show}
+                headerText={props.title}
+                cancelAction={() => 
+                {
+                    this.setState({
+                        confirm: {
+                            show: false,
+                            action: '',
+                            actionDataKeys: []
+                        }
+                    });
+                }}
+                confirmAction={() => 
+                {
+                  pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
+                }}
+                variant={props.confirmVariant}/>
               {this.renderFields()}
             </div>
           </RBModal.Body>
@@ -77,7 +101,19 @@ class Modal extends Component
               disabled={state.hasInvalidInputs}
               onClick={() => 
               {
-                pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
+                if (props.requireConfirm)
+                {
+                  this.setState({
+                    confirm: {
+                      ...this.state.confirm,
+                      show: true
+                    }
+                  })
+                }
+                else 
+                {
+                  pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
+                }
               }}>Ok</Button>
           </RBModal.Footer>
         </RBModal>;
@@ -87,7 +123,8 @@ class Modal extends Component
 Modal.defaultProps = {
   action: '',
   actionFields: [],
-  title: ''
+  title: '',
+  requireConfirm: false
 };
 
 Modal.propTypes = {
@@ -101,7 +138,9 @@ Modal.propTypes = {
       fieldType: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired
   })),
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  requireConfirm: PropTypes.bool.isRequired,
+  confirmVariant: PropTypes.string
 };
 
 export default Modal;

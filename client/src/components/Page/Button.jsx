@@ -19,11 +19,11 @@ class Button extends Component
 
         if (props.buttonType === 'PageAction')
         {
-            props.onClick(props.action, props.actionDataKeys);
+            props.onClick(props.action, props.actionDataKeys, props.requireConfirm, props.text, props.style);
         }
         else if (props.buttonType === 'ModalAction')
         {
-            props.onClick(props.action, props.modalFields, props.text);
+            props.onClick(props.action, props.modalFields, props.text, props.requireConfirm, props.style);
         }
         else if (props.buttonType === 'Navigation')
         {
@@ -44,6 +44,10 @@ class Button extends Component
     }
 };
 
+Button.defaultProps = {
+    requireConfirm: false
+}
+
 Button.propTypes = {
     buttonType: PropTypes.oneOf(['ModalAction', 'PageAction', 'Navigation']).isRequired,
     text: PropTypes.string.isRequired,
@@ -52,7 +56,8 @@ Button.propTypes = {
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
     modalFields: PropTypes.array,
     navigateTo: PropTypes.string,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    requireConfirm: PropTypes.bool.isRequired
 };
 
 export default Button;
