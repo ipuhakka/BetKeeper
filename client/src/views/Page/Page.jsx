@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 import * as pageActions from '../../actions/pageActions';
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
@@ -179,6 +181,17 @@ class Page extends Component
         return null;
     }
 
+    renderTabs(tabs)
+    {
+        return <Tabs defaultActiveKey={tabs[0].key}>
+            {_.map(tabs, (tab, i) => {
+             return <Tab key={`tab-${i}`} eventKey={tab.key} title={tab.title}>
+                 {this.renderComponents(tab.tabContent)}
+             </Tab>  
+            })}
+        </Tabs>;
+    }
+
     renderComponents(components, classname)
     {
         return <div key={classname} className={classname}>
@@ -255,7 +268,11 @@ class Page extends Component
                 confirmAction={this.executePageActionFromConfirm}
                 variant={state.confirm.variant}/>
             <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert}></Info>
-            {this.renderComponents(props.components, 'page-content')}
+            {props.components 
+                && props.components.length > 0 
+                && props.components[0].componentType === 'Tab'
+                ? this.renderTabs(props.components)
+                : this.renderComponents(props.components, 'page-content')}
         </div>;
     }
 };

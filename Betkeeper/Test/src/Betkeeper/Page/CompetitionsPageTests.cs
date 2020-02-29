@@ -5,10 +5,11 @@ using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
+using Betkeeper.Pages;
 using NUnit.Framework;
 using TestTools;
 
-namespace Betkeeper.Test.Page
+namespace Betkeeper.Test.Pages
 {
     public class CompetitionsPageTests
     {

@@ -16,7 +16,9 @@ namespace Betkeeper.Page.Components
 
         Table,
 
-        Container
+        Container,
+
+        Tab
     }
 
     public class Component

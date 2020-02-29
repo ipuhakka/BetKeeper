@@ -5,10 +5,11 @@ using System.Net.Http;
 using Betkeeper.Actions;
 using Betkeeper.Classes;
 using Betkeeper.Page.Components;
+using Betkeeper.Page;
 using Betkeeper.Extensions;
 using Betkeeper.Exceptions;
 
-namespace Betkeeper.Page
+namespace Betkeeper.Pages
 {
     public class CompetitionsPage: IPage
     {
@@ -143,7 +144,7 @@ namespace Betkeeper.Page
 
             return Http.CreateResponse(
                     HttpStatusCode.OK,
-                    "Joined competition successfully");
+                    "Joined competition successfullyCo");
         }
     }
 }

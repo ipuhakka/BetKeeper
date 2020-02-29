@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using Betkeeper.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Extensions;
+using Betkeeper.Page;
 using Betkeeper.Page.Components;
 
-namespace Betkeeper.Page
+namespace Betkeeper.Pages
 {
     /// <summary>
     /// A competition page structure.
@@ -38,22 +37,49 @@ namespace Betkeeper.Page
                 return response;
             }
 
-            var components = new List<Component>
-            {
-                new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
-            };
+            // Yleinen näkymä, osallistujat, vedot, hostille kilpailun hallinta
+            var tabs = new List<Component>();
 
+            // General view
+            tabs.Add(new Tab(
+                "home",
+                "Home",
+                new List<Component>
+                {
+                    new Field("name", "Name", true, FieldType.TextBox, "competition.name"),
+                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
+                }));
+
+            //Participators
+            tabs.Add(GetParticipatorsTab(competitionId));
+
+            //Bets
+            tabs.Add(new Tab(
+                "bets",
+                "Bets",
+                new List<Component>
+                {
+
+                }));
+
+            // Settings
             if (participator.Role == (int)Enums.CompetitionRole.Host)
             {
-                components.Add(new PageActionButton(
-                    "DeleteCompetition",
-                    new List<string> { "competitionId" },
-                    "Delete competition",
-                    "outline-danger",
-                    requireConfirm: true,
-                    navigateTo: "../competitions")
-                );
+                tabs.Add(new Tab(
+                    "settings",
+                    "Settings",
+                    new List<Component>
+                    {
+                        new PageActionButton(
+                            "DeleteCompetition",
+                            new List<string> { "competitionId" },
+                            "Delete competition",
+                            "outline-danger",
+                            requireConfirm: true,
+                            navigateTo: "../competitions")
+                    }));
             }
+
 
             var data = new Dictionary<string, object>();
 
@@ -62,7 +88,7 @@ namespace Betkeeper.Page
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
-                new PageResponse($"competitions/{pageId}", components, data));
+                new PageResponse($"competitions/{pageId}", tabs, data));
         }
 
         public HttpResponseMessage HandleAction(PageAction action)
@@ -77,6 +103,21 @@ namespace Betkeeper.Page
                 case "DeleteCompetition":
                     return DeleteCompetition(action);
             }
+        }
+
+        private Tab GetParticipatorsTab(int competitionId)
+        {
+
+            // TODO: Käyttäjätaulu entitymalliin
+            var components = new List<Component>();
+
+            //components.Add(new Table(
+            //    "participators",
+            //    new List<DataField>
+            //    {
+            //    }));
+
+            return new Tab("participators", "Participators", components);
         }
 
         private HttpResponseMessage DeleteCompetition(PageAction action)

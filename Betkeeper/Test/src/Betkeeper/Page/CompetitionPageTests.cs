@@ -2,12 +2,13 @@
 using System.Net;
 using Betkeeper.Models;
 using Betkeeper.Page;
+using Betkeeper.Pages;
 using Betkeeper.Data;
 using TestTools;
 using NUnit.Framework;
 using System.Linq;
 
-namespace Betkeeper.Test.Page
+namespace Betkeeper.Test.Pages
 {
     [TestFixture]
     public class CompetitionPageTests
