@@ -171,6 +171,7 @@
     <Compile Include="src\Betkeeper\Extensions\DictionaryExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />
+    <Compile Include="src\Betkeeper\Models\UserTests.cs" />
     <Compile Include="src\Betkeeper\Page\CompetitionPageTests.cs" />
     <Compile Include="src\Betkeeper\Page\CompetitionsPageTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\BetRepositoryTests.cs" />
@@ -191,11 +192,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="files\database_schema_dump.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

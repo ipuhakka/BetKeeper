@@ -9,6 +9,8 @@ namespace Betkeeper.Data
 
         public DbSet<Participator> Participator { get; set; }
 
+        public DbSet<User> User { get; set; }
+
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)
         {

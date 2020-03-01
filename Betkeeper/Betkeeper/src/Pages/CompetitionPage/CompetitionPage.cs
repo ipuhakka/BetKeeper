@@ -50,8 +50,8 @@ namespace Betkeeper.Pages
                     new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
                 }));
 
-            //Participators
-            tabs.Add(GetParticipatorsTab(competitionId));
+            // Results
+            tabs.Add(GetResultsTab(competitionId));
 
             //Bets
             tabs.Add(new Tab(
@@ -105,7 +105,7 @@ namespace Betkeeper.Pages
             }
         }
 
-        private Tab GetParticipatorsTab(int competitionId)
+        private Tab GetResultsTab(int competitionId)
         {
 
             // TODO: Käyttäjätaulu entitymalliin

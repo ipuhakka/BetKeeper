@@ -35,7 +35,8 @@ namespace TestTools
 
         public static void CreateTestData(
             List<Participator> participators = null,
-            List<Competition> competitions = null)
+            List<Competition> competitions = null,
+            List<User> users = null)
         {
             using (var context = new BetkeeperDataContext(
                GetTestOptionsBuilder()))
@@ -54,6 +55,12 @@ namespace TestTools
                         context.Competition.Add(competition));
                 }
 
+                if (users != null)
+                {
+                    users.ForEach(user =>
+                        context.User.Add(user));
+                }
+
                 context.SaveChanges();
             }
         }
@@ -62,6 +69,14 @@ namespace TestTools
         {
             return new DbContextOptionsBuilder()
                 .UseInMemoryDatabase("TestDatabase");
+        }
+    }
+
+    internal class TestUserRepository : UserRepository
+    {
+        internal TestUserRepository()
+        {
+            OptionsBuilder = Tools.GetTestOptionsBuilder();
         }
     }
 
