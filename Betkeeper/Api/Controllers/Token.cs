@@ -4,14 +4,19 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using Api.Classes;
 using Betkeeper.Classes;
-using Betkeeper.Repositories;
+using Betkeeper.Models;
 
 namespace Api.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class TokenController : ApiController
     {
-        public IUserRepository _UserRepository { get; set; }
+        protected UserRepository UserRepository { get; set; }
+
+        public TokenController()
+        {
+            UserRepository = new UserRepository();
+        }
 
         // GET: api/Token/5
         /// <summary>
@@ -51,8 +56,6 @@ namespace Api.Controllers
         /// </returns>
         public HttpResponseMessage Post()
         {
-            _UserRepository = _UserRepository ?? new UserRepository();
-
             var password = Request.Headers.Authorization?.ToString();
 
             if (password == null)
@@ -62,9 +65,14 @@ namespace Api.Controllers
 
             var username = Http.GetHttpContent(Request)["username"].ToString();
 
-            var userId = _UserRepository.GetUserId(username);
+            var userId = UserRepository.GetUserId(username.ToString());
 
-            if (!_UserRepository.Authenticate(userId, password))
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            if (!UserRepository.Authenticate(userId, password))
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }

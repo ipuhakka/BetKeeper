@@ -2,10 +2,11 @@
 using System.Net;
 using Api.Classes;
 using Api.Controllers;
+using Betkeeper;
+using Betkeeper.Data;
 using Betkeeper.Classes;
-using Betkeeper.Repositories;
+using Betkeeper.Models;
 using NUnit.Framework;
-using Moq;
 using TestTools;
 
 namespace Api.Test.Controllers
@@ -13,34 +14,81 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class TokenControllerTests
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            // Set Connectionstring so base constructor runs
+            Settings.ConnectionString = "TestDatabase";
+        }
+
         [TearDown]
         public void TearDown()
         {
+            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
+            {
+                context.Database.EnsureDeleted();
+            }
+
             TokenLog.ClearTokenLog();
         }
 
         [Test]
-        public void Post_AuthenticationFails_ReturnsUnauthorized()
+        public void Post_PasswordDoesNotMatch_ReturnsUnauthorized()
         {
-            var mock = new Mock<IUserRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "user",
+                    Password = "somepassword"
+                }
+            };
 
-            mock.Setup(userRepository =>
-                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(false);
-
-            mock.Setup(userRepository =>
-                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
+            Tools.CreateTestData(users: users);
 
             var testData = new { username = "user" };
 
-            var controller = new TokenController()
+            var controller = new TestController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
                     testData, 
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
-                    }),
-                _UserRepository = mock.Object
+                    })
+            };
+
+            var result = controller.Post();
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
+        }
+
+        [Test]
+        public void Post_UserDoesNotExist_ReturnsUnauthorized()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "user",
+                    Password = "somepassword"
+                }
+            };
+
+            Tools.CreateTestData(users: users);
+
+            var testData = new { username = "notexistingusername" };
+
+            var controller = new TestController()
+            {
+                ControllerContext = Tools.MockHttpControllerContext(
+                    testData,
+                    new Dictionary<string, string>
+                    {
+                        { "Authorization", "fakePassword"}
+                    })
             };
 
             var result = controller.Post();
@@ -51,25 +99,28 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_AuthenticationSucceeds_ReturnsOK()
         {
-            var mock = new Mock<IUserRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "user",
+                    Password = "somepassword"
+                }
+            };
 
-            mock.Setup(userRepository =>
-                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
-
-            mock.Setup(userRepository =>
-                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
+            Tools.CreateTestData(users: users);
 
             var testData = new { username = "user" };
 
-            var controller = new TokenController()
+            var controller = new TestController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
-                        { "Authorization", "fakePassword"}
-                    }),
-                _UserRepository = mock.Object
+                        { "Authorization", "somepassword"}
+                    })
             };
 
             var request = controller.Post();
@@ -83,27 +134,30 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_UserAlreadyHasToken_ExistingTokenReturned()
         {
-            var mock = new Mock<IUserRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "user",
+                    Password = "fakePassword"
+                }
+            };
 
-            mock.Setup(userRepository =>
-                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
-
-            mock.Setup(userRepository =>
-                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
+            Tools.CreateTestData(users: users);
 
             var testToken = TokenLog.CreateToken(1);
 
             var testData = new { username = "user" };
 
-            var controller = new TokenController()
+            var controller = new TestController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
-                    }),
-                _UserRepository = mock.Object
+                    })
             };
 
             var request = controller.Post();
@@ -117,27 +171,18 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_NoAuthenticationHeader_ReturnsBadRequest()
         {
-            var mock = new Mock<IUserRepository>();
-
-            mock.Setup(userRepository =>
-                userRepository.Authenticate(It.IsAny<int>(), It.IsAny<string>())).Returns(true);
-
-            mock.Setup(userRepository =>
-                userRepository.GetUserId(It.IsAny<string>())).Returns(1);
-
             var testData = new { username = "user" };
 
-            var controller = new TokenController()
+            var controller = new TestController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
-                    testData),
-                _UserRepository = mock.Object
+                    testData)
             };
 
-            var request = controller.Post();
-            var responseBody = Http.GetHttpContent(request);
+            var response = controller.Post();
+            var responseBody = Http.GetHttpContent(response);
 
-            Assert.AreEqual(HttpStatusCode.BadRequest, request.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Test]
@@ -260,6 +305,14 @@ namespace Api.Test.Controllers
             var response = controller.Delete(1);
 
             Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        private class TestController : TokenController
+        {
+            public TestController()
+            {
+                UserRepository = new TestUserRepository();
+            }
         }
     }
 }

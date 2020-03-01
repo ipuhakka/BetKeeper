@@ -2,14 +2,6 @@
 {
     public interface IUserRepository
     {
-        /// <summary>
-        /// Checks if userId matches a given password.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        bool Authenticate(int userId, string password);
-
         bool UsernameInUse(string username);
 
         /// <summary>
@@ -18,14 +10,6 @@
         /// <param name="userId"></param>
         /// <returns></returns>
         bool UserIdExists(int userId);
-
-        /// <summary>
-        /// Returns user id of matching username.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <exception cref="NotFoundException"></exception>
-        /// <returns></returns>
-        int GetUserId(string username);
 
         /// <summary>
         /// Adds a new user.

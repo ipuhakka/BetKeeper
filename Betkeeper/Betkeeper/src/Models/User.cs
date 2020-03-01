@@ -46,5 +46,32 @@ namespace Betkeeper.Models
                     .ToList();
             }
         }
+
+        public int? GetUserId(string username)
+        {
+            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            {
+                var userId = context
+                    .User
+                    .Where(user => user.Username == username)
+                    .Select(user => user.UserId)
+                    .FirstOrDefault();
+
+                return userId == 0
+                    ? null
+                    : (int?)userId;
+            }
+        }
+
+        public bool Authenticate(int userId, string password)
+        {
+            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            {
+                return context
+                    .User
+                    .Any(user => user.UserId == userId
+                        && user.Password == password);
+            }
+        }
     }
 }
