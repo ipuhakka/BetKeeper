@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Newtonsoft.Json;
@@ -37,19 +36,8 @@ namespace Betkeeper.Models
     /// <summary>
     /// Class for accessing competition data.
     /// </summary>
-    public class CompetitionRepository
+    public class CompetitionRepository : BaseRepository
     {
-        protected DbContextOptionsBuilder OptionsBuilder { get; set; }
-
-        public CompetitionRepository()
-        {
-            // TODO: Tarkista onko tekstinmuokkaus tarpeellista
-            var connectionString = Settings.ConnectionString.Replace("Data Source", "Server");
-
-            OptionsBuilder = new DbContextOptionsBuilder()
-                    .UseSqlServer(connectionString);
-        }
-
         public void AddCompetition(Competition competition)
         {
             if (!Validate(competition))

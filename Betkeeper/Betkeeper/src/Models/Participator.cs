@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 using Betkeeper;
 using Betkeeper.Data;
 using System.Linq;
@@ -20,20 +19,12 @@ namespace Betkeeper.Models
         public int Competition { get; set; }
     }
 
-    public class ParticipatorRepository
+    public class ParticipatorRepository : BaseRepository
     {
-        protected DbContextOptionsBuilder OptionsBuilder { get; set; }
-
         protected CompetitionRepository CompetitionHandler { get; set; }
 
         public ParticipatorRepository()
         {
-            // TODO: Tarkista onko tekstinmuokkaus tarpeellista
-            var connectionString = Settings.ConnectionString.Replace("Data Source", "Server");
-
-            OptionsBuilder = new DbContextOptionsBuilder()
-                    .UseSqlServer(connectionString);
-
             CompetitionHandler = new CompetitionRepository();
         }
 

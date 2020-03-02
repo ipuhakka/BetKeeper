@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 using Betkeeper.Data;
 
 namespace Betkeeper.Models
@@ -22,19 +21,8 @@ namespace Betkeeper.Models
         public string Password { get; set; }
     }
 
-    public class UserRepository
+    public class UserRepository : BaseRepository
     {
-        protected DbContextOptionsBuilder OptionsBuilder { get; set; }
-
-        public UserRepository()
-        {
-            // TODO: Poista kun kaikki entity mallissa
-            var connectionString = Settings.ConnectionString.Replace("Data Source", "Server");
-
-            OptionsBuilder = new DbContextOptionsBuilder()
-                    .UseSqlServer(connectionString);
-        }
-
         public List<string> GetUsernamesById(List<int> userIds)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
