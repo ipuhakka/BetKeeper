@@ -171,6 +171,7 @@
     <Compile Include="src\Betkeeper\Extensions\DictionaryExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />
+    <Compile Include="src\Betkeeper\Models\TargetTests.cs" />
     <Compile Include="src\Betkeeper\Models\UserTests.cs" />
     <Compile Include="src\Betkeeper\Page\CompetitionPageTests.cs" />
     <Compile Include="src\Betkeeper\Page\CompetitionsPageTests.cs" />
