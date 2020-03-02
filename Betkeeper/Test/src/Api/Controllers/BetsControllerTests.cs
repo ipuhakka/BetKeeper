@@ -6,6 +6,7 @@ using Api.Classes;
 using Betkeeper;
 using Betkeeper.Repositories;
 using Betkeeper.Exceptions;
+using Betkeeper.Enums;
 using NUnit.Framework;
 using Moq;
 using TestTools;
@@ -100,7 +101,7 @@ namespace Api.Test.Controllers
 
             mock.Setup(betRepository =>
                 betRepository.CreateBet(
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<string>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
@@ -136,7 +137,7 @@ namespace Api.Test.Controllers
 
             mock.Verify(betRepository =>
                 betRepository.CreateBet(
-                    Enums.BetResult.Won,
+                    BetResult.Won,
                     "testBet",
                     2.1,
                     2.2,
@@ -157,7 +158,7 @@ namespace Api.Test.Controllers
 
             mock.Setup(betRepository =>
                 betRepository.CreateBet(
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<string>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
@@ -405,7 +406,7 @@ namespace Api.Test.Controllers
                         stake = "not double",
                         odd = 2.0,
                         name = "testName",
-                        betResult = (int)Enums.BetResult.Won
+                        betResult = (int)BetResult.Won
                     },
                     headers: new Dictionary<string, string>
                     {
@@ -434,7 +435,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBet(
                     It.IsAny<int>(),
                     It.IsAny<int>(),
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
                     It.IsAny<string>()
@@ -453,7 +454,7 @@ namespace Api.Test.Controllers
                         stake = 2.2,
                         odd = 2.0,
                         name = "testName",
-                        betResult = (int)Enums.BetResult.Won
+                        betResult = (int)BetResult.Won
                     },
                     headers: new Dictionary<string, string>
                     {
@@ -470,7 +471,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBet(
                     1,
                     1,
-                    Enums.BetResult.Won,
+                    BetResult.Won,
                     2.2,
                     2.0,
                     "testName"), 
@@ -501,7 +502,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBet(
                     It.IsAny<int>(),
                     It.IsAny<int>(),
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
                     It.IsAny<string>()
@@ -533,7 +534,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBet(
                     1,
                     1,
-                    Enums.BetResult.Unresolved,
+                    BetResult.Unresolved,
                     2.2,
                     null,
                     null),
@@ -564,7 +565,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBet(
                     It.IsAny<int>(),
                     It.IsAny<int>(),
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
                     It.IsAny<string>()
@@ -583,7 +584,7 @@ namespace Api.Test.Controllers
                         stake = 2.2,
                         odd = 2.0,
                         name = "testName",
-                        betResult = Enums.BetResult.Won,
+                        betResult = BetResult.Won,
                         folders = new List<string>
                         {
                             "folder1",
@@ -675,7 +676,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBets(
                     It.IsAny<List<int>>(),
                     It.IsAny<int>(),
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
                     It.IsAny<string>()
@@ -723,7 +724,7 @@ namespace Api.Test.Controllers
                 betRepository.ModifyBets(
                     It.IsAny<List<int>>(),
                     It.IsAny<int>(),
-                    It.IsAny<Enums.BetResult>(),
+                    It.IsAny<BetResult>(),
                     It.IsAny<double>(),
                     It.IsAny<double>(),
                     It.IsAny<string>()
