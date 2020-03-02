@@ -21,9 +21,7 @@ namespace Betkeeper.Models
 
         public string Bet { get; set; }
 
-        public int Type { get; set; }
-
-        public DateTime StartTime { get; set; }
+        public TargetType Type { get; set; }
 
         public string Result { get; set; }
     }
@@ -37,6 +35,15 @@ namespace Betkeeper.Models
 
     public class TargetRepository : BaseRepository
     {
+        public void AddTarget(Target target)
+        {
+            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            {
+                context.Target.Add(target);
+                context.SaveChanges();
+            }
+        }
+
         public List<Target> GetTargets(int? competitionId = null)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))

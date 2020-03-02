@@ -130,4 +130,17 @@ namespace TestTools
             ParticipatorRepository = new TestParticipatorRepository();
         }
     }
+
+    /// <summary>
+    /// Testable implementation of target action.
+    /// </summary>
+    internal class TestTargetAction : TargetAction
+    {
+        public TestTargetAction()
+        {
+            CompetitionRepository = new TestCompetitionRepository();
+            ParticipatorRepository = new TestParticipatorRepository();
+            TargetRepository = new TestTargetRepository();
+        }
+    }
 }

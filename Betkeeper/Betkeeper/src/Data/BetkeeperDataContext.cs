@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Betkeeper.Models;
+using Betkeeper.Enums;
 
 namespace Betkeeper.Data
 {
@@ -28,6 +29,13 @@ namespace Betkeeper.Data
                 .HasConversion(
                     target => target.ToString(),
                     target => JsonConvert.DeserializeObject<List<Scoring>>(target));
+
+            modelBuilder
+                .Entity<Target>()
+                .Property(target => target.Type)
+                .HasConversion(
+                    target => (int)target,
+                    target => (TargetType)target);
         }
     }
 }

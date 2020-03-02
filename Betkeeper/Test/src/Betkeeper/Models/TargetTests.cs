@@ -3,7 +3,7 @@ using Betkeeper.Models;
 using TestTools;
 using NUnit.Framework;
 
-namespace Test.Betkeeper.Models
+namespace Betkeeper.Test.Models
 {
     [TestFixture]
     public class TargetTests

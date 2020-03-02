@@ -12,6 +12,7 @@ namespace Betkeeper.Models
         [Key]
         public int ParticipatorId { get; set; }
 
+        // TODO: Enum ja conversio mallinrakennukseen
         public int Role { get; set; }
 
         public int UserId { get; set; }

@@ -36,4 +36,22 @@
         /// </summary>
         CorrectResult = 1
     }
+
+    public enum TargetType
+    {
+        /// <summary>
+        /// Bet the result.
+        /// </summary>
+        Result,
+
+        /// <summary>
+        /// Select from options.
+        /// </summary>
+        Selection,
+
+        /// <summary>
+        /// Answer an open question.
+        /// </summary>
+        OpenQuestion
+    }
 }
