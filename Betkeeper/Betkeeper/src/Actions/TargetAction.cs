@@ -39,6 +39,11 @@ namespace Betkeeper.Actions
                 throw new InvalidOperationException("Competition not open for new targets");
             }
 
+            if (!ValidScoringForType(target))
+            {
+                throw new ArgumentException("Invalid scoring type for target");
+            }
+
             if (target.Scoring
                 .GroupBy(scoring => scoring.Score)
                 .Any(group => group.Count() > 1))
@@ -47,6 +52,20 @@ namespace Betkeeper.Actions
             }
 
             TargetRepository.AddTarget(target);
+        }
+
+        private bool ValidScoringForType(Target target)
+        {
+            switch (target.Type)
+            {
+                case TargetType.OpenQuestion:
+                case TargetType.Selection:
+                    return target.Scoring.Count == 1
+                        && target.Scoring[0].Score == TargetScore.CorrectResult;
+
+                default:
+                    return true;
+            }
         }
     }
 }

@@ -129,6 +129,82 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
+        public void AddTarget_InvalidScoringsForType_ThrowsArgumentException()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    StartTime = DateTime.Now.AddDays(1)
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    ParticipatorId = 1
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            new List<Target>
+            {
+                new Target
+                {
+                    Scoring = new List<Scoring>
+                    {
+                        new Scoring
+                        {
+                            Points = 1,
+                            Score = TargetScore.CorrectWinner
+                        }
+                    },
+                    Type = TargetType.OpenQuestion
+                },
+                new Target
+                {
+                    Scoring = new List<Scoring>
+                    {
+                        new Scoring
+                        {
+                            Points = 1,
+                            Score = TargetScore.CorrectWinner
+                        }
+                    },
+                    Type = TargetType.OpenQuestion
+                },
+                new Target
+                {
+                    Scoring = new List<Scoring>
+                    {
+                        new Scoring
+                        {
+                            Points = 1,
+                            Score = TargetScore.CorrectResult
+                        },
+                        new Scoring
+                        {
+                            Points = 2,
+                            Score = TargetScore.CorrectResult
+                        }
+                    },
+                    Type = TargetType.OpenQuestion
+                }
+            }.ForEach(target =>
+            {
+                var exception = Assert.Throws<ArgumentException>(() =>
+                    new TestTargetAction().AddTarget(1, 1, target));
+
+                Assert.AreEqual("Invalid scoring type for target", exception.Message);
+            });
+        }
+
+        [Test]
         public void AddTarget_AddsTarget()
         {
             var competitions = new List<Competition>
