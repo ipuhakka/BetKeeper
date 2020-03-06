@@ -4,6 +4,7 @@ import _ from 'lodash';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import Form from 'react-bootstrap/Form';
+import Dropdown from './Dropdown';
 import consts from '../../js/consts';
 import * as utils from '../../js/utils';
 import './Field.css';
@@ -133,6 +134,9 @@ class Field extends Component
             case 'DateTime':
                 input = this.renderDateTimeInput();
                 break;
+
+            case 'Dropdown':
+                input = <Dropdown onChange={this.onChange} {...this.props}/>;
         }
 
         return <div className='input-field-wrapper'>
@@ -148,7 +152,8 @@ Field.propTypes = {
         "Double", 
         "DateTime", 
         "TextBox", 
-        "TextArea"]).isRequired,
+        "TextArea",
+        "Dropdown"]).isRequired,
     label: PropTypes.string.isRequired,
     fieldKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,

@@ -220,6 +220,9 @@ class Page extends Component
                     case 'Table':
                         return <Table onRowClick={this.navigateTo} key={`itemlist-${i}`} {...component} />;
 
+                    case 'Dropdown':
+                        return <div>Dropdown</div>
+
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
                 }

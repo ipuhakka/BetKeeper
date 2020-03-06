@@ -9,7 +9,8 @@ namespace Betkeeper.Page.Components
         Integer,
         Double,
         TextBox,
-        TextArea
+        TextArea,
+        Dropdown
     }
 
     public class Field : Component
