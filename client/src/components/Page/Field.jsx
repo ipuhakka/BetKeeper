@@ -76,13 +76,20 @@ class Field extends Component
     }
 
     renderDateTimeInput()
-    {
+    {   
+        const { minimumDateTime } = this.props;
+
+        const minDate = _.isNil(minimumDateTime)
+            ? null
+            : new Date(minimumDateTime);
+
         return <DatePicker
             className='datetime-input'
             selected={this.state.value}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={30}
+            minDate={minDate}
             isClearable
             onChange={(date) => this.setDateTime(date)}
             onChangeRaw={(input) => this.setDateTime(input)}

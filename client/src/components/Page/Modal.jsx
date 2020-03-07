@@ -55,7 +55,8 @@ class Modal extends Component
           type={field.fieldType} 
           label={field.label}
           fieldKey={field.key}
-          key={field.key} />
+          key={field.key} 
+          { ...field }/>
       });
     }
 
