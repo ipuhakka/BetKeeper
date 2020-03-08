@@ -23,7 +23,7 @@ class Button extends Component
         }
         else if (props.buttonType === 'ModalAction')
         {
-            props.onClick(props.action, props.modalFields, props.text, props.requireConfirm, props.style);
+            props.onClick(props.action, props.components, props.text, props.requireConfirm, props.style);
         }
         else if (props.buttonType === 'Navigation')
         {
@@ -54,7 +54,7 @@ Button.propTypes = {
     style: PropTypes.string.isRequired,
     action: PropTypes.string,
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
-    modalFields: PropTypes.array,
+    components: PropTypes.array,
     navigateTo: PropTypes.string,
     onClick: PropTypes.func.isRequired,
     requireConfirm: PropTypes.bool.isRequired

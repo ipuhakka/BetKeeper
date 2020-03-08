@@ -35,14 +35,14 @@ namespace Betkeeper.Pages
                     "competitionId"),
                 new ModalActionButton(
                     "JoinCompetition",
-                    new List<Field>
+                    new List<Component>
                     {
                         new Field("JoinCode", "Join code", FieldType.TextBox)
                     },
                     "Join competition"),
                 new ModalActionButton(
                     "Post",
-                    new List<Field>
+                    new List<Component>
                     {
                         new Field("Name", "Name", FieldType.TextBox),
                         new Field("StartTime", "Start time", FieldType.DateTime),

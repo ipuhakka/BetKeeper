@@ -82,11 +82,11 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Modal fields.
         /// </summary>
-        public List<Field> ModalFields { get; }
+        public List<Component> Components { get; }
 
         public ModalActionButton(
             string action, 
-            List<Field> fields,
+            List<Component> components,
             string text,
             string style = "primary",
             bool requireConfirm = false,
@@ -94,7 +94,7 @@ namespace Betkeeper.Page.Components
             : base(ButtonType.ModalAction, text, style, requireConfirm, navigateTo)
         {
             Action = action;
-            ModalFields = fields;
+            Components = components;
         }
     }
 }

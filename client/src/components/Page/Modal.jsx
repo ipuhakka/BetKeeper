@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as pageActions from '../../actions/pageActions';
-import Field from './Field';
 import Confirm from '../Confirm/Confirm';
+import PageContent from '../Page/PageContent';
 
 /** Action modal. */
 class Modal extends Component 
@@ -39,31 +38,10 @@ class Modal extends Component
       });
     }
 
-    renderFields()
-    {
-      const { actionFields } = this.props;
-
-      return _.map(actionFields, field => {
-        return <Field 
-          onChange={this.onChangeInputValue}
-          onError={() => 
-            {
-              this.setState({
-                hasInvalidInputs: true
-              });
-            }}
-          type={field.fieldType} 
-          label={field.label}
-          fieldKey={field.key}
-          key={field.key} 
-          { ...field }/>
-      });
-    }
-
     render()
     {
         const { props, state } = this;
-
+        
         return <RBModal show={props.show} onHide={props.onClose}>
           <RBModal.Header closeButton>
             <RBModal.Title>{props.title}</RBModal.Title>
@@ -89,7 +67,12 @@ class Modal extends Component
                   pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
                 }}
                 variant={props.confirmVariant}/>
-              {this.renderFields()}
+              <PageContent 
+                onFieldValueChange={this.onChangeInputValue}
+                components={props.components}
+                getButtonClick={() => { throw new Error('No button click')}}
+                className='modal-content'
+                />
             </div>
           </RBModal.Body>
         
@@ -123,7 +106,7 @@ class Modal extends Component
 
 Modal.defaultProps = {
   action: '',
-  actionFields: [],
+  components: [],
   title: '',
   requireConfirm: false
 };
@@ -133,15 +116,10 @@ Modal.propTypes = {
   show: PropTypes.bool.isRequired,
   page: PropTypes.string.isRequired,
   action: PropTypes.string.isRequired,
-  actionFields: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      fieldType: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired
-  })),
   title: PropTypes.string.isRequired,
   requireConfirm: PropTypes.bool.isRequired,
-  confirmVariant: PropTypes.string
+  confirmVariant: PropTypes.string,
+  components: PropTypes.array.isRequired
 };
 
 export default Modal;

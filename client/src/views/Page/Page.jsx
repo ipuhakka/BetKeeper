@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
 import * as pageActions from '../../actions/pageActions';
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Confirm from '../../components/Confirm/Confirm';
-import Button from '../../components/Page/Button';
-import Field from '../../components/Page/Field';
 import Modal from '../../components/Page/Modal';
-import Table from '../../components/Page/Table';
+import PageContent from '../../components/Page/PageContent';
 import Info from '../../components/Info/Info.jsx';
 import './Page.css';
 
@@ -138,16 +134,16 @@ class Page extends Component
      * @param {bool} requireConfirm 
      * @param {string} confirmStyle 
      */
-    clickModalAction(action, actionFields, title, requireConfirm, confirmStyle)
+    clickModalAction(action, components, title, requireConfirm, confirmStyle)
     {
         this.setState({
             actionModalOpen: true,
             actionModalProps: {
                 action,
-                actionFields,
                 title,
                 requireConfirm,
-                confirmVariant: confirmStyle
+                confirmVariant: confirmStyle,
+                components
             }
         });
     }
@@ -179,55 +175,6 @@ class Page extends Component
         }
 
         return null;
-    }
-
-    renderTabs(tabs)
-    {
-        return <Tabs defaultActiveKey={tabs[0].key}>
-            {_.map(tabs, (tab, i) => {
-             return <Tab key={`tab-${i}`} eventKey={tab.key} title={tab.title}>
-                 {this.renderComponents(tab.tabContent)}
-             </Tab>  
-            })}
-        </Tabs>;
-    }
-
-    renderComponents(components, classname)
-    {
-        return <div key={classname} className={classname}>
-            {_.map(components, (component, i) => 
-            {
-                switch (component.componentType)
-                {
-                    case 'Container':
-                        return this.renderComponents(component.children, 'container-div');
-
-                    case 'Button':
-                        return <Button 
-                            key={`button-${component.action}`}
-                            onClick={this.getButtonClick(component)} 
-                            {...component} />;
-
-                    case 'Field':
-                        return <Field 
-                            onChange={this.onDataChange}
-                            key={`field-${component.key}`} 
-                            type={component.fieldType} 
-                            fieldKey={component.key}
-                            initialValue={_.get(this.props.data, component.dataKey, '')} 
-                            {...component} />;
-
-                    case 'Table':
-                        return <Table onRowClick={this.navigateTo} key={`itemlist-${i}`} {...component} />;
-
-                    case 'Dropdown':
-                        return <div>Dropdown</div>
-
-                    default:
-                        throw new Error(`Component type ${component.componentType} not implemented`);
-                }
-            })}
-        </div>;
     }
     
     render()
@@ -270,12 +217,14 @@ class Page extends Component
                 }}
                 confirmAction={this.executePageActionFromConfirm}
                 variant={state.confirm.variant}/>
-            <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert}></Info>
-            {props.components 
-                && props.components.length > 0 
-                && props.components[0].componentType === 'Tab'
-                ? this.renderTabs(props.components)
-                : this.renderComponents(props.components, 'page-content')}
+            <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert} />
+            <PageContent 
+                components={props.components}
+                className='page-content'
+                getButtonClick={this.getButtonClick.bind(this)}
+                onTableRowClick={this.navigateTo.bind(this)}
+                onFieldValueChange={this.onDataChange.bind(this)}
+                data={props.data}/>
         </div>;
     }
 };
