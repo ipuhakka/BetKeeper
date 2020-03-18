@@ -85,6 +85,24 @@ export function* callAction(action)
   }
 }
 
+export function* updateOptions(action)
+{
+  const { payload } = action;
+
+  const pageRoute = window.location.pathname.replace('page/', '');
+
+  try 
+  {
+    const response = yield call(pageApi.updateOptions, payload, pageRoute);
+    
+    yield call(pageActions.updateOptionsSuccess, JSON.parse(response.responseText));
+  }
+  catch (error)
+  {
+    yield put(setAlertStatus(error.status, error.responseText || 'Unexpected error on updating dropdown option'));
+  }
+}
+
 export function* watchGetPage()
 {
     yield takeLatest(pageActions.GET_PAGE, getPage);
@@ -93,4 +111,9 @@ export function* watchGetPage()
 export function* watchCallModalAction()
 {
   yield takeLatest(pageActions.CALL_ACTION, callAction);
+}
+
+export function* watchUpdateOptions()
+{
+  yield takeLatest(pageActions.UPDATE_OPTIONS, updateOptions);
 }

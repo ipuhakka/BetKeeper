@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using Betkeeper.Classes;
@@ -24,6 +25,18 @@ namespace Betkeeper.Page
         /// <param name="action"></param>
         /// <returns></returns>
         HttpResponseMessage HandleAction(PageAction action);
+
+        /// <summary>
+        /// Update dropdown options. Returns a dictionary with updated dropdown key as key
+        /// and options list as value.
+        /// </summary>
+        /// <param name="dropdownKey"></param>
+        /// <param name="data"></param>
+        /// <param name="pageId"></param>
+        /// <returns></returns>
+        HttpResponseMessage UpdateOptions(
+            Dictionary<string, object> data, 
+            int? pageId = null);
     }
 
     public class PageResponse
@@ -82,6 +95,23 @@ namespace Betkeeper.Page
                     }
 
                     return new CompetitionsPage().HandleAction(action);
+            }
+        }
+
+        public static IPage GetPageInstance(string page, int? id = null)
+        {
+            switch (page)
+            {
+                default:
+                    throw new ArgumentException($"{page} not found");
+
+                case "competitions":
+                    if (id != null)
+                    {
+                        return new CompetitionPage();
+                    }
+
+                    return new CompetitionsPage();
             }
         }
     }

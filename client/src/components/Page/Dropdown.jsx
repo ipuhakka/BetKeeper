@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import * as pageActions from '../../actions/pageActions';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 
@@ -15,6 +16,17 @@ class Dropdown extends Component
         }
     }
 
+    componentDidUpdate()
+    {
+        const { options } = this.props;
+        const { activeKey } = this.state;
+
+        if (_.isNil(_.find(options, option => option.key === activeKey)))
+        {
+            this.onChange(options[0].key);
+        }
+    }
+
     onChange(newValue)
     {
         const { props } = this;
@@ -22,6 +34,11 @@ class Dropdown extends Component
         this.setState({
             activeKey: newValue
         });
+
+        if (props.updateOptionsOnChange)
+        {
+            pageActions.updateOptions(props.fieldKey, newValue);
+        }
 
         props.onChange(props.fieldKey, newValue);
     }
@@ -42,7 +59,9 @@ class Dropdown extends Component
 
         return (<DropdownButton 
             variant="outline-primary"
-            title={options[activeKey].value} >
+            title={_.isNil(options[activeKey])
+                ? ''
+                : options[activeKey].value} >
                 {items}
             </DropdownButton>);
     }
@@ -56,7 +75,8 @@ Dropdown.propTypes = {
         })
     ),
     onChange: PropTypes.func,
-    fieldKey: PropTypes.string.isRequired
+    fieldKey: PropTypes.string.isRequired,
+    updateOptionsOnChange: PropTypes.bool
 };
 
 export default Dropdown;

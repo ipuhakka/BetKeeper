@@ -5,6 +5,8 @@ using System.Net.Http;
 using Betkeeper.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Extensions;
+using Betkeeper.Enums;
+using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 
@@ -47,7 +49,24 @@ namespace Betkeeper.Pages
                 new List<Component>
                 {
                     new Field("name", "Name", true, FieldType.TextBox, "competition.name"),
-                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
+                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
+                    new Dropdown(
+                        "test", 
+                        "Testlabel", 
+                        new List<Option>
+                        {
+                            new Option("0", "Rainbow"),
+                            new Option("1", "Dark")
+                        },
+                        updateOptionsOnChange: true),
+                    new Dropdown(
+                        "test2",
+                        "test 2 label",
+                        new List<Option>
+                        {
+                            new Option("0", "Marshmellows"),
+                            new Option("1", "Chocolate")
+                        })
                 }));
 
             // Results
@@ -105,6 +124,38 @@ namespace Betkeeper.Pages
             }
         }
 
+        public HttpResponseMessage UpdateOptions(
+            Dictionary<string, object> data, 
+            int? pageId = null)
+        {
+            var key = data.GetString("key");
+            var value = data.GetString("value");
+
+            if (key == "test")
+            {
+                var options = new List<Option>
+                {
+                    new Option("0", "Marshmellows"),
+                    new Option("1", "Chocolate")
+                };
+
+                if (value == "1")
+                {
+                    options.Add(new Option("2", "Whipped cream"));
+                    options.Add(new Option("3", "Fudge"));
+                }
+
+                return Http.CreateResponse(
+                    HttpStatusCode.OK,
+                    new Dictionary<string, List<Option>>
+                    {
+                        { "test2", options }
+                    });
+            }
+
+            throw new ArgumentException($"{key} options update not implemented");
+        }
+
         private Tab GetResultsTab(int competitionId)
         {
 
@@ -119,6 +170,16 @@ namespace Betkeeper.Pages
 
             return new Tab("participators", "Participators", components);
         }
+
+        //private Tab GetBetsTab(Competition competition, Participator participator)
+        //{
+        //    var components = new List<Component>();
+
+        //    if (participator.Role == (int)CompetitionRole.Host)
+        //    {
+        //        components.Add(new ModalActionButton("AddTargets", new List<Field>(), "Add targets"))
+        //    }
+        //}
 
         private HttpResponseMessage DeleteCompetition(PageAction action)
         {

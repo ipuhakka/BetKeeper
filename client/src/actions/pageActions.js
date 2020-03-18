@@ -4,6 +4,8 @@ export const GET_PAGE = "GET_PAGE";
 export const GET_PAGE_SUCCESS = "GET_PAGE_SUCCESS";
 export const CALL_ACTION = "CALL_MODAL_ACTION";
 export const CALL_ACTION_SUCCESS = "CALL_MODAL_ACTION_SUCCESS";
+export const UPDATE_OPTIONS = "UPDATE_OPTIONS";
+export const UPDATE_OPTIONS_SUCCESS = "UPDATE_OPTIONS_SUCCESS";
 
 /**
  * Get page structure.
@@ -43,4 +45,30 @@ export function getPageSuccess(structure)
             structure: structure
           }
       });
+}
+
+/**
+ *  Updates dropdown opions tied to key field.
+ * @param {string} key 
+ * @param {string} value
+ */
+export function updateOptions(key, value)
+{
+    store.dispatch({
+        type: UPDATE_OPTIONS,
+        payload: {
+            key,
+            value
+          }
+      });
+}
+
+export function updateOptionsSuccess(response)
+{
+    store.dispatch({
+        type: UPDATE_OPTIONS_SUCCESS,
+        payload: {
+            response
+        }
+    })
 }

@@ -56,3 +56,31 @@ export function postAction(page, action, parameters)
     xmlHttp.send(JSON.stringify(parameters));
   });
 }
+
+export function updateOptions(requestBody, pageRoute)
+{
+  return new Promise(function(resolve, reject){
+    var xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange =( () => {
+      if (xmlHttp.readyState === 4)
+      {
+        if (xmlHttp.status === 200)
+        {
+          resolve(xmlHttp);
+        }
+        else 
+        {
+          reject(xmlHttp);
+        }
+      }
+    });
+
+
+    xmlHttp.open("POST", `${ConstVars.URI}/page/updateOptions${pageRoute}`);
+    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
+    xmlHttp.setRequestHeader('Content-type', 'application/json');
+
+    xmlHttp.send(JSON.stringify(requestBody));
+  });
+}

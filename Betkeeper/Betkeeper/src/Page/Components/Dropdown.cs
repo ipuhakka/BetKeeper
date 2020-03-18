@@ -7,10 +7,20 @@ namespace Betkeeper.Page.Components
     {
         public List<Option> Options { get; }
 
-        public Dropdown(string key, string label, List<Option> options)
+        /// <summary>
+        /// Call UpdateOptions on changing dropdown value. Allows to bind dropdowns.
+        /// </summary>
+        public bool UpdateOptionsOnChange { get; }
+
+        public Dropdown(
+            string key, 
+            string label, 
+            List<Option> options, 
+            bool updateOptionsOnChange = false)
             : base(key, label, FieldType.Dropdown)
         {
             Options = options;
+            UpdateOptionsOnChange = updateOptionsOnChange;
         }
 
     }

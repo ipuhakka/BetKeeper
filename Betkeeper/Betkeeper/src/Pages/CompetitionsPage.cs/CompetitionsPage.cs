@@ -75,6 +75,13 @@ namespace Betkeeper.Pages
             }
         }
 
+        public HttpResponseMessage UpdateOptions(
+            Dictionary<string, object> data, 
+            int? pageId = null)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///  Adds a new competition.
         /// </summary>
