@@ -58,6 +58,7 @@ namespace Betkeeper.Pages
                             new Option("0", "Rainbow"),
                             new Option("1", "Dark")
                         },
+                        "test",
                         updateOptionsOnChange: true),
                     new Dropdown(
                         "test2",
@@ -82,7 +83,7 @@ namespace Betkeeper.Pages
                 }));
 
             // Settings
-            if (participator.Role == (int)Enums.CompetitionRole.Host)
+            if (participator.Role == (int)CompetitionRole.Host)
             {
                 tabs.Add(new Tab(
                     "settings",
@@ -104,6 +105,7 @@ namespace Betkeeper.Pages
 
             data.Add("CompetitionId", competitionId);
             data.Add("Competition", CompetitionAction.GetCompetition(competitionId));
+            data.Add("Test", "1");
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,

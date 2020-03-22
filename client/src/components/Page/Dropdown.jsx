@@ -16,6 +16,20 @@ class Dropdown extends Component
         }
     }
 
+    componentDidMount()
+    {
+        const { props } = this;
+
+        const initialOption = _.find(props.options, option =>
+            option.key === props.initialValue);
+
+        const initialValue = _.isNil(initialOption)
+            ? props.options[0].key
+            : initialOption.key;
+
+        this.onChange(initialValue);
+    }
+
     componentDidUpdate()
     {
         const { options } = this.props;

@@ -23,6 +23,19 @@ namespace Betkeeper.Page.Components
             UpdateOptionsOnChange = updateOptionsOnChange;
         }
 
+        public Dropdown(
+            string key,
+            string label,
+            List<Option> options,
+            string dataKey,
+            bool readOnly = false,
+            bool updateOptionsOnChange = false)
+            : base(key, label, readOnly, FieldType.Dropdown, dataKey)
+        {
+            UpdateOptionsOnChange = updateOptionsOnChange;
+            Options = options;
+        }
+
     }
 
     public class Option
