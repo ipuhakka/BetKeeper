@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import * as pageActions from '../../actions/pageActions';
+import * as pageUtils from '../../js/pageUtils'; 
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Confirm from '../../components/Confirm/Confirm';
@@ -34,6 +35,23 @@ class Page extends Component
         this.onDataChange = this.onDataChange.bind(this);
         this.executePageAction = this.executePageAction.bind(this);
         this.executePageActionFromConfirm = this.executePageActionFromConfirm.bind(this);
+    }
+
+    componentDidMount()
+    {
+        const { components, data } = this.props;
+        const stateData = _.cloneDeep(this.state.data);
+
+        if (!_.isNil(components))
+        {
+            const initialData = pageUtils.getDataFromComponents(components, data);
+
+            _.merge(stateData, initialData);
+
+            this.setState({
+                data: stateData
+            });
+        }
     }
 
     onDataChange(key, newValue)

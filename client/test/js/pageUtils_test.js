@@ -1,8 +1,8 @@
+import * as pageUtils from '../../src/js/pageUtils';
+
 var chai = require('chai');
 var expect = chai.expect;
 var _ = require('lodash');
-
-import * as pageUtils from '../../src/js/pageUtils';
 
 const tabPage = {
     key: 'page',
@@ -13,9 +13,11 @@ const tabPage = {
             tabContent: [
                 {
                     key: "name",
+                    dataKey: 'dataKey1'
                 },
                 {
                     key: "name2",
+                    dataKey: 'dataKey2.dataKey2Nested2'
                 }
             ] 
         },
@@ -25,6 +27,7 @@ const tabPage = {
             tabContent: [
                 {
                     key: "name3",
+                    dataKey: 'dataKey3'
                 },
                 {
                     key: "name4",
@@ -39,12 +42,24 @@ const componentPage = {
     components: [
         {
             key: "name",
+            dataKey: 'dataKey1'
         },
         {
             key: "name2",
+            dataKey: 'dataKey2.dataKey2Nested2'
         }
     ]
 }
+
+const pageData = {
+    dataKey1: 'dataValue',
+    dataKey2: {
+        dataKey2Nested1: 1,
+        dataKey2Nested2: true
+    },
+    dataKey3: null,
+    dataKey4: 'test'
+};
 
 describe('findComponentFromPage', function()
 {
@@ -60,10 +75,40 @@ describe('findComponentFromPage', function()
         done();
     });
 
-    it('returns null when page not found', function(done)
+    it('Returns null when page not found', function(done)
     {
         expect(pageUtils.findComponentFromPage(componentPage, "unexisting key")).to.equal(null);
         expect(pageUtils.findComponentFromPage(tabPage, "unexisting key")).to.equal(null);
         done();
     })
+});
+
+describe('getDataFromComponents', function()
+{
+    it('Returns object with all data matching dataKeys in tab page', function(done)
+    {
+        const result = pageUtils.getDataFromComponents(tabPage.components, pageData);
+
+        expect(Object.keys(result).length).to.equal(3);
+        
+        // object keys are component keys
+        expect(result['name']).to.equal('dataValue');
+        expect(result['name2']).to.equal(true);
+        expect(result['name3']).to.equal(null);
+
+        done();
+    });
+
+    it('Returns object with all data matching dataKeys in component page', function(done)
+    {
+        const result = pageUtils.getDataFromComponents(componentPage.components, pageData);
+
+        expect(Object.keys(result).length).to.equal(2);
+        
+        // object keys are component keys
+        expect(result['name']).to.equal('dataValue');
+        expect(result['name2']).to.equal(true);
+
+        done();
+    });
 });

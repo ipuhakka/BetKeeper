@@ -45,6 +45,8 @@ function updateOptions(state, response)
 
       component.options = response[key];
     });
+
+    return state;
 }
 
 /**
@@ -64,8 +66,7 @@ const PageReducer = (state = { pages: []}, action ) => {
         };
 
         case pageActions.UPDATE_OPTIONS_SUCCESS:
-          updateOptions(state, action.payload.response);
-          return _.cloneDeep(state);
+          return updateOptions(_.cloneDeep(state), action.payload.response);
 
       default:
         return state;

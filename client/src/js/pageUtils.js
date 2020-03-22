@@ -52,3 +52,46 @@ export function findComponentFromPage(page, componentKey)
 
     return component;
 }
+
+/**
+ * Returns data object from all datakeys tied to components.
+ * @param {*} components 
+ * @param {*} pageData 
+ */
+export function getDataFromComponents(components, pageData)
+{   
+    let dataObject = {};
+
+    // Checks if component has data in pageData and sets it to dataObject
+    const setComponentData = (component) => 
+    {
+        if (_.get(component, 'dataKey', null) === null)
+        {
+            return;
+        }
+
+        if (!_.has(pageData, component.dataKey))
+        {
+            return;
+        }
+
+        dataObject[component.key] = _.get(pageData, component.dataKey, null);
+    }
+
+    _.forEach(components, component => 
+    {
+        if (component.hasOwnProperty('tabContent'))
+        {
+            _.forEach(component.tabContent, tabComponent => 
+            {
+               setComponentData(tabComponent); 
+            });
+        }
+        else 
+        {
+            setComponentData(component);
+        }
+    });
+
+    return dataObject;
+}
