@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 
 namespace Betkeeper.Page.Components
@@ -11,7 +13,7 @@ namespace Betkeeper.Page.Components
         Navigation
     }
 
-    public class Button : Component
+    public abstract class Button : Component
     {
         public string Text { get; }
 
@@ -37,6 +39,34 @@ namespace Betkeeper.Page.Components
             Style = style;
             RequireConfirm = requireConfirm;
             NavigateTo = navigateTo;
+        }
+
+        /// <summary>
+        /// Parses a button from jObject
+        /// </summary>
+        /// <param name="asJObject"></param>
+        /// <returns></returns>
+        public static Button Parse(JObject asJObject)
+        {
+            var buttonType = asJObject["ButtonType"].ToString();
+
+            switch (buttonType)
+            {
+                default:
+                    throw new ArgumentOutOfRangeException();
+
+                case "PageAction":
+                    return asJObject.ToObject<PageActionButton>();
+
+                case "ModalAction":
+                    var children = ComponentParser.ParseComponents(asJObject["Components"].ToString());
+                    var modalActionButton = asJObject.ToObject<ModalActionButton>();
+                    modalActionButton.Components = children;
+                    return modalActionButton;
+
+                case "Navigation":
+                    return asJObject.ToObject<NavigationButton>();
+            }
         }
     }
 
@@ -77,12 +107,12 @@ namespace Betkeeper.Page.Components
     /// </summary>
     public class ModalActionButton : Button
     {
-        public string Action { get; }
+        public string Action { get; set; }
 
         /// <summary>
         /// Modal fields.
         /// </summary>
-        public List<Component> Components { get; }
+        public List<Component> Components { get; set; }
 
         public ModalActionButton(
             string action, 
