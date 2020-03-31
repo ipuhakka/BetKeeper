@@ -26,6 +26,9 @@ namespace Betkeeper.Page
                 case "Button":
                     return Button.Parse(asJObject);
 
+                case "Field":
+                    return Field.Parse(asJObject);
+
                 default:
                     throw new NotImplementedException(
                         $"Component type {componentType} parsing not implemented"

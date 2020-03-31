@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 
 namespace Betkeeper.Page.Components
@@ -15,8 +16,6 @@ namespace Betkeeper.Page.Components
 
     public class Field : Component
     {
-        public string Key { get; }
-
         public string DataKey { get; }
 
         public string Label { get; }
@@ -27,9 +26,8 @@ namespace Betkeeper.Page.Components
         public FieldType FieldType { get; }
 
         public Field(string key, string label, FieldType fieldType)
-            : base(ComponentType.Field)
+            : base(ComponentType.Field, key)
         {
-            Key = key;
             Label = label;
             FieldType = fieldType;
             ReadOnly = false;
@@ -51,6 +49,36 @@ namespace Betkeeper.Page.Components
         {
             ReadOnly = readOnly;
             DataKey = dataKey;
+        }
+
+        [JsonConstructor]
+        public Field(
+            string key,
+            string label,
+            FieldType fieldType,
+            bool readOnly = false,
+            string dataKey = null)
+            : this(key, label, readOnly, fieldType, dataKey)
+        {
+        }
+
+        /// <summary>
+        /// Parses a jObject into a field
+        /// </summary>
+        /// <param name="asJObject"></param>
+        /// <returns></returns>
+        public static Field Parse(JObject asJObject)
+        {
+            var fieldType = asJObject["FieldType"].ToString();
+
+            switch (fieldType)
+            {
+                case "Dropdown":
+                    return asJObject.ToObject<Dropdown>();
+
+                default:
+                    return asJObject.ToObject<Field>();
+            }
         }
     }
 }

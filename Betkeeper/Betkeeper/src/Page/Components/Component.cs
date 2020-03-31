@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Betkeeper.Page.Components
@@ -26,9 +24,12 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public ComponentType ComponentType { get; }
 
-        public Component(ComponentType componentType)
+        public string Key { get; }
+
+        public Component(ComponentType componentType, string key = null)
         {
             ComponentType = componentType;
+            Key = key;
         }
     }
 }

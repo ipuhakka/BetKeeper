@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Betkeeper.Page.Components
 {
@@ -23,6 +24,7 @@ namespace Betkeeper.Page.Components
             UpdateOptionsOnChange = updateOptionsOnChange;
         }
 
+        [JsonConstructor]
         public Dropdown(
             string key,
             string label,
@@ -35,7 +37,6 @@ namespace Betkeeper.Page.Components
             UpdateOptionsOnChange = updateOptionsOnChange;
             Options = options;
         }
-
     }
 
     public class Option
