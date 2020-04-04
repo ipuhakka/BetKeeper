@@ -149,5 +149,98 @@ namespace Betkeeper.Test.Page
             Assert.AreEqual(dropdown.Options[1].Key, result.Options[1].Key);
             Assert.AreEqual(dropdown.Options[1].Value, result.Options[1].Value);
         }
+
+        [Test]
+        public void ParseComponent_ParsesTableCorrectly()
+        {
+            var tableToTest = new Table(
+                "dataKey",
+                new List<DataField>
+                {
+                    new DataField("key1", DataType.DateTime),
+                    new DataField("key2", DataType.Double),
+                    new DataField("key3", DataType.Integer),
+                    new DataField("key4", DataType.String)
+                },
+                "navigation key");
+
+            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(tableToTest)) as Table;
+
+            Assert.AreEqual(tableToTest.DataKey, result.DataKey);
+            Assert.AreEqual(tableToTest.NavigationKey, result.NavigationKey);
+
+            for (var i = 0; i < tableToTest.Columns.Count; i++)
+            {
+                Assert.AreEqual(tableToTest.Columns[i].Key, result.Columns[i].Key);
+                Assert.AreEqual(tableToTest.Columns[i].DataType, result.Columns[i].DataType);
+            }
+        }
+
+        [Test]
+        public void ParseComponent_ParsesTabCorrectly()
+        {
+            var tab = new Tab("tabKey", "title", new List<Component>
+            {
+                new Table("tableKey", new List<DataField>{ new DataField("dataFieldKey", DataType.DateTime)} ),
+                new ModalActionButton(
+                    "modalAction", 
+                    new List<Component>
+                    {
+                        new NavigationButton("to", "text", "somestyle")
+                    },
+                    "buttonText")
+            });
+
+            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(tab)) as Tab;
+
+            Assert.AreEqual(tab.Key, result.Key);
+            Assert.AreEqual(tab.Title, result.Title);
+
+            // Test table
+            var originalTable = tab.TabContent[0] as Table;
+            var table = result.TabContent[0] as Table;
+
+            Assert.AreEqual(originalTable.DataKey, table.DataKey);
+            Assert.AreEqual(originalTable.NavigationKey, table.NavigationKey);
+
+            for (var i = 0; i < originalTable.Columns.Count; i++)
+            {
+                Assert.AreEqual(originalTable.Columns[i].Key, table.Columns[i].Key);
+                Assert.AreEqual(originalTable.Columns[i].DataType, table.Columns[i].DataType);
+            }
+
+            // Test modal action button
+            var originalModalActionButton = tab.TabContent[1] as ModalActionButton;
+            var modalActionButton = result.TabContent[1] as ModalActionButton;
+
+            Assert.AreEqual(originalModalActionButton.Action, modalActionButton.Action);
+            Assert.AreEqual(originalModalActionButton.Text, modalActionButton.Text);
+
+            var originalNavigationButton = originalModalActionButton.Components[0] as NavigationButton;
+            var navigationButton = modalActionButton.Components[0] as NavigationButton;
+
+            Assert.AreEqual(originalNavigationButton.NavigateTo, navigationButton.NavigateTo);
+            Assert.AreEqual(originalNavigationButton.Text, navigationButton.Text);
+            Assert.AreEqual(originalNavigationButton.Style, navigationButton.Style);
+        }
+
+        [Test]
+        public void ParseComponent_ParsesContainerCorrectly()
+        {
+            var container = new Container(
+                new List<Component>
+                {
+                    new Field("key1", "label1", FieldType.Double)
+                });
+
+            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(container)) as Container;
+
+            var originalChildAsField = container.Children[0] as Field;
+            var childAsField = result.Children[0] as Field;
+
+            Assert.AreEqual(originalChildAsField.Key, childAsField.Key);
+            Assert.AreEqual(originalChildAsField.Label, childAsField.Label);
+            Assert.AreEqual(originalChildAsField.FieldType, childAsField.FieldType);
+        }
     }
 }

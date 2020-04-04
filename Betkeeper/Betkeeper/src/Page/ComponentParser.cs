@@ -29,6 +29,15 @@ namespace Betkeeper.Page
                 case "Field":
                     return Field.Parse(asJObject);
 
+                case "Table":
+                    return Table.Parse(asJObject);
+
+                case "Tab":
+                    return Tab.Parse(asJObject);
+
+                case "Container":
+                    return Container.Parse(asJObject);
+
                 default:
                     throw new NotImplementedException(
                         $"Component type {componentType} parsing not implemented"

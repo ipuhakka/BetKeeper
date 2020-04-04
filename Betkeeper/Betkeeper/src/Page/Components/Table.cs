@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Page.Components
 {
@@ -25,6 +27,11 @@ namespace Betkeeper.Page.Components
             DataKey = dataKey;
             Columns = columns;
             NavigationKey = navigationKey;
+        }
+
+        public static Table Parse(JObject asJObject)
+        {
+            return asJObject.ToObject<Table>();
         }
     }
 }
