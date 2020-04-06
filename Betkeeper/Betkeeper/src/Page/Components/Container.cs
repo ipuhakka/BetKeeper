@@ -21,7 +21,7 @@ namespace Betkeeper.Page.Components
         {
             var container = asJObject.ToObject<Container>();
 
-            container.Children = ComponentParser.ParseComponents(asJObject["Children"].ToString());
+            container.Children = ComponentParser.ParseComponents(asJObject["children"].ToString());
 
             return container;
         }

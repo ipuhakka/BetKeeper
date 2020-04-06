@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using NUnit.Framework;
@@ -25,7 +26,7 @@ namespace Betkeeper.Test.Page
                 new List<string> { "include1", "include2"});
 
             var result = ComponentParser
-                .ParseComponent(JsonConvert.SerializeObject(button)) as PageActionButton;
+                .ParseComponent(SerializeAsCamelCase(button)) as PageActionButton;
 
             Assert.AreEqual(button.Action, result.Action);
             Assert.AreEqual(button.ActionDataKeys.Count, result.ActionDataKeys.Count);
@@ -62,7 +63,7 @@ namespace Betkeeper.Test.Page
                 "navigateTo");
 
             var result = ComponentParser
-                .ParseComponent(JsonConvert.SerializeObject(button)) as ModalActionButton;
+                .ParseComponent(SerializeAsCamelCase(button)) as ModalActionButton;
 
             Assert.AreEqual(button.Action, result.Action);
             Assert.AreEqual(button.Text, result.Text);
@@ -95,7 +96,7 @@ namespace Betkeeper.Test.Page
             var button = new NavigationButton("navigateTo", "text", "style");
 
             var result = ComponentParser
-                .ParseComponent(JsonConvert.SerializeObject(button)) as NavigationButton;
+                .ParseComponent(SerializeAsCamelCase(button)) as NavigationButton;
 
             Assert.AreEqual(button.Text, result.Text);
             Assert.AreEqual(button.Style, result.Style);
@@ -116,7 +117,7 @@ namespace Betkeeper.Test.Page
             };
 
             var results = ComponentParser
-                .ParseComponents(JsonConvert.SerializeObject(fields))
+                .ParseComponents(SerializeAsCamelCase(fields))
                 .Select(component => component as Field)
                 .ToList();
 
@@ -139,7 +140,7 @@ namespace Betkeeper.Test.Page
                     new Option("option2", "value2")
                 });
 
-            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(dropdown)) as Dropdown;
+            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(dropdown)) as Dropdown;
 
             Assert.AreEqual(dropdown.Key, result.Key);
             Assert.AreEqual(dropdown.Label, result.Label);
@@ -164,7 +165,7 @@ namespace Betkeeper.Test.Page
                 },
                 "navigation key");
 
-            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(tableToTest)) as Table;
+            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(tableToTest)) as Table;
 
             Assert.AreEqual(tableToTest.DataKey, result.DataKey);
             Assert.AreEqual(tableToTest.NavigationKey, result.NavigationKey);
@@ -191,7 +192,7 @@ namespace Betkeeper.Test.Page
                     "buttonText")
             });
 
-            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(tab)) as Tab;
+            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(tab)) as Tab;
 
             Assert.AreEqual(tab.Key, result.Key);
             Assert.AreEqual(tab.Title, result.Title);
@@ -233,7 +234,7 @@ namespace Betkeeper.Test.Page
                     new Field("key1", "label1", FieldType.Double)
                 });
 
-            var result = ComponentParser.ParseComponent(JsonConvert.SerializeObject(container)) as Container;
+            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(container)) as Container;
 
             var originalChildAsField = container.Children[0] as Field;
             var childAsField = result.Children[0] as Field;
@@ -241,6 +242,21 @@ namespace Betkeeper.Test.Page
             Assert.AreEqual(originalChildAsField.Key, childAsField.Key);
             Assert.AreEqual(originalChildAsField.Label, childAsField.Label);
             Assert.AreEqual(originalChildAsField.FieldType, childAsField.FieldType);
+        }
+
+        /// <summary>
+        /// Serializes object in camelCase.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <returns></returns>
+        private string SerializeAsCamelCase(object component)
+        {
+            return JsonConvert.SerializeObject(
+                component,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
         }
     }
 }

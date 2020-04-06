@@ -71,12 +71,14 @@ namespace Betkeeper.Page.Components
         /// <returns></returns>
         public static Field Parse(JObject asJObject)
         {
-            var fieldType = asJObject["FieldType"].ToString();
+            var fieldType = asJObject["fieldType"].ToString();
 
             switch (fieldType)
             {
                 case "Dropdown":
                     return asJObject.ToObject<Dropdown>();
+
+                // TODO: Datetime puuttuu?
 
                 default:
                     return asJObject.ToObject<Field>();

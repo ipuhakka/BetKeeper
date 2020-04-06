@@ -48,7 +48,7 @@ namespace Betkeeper.Page.Components
         /// <returns></returns>
         public static Button Parse(JObject asJObject)
         {
-            var buttonType = asJObject["ButtonType"].ToString();
+            var buttonType = asJObject["buttonType"].ToString();
 
             switch (buttonType)
             {
@@ -59,7 +59,7 @@ namespace Betkeeper.Page.Components
                     return asJObject.ToObject<PageActionButton>();
 
                 case "ModalAction":
-                    var children = ComponentParser.ParseComponents(asJObject["Components"].ToString());
+                    var children = ComponentParser.ParseComponents(asJObject["components"].ToString());
                     var modalActionButton = asJObject.ToObject<ModalActionButton>();
                     modalActionButton.Components = children;
                     return modalActionButton;

@@ -19,7 +19,7 @@ namespace Betkeeper.Page
         {
             var asJObject = JObject.Parse(componentJson);
 
-            var componentType = asJObject["ComponentType"].ToString();
+            var componentType = asJObject["componentType"].ToString();
 
             switch (componentType)
             {
