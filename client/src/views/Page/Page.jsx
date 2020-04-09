@@ -70,9 +70,9 @@ class Page extends Component
     executePageActionFromConfirm()
     {
         const { onSuccessNavigateTo } = this.state;
-        const {action, actionDataKeys } = this.state.confirm;
+        const {action, actionDataKeys, componentsToInclude } = this.state.confirm;
 
-        this.executePageAction(action, actionDataKeys, onSuccessNavigateTo)
+        this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
     }
 
     /**
@@ -81,7 +81,7 @@ class Page extends Component
      * @param {Array} actionDataKeys 
      * @param {string} onSuccessNavigateTo Navigate to this address on success
      */
-    executePageAction(action, actionDataKeys, onSuccessNavigateTo)
+    executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
     {
         const { state, props } = this;
 
@@ -98,6 +98,13 @@ class Page extends Component
             {
                 parameters[dataKey] = props.data[dataKey];
             }
+        });
+
+        _.forEach(componentsToInclude, componentKey => 
+        {
+            parameters[componentKey] = pageUtils.findComponentFromPage(
+                { components: props.components },
+                componentKey);
         });
 
         const pathname = window.location.pathname;
@@ -123,15 +130,23 @@ class Page extends Component
      * @param {string} confirmStyle Confirm dialog style
      * @param {string} onSuccessNavigateTo If given, redirect to this address after successful action 
      */
-    clickPageAction(action, actionDataKeys, requireConfirm, confirmHeader, confirmStyle, onSuccessNavigateTo = null)
+    clickPageAction(
+        action, 
+        actionDataKeys, 
+        requireConfirm, 
+        componentsToInclude,
+        confirmHeader, 
+        confirmStyle, 
+        onSuccessNavigateTo = null)
     {
         if (requireConfirm)
         {
             this.setState({
                 confirm: {
                     show: true,
-                    action: action,
-                    actionDataKeys: actionDataKeys,
+                    action,
+                    actionDataKeys,
+                    componentsToInclude,
                     header: confirmHeader,
                     variant: confirmStyle
                 },
@@ -140,7 +155,7 @@ class Page extends Component
         }
         else 
         {
-            this.executePageAction(action, actionDataKeys, onSuccessNavigateTo);
+            this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude);
         }
     }
 

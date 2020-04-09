@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using Newtonsoft.Json.Linq;
 using Betkeeper.Classes;
 using Betkeeper.Actions;
 using Betkeeper.Extensions;
 using Betkeeper.Enums;
-using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 
@@ -82,9 +83,10 @@ namespace Betkeeper.Pages
 
                 }));
 
-            // Settings
             if (participator.Role == (int)CompetitionRole.Host)
             {
+                tabs.Add(GetManageBetsTab());
+
                 tabs.Add(new Tab(
                     "settings",
                     "Settings",
@@ -123,7 +125,10 @@ namespace Betkeeper.Pages
 
                 case "DeleteCompetition":
                     return DeleteCompetition(action);
-            }
+
+                case "AddBetContainer":
+                    return AddBetContainer(action);
+            }       
         }
 
         public HttpResponseMessage UpdateOptions(
@@ -158,6 +163,28 @@ namespace Betkeeper.Pages
             throw new ArgumentException($"{key} options update not implemented");
         }
 
+        private Tab GetManageBetsTab()
+        {
+            // TODO: Hae jo olemassa olevat targetit ja 
+            // luo niille databoundeilla fieldiellä varustetu containerit
+            return new Tab(
+                "manageBets",
+                "Manage bets",
+                new List<Component>
+                {
+                    new Container(new List<Component>
+                        {
+                            new PageActionButton("", new List<string>(), "Text")
+                        }, 
+                        key: "betTargets"),
+                    new PageActionButton(
+                        "AddBetContainer",
+                        new List<string>(),
+                        "Add bet",
+                        componentsToInclude: new List<string>{ "betTargets" })
+                });
+        }
+
         private Tab GetResultsTab(int competitionId)
         {
 
@@ -182,6 +209,35 @@ namespace Betkeeper.Pages
         //        components.Add(new ModalActionButton("AddTargets", new List<Field>(), "Add targets"))
         //    }
         //}
+
+        /// <summary>
+        /// Adds a new target to bet container.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private HttpResponseMessage AddBetContainer(PageAction action)
+        {
+            var betTargetsAsJObject = JObject.Parse(action.Parameters["betTargets"].ToString());
+
+            var betTargetContainer = ComponentParser
+                .ParseComponent(betTargetsAsJObject.ToString()) as Container;
+
+            if (betTargetContainer.Children.Count == 0)
+            {
+                // TODO: Oikeat komponentit
+                var newBetTarget = new Field("key5", "Label 5", FieldType.TextArea);
+
+                betTargetContainer.Children.Add(newBetTarget);
+            }
+            else
+            {
+                var newBetTarget = betTargetContainer.Children.Last();
+                // TODO: Id muutokset
+                betTargetContainer.Children.Add(newBetTarget);
+            }
+
+            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetContainer));
+        }
 
         private HttpResponseMessage DeleteCompetition(PageAction action)
         {

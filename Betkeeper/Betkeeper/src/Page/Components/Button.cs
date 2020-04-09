@@ -87,20 +87,26 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<string> ActionDataKeys { get; }
 
+        /// <summary>
+        /// List of id's for components to include in request.
+        /// </summary>
+        public List<string> ComponentsToInclude { get; }
+
         public PageActionButton(
             string action, 
             List<string> actionDataKeys, 
             string text, 
             string style = "outline-primary",
             bool requireConfirm = false,
-            string navigateTo = null)
+            string navigateTo = null,
+            List<string> componentsToInclude = null)
             : base(ButtonType.PageAction, text, style, requireConfirm, navigateTo)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;
+            ComponentsToInclude = componentsToInclude;
         }
     }
-
 
     /// <summary>
     /// Button which opens a modal for performing action

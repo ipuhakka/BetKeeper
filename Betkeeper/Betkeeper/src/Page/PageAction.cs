@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Betkeeper.Page.Components;
+using System.Collections.Generic;
 
 namespace Betkeeper.Page
 {
@@ -43,6 +44,38 @@ namespace Betkeeper.Page
             :this(userId, page, action, parameters)
         {
             PageId = pageId;
+        }
+    }
+
+    /// <summary>
+    /// Page action response model.
+    /// </summary>
+    public class PageActionResponse
+    {
+        /// <summary>
+        /// List of components to update. 
+        /// This does not allow for deleting or creating completely new components.
+        /// Modification is restricted to inside the component.
+        /// </summary>
+        public List<Component> Components { get; set; }
+
+        /// <summary>
+        /// Constructor for page action response to return components.
+        /// </summary>
+        /// <param name="components"></param>
+        public PageActionResponse(List<Component> components)
+        {
+            Components = components;
+        }
+
+        /// <summary>
+        /// Constructor for page action response with a single component.
+        /// </summary>
+        /// <param name="components"></param>
+        public PageActionResponse(Component component)
+        {
+            Components = new List<Component>();
+            Components.Add(component);
         }
     }
 }

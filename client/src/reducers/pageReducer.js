@@ -50,6 +50,29 @@ function updateOptions(state, response)
 }
 
 /**
+ * Updates page components.
+ * @param {object} state 
+ * @param {string} pageKey
+ * @param {object} actionResponse 
+ */
+function handleUpdateComponents(state, pageKey, components)
+{
+  const page = _.find(state.pages, page => page.key === pageKey);
+
+  if (_.isNil(page))
+  {
+    return state;
+  }
+
+  _.forEach(components, component => 
+    {
+      pageUtils.replaceComponent(page, component);
+    });
+
+  return state;
+}
+
+/**
  * PageReducer.
  * @param {object} state
  * @param {object} action 
@@ -65,8 +88,12 @@ const PageReducer = (state = { pages: []}, action ) => {
             pages: newPages
         };
 
-        case pageActions.UPDATE_OPTIONS_SUCCESS:
-          return updateOptions(_.cloneDeep(state), action.payload.response);
+      case pageActions.UPDATE_OPTIONS_SUCCESS:
+        return updateOptions(_.cloneDeep(state), action.payload.response);
+
+      case pageActions.UPDATE_COMPONENTS:
+        const { page, components } = action.payload;
+        return handleUpdateComponents(_.cloneDeep(state), page, components)
 
       default:
         return state;

@@ -49,6 +49,14 @@ export function* callAction(action)
   {
     const response = yield call(pageApi.postAction, page, actionName, parameters);
   
+    const pageActionResponse = JSON.parse(response.responseText);
+
+    if (_.get(pageActionResponse, 'components.length', null) > 0)
+    {
+      yield call(pageActions.updateComponents, page, pageActionResponse.components);
+      return;
+    }
+
     if (!_.isNil(callback))
     {
       callback();

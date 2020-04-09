@@ -3,7 +3,7 @@ import store from '../store';
 export const GET_PAGE = "GET_PAGE";
 export const GET_PAGE_SUCCESS = "GET_PAGE_SUCCESS";
 export const CALL_ACTION = "CALL_MODAL_ACTION";
-export const CALL_ACTION_SUCCESS = "CALL_MODAL_ACTION_SUCCESS";
+export const UPDATE_COMPONENTS = "UPDATE_COMPONENTS";
 export const UPDATE_OPTIONS = "UPDATE_OPTIONS";
 export const UPDATE_OPTIONS_SUCCESS = "UPDATE_OPTIONS_SUCCESS";
 
@@ -34,6 +34,22 @@ export function callAction(page, action, requestParameters, callback)
 }
 
 /**
+ * Update page components.
+ * @param {string} page 
+ * @param {object} components 
+ */
+export function updateComponents(page, components)
+{
+    store.dispatch({
+        type: UPDATE_COMPONENTS,
+        payload: {
+            page,
+            components
+        }
+      });
+}
+
+/**
  * Success action for getting page structure.
  * @param {object} structure 
  */
@@ -48,7 +64,7 @@ export function getPageSuccess(structure)
 }
 
 /**
- *  Updates dropdown opions tied to key field.
+ * Updates dropdown opions tied to key field.
  * @param {string} key 
  * @param {string} value
  */

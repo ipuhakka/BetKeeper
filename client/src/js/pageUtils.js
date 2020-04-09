@@ -53,6 +53,36 @@ export function findComponentFromPage(page, componentKey)
     return component;
 }
 
+export function replaceComponent(page, component)
+{
+    const { components } = page;
+    const componentKey = component.key;
+
+    if (pageUsesTabs(page))
+    {
+        _.forEach(components, tab => 
+        {
+            const componentIndex = _.findIndex(tab.tabContent, component => component.key === componentKey);
+            
+            if (componentIndex !== -1)
+            {
+                tab.tabContent[componentIndex] = component;
+            }
+        })
+
+        return components;
+    }
+
+    const componentIndex = components.findIndex(component => component.key === componentKey);
+
+    if (componentIndex !== -1)
+    {
+        components[componentIndex] = component;
+    }
+    
+    return components;
+}
+
 /**
  * Returns data object from all datakeys tied to components.
  * @param {*} components 
@@ -62,7 +92,7 @@ export function getDataFromComponents(components, pageData)
 {   
     let dataObject = {};
 
-    // Checks if component has data in pageData and sets it to dataObject
+    // Check if component has data in pageData and sets it to dataObject
     const setComponentData = (component) => 
     {
         if (_.get(component, 'dataKey', null) === null)

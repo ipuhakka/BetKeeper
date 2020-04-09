@@ -19,7 +19,14 @@ class Button extends Component
 
         if (props.buttonType === 'PageAction')
         {
-            props.onClick(props.action, props.actionDataKeys, props.requireConfirm, props.text, props.style, props.navigateTo);
+            props.onClick(
+                props.action, 
+                props.actionDataKeys, 
+                props.requireConfirm, 
+                props.componentsToInclude, 
+                props.text, 
+                props.style, 
+                props.navigateTo);
         }
         else if (props.buttonType === 'ModalAction')
         {
@@ -57,7 +64,8 @@ Button.propTypes = {
     components: PropTypes.array,
     navigateTo: PropTypes.string,
     onClick: PropTypes.func.isRequired,
-    requireConfirm: PropTypes.bool.isRequired
+    requireConfirm: PropTypes.bool.isRequired,
+    componentsToInclude: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default Button;
