@@ -83,7 +83,7 @@ namespace Betkeeper.Pages
 
                 }));
 
-            if (participator.Role == (int)CompetitionRole.Host)
+            if (participator.Role == CompetitionRole.Host)
             {
                 tabs.Add(GetManageBetsTab());
 

@@ -69,7 +69,7 @@ namespace Betkeeper.Actions
                 .GetParticipators(
                     userId: userId,
                     competitionId: competitionId,
-                    role: (int)Enums.CompetitionRole.Host)
+                    role: Enums.CompetitionRole.Host)
                 .FirstOrDefault();
 
             if (participator == null)

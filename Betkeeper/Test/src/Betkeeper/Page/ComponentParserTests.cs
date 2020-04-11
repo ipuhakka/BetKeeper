@@ -152,6 +152,20 @@ namespace Betkeeper.Test.Page
         }
 
         [Test]
+        public void ParseComponent_ParsesDateTimeInputCorretly()
+        {
+            var now = DateTime.Now;
+            var dateTimeInput = new DateTimeInput("key", "label", now);
+
+            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(dateTimeInput)) as DateTimeInput;
+
+            Assert.AreEqual(dateTimeInput.ComponentKey, result.ComponentKey);
+            Assert.AreEqual(dateTimeInput.Label, result.Label);
+            Assert.AreEqual(dateTimeInput.FieldType, result.FieldType);
+            Assert.AreEqual(dateTimeInput.MinimumDateTime, result.MinimumDateTime);
+        }
+
+        [Test]
         public void ParseComponent_ParsesTableCorrectly()
         {
             var tableToTest = new Table(

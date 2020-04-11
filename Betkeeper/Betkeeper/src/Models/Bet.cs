@@ -26,7 +26,6 @@ namespace Betkeeper.Models
 
         public List<string> Folders { get; }
 
-        // TODO: Eroon bool?:sta, käytä enumia
         public Bet(
             Enums.BetResult betResult,
             string name,

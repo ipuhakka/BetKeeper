@@ -23,6 +23,17 @@ class Field extends Component
         };
     }
 
+    componentDidMount()
+    {
+        const { fieldType, initialValue } = this.props;
+
+        if (fieldType === 'DateTime' 
+            && (_.isNil(initialValue) || initialValue === ''))
+        {
+            this.setDateTime(new Date());
+        }
+    }
+
     /**
      * Sets a datetime value, if newDate is a valid datetime.
      * @param {object} newDate

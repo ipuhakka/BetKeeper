@@ -53,7 +53,7 @@ namespace Betkeeper.Test.Pages
                 {
                     ParticipatorId = 2,
                     UserId = 2,
-                    Role = (int)Enums.CompetitionRole.Host,
+                    Role = Enums.CompetitionRole.Host,
                     Competition = 1
                 }
             };
@@ -112,7 +112,7 @@ namespace Betkeeper.Test.Pages
                 {
                     ParticipatorId = 1,
                     UserId = 1,
-                    Role = (int)Enums.CompetitionRole.Host,
+                    Role = Enums.CompetitionRole.Host,
                     Competition = 1
                 },
                 new Participator

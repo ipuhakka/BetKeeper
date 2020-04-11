@@ -36,6 +36,13 @@ namespace Betkeeper.Data
                 .HasConversion(
                     target => (int)target,
                     target => (TargetType)target);
+
+            modelBuilder
+                .Entity<Participator>()
+                .Property(participator => participator.Role)
+                .HasConversion(
+                    role => (int)role,
+                    role => (CompetitionRole)role);
         }
     }
 }

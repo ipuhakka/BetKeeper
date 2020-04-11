@@ -154,7 +154,7 @@ namespace Betkeeper.Test.Actions
                 Assert.AreEqual(1, participators.Count);
                 Assert.AreEqual(1, participators[0].Competition);
                 Assert.AreEqual(1, participators[0].UserId);
-                Assert.AreEqual(0, participators[0].Role);
+                Assert.AreEqual(Enums.CompetitionRole.Participator, participators[0].Role);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 1,
                     UserId = 1,
-                    Role = (int)Enums.CompetitionRole.Admin
+                    Role = Enums.CompetitionRole.Admin
                 },
                 new Participator
                 {
@@ -223,7 +223,7 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 2,
                     UserId = 1,
-                    Role = (int)Enums.CompetitionRole.Host
+                    Role = Enums.CompetitionRole.Host
                 }
             };
 
@@ -253,7 +253,7 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 1,
                     UserId = 1,
-                    Role = (int)Enums.CompetitionRole.Host
+                    Role = Enums.CompetitionRole.Host
                 }
             };
 

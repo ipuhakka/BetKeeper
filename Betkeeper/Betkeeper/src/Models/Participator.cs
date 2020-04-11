@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Betkeeper;
+using Betkeeper.Enums;
 using Betkeeper.Data;
 using System.Linq;
 
@@ -12,8 +12,7 @@ namespace Betkeeper.Models
         [Key]
         public int ParticipatorId { get; set; }
 
-        // TODO: Enum ja conversio mallinrakennukseen
-        public int Role { get; set; }
+        public CompetitionRole Role { get; set; }
 
         public int UserId { get; set; }
 
@@ -32,7 +31,7 @@ namespace Betkeeper.Models
         public List<Participator> GetParticipators(
             int? userId = null, 
             int? competitionId = null,
-            int? role = null)
+            CompetitionRole? role = null)
         {
             using (var context = new BetkeeperDataContext(OptionsBuilder))
             {
@@ -57,7 +56,7 @@ namespace Betkeeper.Models
             }
         }
 
-        public void AddParticipator(int userId, int competitionId, Enums.CompetitionRole role)
+        public void AddParticipator(int userId, int competitionId, CompetitionRole role)
         {
             // TODO: Käyttäjän validointi kun taulu tuodaan entitymalliin
             var competition = CompetitionHandler.GetCompetition(competitionId: competitionId);
@@ -73,7 +72,7 @@ namespace Betkeeper.Models
                 {
                     UserId = userId,
                     Competition = competitionId,
-                    Role = (int)role
+                    Role = role
                 });
 
                 context.SaveChanges();

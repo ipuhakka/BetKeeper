@@ -78,7 +78,8 @@ namespace Betkeeper.Page.Components
                 case "Dropdown":
                     return asJObject.ToObject<Dropdown>();
 
-                // TODO: Datetime puuttuu?
+                case "DateTime":
+                    return asJObject.ToObject<DateTimeInput>();
 
                 default:
                     return asJObject.ToObject<Field>();
@@ -90,8 +91,13 @@ namespace Betkeeper.Page.Components
     {
         public DateTime? MinimumDateTime { get; }
 
-        public DateTimeInput(string componentKey, string label, DateTime? minimumDateTime = null)
-            : base(componentKey, label, FieldType.DateTime)
+        public DateTimeInput(
+            string componentKey, 
+            string label, 
+            DateTime? minimumDateTime = null, 
+            bool readOnly = false, 
+            string dataKey = null)
+            : base(componentKey, label, FieldType.DateTime, readOnly: readOnly, dataKey: dataKey)
         {
             MinimumDateTime = minimumDateTime;
         }
