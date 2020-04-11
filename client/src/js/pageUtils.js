@@ -53,6 +53,12 @@ export function findComponentFromPage(page, componentKey)
     return component;
 }
 
+/**
+ * Replace component in page. 
+ * Returns the new list of components.
+ * @param {object} page 
+ * @param {object} component 
+ */
 export function replaceComponent(page, component)
 {
     const { components } = page;
