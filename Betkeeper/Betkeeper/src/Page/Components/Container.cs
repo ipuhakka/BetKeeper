@@ -11,8 +11,8 @@ namespace Betkeeper.Page.Components
 
         public List<Component> Children { get; set; }
 
-        public Container(List<Component> children, string key = null)
-            : base(ComponentType.Container, key)
+        public Container(List<Component> children, string componentKey = null)
+            : base(ComponentType.Container, componentKey)
         {
             Children = children;
         }

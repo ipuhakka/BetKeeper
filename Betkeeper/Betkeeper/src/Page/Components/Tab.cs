@@ -9,8 +9,8 @@ namespace Betkeeper.Page.Components
 
         public List<Component> TabContent { get; set; }
 
-        public Tab(string key, string title, List<Component> tabContent)
-            : base(ComponentType.Tab, key)
+        public Tab(string componentKey, string title, List<Component> tabContent)
+            : base(ComponentType.Tab, componentKey)
         {
             TabContent = tabContent;
             Title = title;

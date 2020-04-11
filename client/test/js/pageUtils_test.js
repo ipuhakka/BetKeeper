@@ -8,29 +8,29 @@ const tabPage = {
     key: 'page',
     components: [
         { 
-            key: 'tab1',
+            componentKey: 'tab1',
             componentType: 'Tab',
             tabContent: [
                 {
-                    key: "name",
+                    componentKey: "name",
                     dataKey: 'dataKey1'
                 },
                 {
-                    key: "name2",
+                    componentKey: "name2",
                     dataKey: 'dataKey2.dataKey2Nested2'
                 }
             ] 
         },
         { 
-            key: 'tab2',
+            componentKey: 'tab2',
             componentType: 'Tab',
             tabContent: [
                 {
-                    key: "name3",
+                    componentKey: "name3",
                     dataKey: 'dataKey3'
                 },
                 {
-                    key: "name4",
+                    componentKey: "name4",
                 }
             ] 
         }
@@ -41,11 +41,11 @@ const componentPage = {
     key: 'page',
     components: [
         {
-            key: "name",
+            componentKey: "name",
             dataKey: 'dataKey1'
         },
         {
-            key: "name2",
+            componentKey: "name2",
             dataKey: 'dataKey2.dataKey2Nested2'
         }
     ]
@@ -65,13 +65,13 @@ describe('findComponentFromPage', function()
 {
     it('Finds component from tabs', function(done)
     {
-        expect(pageUtils.findComponentFromPage(tabPage, "name2").key).to.equal('name2');
+        expect(pageUtils.findComponentFromPage(tabPage, "name2").componentKey).to.equal('name2');
         done();
     });
 
     it('Finds component from regular page', function(done)
     {
-        expect(pageUtils.findComponentFromPage(componentPage, "name2").key).to.equal('name2');
+        expect(pageUtils.findComponentFromPage(componentPage, "name2").componentKey).to.equal('name2');
         done();
     });
 
@@ -89,33 +89,33 @@ describe('replaceComponent', function()
         key: 'page',
         components: [
             { 
-                key: 'tab1',
+                componentKey: 'tab1',
                 componentType: 'Tab',
                 tabContent: [
                     {
-                        key: "name",
+                        componentKey: "name",
                         dataKey: 'dataKey1',
                         componentType: 'Container',
                         children: [
-                            { key: 'child1'}
+                            { componentKey: 'child1'}
                         ]
                     },
                     {
-                        key: "name2",
+                        componentKey: "name2",
                         dataKey: 'dataKey2.dataKey2Nested2'
                     }
                 ] 
             },
             { 
-                key: 'tab2',
+                componentKey: 'tab2',
                 componentType: 'Tab',
                 tabContent: [
                     {
-                        key: "name3",
+                        componentKey: "name3",
                         dataKey: 'dataKey3'
                     },
                     {
-                        key: "name4",
+                        componentKey: "name4",
                     }
                 ] 
             }
@@ -125,15 +125,15 @@ describe('replaceComponent', function()
     it('replaces component on tab page', function(done)
     {
         const newContainer = { 
-            key: 'name', 
+            componentKey: 'name', 
             componentType: 'Container', 
             children: [
-            { key: 'newChild' } 
+            { componentKey: 'newChild' } 
         ]};
 
         const components = pageUtils.replaceComponent(tabPage, newContainer);
 
-        expect(components[0].tabContent[0].children[0].key).to.equal('newChild');
+        expect(components[0].tabContent[0].children[0].componentKey).to.equal('newChild');
         done();
     });
 
@@ -143,18 +143,18 @@ describe('replaceComponent', function()
             key: 'page',
             components: [
                 {
-                    key: "name",
+                    componentKey: "name",
                     dataKey: 'dataKey1'
                 },
                 {
-                    key: "name2",
+                    componentKey: "name2",
                     dataKey: 'dataKey2.dataKey2Nested2'
                 }
             ]
         }
 
         const newComponent = { 
-            key: 'name', 
+            componentKey: 'name', 
             dataKey: 'dataKey2'
         };
 

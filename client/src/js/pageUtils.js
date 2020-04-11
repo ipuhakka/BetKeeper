@@ -31,7 +31,7 @@ export function findComponentFromPage(page, componentKey)
         {
             if (_.isNil(match))
             {
-                match = _.find(tab.tabContent, component => component.key === componentKey);
+                match = _.find(tab.tabContent, component => component.componentKey === componentKey);
             }
         })
 
@@ -43,7 +43,7 @@ export function findComponentFromPage(page, componentKey)
         return match;
     }
 
-    const component = components.find(component => component.key === componentKey);
+    const component = components.find(component => component.componentKey === componentKey);
 
     if (_.isNil(component))
     {
@@ -62,13 +62,13 @@ export function findComponentFromPage(page, componentKey)
 export function replaceComponent(page, component)
 {
     const { components } = page;
-    const componentKey = component.key;
+    const componentKey = component.componentKey;
 
     if (pageUsesTabs(page))
     {
         _.forEach(components, tab => 
         {
-            const componentIndex = _.findIndex(tab.tabContent, component => component.key === componentKey);
+            const componentIndex = _.findIndex(tab.tabContent, component => component.componentKey === componentKey);
             
             if (componentIndex !== -1)
             {
@@ -79,7 +79,7 @@ export function replaceComponent(page, component)
         return components;
     }
 
-    const componentIndex = components.findIndex(component => component.key === componentKey);
+    const componentIndex = components.findIndex(component => component.componentKey === componentKey);
 
     if (componentIndex !== -1)
     {
@@ -111,7 +111,7 @@ export function getDataFromComponents(components, pageData)
             return;
         }
 
-        dataObject[component.key] = _.get(pageData, component.dataKey, null);
+        dataObject[component.componentKey] = _.get(pageData, component.dataKey, null);
     }
 
     _.forEach(components, component => 

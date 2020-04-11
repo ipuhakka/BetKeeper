@@ -123,7 +123,7 @@ namespace Betkeeper.Test.Page
 
             for (int i = 0; i < fields.Count; i++)
             {
-                Assert.AreEqual(fields[i].Key, results[i].Key);
+                Assert.AreEqual(fields[i].ComponentKey, results[i].ComponentKey);
                 Assert.AreEqual(fields[i].Label, results[i].Label);
                 Assert.AreEqual(fields[i].ReadOnly, results[i].ReadOnly);
                 Assert.AreEqual(fields[i].FieldType, results[i].FieldType);
@@ -142,7 +142,7 @@ namespace Betkeeper.Test.Page
 
             var result = ComponentParser.ParseComponent(SerializeAsCamelCase(dropdown)) as Dropdown;
 
-            Assert.AreEqual(dropdown.Key, result.Key);
+            Assert.AreEqual(dropdown.ComponentKey, result.ComponentKey);
             Assert.AreEqual(dropdown.Label, result.Label);
 
             Assert.AreEqual(dropdown.Options[0].Key, result.Options[0].Key);
@@ -194,7 +194,7 @@ namespace Betkeeper.Test.Page
 
             var result = ComponentParser.ParseComponent(SerializeAsCamelCase(tab)) as Tab;
 
-            Assert.AreEqual(tab.Key, result.Key);
+            Assert.AreEqual(tab.ComponentKey, result.ComponentKey);
             Assert.AreEqual(tab.Title, result.Title);
 
             // Test table
@@ -239,7 +239,7 @@ namespace Betkeeper.Test.Page
             var originalChildAsField = container.Children[0] as Field;
             var childAsField = result.Children[0] as Field;
 
-            Assert.AreEqual(originalChildAsField.Key, childAsField.Key);
+            Assert.AreEqual(originalChildAsField.ComponentKey, childAsField.ComponentKey);
             Assert.AreEqual(originalChildAsField.Label, childAsField.Label);
             Assert.AreEqual(originalChildAsField.FieldType, childAsField.FieldType);
         }

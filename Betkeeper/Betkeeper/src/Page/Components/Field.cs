@@ -27,8 +27,8 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; }
 
-        public Field(string key, string label, FieldType fieldType)
-            : base(ComponentType.Field, key)
+        public Field(string componentKey, string label, FieldType fieldType)
+            : base(ComponentType.Field, componentKey)
         {
             Label = label;
             FieldType = fieldType;
@@ -42,12 +42,12 @@ namespace Betkeeper.Page.Components
         /// <param name="readOnly"></param>
         /// <param name="fieldType"></param>
         public Field(
-            string key, 
+            string componentKey, 
             string label, 
             bool readOnly, 
             FieldType fieldType,
             string dataKey)
-            : this(key, label, fieldType)
+            : this(componentKey, label, fieldType)
         {
             ReadOnly = readOnly;
             DataKey = dataKey;
@@ -55,12 +55,12 @@ namespace Betkeeper.Page.Components
 
         [JsonConstructor]
         public Field(
-            string key,
+            string componentKey,
             string label,
             FieldType fieldType,
             bool readOnly = false,
             string dataKey = null)
-            : this(key, label, readOnly, fieldType, dataKey)
+            : this(componentKey, label, readOnly, fieldType, dataKey)
         {
         }
 
@@ -90,8 +90,8 @@ namespace Betkeeper.Page.Components
     {
         public DateTime? MinimumDateTime { get; }
 
-        public DateTimeInput(string key, string label, DateTime? minimumDateTime = null)
-            : base(key, label, FieldType.DateTime)
+        public DateTimeInput(string componentKey, string label, DateTime? minimumDateTime = null)
+            : base(componentKey, label, FieldType.DateTime)
         {
             MinimumDateTime = minimumDateTime;
         }
@@ -107,11 +107,11 @@ namespace Betkeeper.Page.Components
         public bool UpdateOptionsOnChange { get; }
 
         public Dropdown(
-            string key,
+            string componentKey,
             string label,
             List<Option> options,
             bool updateOptionsOnChange = false)
-            : base(key, label, FieldType.Dropdown)
+            : base(componentKey, label, FieldType.Dropdown)
         {
             Options = options;
             UpdateOptionsOnChange = updateOptionsOnChange;
@@ -119,13 +119,13 @@ namespace Betkeeper.Page.Components
 
         [JsonConstructor]
         public Dropdown(
-            string key,
+            string componentKey,
             string label,
             List<Option> options,
             string dataKey,
             bool readOnly = false,
             bool updateOptionsOnChange = false)
-            : base(key, label, readOnly, FieldType.Dropdown, dataKey)
+            : base(componentKey, label, readOnly, FieldType.Dropdown, dataKey)
         {
             UpdateOptionsOnChange = updateOptionsOnChange;
             Options = options;

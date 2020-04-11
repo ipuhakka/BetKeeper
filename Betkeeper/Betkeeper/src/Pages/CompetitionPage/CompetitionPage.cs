@@ -175,8 +175,8 @@ namespace Betkeeper.Pages
                     new Container(new List<Component>
                         {
                             new PageActionButton("", new List<string>(), "Text")
-                        }, 
-                        key: "betTargets"),
+                        },
+                        componentKey: "betTargets"),
                     new PageActionButton(
                         "AddBetContainer",
                         new List<string>(),

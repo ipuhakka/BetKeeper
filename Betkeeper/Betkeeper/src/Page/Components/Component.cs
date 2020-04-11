@@ -24,12 +24,12 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public ComponentType ComponentType { get; }
 
-        public string Key { get; }
+        public string ComponentKey { get; }
 
-        public Component(ComponentType componentType, string key = null)
+        public Component(ComponentType componentType, string componentKey = null)
         {
             ComponentType = componentType;
-            Key = key;
+            ComponentKey = componentKey;
         }
     }
 }

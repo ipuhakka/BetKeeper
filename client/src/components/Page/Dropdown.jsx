@@ -51,10 +51,10 @@ class Dropdown extends Component
 
         if (props.updateOptionsOnChange)
         {
-            pageActions.updateOptions(props.fieldKey, newValue);
+            pageActions.updateOptions(props.componentKey, newValue);
         }
 
-        props.onChange(props.fieldKey, newValue);
+        props.onChange(props.componentKey, newValue);
     }
 
     render()
@@ -89,7 +89,7 @@ Dropdown.propTypes = {
         })
     ),
     onChange: PropTypes.func,
-    fieldKey: PropTypes.string.isRequired,
+    componentKey: PropTypes.string.isRequired,
     updateOptionsOnChange: PropTypes.bool
 };
 

@@ -12,9 +12,9 @@ class PageContent extends Component
 
     renderTabs(tabs)
     {
-        return <Tabs defaultActiveKey={tabs[0].key}>
+        return <Tabs defaultActiveKey={tabs[0].componentKey}>
             {_.map(tabs, (tab, i) => {
-                return <Tab key={`tab-${i}`} eventKey={tab.key} title={tab.title}>
+                return <Tab key={`tab-${i}`} eventKey={tab.componentKey} title={tab.title}>
                     {this.renderComponents(tab.tabContent, 'tab-content')}
                 </Tab>  
             })}
@@ -35,16 +35,16 @@ class PageContent extends Component
 
                     case 'Button':
                         return <Button 
-                            key={`button-${component.action}`}
+                            key={`button-${component.action}-${i}`}
                             onClick={props.getButtonClick(component)} 
                             {...component} />;
 
                     case 'Field':
                         return <Field 
                             onChange={props.onFieldValueChange}
-                            key={`field-${component.key}`} 
+                            key={`field-${component.componentKey}`} 
                             type={component.fieldType} 
-                            fieldKey={component.key}
+                            componentKey={component.componentKey}
                             initialValue={_.get(props.data, component.dataKey, '')} 
                             {...component} />;
 

@@ -66,7 +66,7 @@ class Field extends Component
                 ? moment(newValue).utc()
                 : newValue;
 
-            props.onChange(props.fieldKey, dataValue);
+            props.onChange(props.componentKey, dataValue);
         }
         else 
         {
@@ -162,7 +162,7 @@ Field.propTypes = {
         "TextArea",
         "Dropdown"]).isRequired,
     label: PropTypes.string.isRequired,
-    fieldKey: PropTypes.string.isRequired,
+    componentKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onError: PropTypes.func,
     initialValue: PropTypes.string,

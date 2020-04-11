@@ -36,8 +36,8 @@ namespace Betkeeper.Test.Repositories
             var mockDataTable = MockDataTable(
                 new List<Bet>
                 {
-                    new Bet(true, "testi", 2, 2, new DateTime(), 1),
-                    new Bet(false, "testi2", 3, 3, new DateTime(), 1)
+                    new Bet(Enums.BetResult.Won, "testi", 2, 2, new DateTime(), 1),
+                    new Bet(Enums.BetResult.Lost, "testi2", 3, 3, new DateTime(), 1)
                 });
 
             mock.Setup(database =>
@@ -236,7 +236,7 @@ namespace Betkeeper.Test.Repositories
             var mockDataTable = MockDataTable(
                 new List<Bet>
                 {
-                    new Bet(true, "testi", 2, 2, new DateTime(), 1)
+                    new Bet(Enums.BetResult.Won, "testi", 2, 2, new DateTime(), 1)
                 });
 
             mock.Setup(database =>
@@ -564,7 +564,7 @@ namespace Betkeeper.Test.Repositories
             var mockDataTable = MockDataTable(
                 new List<Bet>
                 {
-                    new Bet(true, "testi", 2, 2, new DateTime(), 1)
+                    new Bet(Enums.BetResult.Won, "testi", 2, 2, new DateTime(), 1)
                 });
 
             mock.Setup(database =>
@@ -639,11 +639,11 @@ namespace Betkeeper.Test.Repositories
             var mockDataTable = MockDataTable(
                 new List<Bet>
                 {
-                    new Bet(null, "testi", 2, 2, new DateTime(), 1)
+                    new Bet(Enums.BetResult.Unresolved, "testi", 2, 2, new DateTime(), 1)
                     {
                         BetId = 2
                     },
-                    new Bet(null, "testi", 2, 2, new DateTime(), 1)
+                    new Bet(Enums.BetResult.Unresolved, "testi", 2, 2, new DateTime(), 1)
                     {
                         BetId = 3
                     }

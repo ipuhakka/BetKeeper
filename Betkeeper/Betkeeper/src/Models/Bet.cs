@@ -28,14 +28,14 @@ namespace Betkeeper.Models
 
         // TODO: Eroon bool?:sta, käytä enumia
         public Bet(
-            bool? betResult,
+            Enums.BetResult betResult,
             string name,
             double odd,
             double stake,
             DateTime playedDate,
             int userId)
         {
-            BetResult = GetBetResult(betResult);
+            BetResult = betResult;
             Name = name;
             Odd = odd;
             Stake = stake;
