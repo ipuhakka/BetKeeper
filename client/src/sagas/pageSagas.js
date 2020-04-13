@@ -1,7 +1,8 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import _ from 'lodash';
-import * as pageApi from '../js/Requests/Page';
-import * as pageActions from '../actions/pageActions';
+import * as PageApi from '../js/Requests/Page';
+import * as PageActions from '../actions/pageActions';
+import * as PageUtils from '../js/pageUtils';
 import {setLoading} from '../actions/loadingActions';
 import {setAlertStatus} from '../actions/alertActions';
 
@@ -11,9 +12,9 @@ export function* getPage(action)
 
     try 
     {
-        const response = yield call(pageApi.getPage, action.payload.pathname);
+        const response = yield call(PageApi.getPage, action.payload.pathname);
 
-        yield call(pageActions.getPageSuccess, JSON.parse(response.responseText));
+        yield call(PageActions.getPageSuccess, JSON.parse(response.responseText));
     }
     catch (error)
     {
@@ -47,13 +48,13 @@ export function* callAction(action)
   
   try 
   {
-    const response = yield call(pageApi.postAction, page, actionName, parameters);
+    const response = yield call(PageApi.postAction, page, actionName, parameters);
   
     const pageActionResponse = JSON.parse(response.responseText);
 
     if (_.get(pageActionResponse, 'components.length', null) > 0)
     {
-      yield call(pageActions.updateComponents, page, pageActionResponse.components);
+      yield call(PageActions.updateComponents, page, pageActionResponse.components);
       return;
     }
 
@@ -64,7 +65,7 @@ export function* callAction(action)
 
     yield put(setAlertStatus(response.status, response.responseText));
 
-    pageActions.getPage(window.location.pathname);
+    PageActions.getPage(window.location.pathname);
   }
   catch (error)
   {
@@ -93,7 +94,7 @@ export function* callAction(action)
   }
 }
 
-export function* updateOptions(action)
+export function* handleServerDropdownUpdate(action)
 {
   const { payload } = action;
 
@@ -101,27 +102,33 @@ export function* updateOptions(action)
 
   try 
   {
-    const response = yield call(pageApi.updateOptions, payload, pageRoute);
+    const response = yield call(PageApi.handleServerDropdownUpdate, payload, pageRoute);
+
+    const pageKey = PageUtils.getActivePageName();
     
-    yield call(pageActions.updateOptionsSuccess, JSON.parse(response.responseText));
+    yield call(
+      PageActions.updateComponents,
+      pageKey, 
+      JSON.parse(response.responseText).components
+    );
   }
   catch (error)
   {
-    yield put(setAlertStatus(error.status, error.responseText || 'Unexpected error on updating dropdown option'));
+    yield put(setAlertStatus(error.status, error.responseText || 'Unexpected error on updating dropdown value'));
   }
 }
 
 export function* watchGetPage()
 {
-    yield takeLatest(pageActions.GET_PAGE, getPage);
+    yield takeLatest(PageActions.GET_PAGE, getPage);
 }
 
 export function* watchCallModalAction()
 {
-  yield takeLatest(pageActions.CALL_ACTION, callAction);
+  yield takeLatest(PageActions.CALL_ACTION, callAction);
 }
 
-export function* watchUpdateOptions()
+export function* watchHandleServerDropdownUpdate()
 {
-  yield takeLatest(pageActions.UPDATE_OPTIONS, updateOptions);
+  yield takeLatest(PageActions.HANDLE_SERVER_DROPDOWN_UPDATE, handleServerDropdownUpdate);
 }

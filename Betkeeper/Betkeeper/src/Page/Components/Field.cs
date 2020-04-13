@@ -108,19 +108,19 @@ namespace Betkeeper.Page.Components
         public List<Option> Options { get; }
 
         /// <summary>
-        /// Call UpdateOptions on changing dropdown value. Allows to bind dropdowns.
+        /// Keys for components to update on value change.
         /// </summary>
-        public bool UpdateOptionsOnChange { get; }
+        public List<string> ComponentsToUpdate { get; }
 
         public Dropdown(
             string componentKey,
             string label,
             List<Option> options,
-            bool updateOptionsOnChange = false)
+            List<string> componentsToUpdate = null)
             : base(componentKey, label, FieldType.Dropdown)
         {
             Options = options;
-            UpdateOptionsOnChange = updateOptionsOnChange;
+            ComponentsToUpdate = componentsToUpdate;
         }
 
         [JsonConstructor]
@@ -130,10 +130,10 @@ namespace Betkeeper.Page.Components
             List<Option> options,
             string dataKey,
             bool readOnly = false,
-            bool updateOptionsOnChange = false)
+            List<string> componentsToUpdate = null)
             : base(componentKey, label, readOnly, FieldType.Dropdown, dataKey)
         {
-            UpdateOptionsOnChange = updateOptionsOnChange;
+            ComponentsToUpdate = componentsToUpdate;
             Options = options;
         }
     }

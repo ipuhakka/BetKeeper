@@ -35,6 +35,7 @@ class Page extends Component
         this.onDataChange = this.onDataChange.bind(this);
         this.executePageAction = this.executePageAction.bind(this);
         this.executePageActionFromConfirm = this.executePageActionFromConfirm.bind(this);
+        this.handleDropdownServerUpdate = this.handleDropdownServerUpdate.bind(this);
     }
 
     componentDidMount()
@@ -62,6 +63,26 @@ class Page extends Component
                 [key]: newValue
             }
         });
+    }
+
+    /**
+     * Handles a dropdown server update.
+     * @param {string} dropdownKey 
+     * @param {*} value 
+     * @param {Array} componentsToUpdate 
+     */
+    handleDropdownServerUpdate(dropdownKey, value, componentsToUpdate)
+    {
+        const { props } = this;
+        
+        const components = _.map(componentsToUpdate, componentKey =>
+            {
+                return pageUtils.findComponentFromPage(
+                    { components: props.components },
+                    componentKey
+                );
+            })
+        pageActions.handleServerDropdownUpdate(dropdownKey, value, components);
     }
 
     /**
@@ -257,6 +278,7 @@ class Page extends Component
                 getButtonClick={this.getButtonClick.bind(this)}
                 onTableRowClick={this.navigateTo.bind(this)}
                 onFieldValueChange={this.onDataChange.bind(this)}
+                onHandleDropdownServerUpdate={this.handleDropdownServerUpdate}
                 data={props.data}/>
         </div>;
     }

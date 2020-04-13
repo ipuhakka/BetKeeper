@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import * as pageActions from '../../actions/pageActions';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import DropdownItem from 'react-bootstrap/DropdownItem';
 
@@ -49,9 +48,9 @@ class Dropdown extends Component
             activeKey: newValue
         });
 
-        if (props.updateOptionsOnChange)
+        if (_.get(props, 'componentsToUpdate.length', 0) > 0)
         {
-            pageActions.updateOptions(props.componentKey, newValue);
+            props.handleServerUpdate(props.componentKey, newValue, props.componentsToUpdate);
         }
 
         props.onChange(props.componentKey, newValue);
@@ -90,7 +89,8 @@ Dropdown.propTypes = {
     ),
     onChange: PropTypes.func,
     componentKey: PropTypes.string.isRequired,
-    updateOptionsOnChange: PropTypes.bool
+    componentsToUpdate: PropTypes.arrayOf(PropTypes.string),
+    handleServerUpdate: PropTypes.func
 };
 
 export default Dropdown;

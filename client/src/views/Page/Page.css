@@ -6,10 +6,6 @@
     display: flex;
 }
 
-.container-div div {
-    display: contents;
-}
-
 .container-div button {
     flex: 1 0 auto;
 }

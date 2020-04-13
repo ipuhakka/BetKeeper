@@ -49,8 +49,8 @@ namespace Api.Controllers
             return PageResponse.GetResponseMessage(page, (int)userId, id);
         }
 
-        [Route("api/page/updateOptions/{page}/{id}")]
-        public HttpResponseMessage UpdateOptions([FromUri]string page, int? id)
+        [Route("api/page/handleDropdownUpdate/{page}/{id}")]
+        public HttpResponseMessage HandeDropdownUpdate([FromUri]string page, int? id)
         {
             if (string.IsNullOrEmpty(page))
             {
@@ -66,9 +66,12 @@ namespace Api.Controllers
 
             var parameters = Http.GetContentAsDictionary(Request);
 
-            return PageResponse.GetPageInstance(page, id).UpdateOptions(
-                parameters,
-                id);
+            return PageResponse
+                .GetPageInstance(page, id)
+                .HandleDropdownUpdate(
+                    parameters,
+                    id
+                );
         }
     }
 }

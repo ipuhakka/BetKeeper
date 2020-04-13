@@ -57,7 +57,7 @@ export function postAction(page, action, parameters)
   });
 }
 
-export function updateOptions(requestBody, pageRoute)
+export function handleServerDropdownUpdate(requestBody, pageRoute)
 {
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
@@ -77,7 +77,7 @@ export function updateOptions(requestBody, pageRoute)
     });
 
 
-    xmlHttp.open("POST", `${ConstVars.URI}/page/updateOptions${pageRoute}`);
+    xmlHttp.open("POST", `${ConstVars.URI}/page/handleDropdownUpdate${pageRoute}`);
     xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
     xmlHttp.setRequestHeader('Content-type', 'application/json');
 

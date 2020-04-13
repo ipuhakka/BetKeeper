@@ -27,14 +27,13 @@ namespace Betkeeper.Page
         HttpResponseMessage HandleAction(PageAction action);
 
         /// <summary>
-        /// Update dropdown options. Returns a dictionary with updated dropdown key as key
-        /// and options list as value.
+        /// Handle a dropdown value update. 
+        /// Allows to change UI with dropdown value change.
         /// </summary>
-        /// <param name="dropdownKey"></param>
         /// <param name="data"></param>
         /// <param name="pageId"></param>
         /// <returns></returns>
-        HttpResponseMessage UpdateOptions(
+        HttpResponseMessage HandleDropdownUpdate(
             Dictionary<string, object> data, 
             int? pageId = null);
     }
@@ -55,6 +54,15 @@ namespace Betkeeper.Page
             Key = pageKey;
             Components = components;
             Data = data;
+        }
+
+        /// <summary>
+        /// Constructor for page response to update components.
+        /// </summary>
+        /// <param name="components"></param>
+        public PageResponse(List<Component> components)
+        {
+            Components = components;
         }
 
         public static HttpResponseMessage GetResponseMessage(

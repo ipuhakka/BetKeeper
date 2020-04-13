@@ -51,24 +51,31 @@ namespace Betkeeper.Pages
                 {
                     new Field("name", "Name", true, FieldType.TextBox, "competition.name"),
                     new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
-                    new Dropdown(
-                        "test", 
-                        "Testlabel", 
-                        new List<Option>
+                    new Container(
+                        children: new List<Component>
                         {
-                            new Option("0", "Rainbow"),
-                            new Option("1", "Dark")
+                            new Dropdown(
+                                "test",
+                                "Testlabel",
+                                new List<Option>
+                                {
+                                    new Option("0", "Rainbow"),
+                                    new Option("1", "Dark")
+                                },
+                                "test",
+                                componentsToUpdate: new List<string>{ "testUpdateContainer" }
+                            ),
+                            new Dropdown(
+                                "test2",
+                                "test 2 label",
+                                new List<Option>
+                                {
+                                    new Option("0", "Marshmellows"),
+                                    new Option("1", "Chocolate")
+                                }
+                            )
                         },
-                        "test",
-                        updateOptionsOnChange: true),
-                    new Dropdown(
-                        "test2",
-                        "test 2 label",
-                        new List<Option>
-                        {
-                            new Option("0", "Marshmellows"),
-                            new Option("1", "Chocolate")
-                        })
+                        componentKey: "testUpdateContainer")
                 }));
 
             // Results
@@ -131,36 +138,60 @@ namespace Betkeeper.Pages
             }       
         }
 
-        public HttpResponseMessage UpdateOptions(
+        public HttpResponseMessage HandleDropdownUpdate(
             Dictionary<string, object> data, 
             int? pageId = null)
         {
-            var key = data.GetString("key");
+            var componentKey = data.GetString("key");
             var value = data.GetString("value");
 
-            if (key == "test")
+            if (data.ContainsKey("components"))
             {
-                var options = new List<Option>
-                {
-                    new Option("0", "Marshmellows"),
-                    new Option("1", "Chocolate")
-                };
+                var components = ComponentParser.ParseComponents(data["components"].ToString());
 
-                if (value == "1")
+                if (componentKey == "test")
                 {
-                    options.Add(new Option("2", "Whipped cream"));
-                    options.Add(new Option("3", "Fudge"));
-                }
+                    var options = new List<Option>
+                        {
+                            new Option("0", "Marshmellows"),
+                            new Option("1", "Chocolate")
+                        };
 
-                return Http.CreateResponse(
-                    HttpStatusCode.OK,
-                    new Dictionary<string, List<Option>>
+                    if (value == "1")
                     {
-                        { "test2", options }
-                    });
+                        options.Add(new Option("2", "Whipped cream"));
+                        options.Add(new Option("3", "Fudge"));
+                    }
+
+                    var newContainer = new Container(
+                        children: new List<Component>
+                        {
+                            new Dropdown(
+                                "test",
+                                "Testlabel",
+                                new List<Option>
+                                {
+                                    new Option("0", "Rainbow"),
+                                    new Option("1", "Dark")
+                                },
+                                "test",
+                                componentsToUpdate: new List<string>{ "testUpdateContainer" }
+                            ),
+                            new Dropdown(
+                                "test2",
+                                "test 2 label",
+                                options
+                            )
+                        },
+                        componentKey: "testUpdateContainer");
+
+                    return Http.CreateResponse(
+                        HttpStatusCode.OK,
+                        new PageResponse(new List<Component> { newContainer }));
+                }
             }
 
-            throw new ArgumentException($"{key} options update not implemented");
+            throw new ArgumentException($"{data} options update not implemented");
         }
 
         private Tab GetManageBetsTab()

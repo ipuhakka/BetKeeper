@@ -2,7 +2,6 @@ import * as pageUtils from '../../src/js/pageUtils';
 
 var chai = require('chai');
 var expect = chai.expect;
-var _ = require('lodash');
 
 const tabPage = {
     key: 'page',
@@ -131,9 +130,9 @@ describe('replaceComponent', function()
             { componentKey: 'newChild' } 
         ]};
 
-        const components = pageUtils.replaceComponent(tabPage, newContainer);
+        const updatedPage = pageUtils.replaceComponent(tabPage, newContainer);
 
-        expect(components[0].tabContent[0].children[0].componentKey).to.equal('newChild');
+        expect(updatedPage.components[0].tabContent[0].children[0].componentKey).to.equal('newChild');
         done();
     });
 
@@ -158,9 +157,9 @@ describe('replaceComponent', function()
             dataKey: 'dataKey2'
         };
 
-        const components = pageUtils.replaceComponent(componentPage, newComponent);
+        const updatedPage = pageUtils.replaceComponent(componentPage, newComponent);
 
-        expect(components[0].dataKey).to.equal('dataKey2');
+        expect(updatedPage.components[0].dataKey).to.equal('dataKey2');
         done();
     });
 });

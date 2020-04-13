@@ -4,8 +4,8 @@ export const GET_PAGE = "GET_PAGE";
 export const GET_PAGE_SUCCESS = "GET_PAGE_SUCCESS";
 export const CALL_ACTION = "CALL_MODAL_ACTION";
 export const UPDATE_COMPONENTS = "UPDATE_COMPONENTS";
-export const UPDATE_OPTIONS = "UPDATE_OPTIONS";
-export const UPDATE_OPTIONS_SUCCESS = "UPDATE_OPTIONS_SUCCESS";
+export const HANDLE_SERVER_DROPDOWN_UPDATE = "HANDLE_SERVER_DROPDOWN_UPDATE";
+export const HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS = "HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS";
 
 /**
  * Get page structure.
@@ -67,24 +67,16 @@ export function getPageSuccess(structure)
  * Updates dropdown opions tied to key field.
  * @param {string} key 
  * @param {string} value
+ * @param {Array} components
  */
-export function updateOptions(key, value)
+export function handleServerDropdownUpdate(key, value, components)
 {
     store.dispatch({
-        type: UPDATE_OPTIONS,
+        type: HANDLE_SERVER_DROPDOWN_UPDATE,
         payload: {
             key,
-            value
+            value,
+            components
           }
       });
-}
-
-export function updateOptionsSuccess(response)
-{
-    store.dispatch({
-        type: UPDATE_OPTIONS_SUCCESS,
-        payload: {
-            response
-        }
-    })
 }

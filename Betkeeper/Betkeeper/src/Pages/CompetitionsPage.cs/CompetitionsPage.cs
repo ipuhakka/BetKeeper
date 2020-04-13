@@ -75,7 +75,7 @@ namespace Betkeeper.Pages
             }
         }
 
-        public HttpResponseMessage UpdateOptions(
+        public HttpResponseMessage HandleDropdownUpdate(
             Dictionary<string, object> data, 
             int? pageId = null)
         {

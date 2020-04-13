@@ -54,8 +54,9 @@ export function findComponentFromPage(page, componentKey)
 }
 
 /**
- * Replace component in page. 
- * Returns the new list of components.
+ * Replace component in page.
+ * Modifies existing page object. 
+ * Returns modified page object.
  * @param {object} page 
  * @param {object} component 
  */
@@ -76,7 +77,7 @@ export function replaceComponent(page, component)
             }
         })
 
-        return components;
+        return page;
     }
 
     const componentIndex = components.findIndex(component => component.componentKey === componentKey);
@@ -86,7 +87,7 @@ export function replaceComponent(page, component)
         components[componentIndex] = component;
     }
     
-    return components;
+    return page;
 }
 
 /**
@@ -130,4 +131,13 @@ export function getDataFromComponents(components, pageData)
     });
 
     return dataObject;
+}
+
+/**
+ * Parses the active page name from window location.
+ */
+export function getActivePageName()
+{
+    const pathname = window.location.pathname;
+    return pathname.split('page/')[1];
 }

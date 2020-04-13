@@ -42,6 +42,7 @@ class PageContent extends Component
                     case 'Field':
                         return <Field 
                             onChange={props.onFieldValueChange}
+                            onHandleDropdownServerUpdate={props.onHandleDropdownServerUpdate}
                             key={`field-${component.componentKey}`} 
                             type={component.fieldType} 
                             componentKey={component.componentKey}
@@ -76,6 +77,7 @@ PageContent.propTypes = {
     getButtonClick: PropTypes.func.isRequired,
     onTableRowClick: PropTypes.func,
     onFieldValueChange: PropTypes.func.isRequired,
+    onHandleDropdownServerUpdate: PropTypes.func,
     data: PropTypes.object
 };
 

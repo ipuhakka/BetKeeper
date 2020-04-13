@@ -133,7 +133,7 @@ class Field extends Component
 
     render()
     {
-        const { type, label } = this.props;
+        const { type, label, onHandleDropdownServerUpdate } = this.props;
 
         let input;
 
@@ -154,7 +154,10 @@ class Field extends Component
                 break;
 
             case 'Dropdown':
-                input = <Dropdown onChange={this.onChange} {...this.props}/>;
+                input = <Dropdown 
+                    onChange={this.onChange} 
+                    handleServerUpdate={onHandleDropdownServerUpdate}
+                    {...this.props}/>;
         }
 
         return <div className='input-field-wrapper'>
@@ -177,7 +180,8 @@ Field.propTypes = {
     onChange: PropTypes.func.isRequired,
     onError: PropTypes.func,
     initialValue: PropTypes.string,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    onHandleDropdownServerUpdate: PropTypes.func
 };
 
 export default Field;
