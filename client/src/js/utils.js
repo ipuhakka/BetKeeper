@@ -115,3 +115,14 @@ export function isInteger(value)
 {
   return /^\+?(0|[1-9]\d*)$/.test(value);
 }
+
+/**
+ * Returns response text either into a json object or as plain text.
+ * @param {object} response 
+ */
+export function getResponseBody(response)
+{
+  return response.getResponseHeader('content-type').includes('application/json')
+    ? JSON.parse(response.responseText)
+    : response.responseText;
+}

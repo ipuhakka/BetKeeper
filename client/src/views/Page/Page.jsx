@@ -9,6 +9,7 @@ import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Page/Modal';
 import PageContent from '../../components/Page/PageContent';
 import Info from '../../components/Info/Info.jsx';
+import * as PageUtils from '../../js/pageUtils';
 import './Page.css';
 
 class Page extends Component
@@ -128,9 +129,7 @@ class Page extends Component
                 componentKey);
         });
 
-        const pathname = window.location.pathname;
-        // Parse page name from path
-        const pageKey = pathname.split('page/')[1];
+        const pageKey = PageUtils.getActivePageName();
 
         pageActions.callAction(pageKey, action, parameters, _.isNil(onSuccessNavigateTo)
             ? null

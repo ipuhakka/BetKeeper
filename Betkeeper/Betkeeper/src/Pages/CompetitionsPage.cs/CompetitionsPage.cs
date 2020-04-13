@@ -118,7 +118,7 @@ namespace Betkeeper.Pages
                     "A tournament with specified name already exists");
             }
 
-            return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully");
+            return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully", Http.ContentType.Text);
         }
 
         private HttpResponseMessage JoinCompetition(PageAction action)
@@ -151,7 +151,8 @@ namespace Betkeeper.Pages
 
             return Http.CreateResponse(
                     HttpStatusCode.OK,
-                    "Joined competition successfullyCo");
+                    "Joined competition successfully",
+                    Http.ContentType.Text);
         }
     }
 }

@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as PageApi from '../js/Requests/Page';
 import * as PageActions from '../actions/pageActions';
 import * as PageUtils from '../js/pageUtils';
+import * as Utils from '../js/utils';
 import {setLoading} from '../actions/loadingActions';
 import {setAlertStatus} from '../actions/alertActions';
 
@@ -49,14 +50,15 @@ export function* callAction(action)
   try 
   {
     const response = yield call(PageApi.postAction, page, actionName, parameters);
-  
-    const pageActionResponse = JSON.parse(response.responseText);
+
+    const pageActionResponse = Utils.getResponseBody(response);
 
     if (_.get(pageActionResponse, 'components.length', null) > 0)
     {
       yield call(PageActions.updateComponents, page, pageActionResponse.components);
       return;
     }
+    
 
     if (!_.isNil(callback))
     {
