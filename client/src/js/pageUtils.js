@@ -20,7 +20,6 @@ export function pageUsesTabs(page)
  */
 function findFromComponents(components, componentKey)
 {
-
     /** Return component if its key matches componentKey. */
     const getMatchingComponent = (component, componentKey) => 
     {
@@ -82,40 +81,59 @@ export function findComponentFromPage(page, componentKey)
 }
 
 /**
+ * Replaces all component with matching componentKey to substituteComponent.
+ * @param {Array} components 
+ * @param {object} substituteComponent 
+ */
+function replaceInComponents(components, substituteComponent)
+{
+    /** Return substitut component if match, otherwise
+     * return component. 
+     */
+    const handleComponent = (component, componentKey) => 
+    {
+        if (component.componentKey === componentKey)
+        {
+            return substituteComponent;
+        }
+
+        return component;
+    }
+
+    for (let i = 0; i < components.length; i++)
+    {
+        components[i] = handleComponent(components[i], substituteComponent.componentKey);
+
+        if (components[i].children)
+        {
+            replaceInComponents(components[i].children, substituteComponent);
+        }
+    }
+}
+
+/**
  * Replace component in page.
  * Modifies existing page object. 
  * Returns modified page object.
  * @param {object} page 
- * @param {object} component 
+ * @param {object} component New component replacing old one.
  */
 export function replaceComponent(page, component)
 {
-    // TODO: Sama käsittely kuin komponentin etsinnälle.
-    const { components } = page;
-    const componentKey = component.componentKey;
+    let { components } = page;
 
     if (pageUsesTabs(page))
     {
         _.forEach(components, tab => 
         {
-            const componentIndex = _.findIndex(tab.tabContent, component => component.componentKey === componentKey);
-            
-            if (componentIndex !== -1)
-            {
-                tab.tabContent[componentIndex] = component;
-            }
+            replaceInComponents(tab.tabContent, component);
         })
 
         return page;
     }
 
-    const componentIndex = components.findIndex(component => component.componentKey === componentKey);
+    replaceInComponents(components, component);
 
-    if (componentIndex !== -1)
-    {
-        components[componentIndex] = component;
-    }
-    
     return page;
 }
 

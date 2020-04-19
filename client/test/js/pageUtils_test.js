@@ -112,7 +112,7 @@ describe('findComponentFromPage', function()
 
 describe('replaceComponent', function()
 {
-    const tabPage = {
+    const replaceTabPage = {
         key: 'page',
         components: [
             { 
@@ -122,14 +122,22 @@ describe('replaceComponent', function()
                     {
                         componentKey: "name",
                         dataKey: 'dataKey1',
-                        componentType: 'Container',
-                        children: [
-                            { componentKey: 'child1'}
-                        ]
+                        componentType: 'Container'
                     },
                     {
                         componentKey: "name2",
-                        dataKey: 'dataKey2.dataKey2Nested2'
+                        dataKey: 'dataKey2.dataKey2Nested2',
+                        children: [
+                            { 
+                                componentKey: 'child1',
+                                children: [
+                                    { 
+                                        componentKey: 'grandChild1',
+                                        dataKey: 'replace this'
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ] 
             },
@@ -149,7 +157,7 @@ describe('replaceComponent', function()
         ]
     }
 
-    it('replaces component on tab page', function(done)
+    it('Replaces component on tab page', function(done)
     {
         const newContainer = { 
             componentKey: 'name', 
@@ -158,13 +166,12 @@ describe('replaceComponent', function()
             { componentKey: 'newChild' } 
         ]};
 
-        const updatedPage = pageUtils.replaceComponent(tabPage, newContainer);
-
+        const updatedPage = pageUtils.replaceComponent(replaceTabPage, newContainer);
         expect(updatedPage.components[0].tabContent[0].children[0].componentKey).to.equal('newChild');
         done();
     });
 
-    it('replaces component on normal page', function(done)
+    it('Replaces component on normal page', function(done)
     {
         const componentPage = {
             key: 'page',
@@ -188,6 +195,57 @@ describe('replaceComponent', function()
         const updatedPage = pageUtils.replaceComponent(componentPage, newComponent);
 
         expect(updatedPage.components[0].dataKey).to.equal('dataKey2');
+        done();
+    });
+
+    it('Replaces component on a deeply nested page', function(done)
+    {
+        const componentPage = {
+            key: 'page',
+            components: [
+                {
+                    componentKey: "name",
+                    dataKey: 'dataKey1',
+                    children: [
+                        { 
+                            componentKey: 'child',
+                            children: [
+                                { 
+                                    componentKey: 'grandChild',
+                                    dataKey: 'grandChildDataKey1'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    componentKey: "name2",
+                    dataKey: 'dataKey2.dataKey2Nested2'
+                }
+            ]
+        }
+
+        const newComponent = { 
+            componentKey: 'grandChild', 
+            dataKey: 'grandChildDataKey2'
+        };
+
+        const updatedPage = pageUtils.replaceComponent(componentPage, newComponent);
+
+        expect(updatedPage.components[0].children[0].children[0].dataKey).to.equal('grandChildDataKey2');
+        done();
+    });
+
+    it('Replaces component on a deeply nested tab page', function(done)
+    {
+        const newComponent = { 
+            componentKey: 'grandChild1', 
+            dataKey: 'replaced datakey'
+        };
+
+        const updatedPage = pageUtils.replaceComponent(replaceTabPage, newComponent);
+
+        expect(updatedPage.components[0].tabContent[1].children[0].children[0].dataKey).to.equal('replaced datakey');
         done();
     });
 });
