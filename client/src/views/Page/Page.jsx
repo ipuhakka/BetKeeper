@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
-import * as pageActions from '../../actions/pageActions';
-import * as pageUtils from '../../js/pageUtils'; 
+import * as PageActions from '../../actions/pageActions';
+import * as PageUtils from '../../js/pageUtils'; 
 import Header from '../../components/Header/Header';
 import Menu from '../../components/Menu/Menu';
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Page/Modal';
 import PageContent from '../../components/Page/PageContent';
 import Info from '../../components/Info/Info.jsx';
-import * as PageUtils from '../../js/pageUtils';
 import './Page.css';
 
 class Page extends Component
@@ -46,7 +45,7 @@ class Page extends Component
 
         if (!_.isNil(components))
         {
-            const initialData = pageUtils.getDataFromComponents(components, data);
+            const initialData = PageUtils.getDataFromComponents(components, data);
 
             _.merge(stateData, initialData);
 
@@ -78,12 +77,13 @@ class Page extends Component
         
         const components = _.map(componentsToUpdate, componentKey =>
             {
-                return pageUtils.findComponentFromPage(
+                return PageUtils.findComponentFromPage(
                     { components: props.components },
                     componentKey
                 );
             })
-        pageActions.handleServerDropdownUpdate(dropdownKey, value, components);
+
+        PageActions.handleServerDropdownUpdate(dropdownKey, value, components);
     }
 
     /**
@@ -124,14 +124,14 @@ class Page extends Component
 
         _.forEach(componentsToInclude, componentKey => 
         {
-            parameters[componentKey] = pageUtils.findComponentFromPage(
+            parameters[componentKey] = PageUtils.findComponentFromPage(
                 { components: props.components },
                 componentKey);
         });
 
         const pageKey = PageUtils.getActivePageName();
 
-        pageActions.callAction(pageKey, action, parameters, _.isNil(onSuccessNavigateTo)
+        PageActions.callAction(pageKey, action, parameters, _.isNil(onSuccessNavigateTo)
             ? null
             : () => 
             {

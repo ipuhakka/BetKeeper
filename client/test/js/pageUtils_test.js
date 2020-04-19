@@ -12,7 +12,11 @@ const tabPage = {
             tabContent: [
                 {
                     componentKey: "name",
-                    dataKey: 'dataKey1'
+                    dataKey: 'dataKey1',
+                    children: [
+                        { componentKey: 'notMatch' },
+                        { componentKey: 'match' }
+                    ]
                 },
                 {
                     componentKey: "name2",
@@ -45,7 +49,17 @@ const componentPage = {
         },
         {
             componentKey: "name2",
-            dataKey: 'dataKey2.dataKey2Nested2'
+            dataKey: 'dataKey2.dataKey2Nested2',
+            children: [
+                { componentKey: 'child-1'},
+                { 
+                    componentKey: 'child-2',
+                    children: [
+                        { componentKey: 'grandChild-1'},
+                        { componentKey: 'grandChild-2'}
+                    ]
+                }
+            ]
         }
     ]
 }
@@ -72,6 +86,20 @@ describe('findComponentFromPage', function()
     {
         expect(pageUtils.findComponentFromPage(componentPage, "name2").componentKey).to.equal('name2');
         done();
+    });
+
+    it ('Finds child match', function(done)
+    {
+        expect(pageUtils.findComponentFromPage(tabPage, 'match').componentKey)
+            .to.equal('match');
+            done();
+    });
+
+    it('Finds grand child', function(done)
+    {
+        expect(pageUtils.findComponentFromPage(componentPage, 'grandChild-2').componentKey)
+            .to.equal('grandChild-2');
+            done();
     });
 
     it('Returns null when page not found', function(done)

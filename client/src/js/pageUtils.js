@@ -13,9 +13,49 @@ export function pageUsesTabs(page)
             && components[0].componentType === 'Tab';
 }
 
+/**
+ * Finds component based on component key from list of components.
+ * @param {Array} components 
+ * @param {string} componentKey 
+ */
+function findFromComponents(components, componentKey)
+{
+
+    /** Return component if its key matches componentKey. */
+    const getMatchingComponent = (component, componentKey) => 
+    {
+        if (component.componentKey === componentKey)
+        {
+            return component;
+        }
+    }
+
+    for (let i = 0; i < components.length; i++)
+    {
+        let match = getMatchingComponent(components[i], componentKey);
+
+        if (match)
+        {
+            return match;    
+        }
+
+        if (components[i].children)
+        {
+            match = findFromComponents(components[i].children, componentKey);
+        }
+
+        if (match)
+        {
+            return match;
+        }
+    }
+
+    return null;
+}
 
 /**
- * Finds a component with key from given page.
+ * Finds the first component with key from given page.
+ * Returns null if no match is found.
  * @param {*} page 
  * @param {*} componentKey 
  */
@@ -31,26 +71,14 @@ export function findComponentFromPage(page, componentKey)
         {
             if (_.isNil(match))
             {
-                match = _.find(tab.tabContent, component => component.componentKey === componentKey);
+                match = findFromComponents(tab.tabContent, componentKey);
             }
         })
-
-        if (_.isNil(match))
-        {
-            return null;
-        }
 
         return match;
     }
 
-    const component = components.find(component => component.componentKey === componentKey);
-
-    if (_.isNil(component))
-    {
-        return null;
-    }
-
-    return component;
+    return findFromComponents(components, componentKey);
 }
 
 /**
@@ -62,6 +90,7 @@ export function findComponentFromPage(page, componentKey)
  */
 export function replaceComponent(page, component)
 {
+    // TODO: Sama käsittely kuin komponentin etsinnälle.
     const { components } = page;
     const componentKey = component.componentKey;
 
