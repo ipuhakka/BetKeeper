@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Page.Components
 {
+    [Serializable]
     public class Table : Component
     {
         public string DataKey { get; }

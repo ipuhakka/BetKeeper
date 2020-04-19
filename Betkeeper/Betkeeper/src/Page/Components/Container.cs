@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Page.Components
@@ -6,6 +7,7 @@ namespace Betkeeper.Page.Components
     /// <summary>
     /// Component for grouping children
     /// </summary>
+    [Serializable]
     public class Container : Component
     {
 

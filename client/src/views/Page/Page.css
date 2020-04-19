@@ -2,8 +2,13 @@
     margin-bottom: 0.5em;
 }
 
-.container-div {
+.child-container-div {
+    width: 100%;
     display: flex;
+}
+
+.child-container-div .input-field-wrapper {
+    flex: 1 1 auto;
 }
 
 .container-div button {

@@ -7,9 +7,10 @@ using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page
 {
+    // TODO: Component-luokan alle staattiseksi metodiksi
     public class ComponentParser
     {
-
+        
         /// <summary>
         /// Parses a component from json.
         /// </summary>

@@ -203,10 +203,8 @@ namespace Betkeeper.Pages
                 "Manage bets",
                 new List<Component>
                 {
-                    new Container(new List<Component>
-                        {
-                            new PageActionButton("", new List<string>(), "Text")
-                        },
+                    new Container(
+                        new List<Component>(),
                         componentKey: "betTargets"),
                     new PageActionButton(
                         "AddBetContainer",
@@ -255,15 +253,35 @@ namespace Betkeeper.Pages
 
             if (betTargetContainer.Children.Count == 0)
             {
-                // TODO: Oikeat komponentit
-                var newBetTarget = new Field("key5", "Label 5", FieldType.TextArea);
+                var defaultBetTarget = new Container(
+                    new List<Component>
+                    {
+                        new Field("question-0", "Bet", FieldType.TextArea),
+                        new Field("scoring-0", "Points for correct answer", FieldType.Integer)
+                    },
+                    "bet-target-0");
 
-                betTargetContainer.Children.Add(newBetTarget);
+                betTargetContainer.Children.Add(defaultBetTarget);
             }
             else
             {
-                var newBetTarget = betTargetContainer.Children.Last();
-                // TODO: Id muutokset
+                var newIndex = betTargetContainer.Children.Count;
+
+                var previousBetTarget = betTargetContainer.Children.Last() as Container;
+
+                var newBetTarget = Component.CloneComponent<Container>(previousBetTarget);
+                newBetTarget.ComponentKey = $"bet-target-{newIndex}";
+
+                newBetTarget.Children.ForEach(child =>
+                {
+                    child.ComponentKey = child
+                    .ComponentKey
+                    .Replace(
+                        (newIndex - 1).ToString(),
+                        newIndex.ToString()
+                    );
+                });
+
                 betTargetContainer.Children.Add(newBetTarget);
             }
 

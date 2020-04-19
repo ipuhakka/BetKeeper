@@ -21,17 +21,21 @@ class PageContent extends Component
         </Tabs>;
     }
 
-    renderComponents(components, className)
+    renderComponents(components, className, depth = 0)
     {
         const { props } = this;
 
-        return <div key={className} className={className}>
+        return <div key={`${className}-${depth}`} className={className}>
             {_.map(components, (component, i) => 
             {
                 switch (component.componentType)
                 {
                     case 'Container':
-                        return this.renderComponents(component.children, 'container-div');
+                        return this.renderComponents(
+                            component.children, 
+                            className !== 'container-div' ? 'container-div' : `child-container-div child-${i}`,
+                            depth + 1
+                        );
 
                     case 'Button':
                         return <Button 
