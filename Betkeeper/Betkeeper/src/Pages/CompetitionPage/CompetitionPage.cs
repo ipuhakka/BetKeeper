@@ -189,9 +189,26 @@ namespace Betkeeper.Pages
                         HttpStatusCode.OK,
                         new PageResponse(new List<Component> { newContainer }));
                 }
+
+                if (componentKey.Contains("bet-type-"))
+                {
+                    var newTargetType = (TargetType)Enum.Parse(typeof(TargetType), value, true);
+
+                    // Get index, format of component key is bet-type-{index}
+                    var index = int.Parse(componentKey.Split('-').Last());
+
+                    return Http.CreateResponse(
+                        HttpStatusCode.OK,
+                        new PageResponse(
+                            new List<Component>
+                            {
+                                CreateTargetContainer(index, newTargetType)
+                            })
+                        );           
+                }
             }
 
-            throw new ArgumentException($"{data} options update not implemented");
+            throw new ArgumentException($"{componentKey} options update not implemented");
         }
 
         private Tab GetManageBetsTab()
@@ -253,13 +270,7 @@ namespace Betkeeper.Pages
 
             if (betTargetContainer.Children.Count == 0)
             {
-                var defaultBetTarget = new Container(
-                    new List<Component>
-                    {
-                        new Field("question-0", "Bet", FieldType.TextArea),
-                        new Field("scoring-0", "Points for correct answer", FieldType.Integer)
-                    },
-                    "bet-target-0");
+                var defaultBetTarget = CreateTargetContainer(0, TargetType.OpenQuestion);
 
                 betTargetContainer.Children.Add(defaultBetTarget);
             }
@@ -271,6 +282,10 @@ namespace Betkeeper.Pages
 
                 var newBetTarget = Component.CloneComponent<Container>(previousBetTarget);
                 newBetTarget.ComponentKey = $"bet-target-{newIndex}";
+
+                var betTypeDropdown = newBetTarget.Children.First() as Dropdown;
+
+                betTypeDropdown.ComponentsToUpdate = new List<string> { newBetTarget.ComponentKey };
 
                 newBetTarget.Children.ForEach(child =>
                 {
@@ -308,6 +323,63 @@ namespace Betkeeper.Pages
                 return Http.CreateResponse(
                     HttpStatusCode.Unauthorized,
                     "User not allowed to delete competition");
+            }
+        }
+
+        /// <summary>
+        /// Creates a target.
+        /// </summary>
+        /// <param name="index"></param>
+        private Container CreateTargetContainer(int index, TargetType targetType)
+        {
+            var options = new List<Option>
+                {
+                    new Option("result", "Result"),
+                    new Option("selection", "Selection"),
+                    new Option("openQuestion", "Open question")
+                };
+
+            var betTypeDropdown = new Dropdown(
+                "bet-type-0",
+                "Bet type",
+                options,
+                new List<string> { $"bet-target-{index}" });
+
+            // TODO: Luo oikeat komponentit
+            switch (targetType)
+            {
+                default:
+                    throw new NotImplementedException($"{targetType} container not implemented");
+
+                case TargetType.OpenQuestion:
+                    return new Container(
+                     new List<Component>
+                     {
+                        betTypeDropdown,
+                        new Field($"question-{index}", "Bet", FieldType.TextArea),
+                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
+                     },
+                     $"bet-target-{index}");
+
+                case TargetType.Result:
+                    return new Container(
+                     new List<Component>
+                     {
+                        betTypeDropdown,
+                        new Field($"question-{index}", "Bet", FieldType.TextBox),
+                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
+                     },
+                     $"bet-target-{index}");
+
+                case TargetType.Selection:
+                    return new Container(
+                     new List<Component>
+                     {
+                        betTypeDropdown,
+                        new Field($"question-{index}", "Bet", FieldType.TextBox),
+                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
+                     },
+                     $"bet-target-{index}");
             }
         }
     }

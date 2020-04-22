@@ -113,7 +113,7 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Keys for components to update on value change.
         /// </summary>
-        public List<string> ComponentsToUpdate { get; }
+        public List<string> ComponentsToUpdate { get; set; }
 
         public Dropdown(
             string componentKey,
@@ -144,6 +144,7 @@ namespace Betkeeper.Page.Components
     /// <summary>
     /// Dropdown list option class.
     /// </summary>
+    [Serializable]
     public class Option
     {
         public string Key { get; }
