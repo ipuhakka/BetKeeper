@@ -16,7 +16,7 @@ namespace Betkeeper.Pages
     /// <summary>
     /// A competition page structure.
     /// </summary>
-    public class CompetitionPage: IPage
+    public partial class CompetitionPage: IPage
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -211,26 +211,6 @@ namespace Betkeeper.Pages
             throw new ArgumentException($"{componentKey} options update not implemented");
         }
 
-        private Tab GetManageBetsTab()
-        {
-            // TODO: Hae jo olemassa olevat targetit ja 
-            // luo niille databoundeilla fieldiellä varustetu containerit
-            return new Tab(
-                "manageBets",
-                "Manage bets",
-                new List<Component>
-                {
-                    new Container(
-                        new List<Component>(),
-                        componentKey: "betTargets"),
-                    new PageActionButton(
-                        "AddBetContainer",
-                        new List<string>(),
-                        "Add bet",
-                        componentsToInclude: new List<string>{ "betTargets" })
-                });
-        }
-
         private Tab GetResultsTab(int competitionId)
         {
 
@@ -256,53 +236,6 @@ namespace Betkeeper.Pages
         //    }
         //}
 
-        /// <summary>
-        /// Adds a new target to bet container.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        private HttpResponseMessage AddBetContainer(PageAction action)
-        {
-            var betTargetsAsJObject = JObject.Parse(action.Parameters["betTargets"].ToString());
-
-            var betTargetContainer = ComponentParser
-                .ParseComponent(betTargetsAsJObject.ToString()) as Container;
-
-            if (betTargetContainer.Children.Count == 0)
-            {
-                var defaultBetTarget = CreateTargetContainer(0, TargetType.OpenQuestion);
-
-                betTargetContainer.Children.Add(defaultBetTarget);
-            }
-            else
-            {
-                var newIndex = betTargetContainer.Children.Count;
-
-                var previousBetTarget = betTargetContainer.Children.Last() as Container;
-
-                var newBetTarget = Component.CloneComponent<Container>(previousBetTarget);
-                newBetTarget.ComponentKey = $"bet-target-{newIndex}";
-
-                var betTypeDropdown = newBetTarget.Children.First() as Dropdown;
-
-                betTypeDropdown.ComponentsToUpdate = new List<string> { newBetTarget.ComponentKey };
-
-                newBetTarget.Children.ForEach(child =>
-                {
-                    child.ComponentKey = child
-                    .ComponentKey
-                    .Replace(
-                        (newIndex - 1).ToString(),
-                        newIndex.ToString()
-                    );
-                });
-
-                betTargetContainer.Children.Add(newBetTarget);
-            }
-
-            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetContainer));
-        }
-
         private HttpResponseMessage DeleteCompetition(PageAction action)
         {
             var competitionId = action.Parameters.GetInt("competitionId");
@@ -323,63 +256,6 @@ namespace Betkeeper.Pages
                 return Http.CreateResponse(
                     HttpStatusCode.Unauthorized,
                     "User not allowed to delete competition");
-            }
-        }
-
-        /// <summary>
-        /// Creates a target.
-        /// </summary>
-        /// <param name="index"></param>
-        private Container CreateTargetContainer(int index, TargetType targetType)
-        {
-            var options = new List<Option>
-                {
-                    new Option("result", "Result"),
-                    new Option("selection", "Selection"),
-                    new Option("openQuestion", "Open question")
-                };
-
-            var betTypeDropdown = new Dropdown(
-                "bet-type-0",
-                "Bet type",
-                options,
-                new List<string> { $"bet-target-{index}" });
-
-            // TODO: Luo oikeat komponentit
-            switch (targetType)
-            {
-                default:
-                    throw new NotImplementedException($"{targetType} container not implemented");
-
-                case TargetType.OpenQuestion:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextArea),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
-                     },
-                     $"bet-target-{index}");
-
-                case TargetType.Result:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
-                     },
-                     $"bet-target-{index}");
-
-                case TargetType.Selection:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Integer)
-                     },
-                     $"bet-target-{index}");
             }
         }
     }

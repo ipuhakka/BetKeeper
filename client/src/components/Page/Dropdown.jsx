@@ -11,13 +11,18 @@ class Dropdown extends Component
         super(props);
 
         this.state = {
-            activeKey: props.options[0].key
+            activeKey: _.get(props, 'options[0].key', null)
         }
     }
 
     componentDidMount()
     {
         const { props } = this;
+
+        if (props.options.length === 0)
+        {
+            return;
+        }
 
         const initialOption = _.find(props.options, option =>
             option.key === props.initialValue);
@@ -34,7 +39,8 @@ class Dropdown extends Component
         const { options } = this.props;
         const { activeKey } = this.state;
 
-        if (_.isNil(_.find(options, option => option.key === activeKey)))
+        if (options.length > 0 
+            && _.isNil(_.find(options, option => option.key === activeKey)))
         {
             this.onChange(options[0].key);
         }
@@ -70,11 +76,13 @@ class Dropdown extends Component
                     onClick={this.onChange.bind(this, option.key)} >{option.value}</DropdownItem>;
             });
 
+        const activeOption = _.find(options, option => option.key === activeKey);
+
         return (<DropdownButton 
             variant="outline-primary"
-            title={_.isNil(options[activeKey])
+            title={_.isNil(activeOption)
                 ? ''
-                : options[activeKey].value} >
+                : activeOption.value} >
                 {items}
             </DropdownButton>);
     }
