@@ -55,13 +55,14 @@ class Page extends Component
         }
     }
 
-    onDataChange(key, newValue)
+    onDataChange(path, newValue)
     {
+        let data = _.cloneDeep(this.state.data);
+
+        _.set(data, path, newValue);
+        
         this.setState({
-            data: {
-                ...this.state.data,
-                [key]: newValue
-            }
+            data
         });
     }
 
@@ -111,23 +112,26 @@ class Page extends Component
 
         _.forEach(actionDataKeys, dataKey => 
         {
-            if (!_.isNil(state.data[dataKey]))
+            const stateValue = _.get(state.data, dataKey, null);
+            if (stateValue !== null)
             {
-                parameters[dataKey] = state.data[dataKey];
+                parameters[dataKey] = stateValue;
             }
-            // parameter in page data
+            // parameter in page data props
             else 
             {
                 parameters[dataKey] = props.data[dataKey];
             }
         });
 
+        parameters.components = parameters.components || {};
+
         _.forEach(componentsToInclude, componentKey => 
-        {
-            parameters[componentKey] = PageUtils.findComponentFromPage(
-                { components: props.components },
-                componentKey);
-        });
+            {
+                parameters.components[componentKey] = PageUtils.findComponentFromPage(
+                    { components: props.components },
+                    componentKey);
+            });
 
         const pageKey = PageUtils.getActivePageName();
 

@@ -54,12 +54,15 @@ class Dropdown extends Component
             activeKey: newValue
         });
 
+        const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
+
         if (_.get(props, 'componentsToUpdate.length', 0) > 0)
         {
+            /** Join dataPath and component key */
             props.handleServerUpdate(props.componentKey, newValue, props.componentsToUpdate);
         }
 
-        props.onChange(props.componentKey, newValue);
+        props.onChange(dataPath, newValue);
     }
 
     render()
@@ -98,7 +101,10 @@ Dropdown.propTypes = {
     onChange: PropTypes.func,
     componentKey: PropTypes.string.isRequired,
     componentsToUpdate: PropTypes.arrayOf(PropTypes.string),
-    handleServerUpdate: PropTypes.func
+    handleServerUpdate: PropTypes.func,
+    /** Path consisting of parent Container splitted by '.'. 
+     * Used to set data to correct path.  */
+    dataPath: PropTypes.string
 };
 
 export default Dropdown;

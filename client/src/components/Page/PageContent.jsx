@@ -21,7 +21,7 @@ class PageContent extends Component
         </Tabs>;
     }
 
-    renderComponents(components, className, depth = 0)
+    renderComponents(components, className, depth = 0, dataPath = null)
     {
         const { props } = this;
 
@@ -34,7 +34,9 @@ class PageContent extends Component
                         return this.renderComponents(
                             component.children, 
                             className !== 'container-div' ? 'container-div' : `child-container-div child-${i}`,
-                            depth + 1
+                            depth + 1,
+                            /** Datapath */
+                            _.compact([dataPath, component.componentKey]).join('.')
                         );
 
                     case 'Button':
@@ -50,7 +52,8 @@ class PageContent extends Component
                             key={`field-${component.componentKey}`} 
                             type={component.fieldType} 
                             componentKey={component.componentKey}
-                            initialValue={_.get(props.data, component.dataKey, '')} 
+                            initialValue={_.get(props.data, component.dataKey, '')}
+                            dataPath={dataPath} 
                             {...component} />;
 
                     case 'Table':

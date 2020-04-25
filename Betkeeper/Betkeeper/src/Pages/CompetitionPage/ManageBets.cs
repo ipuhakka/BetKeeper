@@ -31,7 +31,7 @@ namespace Betkeeper.Pages
                         componentKey: "betTargets"),
                     new PageActionButton(
                         "AddBetContainer",
-                        new List<string>(),
+                        new List<string>{ "betTargets" },
                         "Add bet",
                         componentsToInclude: new List<string>{ "betTargets" })
                 });
@@ -48,7 +48,9 @@ namespace Betkeeper.Pages
             // Edellisen arvoa ei tiedetä. Näin ollen uusi container luodaan aina result-tyyppisenä.
             // Kun sisäkkäiset data-objektit mahdollistetaan tämä tulisi muuttaa katsomaan edellinen valinta datasta,
             // ei edellisestä komponentista.
-            var betTargetsAsJObject = JObject.Parse(action.Parameters["betTargets"].ToString());
+            var components = JObject.Parse(action.Parameters["components"].ToString());
+
+            var betTargetsAsJObject = components["betTargets"];
 
             var betTargetContainer = ComponentParser
                 .ParseComponent(betTargetsAsJObject.ToString()) as Container;

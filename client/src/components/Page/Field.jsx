@@ -56,7 +56,7 @@ class Field extends Component
     }
 
     /**
-     * On change event. Calls prop change handler with key and new value parameters.
+     * On change event. Calls prop change handler with data path and new value parameters.
      */
     onChange(newValue)
     {
@@ -76,8 +76,11 @@ class Field extends Component
             const dataValue = props.type === 'DateTime'
                 ? moment(newValue).utc()
                 : newValue;
+                
+            /** Join dataPath and component key */
+            const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
 
-            props.onChange(props.componentKey, dataValue);
+            props.onChange(dataPath, dataValue);
         }
         else 
         {
@@ -181,7 +184,9 @@ Field.propTypes = {
     onError: PropTypes.func,
     initialValue: PropTypes.string,
     readOnly: PropTypes.bool,
-    onHandleDropdownServerUpdate: PropTypes.func
+    onHandleDropdownServerUpdate: PropTypes.func,
+    /** Parent container component keys joined with '.' Defines data path where components value is stored. */
+    dataPath: PropTypes.string
 };
 
 export default Field;
