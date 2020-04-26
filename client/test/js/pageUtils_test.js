@@ -279,3 +279,63 @@ describe('getDataFromComponents', function()
         done();
     });
 });
+
+describe('getActionData', function()
+{
+    it('Ignores undefined and null values', function(done)
+    {
+        const testData = {
+            key1: null,
+            key2: undefined
+        };
+        
+        const parameters = pageUtils.getActionData(testData, ['key1', 'key2', 'key3'], [], []);
+
+        // Not interested in components, drop
+        delete parameters.components;
+
+        expect(Object.keys(parameters).length).to.equal(0);
+        done();
+    })
+
+    it('Works on single level data object', function(done)
+    {
+        const testData = {
+            key1: 2,
+            key2: 'string',
+            key3: 4
+        }
+
+        const parameters = pageUtils.getActionData(testData, ['key2', 'key3'], [], []);
+
+        // Not interested in components, drop
+        delete parameters.components;
+
+        expect(Object.keys(parameters).length).to.equal(2);
+        expect(parameters.key2).to.equal('string');
+        expect(parameters.key3).to.equal(4);
+        done();
+    });
+
+    it('Works on multi level data object', function(done)
+    {
+        const testData = {
+            key1: 2,
+            parentKey: {
+                betTargets: [
+                    { target1: 1 }
+                ]
+            }
+        };
+
+        const parameters = pageUtils.getActionData(testData, ['betTargets'], [], []);
+
+        // Not interested in components, drop
+        delete parameters.components;
+
+        expect(Object.keys(parameters).length).to.equal(1);
+        expect(parameters.betTargets[0].target1).to.equal(1);
+
+        done();
+    });
+});

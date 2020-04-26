@@ -126,3 +126,45 @@ export function getResponseBody(response)
     ? JSON.parse(response.responseText)
     : response.responseText;
 }
+
+/**
+ * Returns key's value from data.
+ * Returns null if data is not an object, or no match is found.
+ * @param {object} data 
+ * @param {string} key 
+ */
+export function findNestedValue(data, key)
+{
+  if (!isObject(data))
+  {
+    return null;
+  }
+
+  if (!_.isNil(data[key]))
+  {
+    return data[key];
+  }
+
+  const keys = Object.keys(data);
+
+  for (let i = 0; i < keys.length; i++)
+  {
+    const value = findNestedValue(data[keys[i]], key);
+
+    if (!_.isNil(value))
+    {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Checks if value is object.
+ * @param {*} value 
+ */
+function isObject(value)
+{
+  return value && typeof value === 'object' && value.constructor === Object;
+}

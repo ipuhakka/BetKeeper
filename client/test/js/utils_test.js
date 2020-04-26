@@ -1,5 +1,8 @@
 import moment from 'moment';
-import {isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime, camelCaseToText} from '../../src/js/utils';
+import {
+  isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime, camelCaseToText, findNestedValue
+} 
+  from '../../src/js/utils';
 
 var chai = require('chai');
 var expect = chai.expect;
@@ -177,4 +180,37 @@ describe('deepCopy', function(){
 
     done();
   });
-})
+});
+
+describe('findNestedValue', function()
+{
+  it('Finds value from a single level object', function(done)
+  {
+    const testObject = {
+      key1: 2,
+      key2: null,
+      find: 'found'
+    }
+
+    expect(findNestedValue(testObject, 'find')).to.equal('found');
+    done();
+  });
+
+  it('Finds value from nested object', function(done)
+  {
+    const testObject = {
+      key1: 3,
+      key2: {
+        nestedKey1: {},
+        nestedKey2: {
+          nestedNestedKey1: {
+            find: 'found'
+          }
+        }
+      }
+    };
+    
+    expect(findNestedValue(testObject, 'find')).to.equal('found');
+    done();
+  });
+});

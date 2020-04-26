@@ -55,15 +55,18 @@ class Page extends Component
         }
     }
 
+    /**
+     * Handles data change
+     * @param {string} path Variable key path. 
+     * @param {*} newValue 
+     */
     onDataChange(path, newValue)
     {
         let data = _.cloneDeep(this.state.data);
 
         _.set(data, path, newValue);
         
-        this.setState({
-            data
-        });
+        this.setState({ data });
     }
 
     /**
@@ -108,30 +111,12 @@ class Page extends Component
     {
         const { state, props } = this;
 
-        const parameters = {};
+        const data = _.merge(
+            _.cloneDeep(state.data),
+            _.cloneDeep(props.data)
+        );
 
-        _.forEach(actionDataKeys, dataKey => 
-        {
-            const stateValue = _.get(state.data, dataKey, null);
-            if (stateValue !== null)
-            {
-                parameters[dataKey] = stateValue;
-            }
-            // parameter in page data props
-            else 
-            {
-                parameters[dataKey] = props.data[dataKey];
-            }
-        });
-
-        parameters.components = parameters.components || {};
-
-        _.forEach(componentsToInclude, componentKey => 
-            {
-                parameters.components[componentKey] = PageUtils.findComponentFromPage(
-                    { components: props.components },
-                    componentKey);
-            });
+        const parameters = PageUtils.getActionData(data, actionDataKeys, props.components, componentsToInclude);
 
         const pageKey = PageUtils.getActivePageName();
 

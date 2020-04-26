@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import * as Utils from './utils';
 
 /**
  * Checks if page uses tabs.
@@ -187,4 +188,48 @@ export function getActivePageName()
 {
     const pathname = window.location.pathname;
     return pathname.split('page/')[1];
+}
+
+/**
+ * Returns data object from actionDataKeys of data, and components included in action.
+ * Returned object:
+ * {
+ *  dataKey: 'data',
+ *  dataKey2: 'data',
+ *  components: 
+ *      {
+ *          componentKey: {componentType: 'compType'}
+ *      }
+ * }
+ * @param {object} data 
+ * @param {Array} actionDataKeys
+ * @param {Array} components
+ * @param {Array} componentsToInclude 
+ */
+export function getActionData(data, actionDataKeys, components, componentsToInclude)
+{
+    const parameters = {};
+
+    // TODO: Toimii tällä hetkellä vain objektimuotoisella datalla. Mikäli välissä
+    // taulukko, sieltä ei löydetä haluttua avainta.
+    _.forEach(actionDataKeys, dataKey => 
+    {
+        const value = Utils.findNestedValue(data, dataKey);
+
+        if (!_.isNil(value))
+        {
+            parameters[dataKey] = value;
+        }
+    });
+
+    parameters.components = parameters.components || {};
+
+    _.forEach(componentsToInclude, componentKey => 
+        {
+            parameters.components[componentKey] = findComponentFromPage(
+                { components: components },
+                componentKey);
+        });
+
+    return parameters;
 }
