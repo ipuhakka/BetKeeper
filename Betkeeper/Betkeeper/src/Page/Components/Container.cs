@@ -13,10 +13,17 @@ namespace Betkeeper.Page.Components
 
         public List<Component> Children { get; set; }
 
-        public Container(List<Component> children, string componentKey = null)
+        /// <summary>
+        /// How data is stored client side. 
+        /// If true, container child data is stored as an array.
+        /// </summary>
+        public bool StoreDataAsArray { get; set; }
+
+        public Container(List<Component> children, string componentKey = null, bool storeDataAsArray = false)
             : base(ComponentType.Container, componentKey)
         {
             Children = children;
+            StoreDataAsArray = storeDataAsArray;
         }
 
         public static Container Parse(JObject asJObject)

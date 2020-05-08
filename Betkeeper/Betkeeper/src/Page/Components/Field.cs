@@ -124,6 +124,7 @@ namespace Betkeeper.Page.Components
         {
             Options = options;
             ComponentsToUpdate = componentsToUpdate;
+            // TODO: InitialValue
         }
 
         [JsonConstructor]
@@ -151,10 +152,13 @@ namespace Betkeeper.Page.Components
 
         public string Value { get; }
 
-        public Option(string key, string value)
+        public bool InitialValue { get; set; }
+
+        public Option(string key, string value, bool initialValue = false)
         {
             Key = key;
             Value = value;
+            InitialValue = initialValue;
         }
     }
 }

@@ -56,7 +56,8 @@ class Page extends Component
     }
 
     /**
-     * Handles data change
+     * Handles data change. Data is stored as a nested object. Containers store its child data in inner object.
+     * If container actually stores data as array, its data needs to be converted to array when getting action parameters.
      * @param {string} path Variable key path. 
      * @param {*} newValue 
      */

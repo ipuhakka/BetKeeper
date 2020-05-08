@@ -164,7 +164,7 @@ export function findNestedValue(data, key)
  * Checks if value is object.
  * @param {*} value 
  */
-function isObject(value)
+export function isObject(value)
 {
   return value && typeof value === 'object' && value.constructor === Object;
 }

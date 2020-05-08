@@ -28,7 +28,8 @@ namespace Betkeeper.Pages
                 {
                     new Container(
                         new List<Component>(),
-                        componentKey: "betTargets"),
+                        componentKey: "betTargets",
+                        storeDataAsArray: true),
                     new PageActionButton(
                         "AddBetContainer",
                         new List<string>{ "betTargets" },
@@ -44,10 +45,6 @@ namespace Betkeeper.Pages
         /// <returns></returns>
         private HttpResponseMessage AddBetContainer(PageAction action)
         {
-            // TODO: Initialvalueta ei voida asettaa bet-type-dropdownille koska
-            // Edellisen arvoa ei tiedetä. Näin ollen uusi container luodaan aina result-tyyppisenä.
-            // Kun sisäkkäiset data-objektit mahdollistetaan tämä tulisi muuttaa katsomaan edellinen valinta datasta,
-            // ei edellisestä komponentista.
             var components = JObject.Parse(action.Parameters["components"].ToString());
 
             var betTargetsAsJObject = components["betTargets"];
@@ -55,7 +52,11 @@ namespace Betkeeper.Pages
             var betTargetContainer = ComponentParser
                 .ParseComponent(betTargetsAsJObject.ToString()) as Container;
 
-            if (betTargetContainer.Children.Count == 0)
+            var betTargetData = action.Parameters.ContainsKey("betTargets")
+                ? action.Parameters?["betTargets"] as JArray
+                : null;
+
+            if (betTargetData == null || betTargetData.Count == 0)
             {
                 var defaultBetTarget = CreateTargetContainer(0, TargetType.OpenQuestion);
 
@@ -71,7 +72,7 @@ namespace Betkeeper.Pages
                             requireConfirm: true),
                         new PageActionButton(
                             "saveBetTargets",
-                            new List<string>(),
+                            new List<string>{ "betTargets" },
                             "Save bet targets",
                             requireConfirm: true)
                     }));
@@ -80,28 +81,12 @@ namespace Betkeeper.Pages
             }
             else
             {
-                // Remove Save-cancel container from count
-                var newIndex = betTargetContainer.Children.Count - 1;
+                var betTargetCount = betTargetData.Count;
 
-                var previousBetTarget = betTargetContainer.Children.Last() as Container;
+                var previouslyCreatedTargetTypeAsString = betTargetData.Last()[$"bet-target-{betTargetCount - 1}"][$"bet-type-{betTargetCount - 1}"].ToObject<string>();
 
-                var newBetTarget = Component.CloneComponent<Container>(previousBetTarget);
-                newBetTarget.ComponentKey = $"bet-target-{newIndex}";
-
-                newBetTarget.Children.ForEach(child =>
-                {
-                    child.ComponentKey = child
-                    .ComponentKey
-                    .Replace(
-                        (newIndex - 1).ToString(),
-                        newIndex.ToString()
-                    );
-                });
-
-                var betTypeDropdown = newBetTarget.Children.First() as Dropdown;
-
-                betTypeDropdown.ComponentsToUpdate = new List<string> { newBetTarget.ComponentKey };
-
+                var newTargetType = EnumHelper.FromString<TargetType>(previouslyCreatedTargetTypeAsString);
+                var newBetTarget = CreateTargetContainer(betTargetCount, newTargetType);
                 betTargetContainer.Children.Add(newBetTarget);
             }
 
@@ -116,9 +101,9 @@ namespace Betkeeper.Pages
         {
             var options = new List<Option>
                 {
-                    new Option("result", "Result"),
-                    new Option("selection", "Selection"),
-                    new Option("openQuestion", "Open question")
+                    new Option("result", "Result", initialValue: targetType == TargetType.Result),
+                    new Option("selection", "Selection", initialValue: targetType == TargetType.Selection),
+                    new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion)
                 };
 
             var betTypeDropdown = new Dropdown(
@@ -127,7 +112,6 @@ namespace Betkeeper.Pages
                 options,
                 new List<string> { $"bet-target-{index}" });
 
-            // TODO: Luo oikeat komponentit
             switch (targetType)
             {
                 default:
@@ -155,7 +139,6 @@ namespace Betkeeper.Pages
                      $"bet-target-{index}");
 
                 case TargetType.Selection:
-                    // TODO: Modaali jolla lisätään valinnat
                     return new Container(
                      new List<Component>
                      {

@@ -60,7 +60,7 @@ namespace Betkeeper.Pages
                                 new List<Option>
                                 {
                                     new Option("0", "Rainbow"),
-                                    new Option("1", "Dark")
+                                    new Option("1", "Dark", initialValue: true)
                                 },
                                 "test",
                                 componentsToUpdate: new List<string>{ "testUpdateContainer" }
@@ -71,7 +71,9 @@ namespace Betkeeper.Pages
                                 new List<Option>
                                 {
                                     new Option("0", "Marshmellows"),
-                                    new Option("1", "Chocolate")
+                                    new Option("1", "Chocolate"),
+                                    new Option("2", "Whipped cream"),
+                                    new Option("3", "Fudge")
                                 }
                             )
                         },
@@ -114,7 +116,6 @@ namespace Betkeeper.Pages
 
             data.Add("CompetitionId", competitionId);
             data.Add("Competition", CompetitionAction.GetCompetition(competitionId));
-            data.Add("Test", "1");
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,

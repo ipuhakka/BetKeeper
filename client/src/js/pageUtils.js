@@ -201,6 +201,8 @@ export function getActivePageName()
  *          componentKey: {componentType: 'compType'}
  *      }
  * }
+ * 
+ * If data's component is container which stores its data as array, value is converted to array.
  * @param {object} data 
  * @param {Array} actionDataKeys
  * @param {Array} components
@@ -209,9 +211,7 @@ export function getActivePageName()
 export function getActionData(data, actionDataKeys, components, componentsToInclude)
 {
     const parameters = {};
-
-    // TODO: Toimii tällä hetkellä vain objektimuotoisella datalla. Mikäli välissä
-    // taulukko, sieltä ei löydetä haluttua avainta.
+    
     _.forEach(actionDataKeys, dataKey => 
     {
         const value = Utils.findNestedValue(data, dataKey);
@@ -219,6 +219,19 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
         if (!_.isNil(value))
         {
             parameters[dataKey] = value;
+        }
+
+        // Data contains only nested objects. If component actually stores data as array, convert object to array.
+        const component = findComponentFromPage({ components: components}, dataKey);
+
+        if (component.storeDataAsArray && Utils.isObject(value))
+        {
+            const array = _.map(Object.keys(value), key => 
+            {
+                return { [key]: value[key]};
+            });
+
+            parameters[dataKey] = array;
         }
     });
 

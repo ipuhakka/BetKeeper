@@ -13,25 +13,28 @@ class Dropdown extends Component
         this.state = {
             activeKey: _.get(props, 'options[0].key', null)
         }
+
+        this.onChange = this.onChange.bind(this);
     }
 
     componentDidMount()
     {
-        const { props } = this;
+        const { options } = this.props;
 
-        if (props.options.length === 0)
+        if (!options || options.length === 0)
         {
             return;
         }
 
-        const initialOption = _.find(props.options, option =>
-            option.key === props.initialValue);
+        // Check if an option is declared as initialvalue
+        const initialOption = _.find(options, option => option.initialValue);
 
-        const initialValue = _.isNil(initialOption)
-            ? props.options[0].key
-            : initialOption.key;
+        const initialOptionKey = !_.isNil(initialOption)
+            ? initialOption.key
+            : options[0].key;
 
-        this.onChange(initialValue);
+        // Ignore server update on mounting
+        this.onChange(initialOptionKey, true);
     }
 
     componentDidUpdate()
@@ -42,11 +45,16 @@ class Dropdown extends Component
         if (options.length > 0 
             && _.isNil(_.find(options, option => option.key === activeKey)))
         {
-            this.onChange(options[0].key);
+            this.onChange(options[0].key, true);
         }
     }
 
-    onChange(newValue)
+    /**
+     * Handles value change
+     * @param {*} newValue 
+     * @param {boolean} ignoreServerUpdate 
+     */
+    onChange(newValue, ignoreServerUpdate)
     {
         const { props } = this;
 
@@ -56,7 +64,7 @@ class Dropdown extends Component
 
         const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
 
-        if (_.get(props, 'componentsToUpdate.length', 0) > 0)
+        if (!ignoreServerUpdate && _.get(props, 'componentsToUpdate.length', 0) > 0)
         {
             /** Join dataPath and component key */
             props.handleServerUpdate(props.componentKey, newValue, props.componentsToUpdate);
@@ -76,7 +84,11 @@ class Dropdown extends Component
                 return <DropdownItem 
                     active={option.key === activeKey} 
                     key={option.key}
-                    onClick={this.onChange.bind(this, option.key)} >{option.value}</DropdownItem>;
+                    onClick={() => 
+                        {
+                            this.onChange(option.key);
+                        }} 
+                    >{option.value}</DropdownItem>;
             });
 
         const activeOption = _.find(options, option => option.key === activeKey);
@@ -95,7 +107,8 @@ Dropdown.propTypes = {
     options: PropTypes.arrayOf(
         PropTypes.shape({
             key: PropTypes.string.isRequired,
-            value: PropTypes.string.isRequired
+            value: PropTypes.string.isRequired,
+            initialValue: PropTypes.bool.isRequired
         })
     ),
     onChange: PropTypes.func,
