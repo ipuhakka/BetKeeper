@@ -144,7 +144,7 @@ namespace Betkeeper.Pages
                      {
                         betTypeDropdown,
                         new Field($"question-{index}", "Bet", FieldType.TextBox),
-                        new Dropdown($"selection-{index}", "Selections", new List<Option>()),
+                        new InputDropdown($"selection-{index}", "Selections"),
                         new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
                      },
                      $"bet-target-{index}");

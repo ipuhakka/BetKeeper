@@ -288,8 +288,14 @@ describe('getActionData', function()
             key1: null,
             key2: undefined
         };
+
+        const components = [
+            { componentKey: 'key1', storeDataAsArray: false},
+            { componentKey: 'key2', storeDataAsArray: false},
+            { componentKey: 'key3', storeDataAsArray: false}
+        ];
         
-        const parameters = pageUtils.getActionData(testData, ['key1', 'key2', 'key3'], [], []);
+        const parameters = pageUtils.getActionData(testData, ['key1', 'key2', 'key3'], components, []);
 
         // Not interested in components, drop
         delete parameters.components;
@@ -303,17 +309,22 @@ describe('getActionData', function()
         const testData = {
             key1: 2,
             key2: 'string',
-            key3: 4
+            key3: { someKey: 1, someOtherKey: 2 }
         }
 
-        const parameters = pageUtils.getActionData(testData, ['key2', 'key3'], [], []);
+        const components = [
+            { componentKey: 'key2', storeDataAsArray: false },
+            { componentKey: 'key3', storeDataAsArray: true },
+        ]
+
+        const parameters = pageUtils.getActionData(testData, ['key2', 'key3'], components, []);
 
         // Not interested in components, drop
         delete parameters.components;
 
         expect(Object.keys(parameters).length).to.equal(2);
         expect(parameters.key2).to.equal('string');
-        expect(parameters.key3).to.equal(4);
+        expect(parameters.key3.length).to.equal(2);
         done();
     });
 
@@ -322,19 +333,24 @@ describe('getActionData', function()
         const testData = {
             key1: 2,
             parentKey: {
-                betTargets: [
-                    { target1: 1 }
-                ]
+                betTargets: {
+                    target1: 1,
+                    target2: 2
+                }
             }
         };
 
-        const parameters = pageUtils.getActionData(testData, ['betTargets'], [], []);
+        const components = [
+            { componentKey: 'betTargets', storeDataAsArray: true}
+        ];
+
+        const parameters = pageUtils.getActionData(testData, ['betTargets'], components, []);
 
         // Not interested in components, drop
         delete parameters.components;
 
         expect(Object.keys(parameters).length).to.equal(1);
-        expect(parameters.betTargets[0].target1).to.equal(1);
+        expect(parameters.betTargets.length).to.equal(2);
 
         done();
     });

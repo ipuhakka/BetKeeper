@@ -8,6 +8,7 @@ import Dropdown from './Dropdown';
 import consts from '../../js/consts';
 import * as utils from '../../js/utils';
 import './Field.css';
+import InputDropdown from './InputDropdown';
 
 class Field extends Component
 {
@@ -101,7 +102,7 @@ class Field extends Component
             className='datetime-input'
             selected={this.state.value}
             showTimeSelect
-            timeFormat="HH:mm"
+            timeFormat='HH:mm'
             timeIntervals={30}
             minDate={minDate}
             isClearable
@@ -136,7 +137,7 @@ class Field extends Component
 
     render()
     {
-        const { type, label, onHandleDropdownServerUpdate } = this.props;
+        const { type, label, onHandleDropdownServerUpdate, componentKey } = this.props;
 
         let input;
 
@@ -145,8 +146,8 @@ class Field extends Component
             default: 
                 throw new Error(`Non implemented input type ${type}`);
 
-            case "Integer":
-            case "Double":
+            case 'Integer':
+            case 'Double':
             case 'TextArea':
             case 'TextBox':
                 input = this.renderInput();
@@ -161,6 +162,15 @@ class Field extends Component
                     onChange={this.onChange} 
                     handleServerUpdate={onHandleDropdownServerUpdate}
                     {...this.props}/>;
+                    break;
+
+            case 'InputDropdown':
+                input = <InputDropdown 
+                    onChange={this.onChange} 
+                    label={label}
+                    componentKey={componentKey}/>;
+                    break;
+
         }
 
         return <div className='input-field-wrapper'>
@@ -172,12 +182,13 @@ class Field extends Component
 
 Field.propTypes = {
     type: PropTypes.oneOf([
-        "Integer", 
-        "Double", 
-        "DateTime", 
-        "TextBox", 
-        "TextArea",
-        "Dropdown"]).isRequired,
+        'Integer', 
+        'Double', 
+        'DateTime', 
+        'TextBox', 
+        'TextArea',
+        'Dropdown',
+        'InputDropdown']).isRequired,
     label: PropTypes.string.isRequired,
     componentKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,

@@ -26,3 +26,28 @@
 .datetime-input {
     width: 100%;
 }
+
+
+/* InputDropdown styles*/
+.add-options-item {
+    display: flex;
+}
+
+.add-selection-item {
+    border-top: .5px solid gray;
+    border-bottom: .5px solid gray;
+}
+
+.add-selection-item-inner-div {
+    display: flex;
+    align-items: baseline;
+}
+
+.add-selection-item-text {
+    flex: 1 0 100%;
+    margin: 0;
+}
+
+.add-selection-item-remove:hover {
+    color: #e2e5ea;
+}

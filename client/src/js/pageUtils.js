@@ -221,7 +221,7 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
             parameters[dataKey] = value;
         }
 
-        // Data contains only nested objects. If component actually stores data as array, convert object to array.
+        // Data contains only nested objects (except for InputDropdown arrays). If component actually stores data as array, convert object to array.
         const component = findComponentFromPage({ components: components}, dataKey);
 
         if (component.storeDataAsArray && Utils.isObject(value))

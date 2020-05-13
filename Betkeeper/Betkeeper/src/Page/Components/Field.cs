@@ -13,7 +13,8 @@ namespace Betkeeper.Page.Components
         Double,
         TextBox,
         TextArea,
-        Dropdown
+        Dropdown,
+        InputDropdown
     }
 
     [Serializable]
@@ -124,7 +125,6 @@ namespace Betkeeper.Page.Components
         {
             Options = options;
             ComponentsToUpdate = componentsToUpdate;
-            // TODO: InitialValue
         }
 
         [JsonConstructor]
@@ -139,6 +139,19 @@ namespace Betkeeper.Page.Components
         {
             ComponentsToUpdate = componentsToUpdate;
             Options = options;
+        }
+    }
+
+    /// <summary>
+    /// Class for dropdown which is used to input selections
+    /// </summary>
+    [Serializable]
+    public class InputDropdown : Field
+    {
+        public InputDropdown(string componentKey, string label)
+            :base(componentKey, label, FieldType.InputDropdown)
+        {
+
         }
     }
 
