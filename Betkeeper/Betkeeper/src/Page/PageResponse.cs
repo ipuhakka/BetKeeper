@@ -40,7 +40,7 @@ namespace Betkeeper.Page
 
     public class PageResponse
     {
-        public string Key { get; set; }
+        public string PageKey { get; set; }
 
         public List<Component> Components { get; set; }
 
@@ -51,7 +51,7 @@ namespace Betkeeper.Page
             List<Component> components,
             Dictionary<string, object> data)
         {
-            Key = pageKey;
+            PageKey = pageKey;
             Components = components;
             Data = data;
         }

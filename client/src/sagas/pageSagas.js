@@ -59,7 +59,6 @@ export function* callAction(action)
       return;
     }
     
-
     if (!_.isNil(callback))
     {
       callback();

@@ -211,7 +211,7 @@ export function getActivePageName()
 export function getActionData(data, actionDataKeys, components, componentsToInclude)
 {
     const parameters = {};
-    
+
     _.forEach(actionDataKeys, dataKey => 
     {
         const value = Utils.findNestedValue(data, dataKey);
@@ -224,7 +224,8 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
         // Data contains only nested objects (except for InputDropdown arrays). If component actually stores data as array, convert object to array.
         const component = findComponentFromPage({ components: components}, dataKey);
 
-        if (component.storeDataAsArray && Utils.isObject(value))
+        // All data is not bound to a component, check if component is found.
+        if (component && component.storeDataAsArray && Utils.isObject(value))
         {
             const array = _.map(Object.keys(value), key => 
             {

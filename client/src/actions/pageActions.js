@@ -6,6 +6,7 @@ export const CALL_ACTION = "CALL_MODAL_ACTION";
 export const UPDATE_COMPONENTS = "UPDATE_COMPONENTS";
 export const HANDLE_SERVER_DROPDOWN_UPDATE = "HANDLE_SERVER_DROPDOWN_UPDATE";
 export const HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS = "HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS";
+export const DATA_CHANGE = "DATA_CHANGE";
 
 /**
  * Get page structure.
@@ -77,6 +78,24 @@ export function handleServerDropdownUpdate(key, value, components)
             key,
             value,
             components
+          }
+      });
+}
+
+/**
+ * Handle page data change.
+ * @param {string} pageKey Page key.
+ * @param {string} dataKeyPath Path for new data key.
+ * @param {*} newValue new value to place in datakey path.
+ */
+export function onDataChange(pageKey, dataKeyPath, newValue)
+{
+    store.dispatch({
+        type: DATA_CHANGE,
+        payload: {
+            pageKey,
+            dataKeyPath,
+            newValue
           }
       });
 }

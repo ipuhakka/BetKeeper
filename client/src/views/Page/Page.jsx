@@ -20,7 +20,6 @@ class Page extends Component
 		this.state = {
             actionModalOpen: false,
             actionModalProps: {},
-            data: {},
             confirm: {
                 show: false,
                 action: '',
@@ -38,23 +37,6 @@ class Page extends Component
         this.handleDropdownServerUpdate = this.handleDropdownServerUpdate.bind(this);
     }
 
-    componentDidMount()
-    {
-        const { components, data } = this.props;
-        const stateData = _.cloneDeep(this.state.data);
-
-        if (!_.isNil(components))
-        {
-            const initialData = PageUtils.getDataFromComponents(components, data);
-
-            _.merge(stateData, initialData);
-
-            this.setState({
-                data: stateData
-            });
-        }
-    }
-
     /**
      * Handles data change. Data is stored as a nested object. Containers store its child data in inner object.
      * If container actually stores data as array, its data needs to be converted to array when getting action parameters.
@@ -63,11 +45,7 @@ class Page extends Component
      */
     onDataChange(path, newValue)
     {
-        let data = _.cloneDeep(this.state.data);
-
-        _.set(data, path, newValue);
-        
-        this.setState({ data });
+        PageActions.onDataChange(this.props.pageKey, path, newValue);
     }
 
     /**
@@ -110,12 +88,9 @@ class Page extends Component
      */
     executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
     {
-        const { state, props } = this;
+        const { props } = this;
 
-        const data = _.merge(
-            _.cloneDeep(state.data),
-            _.cloneDeep(props.data)
-        );
+        const data = props.data;
 
         const parameters = PageUtils.getActionData(data, actionDataKeys, props.components, componentsToInclude);
 
@@ -191,6 +166,10 @@ class Page extends Component
         });
     }
 
+    /**
+     * Navigates to a given address
+     * @param {string} address 
+     */
     navigateTo(address)
     {
         this.props.history.push(address);
@@ -219,19 +198,27 @@ class Page extends Component
 
         return null;
     }
+
+    /** 
+     * Closes confirm.
+     */
+    closeConfirm()
+    {
+        this.setState({
+            confirm: {
+                show: false,
+                action: '',
+                actionDataKeys: [],
+                header: ''
+            }
+        });
+    }
     
     render()
     {
         const { state, props } = this;
 
-        const pathname = window.location.pathname;
-        // Parse page name from path and convert first char to upper
-        let pageKey = pathname
-            .substring(pathname.lastIndexOf('/') + 1);
-
-        pageKey = pageKey
-            .charAt(0)
-            .toUpperCase() + pageKey.slice(1);
+        const { pageKey } = props;
 
         return <div className="content">
             <Modal 
@@ -247,18 +234,12 @@ class Page extends Component
             <Confirm 
                 visible={state.confirm.show}
                 headerText={state.confirm.header}
-                cancelAction={() => 
-                {
-                    this.setState({
-                        confirm: {
-                            show: false,
-                            action: '',
-                            actionDataKeys: [],
-                            header: ''
-                        }
-                    });
-                }}
-                confirmAction={this.executePageActionFromConfirm}
+                cancelAction={this.closeConfirm}
+                confirmAction={() => 
+                    {
+                        this.executePageActionFromConfirm();
+                        this.closeConfirm();
+                    }}
                 variant={state.confirm.variant}/>
             <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert} />
             <PageContent 

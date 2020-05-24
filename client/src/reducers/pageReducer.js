@@ -4,20 +4,20 @@ import * as PageUtils from '../js/pageUtils';
 
 function handleGetPageSuccess(state, newPage)
 {
-    const pages = _.cloneDeep(state.pages);
+  const pages = _.cloneDeep(state.pages);
 
-    const pageIndexToReplace = _.findIndex(pages, page => page.key === newPage.key);
+  const pageIndexToReplace = _.findIndex(pages, page => page.pageKey === newPage.pageKey);
 
-    if (pageIndexToReplace === -1)
-    {
-        pages.push(newPage);
-    }
-    else 
-    {
-        pages[pageIndexToReplace] = newPage;
-    }
+  if (pageIndexToReplace === -1)
+  {
+      pages.push(newPage);
+  }
+  else 
+  {
+      pages[pageIndexToReplace] = newPage;
+  }
 
-    return pages;
+  return pages;
 }
 
 /**
@@ -28,7 +28,7 @@ function handleGetPageSuccess(state, newPage)
  */
 function handleUpdateComponents(state, pageKey, components)
 {
-  const page = _.find(state.pages, page => page.key === pageKey);
+  const page = _.find(state.pages, page => page.pageKey === pageKey);
 
   if (_.isNil(page))
   {
@@ -40,6 +40,23 @@ function handleUpdateComponents(state, pageKey, components)
       PageUtils.replaceComponent(page, component);
     });
 
+  return state;
+}
+
+/**
+ * Handles page data change.
+ * @param {object} state 
+ * @param {object} action 
+ */
+function handleDataChange(state, action)
+{
+  const { pageKey, dataKeyPath, newValue } = action.payload;
+
+  const page = _.find(state.pages, page =>
+    page.pageKey === pageKey);
+
+  _.set(page.data, dataKeyPath, newValue);
+    
   return state;
 }
 
@@ -61,7 +78,10 @@ const PageReducer = (state = { pages: []}, action ) => {
 
       case PageActions.UPDATE_COMPONENTS:
         const { page, components } = action.payload;
-        return handleUpdateComponents(_.cloneDeep(state), page, components)
+        return handleUpdateComponents(_.cloneDeep(state), page, components);
+
+      case PageActions.DATA_CHANGE:
+        return handleDataChange(_.cloneDeep(state), action);
 
       default:
         return state;

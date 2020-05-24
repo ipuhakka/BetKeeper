@@ -54,13 +54,13 @@ const mapStateToProps = (state) =>
 
     return {
         page: _.find(state.pages.pages, page =>
-            page.key === pageKey)
+            page.pageKey === pageKey)
     };
 };
 
 PageContainer.propTypes = {
     page: PropTypes.shape({
-        key: PropTypes.string.isRequired,
+        pageKey: PropTypes.string.isRequired,
         // TODO: shape these
         components: PropTypes.array.isRequired,
         data: PropTypes.object.isRequired

@@ -95,7 +95,7 @@ const mapStateToProps = (state) =>
 
     return {
         data: _.find(state.pages.pages, page =>
-            page.key === pageKey).data || {} 
+            page.pageKey === pageKey).data || {} 
     };
 };
 
