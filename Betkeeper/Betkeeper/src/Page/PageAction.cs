@@ -60,6 +60,46 @@ namespace Betkeeper.Page
         public List<Component> Components { get; set; }
 
         /// <summary>
+        /// Data object
+        /// </summary>
+        public Dictionary<string, object> Data { get; set; }
+
+        /// <summary>
+        /// Action message
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// Show alert after completing the action.
+        /// </summary>
+        public bool ShowAlert { get; }
+
+        /// <summary>
+        /// Refresh page after completing the action.
+        /// </summary>
+        public bool Refresh { get; set; }
+
+        /// <summary>
+        /// Empty constructor
+        /// </summary>
+        public PageActionResponse()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a pageaction response with message to be displayed
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="refresh"></param>
+        public PageActionResponse(string message, bool refresh = false)
+        {
+            Message = message;
+            ShowAlert = true;
+            Refresh = refresh;
+        }
+
+        /// <summary>
         /// Constructor for page action response to return components.
         /// </summary>
         /// <param name="components"></param>

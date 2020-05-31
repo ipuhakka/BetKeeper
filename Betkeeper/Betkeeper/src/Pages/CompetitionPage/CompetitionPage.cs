@@ -136,6 +136,9 @@ namespace Betkeeper.Pages
 
                 case "AddBetContainer":
                     return AddBetContainer(action);
+
+                case "CancelBetTargetsUpdate":
+                    return CancelBetTargetsUpdate(action);
             }       
         }
 
@@ -250,7 +253,9 @@ namespace Betkeeper.Pages
             {
                 CompetitionAction.DeleteCompetition(action.UserId, (int)competitionId);
 
-                return Http.CreateResponse(HttpStatusCode.OK, "Competition deleted successfully");
+                return Http.CreateResponse(
+                    HttpStatusCode.OK, 
+                    new PageActionResponse("Competition deleted successfully"));
             }
             catch (InvalidOperationException)
             {

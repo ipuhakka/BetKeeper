@@ -118,7 +118,7 @@ namespace Betkeeper.Pages
                     "A tournament with specified name already exists");
             }
 
-            return Http.CreateResponse(HttpStatusCode.Created, "Competition created successfully", Http.ContentType.Text);
+            return Http.CreateResponse(HttpStatusCode.Created, new PageActionResponse("Competition created successfully", refresh: true));
         }
 
         private HttpResponseMessage JoinCompetition(PageAction action)
@@ -140,19 +140,18 @@ namespace Betkeeper.Pages
             {
                 return Http.CreateResponse(
                     HttpStatusCode.Conflict,
-                    "Competition has already started and does not accept new players");
+                    new PageActionResponse("Competition has already started and does not accept new players"));
             }
             catch (NotFoundException)
             {
                 return Http.CreateResponse(
                     HttpStatusCode.NotFound,
-                    "Join code did not match any competition");
+                    new PageActionResponse("Join code did not match any competition", refresh: true));
             }
 
             return Http.CreateResponse(
                     HttpStatusCode.OK,
-                    "Joined competition successfully",
-                    Http.ContentType.Text);
+                    new PageActionResponse("Joined competition successfully", refresh: true));
         }
     }
 }

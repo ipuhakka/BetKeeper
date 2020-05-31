@@ -63,15 +63,14 @@ namespace Betkeeper.Pages
                 betTargetContainer.Children.Add(new Container(
                     new List<Component>
                     {
-                        // TODO: DataKeyt
                         new PageActionButton(
-                            "cancelBetTargetsUpdate",
-                            new List<string>(),
+                            "CancelBetTargetsUpdate",
+                            new List<string>{ "betTargets" },
                             "Cancel bet targets update",
                             style: "outline-danger",
                             requireConfirm: true),
                         new PageActionButton(
-                            "saveBetTargets",
+                            "SaveBetTargets",
                             new List<string>{ "betTargets" },
                             "Save bet targets",
                             requireConfirm: true)
@@ -149,6 +148,13 @@ namespace Betkeeper.Pages
                      },
                      $"bet-target-{index}");
             }
+        }
+
+        private HttpResponseMessage CancelBetTargetsUpdate(PageAction action)
+        {
+            // TODO: Tyhjää betTargets komponentti, tyhjää data -> Muuta datamallia siten että
+            // Dataa voi muokata actionin yhteydessä.
+            return Http.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

@@ -56,36 +56,49 @@ export function* callAction(action)
     if (_.get(pageActionResponse, 'components.length', null) > 0)
     {
       yield call(PageActions.updateComponents, page, pageActionResponse.components);
-      return;
     }
+
+    // TODO: Datapäivitys
     
     if (!_.isNil(callback))
     {
       callback();
     }
 
-    yield put(setAlertStatus(response.status, response.responseText));
 
-    PageActions.getPage(window.location.pathname);
+    if (pageActionResponse.showAlert)
+    {
+      yield put(setAlertStatus(response.status, pageActionResponse.message));
+    }
+
+    if(pageActionResponse.refresh)
+    {
+      PageActions.getPage(window.location.pathname);
+    }
   }
   catch (error)
   {
+    // Response can be text based or json
+    const response = Utils.getResponseBody(error);
+
+    const message = response.message || error.responseText;
+
     switch (error.status)
     {
       case 401:
-        yield put(setAlertStatus(error.status, error.responseText || "Session expired, please login again"));
+        yield put(setAlertStatus(error.status, message || "Session expired, please login again"));
         break;
       case 404:
-        yield put(setAlertStatus(error.status, error.responseText || "Requested page was not found"));
+        yield put(setAlertStatus(error.status, message || "Requested page was not found"));
         break;
       case 0:
         yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
         break;
       case 409:
-        yield put(setAlertStatus(error.status, error.responseText));
+        yield put(setAlertStatus(error.status, message));
         break;
       default:
-        yield put(setAlertStatus(error.status, error.responseText || "Unexpected error occurred"));
+        yield put(setAlertStatus(error.status, message || "Unexpected error occurred"));
         break;
     }
   }
