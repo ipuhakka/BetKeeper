@@ -45,12 +45,7 @@ namespace Betkeeper.Pages
         /// <returns></returns>
         private HttpResponseMessage AddBetContainer(PageAction action)
         {
-            var components = JObject.Parse(action.Parameters["components"].ToString());
-
-            var betTargetsAsJObject = components["betTargets"];
-
-            var betTargetContainer = ComponentParser
-                .ParseComponent(betTargetsAsJObject.ToString()) as Container;
+            var betTargetContainer = ComponentTools<Container>.GetComponentFromAction(action, "betTargets");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray
@@ -68,7 +63,8 @@ namespace Betkeeper.Pages
                             new List<string>{ "betTargets" },
                             "Cancel bet targets update",
                             style: "outline-danger",
-                            requireConfirm: true),
+                            requireConfirm: true,
+                            componentsToInclude: new List<string>{ "betTargets" }),
                         new PageActionButton(
                             "SaveBetTargets",
                             new List<string>{ "betTargets" },
@@ -150,11 +146,25 @@ namespace Betkeeper.Pages
             }
         }
 
+        /// <summary>
+        /// Clears new changes to bet targets. Does not remove already save data.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         private HttpResponseMessage CancelBetTargetsUpdate(PageAction action)
         {
-            // TODO: Tyhjää betTargets komponentti, tyhjää data -> Muuta datamallia siten että
-            // Dataa voi muokata actionin yhteydessä.
-            return Http.CreateResponse(HttpStatusCode.OK);
+            var betTargetsContainer = ComponentTools<Container>.GetComponentFromAction(action, "betTargets");
+
+            betTargetsContainer.Clear();
+
+            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetsContainer)
+            {
+                Data = new Dictionary<string, object>
+                {
+                    // Clear bet targets data
+                    {"betTargets", new { } }
+                }
+            });
         }
     }
 }

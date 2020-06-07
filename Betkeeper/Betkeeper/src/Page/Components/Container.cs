@@ -26,6 +26,14 @@ namespace Betkeeper.Page.Components
             StoreDataAsArray = storeDataAsArray;
         }
 
+        /// <summary>
+        /// Empties a container.
+        /// </summary>
+        public void Clear()
+        {
+            Children = new List<Component>();
+        }
+
         public static Container Parse(JObject asJObject)
         {
             var container = asJObject.ToObject<Container>();
