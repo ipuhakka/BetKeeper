@@ -44,6 +44,29 @@ function handleUpdateComponents(state, pageKey, components)
 }
 
 /**
+ * Updates page data
+ * @param {object} state 
+ * @param {string} pageKey 
+ * @param {*} data 
+ */
+function handleUpdateData(state, pageKey, data)
+{
+  const page = _.find(state.pages, page => page.pageKey === pageKey);
+
+  if (_.isNil(page))
+  {
+    return state;
+  }
+
+  _.forEach(Object.keys(data), dataKey => 
+    {
+      PageUtils.replaceData(page, dataKey, data[dataKey]);
+    });
+
+  return state;
+}
+
+/**
  * Handles page data change.
  * @param {object} state 
  * @param {object} action 
@@ -65,7 +88,8 @@ function handleDataChange(state, action)
  * @param {object} state
  * @param {object} action 
  */
-const PageReducer = (state = { pages: []}, action ) => {
+const PageReducer = (state = { pages: []}, action ) => 
+{
     switch (action.type) 
     {
       case PageActions.GET_PAGE_SUCCESS:
@@ -76,13 +100,20 @@ const PageReducer = (state = { pages: []}, action ) => {
             pages: newPages
         };
 
-      case PageActions.UPDATE_COMPONENTS:
+      case PageActions.UPDATE_COMPONENTS: 
+      {
         const { page, components } = action.payload;
         return handleUpdateComponents(_.cloneDeep(state), page, components);
+      }
 
       case PageActions.DATA_CHANGE:
         return handleDataChange(_.cloneDeep(state), action);
 
+      case PageActions.UPDATE_DATA:
+        {
+          const { page, data } = action.payload;
+          return handleUpdateData(_.cloneDeep(state), page, data);
+        }
       default:
         return state;
     }

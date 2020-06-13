@@ -168,3 +168,12 @@ export function isObject(value)
 {
   return value && typeof value === 'object' && value.constructor === Object;
 }
+
+/**
+ * Creates an object from entries.
+ * @param {array} entries 
+ */
+export function fromEntries(entries)
+{
+  return Object.assign({}, ...Array.from(entries, ([key, value]) => ({[key]: value}) ));
+}

@@ -4,6 +4,7 @@ export const GET_PAGE = "GET_PAGE";
 export const GET_PAGE_SUCCESS = "GET_PAGE_SUCCESS";
 export const CALL_ACTION = "CALL_MODAL_ACTION";
 export const UPDATE_COMPONENTS = "UPDATE_COMPONENTS";
+export const UPDATE_DATA = 'UPDATE_DATA';
 export const HANDLE_SERVER_DROPDOWN_UPDATE = "HANDLE_SERVER_DROPDOWN_UPDATE";
 export const HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS = "HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS";
 export const DATA_CHANGE = "DATA_CHANGE";
@@ -46,6 +47,22 @@ export function updateComponents(page, components)
         payload: {
             page,
             components
+        }
+      });
+}
+
+/**
+ * 
+ * @param {string} page 
+ * @param {*} newData 
+ */
+export function updateData(page, newData)
+{
+    store.dispatch({
+        type: UPDATE_DATA,
+        payload: {
+            page,
+            data: newData
         }
       });
 }

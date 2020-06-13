@@ -355,3 +355,43 @@ describe('getActionData', function()
         done();
     });
 });
+
+describe('replaceData', function()
+{
+    it('Replaces data on a single level object', function(done)
+    {
+        // Replace testKey3
+        const testPage = {
+            data: {
+                testKey: 'nope',
+                testKey2: 'nope',
+                testKey3: 'yep'
+            }
+        };
+
+        const result = pageUtils.replaceData(testPage, 'testKey3', 'found it');
+        expect(result.data['testKey3']).to.equal('found it');
+        done();
+    });
+
+    it('Replaces data on a multi level object', function(done)
+    {
+        // Replace innerInnerKey
+        const testPage = {
+            data: {
+                testKey: 'nope',
+                testKey2: {
+                    innerKey1: 'test',
+                    innerKey2: {
+                        innerInnerKey: 'sgd'
+                    }
+                },
+                testKey3: 'yep'
+            }
+        };
+
+        const result = pageUtils.replaceData(testPage, 'innerInnerKey', 'found it');
+        expect(result.data['testKey2']['innerKey2']['innerInnerKey']).to.equal('found it');
+        done();
+    });
+})

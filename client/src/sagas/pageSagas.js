@@ -58,13 +58,15 @@ export function* callAction(action)
       yield call(PageActions.updateComponents, page, pageActionResponse.components);
     }
 
-    // TODO: Datapäivitys
+    if (pageActionResponse.data)
+    {
+      yield call(PageActions.updateData, page, pageActionResponse.data);
+    }
     
     if (!_.isNil(callback))
     {
       callback();
     }
-
 
     if (pageActionResponse.showAlert)
     {

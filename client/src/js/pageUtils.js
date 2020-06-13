@@ -88,7 +88,7 @@ export function findComponentFromPage(page, componentKey)
  */
 function replaceInComponents(components, substituteComponent)
 {
-    /** Return substitut component if match, otherwise
+    /** Return substitute component if match, otherwise
      * return component. 
      */
     const handleComponent = (component, componentKey) => 
@@ -135,6 +135,43 @@ export function replaceComponent(page, component)
 
     replaceInComponents(components, component);
 
+    return page;
+}
+
+/**
+ * Replaces all data found from data object.
+ * @param {object} page 
+ * @param {string} dataKey 
+ */
+export function replaceData(page, dataKey, newValue)
+{
+    const { data } = page;
+
+    const checkObject = (data) => 
+    {
+        return Utils.fromEntries(Object.entries(data).map(handleEntry))
+    }
+
+    /** Replaces entries value with newValue if keys match. 
+     * Else if value is object, loop through that and set value as that. 
+    */
+    const handleEntry = ([key, value]) => 
+    {
+        if (key === dataKey)
+        {
+            return [key, newValue];
+        }
+
+        if (Utils.isObject(value))
+        {
+            value = checkObject(value);
+        }
+
+        return [key, value];
+    }
+
+    page.data = checkObject(data);
+    
     return page;
 }
 

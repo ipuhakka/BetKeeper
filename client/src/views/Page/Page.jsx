@@ -226,7 +226,7 @@ class Page extends Component
                 {
                     this.setState({ actionModalOpen: false });
                 }} 
-                page={pageKey}
+                page={pageKey || ''}
                 show={state.actionModalOpen} 
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
