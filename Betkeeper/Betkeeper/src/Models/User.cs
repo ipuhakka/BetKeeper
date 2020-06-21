@@ -1,4 +1,5 @@
 ﻿using Betkeeper.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,45 +22,53 @@ namespace Betkeeper.Models
         public string Password { get; set; }
     }
 
-    public class UserRepository : BaseRepository
+    public class UserRepository : BaseRepository, IDisposable
     {
-        public List<string> GetUsernamesById(List<int> userIds)
+        private BetkeeperDataContext _context;
+
+        public UserRepository()
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                return context
-                    .User
-                    .Where(user => userIds.Contains(user.UserId))
-                    .Select(user => user.Username)
-                    .ToList();
-            }
+            _context = new BetkeeperDataContext(OptionsBuilder);
+        }
+
+        public UserRepository(BetkeeperDataContext context)
+        {
+            _context = context;
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+
+        public List<string> GetUsernamesById(List<int> userIds)
+        {     
+            return _context
+                .User
+                .Where(user => userIds.Contains(user.UserId))
+                .Select(user => user.Username)
+                .ToList();
         }
 
         public int? GetUserId(string username)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                var userId = context
-                    .User
-                    .Where(user => user.Username == username)
-                    .Select(user => user.UserId)
-                    .FirstOrDefault();
+            var userId = _context
+                .User
+                .Where(user => user.Username == username)
+                .Select(user => user.UserId)
+                .FirstOrDefault();
 
-                return userId == 0
-                    ? null
-                    : (int?)userId;
-            }
+            return userId == 0
+                ? null
+                : (int?)userId;          
         }
 
         public bool Authenticate(int userId, string password)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                return context
-                    .User
-                    .Any(user => user.UserId == userId
-                        && user.Password == password);
-            }
+            return _context
+                .User
+                .Any(user => user.UserId == userId
+                    && user.Password == password);           
         }
     }
 }

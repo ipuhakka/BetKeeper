@@ -14,21 +14,29 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class TokenControllerTests
     {
+        private BetkeeperDataContext _context;
+
+        private TestController _controller;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder());
+            _controller = new TestController(_context);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _context.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
-
+            _context.User.RemoveRange(_context.User);
             TokenLog.ClearTokenLog();
         }
 
@@ -45,21 +53,18 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(users: users);
+            Tools.CreateTestData(_context, users: users);
 
             var testData = new { username = "user" };
 
-            var controller = new TestController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
-                    })
-            };
+                    });
 
-            var result = controller.Post();
+            var result = _controller.Post();
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
         }
@@ -77,21 +82,18 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(users: users);
+            Tools.CreateTestData(_context, users: users);
 
             var testData = new { username = "notexistingusername" };
 
-            var controller = new TestController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
-                    })
-            };
+                    });
 
-            var result = controller.Post();
+            var result = _controller.Post();
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
         }
@@ -109,21 +111,18 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(users: users);
+            Tools.CreateTestData(_context, users: users);
 
             var testData = new { username = "user" };
 
-            var controller = new TestController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
-                        { "Authorization", "somepassword"}
-                    })
-            };
+                        { "Authorization", "somepassword" }
+                    });
 
-            var request = controller.Post();
+            var request = _controller.Post();
             var responseBody = Http.GetHttpContent(request);
 
             Assert.AreEqual(HttpStatusCode.OK, request.StatusCode);
@@ -144,23 +143,20 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(users: users);
+            Tools.CreateTestData(_context, users: users);
 
             var testToken = TokenLog.CreateToken(1);
 
             var testData = new { username = "user" };
 
-            var controller = new TestController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
-                    })
-            };
+                    });
 
-            var request = controller.Post();
+            var request = _controller.Post();
             var responseBody = Http.GetHttpContent(request);
 
             Assert.AreEqual(HttpStatusCode.OK, request.StatusCode);
@@ -173,14 +169,9 @@ namespace Api.Test.Controllers
         {
             var testData = new { username = "user" };
 
-            var controller = new TestController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
-                    testData)
-            };
+            _controller.ControllerContext = Tools.MockHttpControllerContext(testData);
 
-            var response = controller.Post();
-            var responseBody = Http.GetHttpContent(response);
+            var response = _controller.Post();
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -190,16 +181,13 @@ namespace Api.Test.Controllers
         {
             var token = TokenLog.CreateToken(1);
 
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString}
-                    }),
-            };
+                    });
 
-            var response = controller.Get(1);
+            var response = _controller.Get(1);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
@@ -207,12 +195,9 @@ namespace Api.Test.Controllers
         [Test]
         public void Get_TokenMissing_ReturnsBadRequest()
         {
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(),
-            };
+            _controller.ControllerContext = Tools.MockHttpControllerContext();
 
-            var response = controller.Get(1);
+            var response = _controller.Get(1);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -220,18 +205,15 @@ namespace Api.Test.Controllers
         [Test]
         public void Get_TokenLogDoesNotContainToken_ReturnsNotFound()
         {
-            var token = TokenLog.CreateToken(1);
+            TokenLog.CreateToken(1);
 
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", "UnusedToken"}
-                    }),
-            };
+                    });
 
-            var response = controller.Get(1);
+            var response = _controller.Get(1);
 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -241,16 +223,13 @@ namespace Api.Test.Controllers
         {
             var token = TokenLog.CreateToken(1);
 
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString}
-                    }),
-            };
+                    });
 
-            var response = controller.Get(2);
+            var response = _controller.Get(2);
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
@@ -258,12 +237,9 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_NoAuthorizationHeader_ReturnsBadRequest()
         {
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(),
-            };
+            _controller.ControllerContext = Tools.MockHttpControllerContext();
 
-            var response = controller.Delete(1);
+            var response = _controller.Delete(1);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -274,16 +250,13 @@ namespace Api.Test.Controllers
             TokenLog.CreateToken(1);
             var token2 = TokenLog.CreateToken(2);
 
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token2.TokenString}
-                    }),
-            };
+                    });
 
-            var response = controller.Delete(1);
+            var response = _controller.Delete(1);
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
@@ -293,25 +266,22 @@ namespace Api.Test.Controllers
         {
             var token = TokenLog.CreateToken(1);
 
-            var controller = new TokenController()
-            {
-                ControllerContext = Tools.MockHttpControllerContext(
+            _controller.ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString}
-                    }),
-            };
+                    });
 
-            var response = controller.Delete(1);
+            var response = _controller.Delete(1);
 
             Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         private class TestController : TokenController
         {
-            public TestController()
+            public TestController(BetkeeperDataContext context)
             {
-                UserRepository = new TestUserRepository();
+                UserRepository = new UserRepository(context);
             }
         }
     }

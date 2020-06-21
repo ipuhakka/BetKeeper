@@ -15,9 +15,10 @@ namespace TestTools
             object dataContent = null,
             Dictionary<string, string> headers = null)
         {
-            var request = new HttpRequestMessage();
-
-            request.Content = new StringContent(JsonConvert.SerializeObject(dataContent));
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(dataContent))
+            };
 
             if (headers != null)
             {
@@ -31,6 +32,48 @@ namespace TestTools
             {
                 Request = request
             };
+        }
+
+        /// <summary>
+        /// Creates test data for given context.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="participators"></param>
+        /// <param name="competitions"></param>
+        /// <param name="users"></param>
+        /// <param name="targets"></param>
+        public static void CreateTestData(
+           BetkeeperDataContext context,
+           List<Participator> participators = null,
+           List<Competition> competitions = null,
+           List<User> users = null,
+           List<Target> targets = null)
+        {
+            if (participators != null)
+            {
+                participators.ForEach(participator =>
+                    context.Participator.Add(participator));
+            }
+
+            if (competitions != null)
+            {
+                competitions.ForEach(competition =>
+                    context.Competition.Add(competition));
+            }
+
+            if (users != null)
+            {
+                users.ForEach(user =>
+                    context.User.Add(user));
+            }
+
+            if (targets != null)
+            {
+                targets.ForEach(target =>
+                    context.Target.Add(target));
+            }
+
+            context.SaveChanges();
         }
 
         public static void CreateTestData(

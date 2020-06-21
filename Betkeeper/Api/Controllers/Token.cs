@@ -18,6 +18,12 @@ namespace Api.Controllers
             UserRepository = new UserRepository();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            UserRepository.Dispose();
+            base.Dispose(disposing);
+        }
+
         // GET: api/Token/5
         /// <summary>
         /// Checks if user authentication token is still valid.
