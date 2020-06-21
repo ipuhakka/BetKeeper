@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace Betkeeper.Page.Components
 {
@@ -27,10 +27,10 @@ namespace Betkeeper.Page.Components
 
         public string NavigateTo { get; }
 
-        public Button (
-            ButtonType buttonType, 
-            string text, 
-            string style = "primary", 
+        public Button(
+            ButtonType buttonType,
+            string text,
+            string style = "primary",
             bool requireConfirm = false,
             string navigateTo = null)
             : base(ComponentType.Button)
@@ -74,7 +74,7 @@ namespace Betkeeper.Page.Components
     [Serializable]
     public class NavigationButton : Button
     {
-        public NavigationButton(string navigateTo, string text, string style) 
+        public NavigationButton(string navigateTo, string text, string style)
             : base(ButtonType.Navigation, text, style, navigateTo: navigateTo)
         {
         }
@@ -96,9 +96,9 @@ namespace Betkeeper.Page.Components
         public List<string> ComponentsToInclude { get; }
 
         public PageActionButton(
-            string action, 
-            List<string> actionDataKeys, 
-            string text, 
+            string action,
+            List<string> actionDataKeys,
+            string text,
             string style = "outline-primary",
             bool requireConfirm = false,
             string navigateTo = null,
@@ -125,7 +125,7 @@ namespace Betkeeper.Page.Components
         public List<Component> Components { get; set; }
 
         public ModalActionButton(
-            string action, 
+            string action,
             List<Component> components,
             string text,
             string style = "primary",

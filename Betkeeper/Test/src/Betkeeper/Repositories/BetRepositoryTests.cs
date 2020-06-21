@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Betkeeper.Data;
+using Betkeeper.Exceptions;
+using Betkeeper.Models;
+using Betkeeper.Repositories;
+using Moq;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Betkeeper.Models;
-using Betkeeper.Data;
-using Betkeeper.Repositories;
-using Betkeeper.Exceptions;
-using NUnit.Framework;
-using Moq;
 
 namespace Betkeeper.Test.Repositories
 {
@@ -69,14 +69,14 @@ namespace Betkeeper.Test.Repositories
 
             betRepository.GetBets(
                 userId: 1,
-                betFinished: null, 
+                betFinished: null,
                 folder: null);
 
-            mock.Verify(database => 
+            mock.Verify(database =>
                 database.ExecuteQuery(
                     It.Is<string>(
                         query => query.Contains("SELECT * FROM bets")),
-                    It.IsAny<Dictionary<string, object>>()), 
+                    It.IsAny<Dictionary<string, object>>()),
                 Times.Once);
         }
 
@@ -411,7 +411,7 @@ namespace Betkeeper.Test.Repositories
                 .Returns(1);
 
             var betRepository = new BetRepository(
-                userRepoMock.Object, 
+                userRepoMock.Object,
                 databaseMock.Object);
 
             betRepository.CreateBet(
@@ -505,7 +505,7 @@ namespace Betkeeper.Test.Repositories
                 .Returns((int userId, string folderName, int betId) =>
                 {
                     // Bet already in folder
-                    if (folderName == "alreadyContainsBet") 
+                    if (folderName == "alreadyContainsBet")
                     {
                         return true;
                     }
@@ -525,7 +525,7 @@ namespace Betkeeper.Test.Repositories
             var betRepository = new BetRepository(
                 database: databaseMock.Object,
                 folderRepository: folderMock.Object);
-            
+
             var testFolders = new List<string>
             {
                 "testFolder1",
@@ -583,9 +583,9 @@ namespace Betkeeper.Test.Repositories
             var betRepository = new BetRepository(database: mock.Object);
 
             betRepository.ModifyBet(
-                1, 
-                1, 
-                Enums.BetResult.Lost, 
+                1,
+                1,
+                Enums.BetResult.Lost,
                 stake: 2.1);
 
             betRepository.ModifyBet(

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Page.Components
 {
@@ -20,7 +20,7 @@ namespace Betkeeper.Page.Components
         public string NavigationKey { get; }
 
         public Table(
-            string dataKey, 
+            string dataKey,
             List<DataField> columns,
             string navigationKey = null)
             : base(ComponentType.Table)

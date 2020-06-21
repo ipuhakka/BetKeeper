@@ -1,22 +1,21 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using Newtonsoft.Json.Linq;
+﻿using Betkeeper.Actions;
 using Betkeeper.Classes;
-using Betkeeper.Actions;
-using Betkeeper.Extensions;
 using Betkeeper.Enums;
+using Betkeeper.Extensions;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
     /// <summary>
     /// A competition page structure.
     /// </summary>
-    public partial class CompetitionPage: IPage
+    public partial class CompetitionPage : IPage
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -26,7 +25,7 @@ namespace Betkeeper.Pages
         }
 
         public HttpResponseMessage GetResponse(string pageId, int userId)
-        { 
+        {
             var competitionId = int.Parse(pageId);
 
             var participator = CompetitionAction.GetParticipator(userId, competitionId);
@@ -139,11 +138,11 @@ namespace Betkeeper.Pages
 
                 case "CancelBetTargetsUpdate":
                     return CancelBetTargetsUpdate(action);
-            }       
+            }
         }
 
         public HttpResponseMessage HandleDropdownUpdate(
-            Dictionary<string, object> data, 
+            Dictionary<string, object> data,
             int? pageId = null)
         {
             var componentKey = data.GetString("key");
@@ -208,7 +207,7 @@ namespace Betkeeper.Pages
                             {
                                 CreateTargetContainer(index, newTargetType)
                             })
-                        );           
+                        );
                 }
             }
 
@@ -254,7 +253,7 @@ namespace Betkeeper.Pages
                 CompetitionAction.DeleteCompetition(action.UserId, (int)competitionId);
 
                 return Http.CreateResponse(
-                    HttpStatusCode.OK, 
+                    HttpStatusCode.OK,
                     new PageActionResponse("Competition deleted successfully"));
             }
             catch (InvalidOperationException)

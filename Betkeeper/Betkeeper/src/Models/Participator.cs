@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Betkeeper.Data;
+using Betkeeper.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Betkeeper.Enums;
-using Betkeeper.Data;
 using System.Linq;
 
 namespace Betkeeper.Models
@@ -29,7 +29,7 @@ namespace Betkeeper.Models
         }
 
         public List<Participator> GetParticipators(
-            int? userId = null, 
+            int? userId = null,
             int? competitionId = null,
             CompetitionRole? role = null)
         {

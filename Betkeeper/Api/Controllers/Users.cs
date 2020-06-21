@@ -1,10 +1,10 @@
-﻿using System.Net;
+﻿using Betkeeper.Classes;
+using Betkeeper.Repositories;
+using Microsoft.CSharp.RuntimeBinder;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Microsoft.CSharp.RuntimeBinder;
-using Betkeeper.Classes;
-using Betkeeper.Repositories;
 
 namespace Api.Controllers
 {

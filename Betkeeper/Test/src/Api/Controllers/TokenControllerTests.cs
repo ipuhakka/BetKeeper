@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using Api.Classes;
+﻿using Api.Classes;
 using Api.Controllers;
 using Betkeeper;
-using Betkeeper.Data;
 using Betkeeper.Classes;
+using Betkeeper.Data;
 using Betkeeper.Models;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Net;
 using TestTools;
 
 namespace Api.Test.Controllers
@@ -52,7 +52,7 @@ namespace Api.Test.Controllers
             var controller = new TestController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
-                    testData, 
+                    testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}

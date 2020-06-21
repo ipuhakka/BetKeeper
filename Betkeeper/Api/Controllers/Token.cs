@@ -1,10 +1,10 @@
-﻿using System.Net;
+﻿using Api.Classes;
+using Betkeeper.Classes;
+using Betkeeper.Models;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Api.Classes;
-using Betkeeper.Classes;
-using Betkeeper.Models;
 
 namespace Api.Controllers
 {
@@ -77,7 +77,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var token = TokenLog.GetExistingToken(userId) 
+            var token = TokenLog.GetExistingToken(userId)
                 ?? TokenLog.CreateToken(userId);
 
             return Http.CreateResponse(HttpStatusCode.OK, token);

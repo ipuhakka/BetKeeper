@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Data;
-using Betkeeper.Models;
-using Betkeeper.Exceptions;
+﻿using Betkeeper.Data;
 using Betkeeper.Enums;
-using TestTools;
+using Betkeeper.Exceptions;
+using Betkeeper.Models;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using TestTools;
 
 namespace Betkeeper.Test.Actions
 {

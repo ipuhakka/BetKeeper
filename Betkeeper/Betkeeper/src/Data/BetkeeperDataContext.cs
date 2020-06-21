@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Betkeeper.Enums;
+using Betkeeper.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Betkeeper.Models;
-using Betkeeper.Enums;
+using System.Collections.Generic;
 
 namespace Betkeeper.Data
 {

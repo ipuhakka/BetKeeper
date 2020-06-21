@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Betkeeper.Page.Components;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
-using Betkeeper.Page.Components;
 
 namespace Betkeeper.Page
 {
     // TODO: Component-luokan alle staattiseksi metodiksi
     public class ComponentParser
     {
-        
+
         /// <summary>
         /// Parses a component from json.
         /// </summary>

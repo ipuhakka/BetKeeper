@@ -1,6 +1,6 @@
-﻿using System;
-using Betkeeper.Extensions;
+﻿using Betkeeper.Extensions;
 using NUnit.Framework;
+using System;
 
 namespace Betkeeper.Test.Extensions
 {

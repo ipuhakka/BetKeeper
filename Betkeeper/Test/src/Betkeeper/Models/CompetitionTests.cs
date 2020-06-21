@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Models;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using Betkeeper.Models;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using TestTools;
 
 namespace Betkeeper.Test.Models
@@ -262,7 +262,7 @@ namespace Betkeeper.Test.Models
             Assert.AreEqual("Description 1", competition.Description);
         }
 
-        private class TestRepository: CompetitionRepository
+        private class TestRepository : CompetitionRepository
         {
             public TestRepository()
             {

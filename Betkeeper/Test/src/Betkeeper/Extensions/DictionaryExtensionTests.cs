@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Extensions;
+﻿using Betkeeper.Extensions;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Betkeeper.Test.Extensions
 {

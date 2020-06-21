@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Betkeeper.Models;
-using Betkeeper.Enums;
+﻿using Betkeeper.Enums;
 using Betkeeper.Exceptions;
+using Betkeeper.Models;
+using System;
+using System.Linq;
 
 namespace Betkeeper.Actions
 {

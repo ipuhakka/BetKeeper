@@ -1,10 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using Betkeeper.Classes;
+﻿using Betkeeper.Classes;
 using Betkeeper.Exceptions;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
+using System.Net;
+using System.Net.Http;
 
 namespace Betkeeper.Test.Classes
 {
@@ -95,7 +95,7 @@ namespace Betkeeper.Test.Classes
             var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual(
-                new DateTime(2019, 1, 1, 12, 20, 20), 
+                new DateTime(2019, 1, 1, 12, 20, 20),
                 (DateTime)asDynamic.testDateTime);
         }
 

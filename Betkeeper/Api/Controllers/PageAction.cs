@@ -1,10 +1,10 @@
-﻿using System.Net;
+﻿using Api.Classes;
+using Betkeeper.Classes;
+using Betkeeper.Page;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Api.Classes;
-using Betkeeper.Classes;
-using Betkeeper.Page;
 
 namespace Api.Controllers
 {

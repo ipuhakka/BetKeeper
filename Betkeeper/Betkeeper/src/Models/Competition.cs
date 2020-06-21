@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Betkeeper.Models
 {
@@ -23,7 +23,7 @@ namespace Betkeeper.Models
 
         // TODO: Huomioi valmiiden vetojen määrä finishediä varten.
         [JsonConverter(typeof(StringEnumConverter))]
-        public Enums.CompetitionState State => StartTime == null 
+        public Enums.CompetitionState State => StartTime == null
             || StartTime > DateTime.UtcNow
             ? Enums.CompetitionState.Open
             : Enums.CompetitionState.Ongoing;

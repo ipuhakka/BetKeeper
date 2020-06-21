@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Betkeeper.Actions;
+using Betkeeper.Classes;
+using Betkeeper.Exceptions;
+using Betkeeper.Extensions;
+using Betkeeper.Page;
+using Betkeeper.Page.Components;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using Betkeeper.Actions;
-using Betkeeper.Classes;
-using Betkeeper.Page.Components;
-using Betkeeper.Page;
-using Betkeeper.Extensions;
-using Betkeeper.Exceptions;
 
 namespace Betkeeper.Pages
 {
-    public class CompetitionsPage: IPage
+    public class CompetitionsPage : IPage
     {
         protected CompetitionAction CompetitionAction { get; set; }
 
@@ -25,7 +25,7 @@ namespace Betkeeper.Pages
             var components = new List<Component>
             {
                 new Table(
-                    "competitions", 
+                    "competitions",
                     new List<DataField>
                     {
                         new DataField("name", DataType.String),
@@ -51,9 +51,10 @@ namespace Betkeeper.Pages
                     "Create a competition")
             };
 
-            var dataDictionary = new Dictionary<string, object>();
-
-            dataDictionary.Add("Competitions", CompetitionAction.GetUsersCompetitions(userId));
+            var dataDictionary = new Dictionary<string, object>
+            {
+                { "Competitions", CompetitionAction.GetUsersCompetitions(userId) }
+            };
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
@@ -76,7 +77,7 @@ namespace Betkeeper.Pages
         }
 
         public HttpResponseMessage HandleDropdownUpdate(
-            Dictionary<string, object> data, 
+            Dictionary<string, object> data,
             int? pageId = null)
         {
             throw new NotImplementedException();

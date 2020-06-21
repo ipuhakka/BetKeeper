@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Page.Components
 {
@@ -21,7 +21,7 @@ namespace Betkeeper.Page.Components
         public static Tab Parse(JObject asJObject)
         {
             var tabContent = ComponentParser.ParseComponents(asJObject["tabContent"].ToString());
-             
+
             var tab = asJObject.ToObject<Tab>();
 
             tab.TabContent = tabContent;

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Betkeeper.Exceptions;
+using Betkeeper.Extensions;
+using Microsoft.CSharp.RuntimeBinder;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.CSharp.RuntimeBinder;
-using Betkeeper.Extensions;
-using Betkeeper.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Models
 {

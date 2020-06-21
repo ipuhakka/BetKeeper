@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Betkeeper.Data;
-using Betkeeper.Repositories;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
-using NUnit.Framework;
+using Betkeeper.Repositories;
 using Moq;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Betkeeper.Test.Repositories
 {
@@ -57,7 +57,7 @@ namespace Betkeeper.Test.Repositories
                         {"username", "username" },
                         {"password", "password" }
                     },
-                    false), 
+                    false),
                 Times.Once);
         }
     }

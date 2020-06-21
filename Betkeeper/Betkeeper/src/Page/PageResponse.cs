@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Betkeeper.Classes;
+using Betkeeper.Page.Components;
+using Betkeeper.Pages;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using Betkeeper.Classes;
-using Betkeeper.Page.Components;
-using Betkeeper.Pages;
 
 namespace Betkeeper.Page
 {
@@ -34,7 +34,7 @@ namespace Betkeeper.Page
         /// <param name="pageId"></param>
         /// <returns></returns>
         HttpResponseMessage HandleDropdownUpdate(
-            Dictionary<string, object> data, 
+            Dictionary<string, object> data,
             int? pageId = null);
     }
 
@@ -47,7 +47,7 @@ namespace Betkeeper.Page
         public Dictionary<string, object> Data { get; set; }
 
         public PageResponse(
-            string pageKey, 
+            string pageKey,
             List<Component> components,
             Dictionary<string, object> data)
         {
@@ -66,8 +66,8 @@ namespace Betkeeper.Page
         }
 
         public static HttpResponseMessage GetResponseMessage(
-            string pageKey, 
-            int userId, 
+            string pageKey,
+            int userId,
             int? pageId = null)
         {
             switch (pageKey)

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Betkeeper.Classes;
+﻿using Betkeeper.Classes;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Betkeeper.Test.Classes
 {

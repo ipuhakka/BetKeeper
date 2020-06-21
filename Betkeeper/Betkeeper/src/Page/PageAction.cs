@@ -16,9 +16,9 @@ namespace Betkeeper.Page
         public string ActionName { get; }
 
         public PageAction(
-            int userId, 
-            string page, 
-            string action, 
+            int userId,
+            string page,
+            string action,
             Dictionary<string, object> parameters)
         {
             UserId = userId;
@@ -41,7 +41,7 @@ namespace Betkeeper.Page
             string action,
             Dictionary<string, object> parameters,
             int pageId)
-            :this(userId, page, action, parameters)
+            : this(userId, page, action, parameters)
         {
             PageId = pageId;
         }
@@ -114,8 +114,10 @@ namespace Betkeeper.Page
         /// <param name="components"></param>
         public PageActionResponse(Component component)
         {
-            Components = new List<Component>();
-            Components.Add(component);
+            Components = new List<Component>
+            {
+                component
+            };
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using System.Collections.Generic;
 
 namespace Betkeeper.Repositories
 {
@@ -32,7 +31,7 @@ namespace Betkeeper.Repositories
             {
                 throw new UsernameInUseException(
                     string.Format(
-                        "Username {0} already in use, user not created", 
+                        "Username {0} already in use, user not created",
                         username));
             }
 

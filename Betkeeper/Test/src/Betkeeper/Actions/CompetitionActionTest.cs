@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Actions;
+﻿using Betkeeper.Actions;
 using Betkeeper.Data;
-using Betkeeper.Models;
-using TestTools;
-using NUnit.Framework;
 using Betkeeper.Exceptions;
+using Betkeeper.Models;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using TestTools;
 
 namespace Betkeeper.Test.Actions
 {
@@ -98,8 +98,8 @@ namespace Betkeeper.Test.Actions
 
             var testAction = new TestAction();
 
-           Assert.Throws<NameInUseException>(() =>
-            testAction.CreateCompetition(1, "InUseName", "Description", new DateTime(2000, 1, 1)));
+            Assert.Throws<NameInUseException>(() =>
+             testAction.CreateCompetition(1, "InUseName", "Description", new DateTime(2000, 1, 1)));
         }
 
         [Test]
@@ -325,7 +325,7 @@ namespace Betkeeper.Test.Actions
             Assert.AreEqual(1, participator.ParticipatorId);
             Assert.AreEqual(1, participator.UserId);
             Assert.AreEqual(
-                Enums.CompetitionRole.Participator, 
+                Enums.CompetitionRole.Participator,
                 (Enums.CompetitionRole)participator.Role);
         }
 

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Api.Classes;
+using Api.Controllers;
+using Betkeeper.Enums;
+using Betkeeper.Exceptions;
+using Betkeeper.Repositories;
+using Moq;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Net;
-using Api.Controllers;
-using Api.Classes;
-using Betkeeper;
-using Betkeeper.Repositories;
-using Betkeeper.Exceptions;
-using Betkeeper.Enums;
-using NUnit.Framework;
-using Moq;
 using TestTools;
 
 namespace Api.Test.Controllers
@@ -474,14 +473,14 @@ namespace Api.Test.Controllers
                     BetResult.Won,
                     2.2,
                     2.0,
-                    "testName"), 
+                    "testName"),
                     Times.Once);
 
             mock.Verify(betRepository =>
                 betRepository.AddBetToFolders(
                     It.IsAny<int>(),
                     It.IsAny<int>(),
-                    It.IsAny<List<string>>()), 
+                    It.IsAny<List<string>>()),
                     Times.Never);
 
         }

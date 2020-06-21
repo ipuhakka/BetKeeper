@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using Betkeeper.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Betkeeper.Data;
+using System.Linq;
 
 namespace Betkeeper.Models
 {

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Betkeeper.Classes
 {
@@ -84,10 +84,10 @@ namespace Betkeeper.Classes
         private static HttpContent SetHttpContent(object data, ContentType contentType = ContentType.Json)
         {
             var serializerSettings = new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
-                };
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                DateFormatString = "yyyy-MM-dd HH:mm:ss"
+            };
 
 
             var contentTypeHeader = contentType == ContentType.Json

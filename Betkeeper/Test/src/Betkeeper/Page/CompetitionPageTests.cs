@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Pages;
-using Betkeeper.Data;
-using TestTools;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using TestTools;
 
 namespace Betkeeper.Test.Pages
 {
@@ -154,6 +154,6 @@ namespace Betkeeper.Test.Pages
                 CompetitionAction = new TestCompetitionAction();
             }
         }
-        
+
     }
 }

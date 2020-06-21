@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Models;
-using TestTools;
 using NUnit.Framework;
+using System.Collections.Generic;
+using TestTools;
 
 namespace Betkeeper.Test.Models
 {

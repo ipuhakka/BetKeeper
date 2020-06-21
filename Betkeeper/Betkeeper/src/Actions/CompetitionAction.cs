@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Betkeeper.Classes;
+using Betkeeper.Exceptions;
+using Betkeeper.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Betkeeper.Classes;
-using Betkeeper.Models;
-using Betkeeper.Exceptions;
 
 namespace Betkeeper.Actions
 {
@@ -32,7 +32,7 @@ namespace Betkeeper.Actions
         /// <param name="startTime"></param>
         public void CreateCompetition(
             int userId,
-            string name, 
+            string name,
             string description,
             DateTime startTime)
         {

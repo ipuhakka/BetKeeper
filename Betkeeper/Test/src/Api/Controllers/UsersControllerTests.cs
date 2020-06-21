@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using Api.Controllers;
+﻿using Api.Controllers;
 using Betkeeper.Repositories;
-using NUnit.Framework;
 using Moq;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Net;
 using TestTools;
 
 namespace Api.Test.Controllers
@@ -50,7 +50,7 @@ namespace Api.Test.Controllers
         {
             var mock = new Mock<IUserRepository>();
 
-            mock.Setup(userRepo => 
+            mock.Setup(userRepo =>
                 userRepo.UsernameInUse(It.IsAny<string>()))
                 .Returns(true);
 

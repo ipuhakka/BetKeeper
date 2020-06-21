@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Api.Classes;
+using Betkeeper.Classes;
+using Betkeeper.Repositories;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Betkeeper.Classes;
-using Betkeeper.Repositories;
-using Api.Classes;
 
 namespace Api.Controllers
 {

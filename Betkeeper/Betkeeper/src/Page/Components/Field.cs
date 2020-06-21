@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace Betkeeper.Page.Components
 {
@@ -44,9 +44,9 @@ namespace Betkeeper.Page.Components
         /// <param name="readOnly"></param>
         /// <param name="fieldType"></param>
         public Field(
-            string componentKey, 
-            string label, 
-            bool readOnly, 
+            string componentKey,
+            string label,
+            bool readOnly,
             FieldType fieldType,
             string dataKey)
             : this(componentKey, label, fieldType)
@@ -95,10 +95,10 @@ namespace Betkeeper.Page.Components
         public DateTime? MinimumDateTime { get; }
 
         public DateTimeInput(
-            string componentKey, 
-            string label, 
-            DateTime? minimumDateTime = null, 
-            bool readOnly = false, 
+            string componentKey,
+            string label,
+            DateTime? minimumDateTime = null,
+            bool readOnly = false,
             string dataKey = null)
             : base(componentKey, label, FieldType.DateTime, readOnly: readOnly, dataKey: dataKey)
         {
@@ -149,7 +149,7 @@ namespace Betkeeper.Page.Components
     public class InputDropdown : Field
     {
         public InputDropdown(string componentKey, string label)
-            :base(componentKey, label, FieldType.InputDropdown)
+            : base(componentKey, label, FieldType.InputDropdown)
         {
 
         }

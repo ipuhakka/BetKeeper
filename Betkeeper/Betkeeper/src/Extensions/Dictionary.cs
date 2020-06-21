@@ -34,7 +34,7 @@ namespace Betkeeper.Extensions
 
         public static int? GetInt(this Dictionary<string, object> dictionary, string key)
         {
-            if (!dictionary.ContainsKey(key) 
+            if (!dictionary.ContainsKey(key)
                 || dictionary[key] == null)
             {
                 return null;

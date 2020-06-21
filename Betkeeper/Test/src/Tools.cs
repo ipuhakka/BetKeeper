@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Web.Http.Controllers;
-using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Models;
-using Betkeeper.Actions;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Web.Http.Controllers;
 
 namespace TestTools
 {
     public static class Tools
     {
         public static HttpControllerContext MockHttpControllerContext(
-            object dataContent = null, 
+            object dataContent = null,
             Dictionary<string, string> headers = null)
         {
             var request = new HttpRequestMessage();

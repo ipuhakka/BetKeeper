@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Api.Classes;
 using Api.Controllers;
-using Api.Classes;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Net;
 using TestTools;
 
@@ -26,7 +26,7 @@ namespace Api.Test.Controllers
 
             var response = controller.Get("competitions");
 
-            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);     
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Test]

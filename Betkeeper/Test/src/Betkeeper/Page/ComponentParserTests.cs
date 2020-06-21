@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Betkeeper.Page;
+using Betkeeper.Page.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Betkeeper.Page;
-using Betkeeper.Page.Components;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Betkeeper.Test.Page
 {
@@ -23,7 +23,7 @@ namespace Betkeeper.Test.Page
                 "style",
                 true,
                 "navigateTo",
-                new List<string> { "include1", "include2"});
+                new List<string> { "include1", "include2" });
 
             var result = ComponentParser
                 .ParseComponent(SerializeAsCamelCase(button)) as PageActionButton;
@@ -198,7 +198,7 @@ namespace Betkeeper.Test.Page
             {
                 new Table("tableKey", new List<DataField>{ new DataField("dataFieldKey", DataType.DateTime)} ),
                 new ModalActionButton(
-                    "modalAction", 
+                    "modalAction",
                     new List<Component>
                     {
                         new NavigationButton("to", "text", "somestyle")
