@@ -19,13 +19,28 @@ namespace Betkeeper.Models
         public int Competition { get; set; }
     }
 
-    public class ParticipatorRepository : BaseRepository
+    public class ParticipatorRepository : BaseRepository, IDisposable
     {
-        protected CompetitionRepository CompetitionHandler { get; set; }
+        private CompetitionRepository CompetitionHandler { get; set; }
+
+        private readonly BetkeeperDataContext _context;
 
         public ParticipatorRepository()
         {
             CompetitionHandler = new CompetitionRepository();
+            _context = new BetkeeperDataContext(OptionsBuilder);
+        }
+
+        public ParticipatorRepository(BetkeeperDataContext context)
+        {
+            _context = context;
+            CompetitionHandler = new CompetitionRepository(context);
+        }
+
+        public void Dispose()
+        {
+            CompetitionHandler.Dispose();
+            _context.Dispose();
         }
 
         public List<Participator> GetParticipators(
@@ -33,27 +48,24 @@ namespace Betkeeper.Models
             int? competitionId = null,
             CompetitionRole? role = null)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            var query = _context.Participator.AsQueryable();
+
+            if (userId != null)
             {
-                var query = context.Participator.AsQueryable();
-
-                if (userId != null)
-                {
-                    query = query.Where(participator => participator.UserId == userId);
-                }
-
-                if (competitionId != null)
-                {
-                    query = query.Where(participator => participator.Competition == competitionId);
-                }
-
-                if (role != null)
-                {
-                    query = query.Where(participator => participator.Role == role);
-                }
-
-                return query.ToList();
+                query = query.Where(participator => participator.UserId == userId);
             }
+
+            if (competitionId != null)
+            {
+                query = query.Where(participator => participator.Competition == competitionId);
+            }
+
+            if (role != null)
+            {
+                query = query.Where(participator => participator.Role == role);
+            }
+
+            return query.ToList();
         }
 
         public void AddParticipator(int userId, int competitionId, CompetitionRole role)
@@ -66,17 +78,14 @@ namespace Betkeeper.Models
                 throw new ArgumentException("Competition does not exist");
             }
 
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            _context.Participator.Add(new Participator
             {
-                context.Participator.Add(new Participator
-                {
-                    UserId = userId,
-                    Competition = competitionId,
-                    Role = role
-                });
+                UserId = userId,
+                Competition = competitionId,
+                Role = role
+            });
 
-                context.SaveChanges();
-            }
+            _context.SaveChanges();
         }
     }
 }

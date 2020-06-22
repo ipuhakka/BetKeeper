@@ -10,21 +10,31 @@ namespace Betkeeper.Test.Models
 {
     public class ParticipatorTests
     {
+        private ParticipatorRepository _participatorRepository;
+
+        private BetkeeperDataContext _context;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _participatorRepository = new ParticipatorRepository(_context);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _participatorRepository.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Participator.RemoveRange(_context.Participator);
+            _context.Competition.RemoveRange(_context.Competition);
+            _context.SaveChanges();
         }
 
         [Test]
@@ -70,21 +80,19 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions, participators: participators);
+            Tools.CreateTestData(_context, competitions: competitions, participators: participators);
 
-            var testRepo = new TestParticipatorRepository();
-
-            Assert.AreEqual(4, testRepo.GetParticipators().Count);
-            Assert.AreEqual(2, testRepo.GetParticipators(competitionId: 2).Count);
-            Assert.AreEqual(2, testRepo.GetParticipators(userId: 2).Count);
-            Assert.AreEqual(1, testRepo.GetParticipators(userId: 1, competitionId: 1).Count);
+            Assert.AreEqual(4, _participatorRepository.GetParticipators().Count);
+            Assert.AreEqual(2, _participatorRepository.GetParticipators(competitionId: 2).Count);
+            Assert.AreEqual(2, _participatorRepository.GetParticipators(userId: 2).Count);
+            Assert.AreEqual(1, _participatorRepository.GetParticipators(userId: 1, competitionId: 1).Count);
         }
 
         [Test]
         public void AddParticipator_CompetitionDoesNotExist_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>
-                new TestParticipatorRepository().AddParticipator(
+                _participatorRepository.AddParticipator(
                     userId: 1, competitionId: 1, Enums.CompetitionRole.Host));
         }
 
@@ -101,32 +109,12 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            new TestParticipatorRepository().AddParticipator(
+            _participatorRepository.AddParticipator(
                 userId: 1, competitionId: 1, Enums.CompetitionRole.Host);
-
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                Assert.AreEqual(1, context.Participator.ToList().Count);
-            }
-        }
-
-        private class TestParticipatorRepository : ParticipatorRepository
-        {
-            public TestParticipatorRepository()
-            {
-                OptionsBuilder = Tools.GetTestOptionsBuilder();
-                CompetitionHandler = new TestCompetitionRepository();
-            }
-
-            private class TestCompetitionRepository : CompetitionRepository
-            {
-                public TestCompetitionRepository()
-                {
-                    OptionsBuilder = Tools.GetTestOptionsBuilder();
-                }
-            }
+ 
+            Assert.AreEqual(1, _context.Participator.ToList().Count);
         }
     }
 }

@@ -30,15 +30,19 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(targets: targets);
+            var context = Tools.GetTestContext();
 
-            var resultTargets = new TestTargetRepository().GetTargets(competitionId: 1);
+            Tools.CreateTestData(context, targets: targets);
+
+            var resultTargets = new TargetRepository(context).GetTargets(competitionId: 1);
 
             Assert.AreEqual(2, resultTargets.Count);
             resultTargets.ForEach(target =>
             {
                 Assert.AreEqual(1, target.CompetitionId);
             });
+
+            context.Target.RemoveRange(context.Target);
         }
     }
 }

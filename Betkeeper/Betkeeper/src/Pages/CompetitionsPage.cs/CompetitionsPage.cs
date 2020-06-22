@@ -11,13 +11,23 @@ using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
-    public class CompetitionsPage : IPage
+    public class CompetitionsPage : IPage, IDisposable
     {
-        protected CompetitionAction CompetitionAction { get; set; }
+        private CompetitionAction CompetitionAction { get; set; }
 
         public CompetitionsPage()
         {
             CompetitionAction = new CompetitionAction();
+        }
+
+        public CompetitionsPage(CompetitionAction competitionAction)
+        {
+            CompetitionAction = competitionAction;
+        }
+
+        public void Dispose()
+        {
+            CompetitionAction.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageKey, int userId)

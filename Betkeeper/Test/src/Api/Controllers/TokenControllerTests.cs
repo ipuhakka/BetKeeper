@@ -23,7 +23,7 @@ namespace Api.Test.Controllers
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
-            _context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder());
+            _context = Tools.GetTestContext();
             _controller = new TestController(_context);
         }
 
@@ -38,6 +38,7 @@ namespace Api.Test.Controllers
         {
             _context.User.RemoveRange(_context.User);
             TokenLog.ClearTokenLog();
+            _context.SaveChanges();
         }
 
         [Test]

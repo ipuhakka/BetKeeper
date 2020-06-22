@@ -15,13 +15,23 @@ namespace Betkeeper.Pages
     /// <summary>
     /// A competition page structure.
     /// </summary>
-    public partial class CompetitionPage : IPage
+    public partial class CompetitionPage : IPage, IDisposable
     {
-        protected CompetitionAction CompetitionAction { get; set; }
+        private CompetitionAction CompetitionAction { get; set; }
 
         public CompetitionPage()
         {
             CompetitionAction = new CompetitionAction();
+        }
+
+        public CompetitionPage(CompetitionAction competitionAction)
+        {
+            CompetitionAction = competitionAction;
+        }
+
+        public void Dispose()
+        {
+            CompetitionAction.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageId, int userId)

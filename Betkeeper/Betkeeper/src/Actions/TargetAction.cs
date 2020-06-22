@@ -9,13 +9,37 @@ namespace Betkeeper.Actions
     /// <summary>
     /// Actions for competition bet targets.
     /// </summary>
-    public class TargetAction
+    public class TargetAction : IDisposable
     {
-        protected CompetitionRepository CompetitionRepository { get; set; }
+        private CompetitionRepository CompetitionRepository { get; set; }
 
-        protected ParticipatorRepository ParticipatorRepository { get; set; }
+        private ParticipatorRepository ParticipatorRepository { get; set; }
 
-        protected TargetRepository TargetRepository { get; set; }
+        private TargetRepository TargetRepository { get; set; }
+
+        public TargetAction()
+        {
+            CompetitionRepository = new CompetitionRepository();
+            ParticipatorRepository = new ParticipatorRepository();
+            TargetRepository = new TargetRepository();
+        }
+
+        public TargetAction(
+            CompetitionRepository competitionRepository,
+            ParticipatorRepository participatorRepository,
+            TargetRepository targetRepository)
+        {
+            CompetitionRepository = competitionRepository;
+            ParticipatorRepository = participatorRepository;
+            TargetRepository = targetRepository;
+        }
+
+        public void Dispose()
+        {
+            CompetitionRepository.Dispose();
+            ParticipatorRepository.Dispose();
+            TargetRepository.Dispose();
+        }
 
         public void AddTarget(int userId, int competitionId, Target target)
         {

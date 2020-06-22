@@ -13,20 +13,27 @@ namespace Betkeeper.Test.Pages
     [TestFixture]
     public class CompetitionPageTests
     {
+        private CompetitionPage _competitionPage;
+        private BetkeeperDataContext _context;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _competitionPage = new CompetitionPage(
+                new Betkeeper.Actions.CompetitionAction(
+                    new CompetitionRepository(_context), new ParticipatorRepository(_context)));
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Competition.RemoveRange(_context.Competition);
+            _context.Participator.RemoveRange(_context.Participator);
+
+            _context.SaveChanges();
         }
 
         [Test]
@@ -58,7 +65,7 @@ namespace Betkeeper.Test.Pages
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             var action = new PageAction(
                 1,
@@ -69,7 +76,7 @@ namespace Betkeeper.Test.Pages
                     { "competitionId", 1}
                 });
 
-            var response = new TestCompetitionPage().HandleAction(action);
+            var response = _competitionPage.HandleAction(action);
 
             Assert.AreEqual(
                 HttpStatusCode.Unauthorized,
@@ -88,7 +95,7 @@ namespace Betkeeper.Test.Pages
                     { "competitionId", null}
                 });
 
-            var response = new TestCompetitionPage().HandleAction(action);
+            var response = _competitionPage.HandleAction(action);
 
             Assert.AreEqual(
                 HttpStatusCode.BadRequest,
@@ -124,7 +131,7 @@ namespace Betkeeper.Test.Pages
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             var action = new PageAction(
                 1,
@@ -135,25 +142,13 @@ namespace Betkeeper.Test.Pages
                     { "competitionId", 1}
                 });
 
-            var response = new TestCompetitionPage().HandleAction(action);
+            var response = _competitionPage.HandleAction(action);
 
             Assert.AreEqual(
                 HttpStatusCode.OK,
                 response.StatusCode);
-
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                Assert.AreEqual(0, context.Competition.ToList().Count);
-            }
+            
+            Assert.AreEqual(0, _context.Competition.ToList().Count);
         }
-
-        private class TestCompetitionPage : CompetitionPage
-        {
-            public TestCompetitionPage()
-            {
-                CompetitionAction = new TestCompetitionAction();
-            }
-        }
-
     }
 }

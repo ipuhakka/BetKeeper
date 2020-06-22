@@ -13,20 +13,34 @@ namespace Betkeeper.Test.Actions
     [TestFixture]
     public class CompetitionActionTest
     {
+        private CompetitionAction _action;
+
+        private CompetitionRepository _competitionRepository;
+
+        private BetkeeperDataContext _context;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _competitionRepository = new CompetitionRepository(_context);
+            _action = new CompetitionAction(_competitionRepository, new ParticipatorRepository(_context));
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _action.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Participator.RemoveRange(_context.Participator);
+            _context.Competition.RemoveRange(_context.Competition);
+            _context.SaveChanges();
         }
 
         [Test]
@@ -72,9 +86,9 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
-            var resultCompetitions = new TestAction().GetUsersCompetitions(1);
+            var resultCompetitions = _action.GetUsersCompetitions(1);
 
             Assert.AreEqual(2, resultCompetitions.Count);
             Assert.AreEqual(1, resultCompetitions[0].CompetitionId);
@@ -94,9 +108,9 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
 
-            var testAction = new TestAction();
+            var testAction = _action;
 
             Assert.Throws<NameInUseException>(() =>
              testAction.CreateCompetition(1, "InUseName", "Description", new DateTime(2000, 1, 1)));
@@ -105,11 +119,11 @@ namespace Betkeeper.Test.Actions
         [Test]
         public void CreateCompetition_CreatesParticipatorAndCompetition()
         {
-            var testAction = new TestAction();
+            var testAction = _action;
 
             testAction.CreateCompetition(1, "TestName", "Description to remember", DateTime.UtcNow.AddDays(1));
 
-            var competitions = new TestCompetitionRepository().GetCompetitions();
+            var competitions = _competitionRepository.GetCompetitions();
 
             Assert.AreEqual(1, competitions.Count);
 
@@ -123,7 +137,7 @@ namespace Betkeeper.Test.Actions
         {
             Assert.Throws<NotFoundException>(() =>
             {
-                new TestAction().JoinCompetition("joincode", 1);
+                _action.JoinCompetition("joincode", 1);
             });
         }
 
@@ -144,18 +158,15 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            new TestAction().JoinCompetition("joincode", 1);
+            _action.JoinCompetition("joincode", 1);
 
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                var participators = context.Participator.ToList();
-                Assert.AreEqual(1, participators.Count);
-                Assert.AreEqual(1, participators[0].Competition);
-                Assert.AreEqual(1, participators[0].UserId);
-                Assert.AreEqual(Enums.CompetitionRole.Participator, participators[0].Role);
-            }
+            var participators = _context.Participator.ToList();
+            Assert.AreEqual(1, participators.Count);
+            Assert.AreEqual(1, participators[0].Competition);
+            Assert.AreEqual(1, participators[0].UserId);
+            Assert.AreEqual(Enums.CompetitionRole.Participator, participators[0].Role);
         }
 
         [Test]
@@ -177,12 +188,12 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
             competitions.ForEach(competition =>
             {
                 Assert.Throws<InvalidOperationException>(() =>
-                    new TestAction().JoinCompetition(competition.JoinCode, 1));
+                    _action.JoinCompetition(competition.JoinCode, 1));
             });
         }
 
@@ -205,12 +216,12 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators);
+            Tools.CreateTestData(_context, participators: participators);
 
             participators.ForEach(participator =>
             {
                 Assert.Throws<InvalidOperationException>(() =>
-                    new TestAction().DeleteCompetition(participator.UserId, 1));
+                    _action.DeleteCompetition(participator.UserId, 1));
             });
         }
 
@@ -227,12 +238,12 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators);
+            Tools.CreateTestData(_context, participators: participators);
 
             participators.ForEach(participator =>
             {
                 Assert.Throws<InvalidOperationException>(() =>
-                    new TestAction().DeleteCompetition(participator.UserId, 1));
+                    _action.DeleteCompetition(participator.UserId, 1));
             });
         }
 
@@ -257,25 +268,17 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                var existingCompetitions = context.Competition.ToList();
-
-                Assert.AreEqual(1, existingCompetitions.Count);
-            }
+            var existingCompetitions = _context.Competition.ToList();
+            Assert.AreEqual(1, existingCompetitions.Count);
 
             participators.ForEach(participator =>
             {
-                new TestAction().DeleteCompetition(participator.UserId, 1);
+                _action.DeleteCompetition(participator.UserId, 1);
 
-                using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-                {
-                    var existingCompetitions = context.Competition.ToList();
-
-                    Assert.AreEqual(0, existingCompetitions.Count);
-                }
+                existingCompetitions = _context.Competition.ToList();
+                Assert.AreEqual(0, existingCompetitions.Count);
             });
         }
 
@@ -290,9 +293,9 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            Assert.IsNull(new TestAction().GetParticipator(1, 1));
+            Assert.IsNull(_action.GetParticipator(1, 1));
         }
 
         [Test]
@@ -317,9 +320,9 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
-            var participator = new TestAction().GetParticipator(1, 1);
+            var participator = _action.GetParticipator(1, 1);
 
             Assert.AreEqual(1, participator.Competition);
             Assert.AreEqual(1, participator.ParticipatorId);
@@ -327,15 +330,6 @@ namespace Betkeeper.Test.Actions
             Assert.AreEqual(
                 Enums.CompetitionRole.Participator,
                 (Enums.CompetitionRole)participator.Role);
-        }
-
-        private class TestAction : CompetitionAction
-        {
-            public TestAction()
-            {
-                CompetitionRepository = new TestCompetitionRepository();
-                ParticipatorRepository = new TestParticipatorRepository();
-            }
         }
     }
 }

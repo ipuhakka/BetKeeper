@@ -1,5 +1,6 @@
 ﻿using Betkeeper.Data;
 using Betkeeper.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,30 +33,41 @@ namespace Betkeeper.Models
         public TargetScore Score { get; set; }
     }
 
-    public class TargetRepository : BaseRepository
+    public class TargetRepository : BaseRepository, IDisposable
     {
+        private BetkeeperDataContext _context;
+
+        public TargetRepository()
+        {
+            _context = new BetkeeperDataContext(OptionsBuilder);
+        }
+
+        public TargetRepository(BetkeeperDataContext context)
+        {
+            _context = context;
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+
         public void AddTarget(Target target)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                context.Target.Add(target);
-                context.SaveChanges();
-            }
+            _context.Target.Add(target);
+            _context.SaveChanges();
         }
 
         public List<Target> GetTargets(int? competitionId = null)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            var query = _context.Target.AsQueryable();
+
+            if (competitionId != null)
             {
-                var query = context.Target.AsQueryable();
-
-                if (competitionId != null)
-                {
-                    query = query.Where(competition => competition.CompetitionId == competitionId);
-                }
-
-                return query.ToList();
+                query = query.Where(competition => competition.CompetitionId == competitionId);
             }
+
+            return query.ToList();
         }
     }
 }

@@ -11,6 +11,12 @@ namespace TestTools
 {
     public static class Tools
     {
+        /// <summary>
+        /// Mocks http controller context
+        /// </summary>
+        /// <param name="dataContent">Mock request content</param>
+        /// <param name="headers">Mock request headers</param>
+        /// <returns></returns>
         public static HttpControllerContext MockHttpControllerContext(
             object dataContent = null,
             Dictionary<string, string> headers = null)
@@ -76,114 +82,19 @@ namespace TestTools
             context.SaveChanges();
         }
 
-        public static void CreateTestData(
-            List<Participator> participators = null,
-            List<Competition> competitions = null,
-            List<User> users = null,
-            List<Target> targets = null)
+        /// <summary>
+        /// Creates test context using in memory database.
+        /// </summary>
+        /// <returns></returns>
+        public static BetkeeperDataContext GetTestContext()
         {
-            using (var context = new BetkeeperDataContext(
-               GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureCreated();
-
-                if (participators != null)
-                {
-                    participators.ForEach(participator =>
-                        context.Participator.Add(participator));
-                }
-
-                if (competitions != null)
-                {
-                    competitions.ForEach(competition =>
-                        context.Competition.Add(competition));
-                }
-
-                if (users != null)
-                {
-                    users.ForEach(user =>
-                        context.User.Add(user));
-                }
-
-                if (targets != null)
-                {
-                    targets.ForEach(target =>
-                        context.Target.Add(target));
-                }
-
-                context.SaveChanges();
-            }
+            return new BetkeeperDataContext(GetTestOptionsBuilder());
         }
 
-        public static DbContextOptionsBuilder GetTestOptionsBuilder()
+        private static DbContextOptionsBuilder GetTestOptionsBuilder()
         {
             return new DbContextOptionsBuilder()
                 .UseInMemoryDatabase("TestDatabase");
-        }
-    }
-
-    internal class TestTargetRepository : TargetRepository
-    {
-        internal TestTargetRepository()
-        {
-            OptionsBuilder = Tools.GetTestOptionsBuilder();
-        }
-    }
-
-
-    internal class TestUserRepository : UserRepository
-    {
-        internal TestUserRepository()
-        {
-            OptionsBuilder = Tools.GetTestOptionsBuilder();
-        }
-    }
-
-    /// <summary>
-    /// Testable implementation of competition repository.
-    /// </summary>
-    internal class TestCompetitionRepository : CompetitionRepository
-    {
-        internal TestCompetitionRepository()
-        {
-            OptionsBuilder = Tools.GetTestOptionsBuilder();
-        }
-    }
-
-    /// <summary>
-    /// Testable implementation of participator repository.
-    /// </summary>
-    internal class TestParticipatorRepository : ParticipatorRepository
-    {
-        internal TestParticipatorRepository()
-        {
-            OptionsBuilder = Tools.GetTestOptionsBuilder();
-            CompetitionHandler = new TestCompetitionRepository();
-        }
-    }
-
-    /// <summary>
-    /// Testable implementation of competition action.
-    /// </summary>
-    internal class TestCompetitionAction : CompetitionAction
-    {
-        public TestCompetitionAction()
-        {
-            CompetitionRepository = new TestCompetitionRepository();
-            ParticipatorRepository = new TestParticipatorRepository();
-        }
-    }
-
-    /// <summary>
-    /// Testable implementation of target action.
-    /// </summary>
-    internal class TestTargetAction : TargetAction
-    {
-        public TestTargetAction()
-        {
-            CompetitionRepository = new TestCompetitionRepository();
-            ParticipatorRepository = new TestParticipatorRepository();
-            TargetRepository = new TestTargetRepository();
         }
     }
 }

@@ -36,8 +36,25 @@ namespace Betkeeper.Models
     /// <summary>
     /// Class for accessing competition data.
     /// </summary>
-    public class CompetitionRepository : BaseRepository
+    public class CompetitionRepository : BaseRepository, IDisposable
     {
+        private readonly BetkeeperDataContext _context;
+
+        public CompetitionRepository()
+        {
+            _context = new BetkeeperDataContext(OptionsBuilder);
+        }
+
+        public CompetitionRepository(BetkeeperDataContext context)
+        {
+            _context = context;
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
+        }
+
         public void AddCompetition(Competition competition)
         {
             if (!Validate(competition))
@@ -55,11 +72,8 @@ namespace Betkeeper.Models
                 throw new ArgumentException("Join code already in use");
             }
 
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                context.Competition.Add(competition);
-                context.SaveChanges();
-            }
+            _context.Competition.Add(competition);
+            _context.SaveChanges();
         }
 
         public void UpdateCompetition()
@@ -76,11 +90,8 @@ namespace Betkeeper.Models
                 throw new InvalidOperationException("Competition not found");
             }
 
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                context.Competition.Remove(competition);
-                context.SaveChanges();
-            }
+            _context.Competition.Remove(competition);
+            _context.SaveChanges();            
         }
 
         /// <summary>
@@ -95,27 +106,25 @@ namespace Betkeeper.Models
             string name = null,
             string joinCode = null)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            
+            var query = _context.Competition.AsQueryable();
+
+            if (competitionId != null)
             {
-                var query = context.Competition.AsQueryable();
-
-                if (competitionId != null)
-                {
-                    query = query.Where(competition => competition.CompetitionId == competitionId);
-                }
-
-                if (name != null)
-                {
-                    query = query.Where(competition => competition.Name == name);
-                }
-
-                if (joinCode != null)
-                {
-                    query = query.Where(competition => competition.JoinCode == joinCode);
-                }
-
-                return query.ToList();
+                query = query.Where(competition => competition.CompetitionId == competitionId);
             }
+
+            if (name != null)
+            {
+                query = query.Where(competition => competition.Name == name);
+            }
+
+            if (joinCode != null)
+            {
+                query = query.Where(competition => competition.JoinCode == joinCode);
+            }
+
+            return query.ToList();           
         }
 
         /// <summary>
@@ -125,14 +134,11 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public List<Competition> GetCompetitionsById(List<int> competitionIds)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
-            {
-                return context
-                    .Competition
-                    .Where(competition =>
-                        competitionIds.Contains(competition.CompetitionId))
-                    .ToList();
-            }
+            return _context
+                .Competition
+                .Where(competition =>
+                    competitionIds.Contains(competition.CompetitionId))
+                .ToList();            
         }
 
         /// <summary>
@@ -142,22 +148,19 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public Competition GetCompetition(int? competitionId = null, string name = null)
         {
-            using (var context = new BetkeeperDataContext(OptionsBuilder))
+            var query = _context.Competition.AsQueryable();
+
+            if (competitionId != null)
             {
-                var query = context.Competition.AsQueryable();
-
-                if (competitionId != null)
-                {
-                    query = query.Where(competition => competition.CompetitionId == competitionId);
-                }
-
-                if (name != null)
-                {
-                    query = query.Where(competition => competition.Name == name);
-                }
-
-                return query.FirstOrDefault();
+                query = query.Where(competition => competition.CompetitionId == competitionId);
             }
+
+            if (name != null)
+            {
+                query = query.Where(competition => competition.Name == name);
+            }
+
+            return query.FirstOrDefault();
         }
 
         /// <summary>

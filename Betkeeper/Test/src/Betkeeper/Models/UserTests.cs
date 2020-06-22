@@ -17,7 +17,7 @@ namespace Betkeeper.Test.Models
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
-            _context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder());
+            _context = Tools.GetTestContext();
             _userRepository = new UserRepository(_context);
         }
 
@@ -32,6 +32,7 @@ namespace Betkeeper.Test.Models
         public void TearDown()
         {
             _context.User.RemoveRange(_context.User);
+            _context.SaveChanges();
         }
 
         [Test]

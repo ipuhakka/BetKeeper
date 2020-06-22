@@ -11,20 +11,30 @@ namespace Betkeeper.Test.Models
     [TestFixture]
     public class CompetitionTests
     {
+        private BetkeeperDataContext _context;
+
+        private CompetitionRepository _competitionRepository;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _competitionRepository = new CompetitionRepository(_context);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _competitionRepository.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Competition.RemoveRange(_context.Competition);
+            _context.SaveChanges();
         }
 
         public void GetCompetitionsById_ReturnsCompetitionsWithIdInList()
@@ -45,9 +55,9 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            var results = new TestCompetitionRepository()
+            var results = _competitionRepository
                 .GetCompetitionsById(new List<int> { 1, 3, 4 });
 
             Assert.AreEqual(2, results.Count);
@@ -79,13 +89,11 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: inDatabaseCompetitions);
-
-            var repository = new TestRepository();
+            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<NameInUseException>(() =>
-                    repository.AddCompetition(competition)));
+                    _competitionRepository.AddCompetition(competition)));
         }
 
         [Test]
@@ -111,13 +119,11 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: inDatabaseCompetitions);
-
-            var repository = new TestRepository();
+            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentException>(() =>
-                    repository.AddCompetition(competition)));
+                    _competitionRepository.AddCompetition(competition)));
         }
 
         [Test]
@@ -163,13 +169,11 @@ namespace Betkeeper.Test.Models
                 },
             };
 
-            Tools.CreateTestData(competitions: testCompetitions);
-
-            var repository = new TestRepository();
+            Tools.CreateTestData(_context, competitions: testCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
-                    repository.AddCompetition(competition)));
+                    _competitionRepository.AddCompetition(competition)));
         }
 
         [Test]
@@ -183,9 +187,7 @@ namespace Betkeeper.Test.Models
                 StartTime = DateTime.UtcNow.AddDays(-1)
             };
 
-            var repository = new TestRepository();
-
-            Assert.DoesNotThrow(() => repository.AddCompetition(competition));
+            Assert.DoesNotThrow(() => _competitionRepository.AddCompetition(competition));
         }
 
         [Test]
@@ -202,12 +204,10 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
-
-            var repository = new TestRepository();
+            Tools.CreateTestData(_context, competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
-                repository.DeleteCompetition(competitionId: 5));
+                _competitionRepository.DeleteCompetition(competitionId: 5));
         }
 
         [Test]
@@ -224,12 +224,10 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
-
-            var repository = new TestRepository();
+            Tools.CreateTestData(_context, competitions: competitions);
 
             Assert.DoesNotThrow(() =>
-                repository.DeleteCompetition(competitionId: 3));
+                _competitionRepository.DeleteCompetition(competitionId: 3));
         }
 
         [Test]
@@ -241,9 +239,9 @@ namespace Betkeeper.Test.Models
                 new Competition{ CompetitionId = 2 },
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            Assert.IsNull(new TestRepository().GetCompetition(3));
+            Assert.IsNull(_competitionRepository.GetCompetition(3));
         }
 
         [Test]
@@ -255,19 +253,11 @@ namespace Betkeeper.Test.Models
                 new Competition{ CompetitionId = 2, Description = "Description 2" },
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
-            var competition = new TestRepository().GetCompetition(1);
+            var competition = _competitionRepository.GetCompetition(1);
 
             Assert.AreEqual("Description 1", competition.Description);
-        }
-
-        private class TestRepository : CompetitionRepository
-        {
-            public TestRepository()
-            {
-                OptionsBuilder = Tools.GetTestOptionsBuilder();
-            }
         }
     }
 }

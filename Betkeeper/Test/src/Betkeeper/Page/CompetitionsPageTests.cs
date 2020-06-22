@@ -12,20 +12,34 @@ namespace Betkeeper.Test.Pages
 {
     public class CompetitionsPageTests
     {
+        private CompetitionsPage _competitionsPage;
+        private CompetitionRepository _competitionRepository;
+        private BetkeeperDataContext _context;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _competitionRepository = new CompetitionRepository(_context);
+            _competitionsPage = new CompetitionsPage(
+                new Betkeeper.Actions.CompetitionAction(_competitionRepository, new ParticipatorRepository(_context)));
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _competitionRepository.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Competition.RemoveRange(_context.Competition);
+            _context.Participator.RemoveRange(_context.Participator);
+
+            _context.SaveChanges();
         }
 
         [Test]
@@ -49,7 +63,7 @@ namespace Betkeeper.Test.Pages
 
             invalidDicts.ForEach(dict =>
             {
-                var response = new TestCompetitionPage().HandleAction(
+                var response = _competitionsPage.HandleAction(
                         new PageAction(1, "competitions", "Post", dict));
 
                 Assert.AreEqual(
@@ -68,12 +82,12 @@ namespace Betkeeper.Test.Pages
                 { "Description", "Kuvaus" }
             };
 
-            var response = new TestCompetitionPage().HandleAction(
+            var response = _competitionsPage.HandleAction(
                 new PageAction(1, "competitions", "Post", parameters));
 
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
 
-            var competitions = new TestCompetitionRepository().GetCompetitions();
+            var competitions = _competitionRepository.GetCompetitions();
 
             Assert.AreEqual(1, competitions.Count);
             Assert.AreEqual(new DateTime(2019, 1, 1, 14, 45, 0), competitions[0].StartTime);
@@ -94,7 +108,7 @@ namespace Betkeeper.Test.Pages
                 }
             };
 
-            Tools.CreateTestData(competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
 
             var parameters = new Dictionary<string, object>
             {
@@ -103,7 +117,7 @@ namespace Betkeeper.Test.Pages
                 { "Description", "Kuvaus" }
             };
 
-            var response = new TestCompetitionPage().HandleAction(
+            var response = _competitionsPage.HandleAction(
                 new PageAction(1, "competitions", "Post", parameters));
 
             Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
@@ -132,7 +146,7 @@ namespace Betkeeper.Test.Pages
             {
                 Assert.AreEqual(
                     HttpStatusCode.BadRequest,
-                    new TestCompetitionPage().HandleAction(action).StatusCode);
+                    _competitionsPage.HandleAction(action).StatusCode);
             });
         }
 
@@ -150,7 +164,7 @@ namespace Betkeeper.Test.Pages
 
             Assert.AreEqual(
                 HttpStatusCode.NotFound,
-                new TestCompetitionPage().HandleAction(action).StatusCode);
+                _competitionsPage.HandleAction(action).StatusCode);
         }
 
         [Test]
@@ -166,7 +180,7 @@ namespace Betkeeper.Test.Pages
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
             var action = new PageAction(
             1,
@@ -179,7 +193,7 @@ namespace Betkeeper.Test.Pages
 
             Assert.AreEqual(
                 HttpStatusCode.Conflict,
-                new TestCompetitionPage().HandleAction(action).StatusCode);
+                _competitionsPage.HandleAction(action).StatusCode);
         }
 
         [Test]
@@ -195,7 +209,7 @@ namespace Betkeeper.Test.Pages
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
             var action = new PageAction(
             1,
@@ -208,15 +222,7 @@ namespace Betkeeper.Test.Pages
 
             Assert.AreEqual(
                 HttpStatusCode.OK,
-                new TestCompetitionPage().HandleAction(action).StatusCode);
-        }
-
-        private class TestCompetitionPage : CompetitionsPage
-        {
-            public TestCompetitionPage()
-            {
-                CompetitionAction = new TestCompetitionAction();
-            }
+                _competitionsPage.HandleAction(action).StatusCode);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Actions;
+using Betkeeper.Data;
 using Betkeeper.Enums;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
@@ -13,27 +14,43 @@ namespace Betkeeper.Test.Actions
     [TestFixture]
     public class TargetActionTests
     {
+        private TargetAction _targetAction;
+
+        private BetkeeperDataContext _context;
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             // Set Connectionstring so base constructor runs
             Settings.ConnectionString = "TestDatabase";
+            _context = Tools.GetTestContext();
+            _targetAction = new TargetAction(
+                new CompetitionRepository(_context),
+                new ParticipatorRepository(_context),
+                new TargetRepository(_context));
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _targetAction.Dispose();
         }
 
         [TearDown]
         public void TearDown()
         {
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                context.Database.EnsureDeleted();
-            }
+            _context.Participator.RemoveRange(_context.Participator);
+            _context.Target.RemoveRange(_context.Target);
+            _context.Competition.RemoveRange(_context.Competition);
+
+            _context.SaveChanges();
         }
 
         [Test]
         public void AddTarget_CompetitionDoesNotExist_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                new TestTargetAction().AddTarget(1, 1, new Target()));
+                _targetAction.AddTarget(1, 1, new Target()));
         }
 
         [Test]
@@ -47,10 +64,10 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(_context, competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
-                new TestTargetAction().AddTarget(1, 1, new Target()));
+                _targetAction.AddTarget(1, 1, new Target()));
         }
 
         [Test]
@@ -75,10 +92,10 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
-                new TestTargetAction().AddTarget(1, 1, new Target()));
+                _targetAction.AddTarget(1, 1, new Target()));
         }
 
         [Test]
@@ -103,7 +120,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             var target = new Target
             {
@@ -123,7 +140,7 @@ namespace Betkeeper.Test.Actions
             };
 
             var exception = Assert.Throws<ArgumentException>(() =>
-                new TestTargetAction().AddTarget(1, 1, target));
+                _targetAction.AddTarget(1, 1, target));
 
             Assert.AreEqual("Invalid scoring arguments", exception.Message);
         }
@@ -150,7 +167,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             new List<Target>
             {
@@ -198,7 +215,7 @@ namespace Betkeeper.Test.Actions
             }.ForEach(target =>
             {
                 var exception = Assert.Throws<ArgumentException>(() =>
-                    new TestTargetAction().AddTarget(1, 1, target));
+                    _targetAction.AddTarget(1, 1, target));
 
                 Assert.AreEqual("Invalid scoring type for target", exception.Message);
             });
@@ -226,7 +243,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(participators: participators, competitions: competitions);
+            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             var target = new Target
             {
@@ -246,15 +263,12 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            new TestTargetAction().AddTarget(1, 1, target);
+            _targetAction.AddTarget(1, 1, target);
 
-            using (var context = new BetkeeperDataContext(Tools.GetTestOptionsBuilder()))
-            {
-                var targets = context.Target.ToList();
-                Assert.AreEqual(1, targets.Count);
-                Assert.AreEqual(2, targets[0].Scoring.Count);
-                Assert.AreEqual(TargetType.Result, targets[0].Type);
-            }
+            var targets = _context.Target.ToList();
+            Assert.AreEqual(1, targets.Count);
+            Assert.AreEqual(2, targets[0].Scoring.Count);
+            Assert.AreEqual(TargetType.Result, targets[0].Type);
         }
     }
 }

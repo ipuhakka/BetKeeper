@@ -1,4 +1,5 @@
 ﻿using Betkeeper.Classes;
+using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
 using System;
@@ -7,15 +8,27 @@ using System.Linq;
 
 namespace Betkeeper.Actions
 {
-    public class CompetitionAction
+    public class CompetitionAction : IDisposable
     {
-        protected CompetitionRepository CompetitionRepository { get; set; }
-        protected ParticipatorRepository ParticipatorRepository { get; set; }
+        private CompetitionRepository CompetitionRepository { get; set; }
+        private ParticipatorRepository ParticipatorRepository { get; set; }
 
         public CompetitionAction()
         {
             CompetitionRepository = new CompetitionRepository();
             ParticipatorRepository = new ParticipatorRepository();
+        }
+
+        public CompetitionAction(CompetitionRepository competitionRepository, ParticipatorRepository participatorRepository)
+        {
+            CompetitionRepository = competitionRepository;
+            ParticipatorRepository = participatorRepository;
+        }
+
+        public void Dispose()
+        {
+            CompetitionRepository.Dispose();
+            ParticipatorRepository.Dispose();
         }
 
         public Competition GetCompetition(int competitionId)
