@@ -81,6 +81,25 @@ namespace Betkeeper.Actions
             TargetRepository.AddTargets(targets);
         }
 
+        /// <summary>
+        /// Returns targets for competition.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <returns></returns>
+        public List<Target> GetTargets(int competitionId)
+        {
+            return TargetRepository.GetTargets(competitionId);
+        }
+
+        /// <summary>
+        /// Deletes competitions targets.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        public void ClearTargets(int competitionId)
+        {
+            TargetRepository.ClearTargets(competitionId);
+        }
+
         private bool ValidScoringForType(Target target)
         {
             switch (target.Type)

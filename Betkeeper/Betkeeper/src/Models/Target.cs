@@ -3,6 +3,7 @@ using Betkeeper.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Betkeeper.Models
@@ -15,6 +16,7 @@ namespace Betkeeper.Models
         [Key]
         public int TargetId { get; set; }
 
+        [Column("Competition")]
         public int CompetitionId { get; set; }
 
         public List<Scoring> Scoring { get; set; }
@@ -35,7 +37,7 @@ namespace Betkeeper.Models
 
     public class TargetRepository : BaseRepository, IDisposable
     {
-        private BetkeeperDataContext _context;
+        private readonly BetkeeperDataContext _context;
 
         public TargetRepository()
         {
@@ -74,6 +76,20 @@ namespace Betkeeper.Models
             }
 
             return query.ToList();
+        }
+
+        /// <summary>
+        /// Deletes targets from competition.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        public void ClearTargets(int competitionId)
+        {
+            var competitionTargets = _context.Target
+                .AsQueryable()
+                .Where(target => target.CompetitionId == competitionId);
+
+            _context.Target.RemoveRange(competitionTargets);
+            _context.SaveChanges();
         }
     }
 }
