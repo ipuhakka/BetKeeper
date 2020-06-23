@@ -2,6 +2,7 @@
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Betkeeper.Actions
@@ -41,7 +42,7 @@ namespace Betkeeper.Actions
             TargetRepository.Dispose();
         }
 
-        public void AddTarget(int userId, int competitionId, Target target)
+        public void AddTargets(int userId, int competitionId, List<Target> targets)
         {
             var competition = CompetitionRepository.GetCompetition(competitionId);
 
@@ -62,19 +63,22 @@ namespace Betkeeper.Actions
                 throw new InvalidOperationException("Competition not open for new targets");
             }
 
-            if (!ValidScoringForType(target))
+            targets.ForEach(target =>
             {
-                throw new ArgumentException("Invalid scoring type for target");
-            }
+                if (!ValidScoringForType(target))
+                {
+                    throw new ArgumentException("Invalid scoring type for target");
+                }
 
-            if (target.Scoring
-                .GroupBy(scoring => scoring.Score)
-                .Any(group => group.Count() > 1))
-            {
-                throw new ArgumentException("Invalid scoring arguments");
-            }
+                if (target.Scoring
+                    .GroupBy(scoring => scoring.Score)
+                    .Any(group => group.Count() > 1))
+                {
+                    throw new ArgumentException("Invalid scoring arguments");
+                }
+            });
 
-            TargetRepository.AddTarget(target);
+            TargetRepository.AddTargets(targets);
         }
 
         private bool ValidScoringForType(Target target)

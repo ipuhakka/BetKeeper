@@ -58,6 +58,12 @@ namespace Betkeeper.Models
             _context.SaveChanges();
         }
 
+        public void AddTargets(List<Target> targets)
+        {
+            _context.Target.AddRange(targets);
+            _context.SaveChanges();
+        }
+
         public List<Target> GetTargets(int? competitionId = null)
         {
             var query = _context.Target.AsQueryable();
