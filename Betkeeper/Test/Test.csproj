@@ -176,8 +176,9 @@
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />
     <Compile Include="src\Betkeeper\Models\TargetTests.cs" />
     <Compile Include="src\Betkeeper\Models\UserTests.cs" />
-    <Compile Include="src\Betkeeper\Page\CompetitionPageTests.cs" />
-    <Compile Include="src\Betkeeper\Page\CompetitionsPageTests.cs" />
+    <Compile Include="src\Betkeeper\Pages\CompetitionPageTests\CompetitionPageTests.cs" />
+    <Compile Include="src\Betkeeper\Pages\CompetitionPageTests\ManageBetsTests.cs" />
+    <Compile Include="src\Betkeeper\Pages\CompetitionsPageTests\CompetitionsPageTests.cs" />
     <Compile Include="src\Betkeeper\Page\ComponentParserTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\BetRepositoryTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\FolderRepositoryTests.cs" />

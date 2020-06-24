@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using TestTools;
 
-namespace Betkeeper.Test.Pages
+namespace Betkeeper.Test.Pages.CompetitionsPageTests
 {
     public class CompetitionsPageTests
     {

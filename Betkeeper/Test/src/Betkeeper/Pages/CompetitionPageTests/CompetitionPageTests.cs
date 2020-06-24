@@ -8,7 +8,7 @@ using System.Linq;
 using System.Net;
 using TestTools;
 
-namespace Betkeeper.Test.Pages
+namespace Betkeeper.Test.Pages.CompetitionPageTests
 {
     [TestFixture]
     public class CompetitionPageTests
