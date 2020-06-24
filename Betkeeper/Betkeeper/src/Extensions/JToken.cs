@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Extensions
@@ -13,6 +14,23 @@ namespace Betkeeper.Extensions
         public static bool IsNullOrWhiteSpace(this JToken token)
         {
             return string.IsNullOrWhiteSpace(token?.ToString());
+        }
+
+        /// <summary>
+        /// returns a JToken value as double, or null if conversion fails.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static double? GetDoubleInvariantCulture(this JToken token)
+        {
+            var asString = token.ToString().Trim();
+
+            asString = asString.Replace(",", ".");
+
+            CultureInfo culture = new CultureInfo("us");
+            return double.TryParse(asString, NumberStyles.AllowDecimalPoint, culture, out double result)
+                ? result
+                : (double?)null;
         }
     }
 }

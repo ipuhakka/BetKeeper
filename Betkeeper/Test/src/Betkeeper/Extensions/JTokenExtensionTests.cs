@@ -33,5 +33,31 @@ namespace Test.src.Betkeeper.Extensions
             Assert.IsFalse(new JValue(1).IsNullOrWhiteSpace());
             Assert.IsFalse(new JValue("Not empty").IsNullOrWhiteSpace());
         }
+
+        [Test]
+        public void ToDoubleInvariantCulture_InputContainsCommas_ParsesCorrectly()
+        {
+            Assert.AreEqual(2.78, new JValue("2,78").GetDoubleInvariantCulture());
+        }
+
+        [Test]
+        public void ToDoubleInvariantCulture_InputContainsPoint_ParsesCorrectly()
+        {
+            Assert.AreEqual(2.78, new JValue("2.78").GetDoubleInvariantCulture());
+        }
+
+        [Test]
+        public void ToDoubleInvariantCulture_InputNull_ReturnsNull()
+        {
+            Assert.IsNull(new JValue((object)null).GetDoubleInvariantCulture());
+        }
+
+        [Test]
+        public void ToDoubleInvariantCulture_InputNotNumber_ReturnsNull()
+        {
+            Assert.IsNull(new JValue("test2.2").GetDoubleInvariantCulture());
+            Assert.IsNull(new JValue(true).GetDoubleInvariantCulture());
+            Assert.IsNull(new JValue("2.2asfd").GetDoubleInvariantCulture());
+        }
     }
 }
