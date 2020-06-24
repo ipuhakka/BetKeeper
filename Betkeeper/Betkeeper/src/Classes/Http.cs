@@ -57,6 +57,17 @@ namespace Betkeeper.Classes
         }
 
         /// <summary>
+        /// Returns HttpContent as specific type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static T GetHttpContent<T>(HttpContent content)
+        {
+            return JsonConvert.DeserializeObject<T>(content.ReadAsStringAsync().Result);
+        }
+
+        /// <summary>
         /// Returns content as a object dictionary.
         /// </summary>
         /// <param name="request"></param>

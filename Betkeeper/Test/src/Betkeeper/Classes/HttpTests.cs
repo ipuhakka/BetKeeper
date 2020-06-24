@@ -111,5 +111,51 @@ namespace Betkeeper.Test.Classes
 
             Assert.IsTrue(asDynamic.testNull == null);
         }
+
+        [Test]
+        public void GetHttpContent_WorksWithLowerCaseKeys()
+        {
+            var testJson = "{ 'testInt': 1, 'testString': 'tst', 'testDouble': 2.7, 'testBool': true }";
+
+            var request = new HttpRequestMessage();
+            request.Content = new StringContent(testJson);
+
+            var result = Http.GetHttpContent<ContentTest>(request.Content);
+
+            Assert.AreEqual(1, result.TestInt);
+            Assert.AreEqual("tst", result.TestString);
+            Assert.AreEqual(2.7, result.TestDouble);
+            Assert.IsTrue(result.TestBool);
+        }
+
+        [Test]
+        public void GetHttpContent_WorksWithUpperCaseKeys()
+        {
+            var testJson = "{ 'TestInt': 1, 'TestString': 'tst', 'TestDouble': 2.7, 'TestBool': true }";
+
+            var request = new HttpRequestMessage();
+            request.Content = new StringContent(testJson);
+
+            var result = Http.GetHttpContent<ContentTest>(request.Content);
+
+            Assert.AreEqual(1, result.TestInt);
+            Assert.AreEqual("tst", result.TestString);
+            Assert.AreEqual(2.7, result.TestDouble);
+            Assert.IsTrue(result.TestBool);
+        }
+
+        /// <summary>
+        /// Class to test Getting typed Http content.
+        /// </summary>
+        private class ContentTest
+        {
+            public int TestInt { get; set; }
+
+            public string TestString { get; set; }
+
+            public double TestDouble { get; set; }
+
+            public bool TestBool { get; set; }
+        }
     }
 }
