@@ -1,5 +1,8 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Classes;
+using Betkeeper.Data;
 using Betkeeper.Enums;
+using Betkeeper.Extensions;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,12 +29,92 @@ namespace Betkeeper.Models
         public TargetType Type { get; set; }
 
         public string Result { get; set; }
+
+        public List<string> Selections { get; set; }
+
+        /// <summary>
+        /// Gets target from jObject.
+        /// </summary>
+        /// <param name="jObject"></param>
+        /// <param name="i">Index used in keys</param>
+        /// <param name="competitionId"></param>
+        /// <returns></returns>
+        public static Target FromJObject(JObject jObject, int i, int competitionId)
+        {
+            var targetObject = jObject[$"bet-target-{i}"] as JObject;
+
+            var type = EnumHelper.FromString<TargetType>(targetObject[$"bet-type-{i}"].ToString());
+
+            targetObject.TryGetValue($"question-{i}", out JToken questionJToken);
+            targetObject.TryGetValue($"scoring-{i}", out JToken scoringJToken);
+
+            List<Scoring> scorings = new List<Scoring>();
+
+            if (!scoringJToken.IsNullOrWhiteSpace())
+            {
+                scorings.Add(new Scoring
+                {
+                    Score = TargetScore.CorrectResult,
+                    Points = scoringJToken.GetDoubleInvariantCulture()
+                });
+            }
+
+            if (type == TargetType.Result)
+            {
+                targetObject.TryGetValue($"winner-{i}", out JToken winnerJToken);
+
+                if (!winnerJToken.IsNullOrWhiteSpace())
+                {
+                    scorings.Add(new Scoring
+                    {
+                        Score = TargetScore.CorrectWinner,
+                        Points = winnerJToken.GetDoubleInvariantCulture()
+                    });
+                }
+            }
+
+            List<string> selections = null;
+            if (type == TargetType.Selection)
+            {
+                targetObject.TryGetValue($"selection-{i}", out JToken selectionsToken);
+
+                if (selectionsToken != null)
+                {
+                    selections = selectionsToken.ToObject<List<string>>();
+                }
+            }
+
+            return new Target
+            {
+                Type = type,
+                Bet = questionJToken?.ToString(),
+                CompetitionId = competitionId,
+                Scoring = scorings,
+                Selections = selections
+            };
+        }
+
+        /// <summary>
+        /// Helper method to check if target has a specific scoring type with points set
+        /// </summary>
+        /// <param name="scoring"></param>
+        /// <returns></returns>
+        public bool HasScoringType(TargetScore scoring)
+        {
+            return Scoring.Any(score => score.Score == scoring && score.Points != null);
+        }
     }
 
     public class Scoring
     {
-        public int Points { get; set; }
+        /// <summary>
+        /// How many points scoring provides
+        /// </summary>
+        public double? Points { get; set; }
 
+        /// <summary>
+        /// Score type
+        /// </summary>
         public TargetScore Score { get; set; }
     }
 

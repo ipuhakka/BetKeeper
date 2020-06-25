@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Betkeeper.Extensions;
 
-namespace Test.src.Betkeeper.Extensions
+namespace Betkeeper.Test.Extensions
 {
     [TestFixture]
     public class JTokenExtensionTests

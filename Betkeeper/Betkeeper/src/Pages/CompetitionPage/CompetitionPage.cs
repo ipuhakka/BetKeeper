@@ -10,23 +10,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 
-namespace Betkeeper.Pages
+namespace Betkeeper.Pages.CompetitionPage
 {
     /// <summary>
     /// A competition page structure.
     /// </summary>
     public partial class CompetitionPage : IPage, IDisposable
     {
-        private CompetitionAction CompetitionAction { get; set; }
+        private CompetitionAction CompetitionAction { get; }
+
+        private TargetAction TargetAction { get; }
 
         public CompetitionPage()
         {
             CompetitionAction = new CompetitionAction();
+            TargetAction = new TargetAction();
         }
 
-        public CompetitionPage(CompetitionAction competitionAction)
+        public CompetitionPage(CompetitionAction competitionAction = null, TargetAction targetAction = null)
         {
             CompetitionAction = competitionAction;
+            TargetAction = targetAction;
         }
 
         public void Dispose()
@@ -39,6 +43,7 @@ namespace Betkeeper.Pages
             var competitionId = int.Parse(pageId);
 
             var participator = CompetitionAction.GetParticipator(userId, competitionId);
+            var competition = CompetitionAction.GetCompetition(competitionId);
 
             // User does not have rights to competition, redirect
             if (participator == null)
@@ -50,10 +55,10 @@ namespace Betkeeper.Pages
             }
 
             // Yleinen näkymä, osallistujat, vedot, hostille kilpailun hallinta
-            var tabs = new List<Component>();
-
-            // General view
-            tabs.Add(new Tab(
+            var tabs = new List<Component>
+            {
+                // General view
+                new Tab(
                 "home",
                 "Home",
                 new List<Component>
@@ -87,23 +92,27 @@ namespace Betkeeper.Pages
                             )
                         },
                         componentKey: "testUpdateContainer")
-                }));
+                }),
 
-            // Results
-            tabs.Add(GetResultsTab(competitionId));
+                // Results
+                GetResultsTab(competitionId),
 
-            //Bets
-            tabs.Add(new Tab(
+                //Bets
+                new Tab(
                 "bets",
                 "Bets",
                 new List<Component>
                 {
 
-                }));
+                })
+            };
 
             if (participator.Role == CompetitionRole.Host)
             {
-                tabs.Add(GetManageBetsTab());
+                if (competition.State == CompetitionState.Open)
+                {
+                    tabs.Add(GetManageBetsTab());
+                }
 
                 tabs.Add(new Tab(
                     "settings",
@@ -121,10 +130,11 @@ namespace Betkeeper.Pages
             }
 
 
-            var data = new Dictionary<string, object>();
-
-            data.Add("CompetitionId", competitionId);
-            data.Add("Competition", CompetitionAction.GetCompetition(competitionId));
+            var data = new Dictionary<string, object>
+            {
+                { "CompetitionId", competitionId },
+                { "Competition", CompetitionAction.GetCompetition(competitionId) }
+            };
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
@@ -148,6 +158,9 @@ namespace Betkeeper.Pages
 
                 case "CancelBetTargetsUpdate":
                     return CancelBetTargetsUpdate(action);
+
+                case "SaveBetTargets":
+                    return SaveBetTargets(action); 
             }
         }
 
@@ -160,8 +173,6 @@ namespace Betkeeper.Pages
 
             if (data.ContainsKey("components"))
             {
-                var components = ComponentParser.ParseComponents(data["components"].ToString());
-
                 if (componentKey == "test")
                 {
                     var options = new List<Option>
@@ -205,7 +216,7 @@ namespace Betkeeper.Pages
 
                 if (componentKey.Contains("bet-type-"))
                 {
-                    var newTargetType = (TargetType)Enum.Parse(typeof(TargetType), value, true);
+                    var newTargetType = EnumHelper.FromString<TargetType>(value);
 
                     // Get index, format of component key is bet-type-{index}
                     var index = int.Parse(componentKey.Split('-').Last());

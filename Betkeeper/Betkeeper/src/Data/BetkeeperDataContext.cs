@@ -27,8 +27,8 @@ namespace Betkeeper.Data
                 .Entity<Target>()
                 .Property(target => target.Scoring)
                 .HasConversion(
-                    target => target.ToString(),
-                    target => JsonConvert.DeserializeObject<List<Scoring>>(target));
+                    scoring => JsonConvert.SerializeObject(scoring),
+                    scoring => JsonConvert.DeserializeObject<List<Scoring>>(scoring));
 
             modelBuilder
                 .Entity<Target>()
@@ -36,6 +36,13 @@ namespace Betkeeper.Data
                 .HasConversion(
                     target => (int)target,
                     target => (TargetType)target);
+
+            modelBuilder
+                .Entity<Target>()
+                .Property(target => target.Selections)
+                .HasConversion(
+                    selections => JsonConvert.SerializeObject(selections),
+                    selections => JsonConvert.DeserializeObject<List<string>>(selections));
 
             modelBuilder
                 .Entity<Participator>()

@@ -1,7 +1,7 @@
 ﻿using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
-using Betkeeper.Pages;
+using Betkeeper.Pages.CompetitionPage;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
