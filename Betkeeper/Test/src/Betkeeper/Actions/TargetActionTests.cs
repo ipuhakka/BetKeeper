@@ -54,17 +54,32 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void AddTargets_UserNotInCompetition_ThrowsInvalidOperationException()
+        public void AddTargets_UserNotCompetitionHost_ThrowsInvalidOperationException()
         {
             var competitions = new List<Competition>
             {
                 new Competition
                 {
-                    CompetitionId = 1
+                    CompetitionId = 1,
+                    StartTime = DateTime.Today.AddDays(1)
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Admin,
+                    Competition = 1,
+                    UserId = 1
+                }
+            };
+
+            Tools.CreateTestData(
+                _context, 
+                competitions: competitions,
+                participators: participators);
 
             Assert.Throws<InvalidOperationException>(() =>
                 _targetAction.AddTargets(1, 1, new List<Target>()));
@@ -116,7 +131,8 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 1,
                     UserId = 1,
-                    ParticipatorId = 1
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
                 }
             };
 
@@ -163,7 +179,8 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 1,
                     UserId = 1,
-                    ParticipatorId = 1
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
                 }
             };
 
@@ -239,7 +256,8 @@ namespace Betkeeper.Test.Actions
                 {
                     Competition = 1,
                     UserId = 1,
-                    ParticipatorId = 1
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
                 }
             };
 

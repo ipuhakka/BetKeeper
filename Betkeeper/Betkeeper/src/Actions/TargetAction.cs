@@ -52,7 +52,7 @@ namespace Betkeeper.Actions
             }
 
             if (ParticipatorRepository
-                    .GetParticipators(userId, competitionId)
+                    .GetParticipators(userId, competitionId, CompetitionRole.Host)
                     .Count == 0)
             {
                 throw new InvalidOperationException("User not in competition");

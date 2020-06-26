@@ -176,7 +176,6 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <returns></returns>
         private HttpResponseMessage SaveBetTargets(PageAction action)
         {
-            // TODO: Käyttäjän oikeuksia validointi (saako tehdä targetteja kisaan)
             var targetData = action.Parameters["betTargets"] as JArray;
 
             var competitionId = (int)action.PageId;

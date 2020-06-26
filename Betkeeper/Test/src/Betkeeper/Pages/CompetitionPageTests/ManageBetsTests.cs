@@ -240,7 +240,12 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                 _context,
                 participators: new List<Participator>
                 {
-                    new Participator{ Competition = 1, UserId = 1}
+                    new Participator
+                    {
+                        Competition = 1,
+                        UserId = 1,
+                        Role = Enums.CompetitionRole.Host
+                    }
                 });
 
             var jArray = CompetitionPage.TargetsToJArray(
