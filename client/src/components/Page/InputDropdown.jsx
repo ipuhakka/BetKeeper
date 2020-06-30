@@ -24,6 +24,23 @@ class InputDropdown extends Component
     }
 
     /**
+     * Set initial selections if they exist.
+     */
+    componentDidMount()
+    {
+        const { initialSelections } = this.props;
+
+        if (_.isNil(initialSelections))
+        {
+            return;
+        }
+        
+        this.setState({
+            values: initialSelections
+        })
+    }
+
+    /**
      * Adds a new selection.
      */
     addSelection()
@@ -126,7 +143,7 @@ class InputDropdown extends Component
                         e.preventDefault();
                         e.stopPropagation();
 
-                        // Set focus to input element to allow writing another option instantly
+                        // Focus on input element to allow writing another option instantly
                         this.inputRef.current.focus();
                     }}
                 disabled={this.state.newValue === ''}>Add</Button>
@@ -147,7 +164,8 @@ class InputDropdown extends Component
 InputDropdown.propTypes = {
     componentKey: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    initialSelections: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default InputDropdown;

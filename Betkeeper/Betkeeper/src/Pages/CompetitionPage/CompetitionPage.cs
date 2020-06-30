@@ -107,11 +107,13 @@ namespace Betkeeper.Pages.CompetitionPage
                 })
             };
 
+            var competitionTargets = TargetAction.GetTargets(competitionId);
+
             if (participator.Role == CompetitionRole.Host)
             {
                 if (competition.State == CompetitionState.Open)
                 {
-                    tabs.Add(GetManageBetsTab());
+                    tabs.Add(GetManageBetsTab(competitionTargets));
                 }
 
                 tabs.Add(new Tab(
@@ -129,11 +131,11 @@ namespace Betkeeper.Pages.CompetitionPage
                     }));
             }
 
-
             var data = new Dictionary<string, object>
             {
                 { "CompetitionId", competitionId },
-                { "Competition", CompetitionAction.GetCompetition(competitionId) }
+                { "Competition", competition },
+                { "betTargets", TargetsToJObject(competitionTargets) }
             };
 
             return Http.CreateResponse(

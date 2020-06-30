@@ -1,5 +1,4 @@
 ﻿using Betkeeper.Classes;
-using Betkeeper.Extensions;
 using Betkeeper.Enums;
 using Betkeeper.Models;
 using Betkeeper.Page;
@@ -19,25 +18,62 @@ namespace Betkeeper.Pages.CompetitionPage
     /// </summary>
     public partial class CompetitionPage
     {
-        private Tab GetManageBetsTab()
+        /// <summary>
+        /// Returns manage bets structure.
+        /// </summary>
+        /// <param name="targets"></param>
+        /// <returns></returns>
+        private Tab GetManageBetsTab(List<Target> targets)
         {
-            // TODO: Hae jo olemassa olevat targetit ja 
-            // luo niille databoundeilla fieldiellä varustetu containerit
             return new Tab(
                 "manageBets",
                 "Manage bets",
                 new List<Component>
                 {
-                    new Container(
-                        new List<Component>(),
-                        componentKey: "betTargets",
-                        storeDataAsArray: true),
+                    GetBetTargetsContainer(targets),
                     new PageActionButton(
                         "AddBetContainer",
                         new List<string>{ "betTargets" },
                         "Add bet",
                         componentsToInclude: new List<string>{ "betTargets" })
                 });
+        }
+
+        /// <summary>
+        /// Gets bet targets container.
+        /// </summary>
+        /// <param name="competitionTargets"></param>
+        private Container GetBetTargetsContainer(List<Target> competitionTargets)
+        {
+            var targets = new List<Component>();
+
+            for (var i = 0; i < competitionTargets.Count; i++)
+            {
+                targets.Add(CreateTargetContainer(i, competitionTargets[i].Type));
+            }
+
+            var components = new List<Component>
+            {
+                new PageActionButton(
+                            "CancelBetTargetsUpdate",
+                            new List<string>{ "betTargets" },
+                            "Cancel bet targets update",
+                            style: "outline-danger",
+                            requireConfirm: true,
+                            componentsToInclude: new List<string>{ "betTargets" }),
+                        new PageActionButton(
+                            "SaveBetTargets",
+                            new List<string>{ "betTargets" },
+                            "Save bet targets",
+                            requireConfirm: true)
+            };
+
+            components.AddRange(targets);
+
+            return new Container(
+                components,
+                componentKey: "betTargets",
+                storeDataAsArray: true);
         }
 
         /// <summary>
@@ -91,7 +127,7 @@ namespace Betkeeper.Pages.CompetitionPage
         }
 
         /// <summary>
-        /// Creates a target. Called from HandleDropdownUpdate.
+        /// Creates a target.
         /// </summary>
         /// <param name="index"></param>
         private Container CreateTargetContainer(int index, TargetType targetType)
@@ -119,8 +155,8 @@ namespace Betkeeper.Pages.CompetitionPage
                      new List<Component>
                      {
                         betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextArea),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
+                        new Field($"question-{index}", "Bet", FieldType.TextArea, dataKey: $"question-{index}"),
+                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
                      },
                      $"bet-target-{index}");
 
@@ -129,9 +165,9 @@ namespace Betkeeper.Pages.CompetitionPage
                      new List<Component>
                      {
                         betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox),
-                        new Field($"scoring-{index}", "Points for correct result", FieldType.Double),
-                        new Field($"winner-{index}", "Points for correct winner", FieldType.Double)
+                        new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
+                        new Field($"scoring-{index}", "Points for correct result", FieldType.Double, dataKey: $"scoring-{index}"),
+                        new Field($"winner-{index}", "Points for correct winner", FieldType.Double, dataKey: $"winner-{index}")
                      },
                      $"bet-target-{index}");
 
@@ -140,9 +176,9 @@ namespace Betkeeper.Pages.CompetitionPage
                      new List<Component>
                      {
                         betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox),
-                        new InputDropdown($"selection-{index}", "Selections"),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
+                        new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
+                        new InputDropdown($"selection-{index}", "Selections", dataKey: $"selection-{index}"),
+                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
                      },
                      $"bet-target-{index}");
             }

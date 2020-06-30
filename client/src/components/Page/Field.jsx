@@ -168,7 +168,8 @@ class Field extends Component
                 input = <InputDropdown 
                     onChange={this.onChange} 
                     label={label}
-                    componentKey={componentKey}/>;
+                    componentKey={componentKey}
+                    initialSelections={this.props.initialValue}/>;
                     break;
 
         }
@@ -193,7 +194,7 @@ Field.propTypes = {
     componentKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onError: PropTypes.func,
-    initialValue: PropTypes.string,
+    initialValue: PropTypes.any,
     readOnly: PropTypes.bool,
     onHandleDropdownServerUpdate: PropTypes.func,
     /** Parent container component keys joined with '.' Defines data path where components value is stored. */

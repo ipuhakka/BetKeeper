@@ -52,7 +52,11 @@ class PageContent extends Component
                             key={`field-${component.componentKey}`} 
                             type={component.fieldType} 
                             componentKey={component.componentKey}
-                            initialValue={_.get(props.data, component.dataKey, '')}
+                            initialValue={_.get(
+                                props.data, 
+                                _.compact([dataPath, component.dataKey]).join('.'),
+                                 null) ||
+                                 _.get(props.data, component.dataKey, null)}
                             dataPath={dataPath} 
                             {...component} />;
 

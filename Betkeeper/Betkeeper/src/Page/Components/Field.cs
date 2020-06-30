@@ -148,8 +148,8 @@ namespace Betkeeper.Page.Components
     [Serializable]
     public class InputDropdown : Field
     {
-        public InputDropdown(string componentKey, string label)
-            : base(componentKey, label, FieldType.InputDropdown)
+        public InputDropdown(string componentKey, string label, string dataKey = null)
+            : base(componentKey, label, FieldType.InputDropdown, dataKey: dataKey)
         {
 
         }
