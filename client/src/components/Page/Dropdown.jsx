@@ -37,10 +37,19 @@ class Dropdown extends Component
         this.onChange(initialOptionKey, true);
     }
 
-    componentDidUpdate()
+    componentDidUpdate(prevProps)
     {
         const { options } = this.props;
         const { activeKey } = this.state;
+
+        const prevPropsInitialOption = _.find(prevProps.options, option => option.initialValue);
+        const newPropsInitialOption = _.find(options, option => option.initialValue);
+
+        if (!_.isEqual(prevPropsInitialOption, newPropsInitialOption) && newPropsInitialOption)
+        {
+            this.onChange(newPropsInitialOption.key, true);
+            return;
+        }
 
         if (options.length > 0 
             && _.isNil(_.find(options, option => option.key === activeKey)))

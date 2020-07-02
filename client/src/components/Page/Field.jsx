@@ -36,6 +36,19 @@ class Field extends Component
     }
 
     /**
+     * Check if initialValue has changed.
+     */
+    componentDidUpdate(prevProps)
+    {
+        if (!_.isEqual(prevProps.initialValue, this.props.initialValue))
+        {
+            this.setState({
+                value: this.props.initialValue
+            });
+        }
+    }
+
+    /**
      * Sets a datetime value, if newDate is a valid datetime.
      * @param {object} newDate
      */

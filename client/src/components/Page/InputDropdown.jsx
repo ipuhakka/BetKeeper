@@ -41,6 +41,19 @@ class InputDropdown extends Component
     }
 
     /**
+     * Check if initialSelections have changed.
+     */
+    componentDidUpdate(prevProps)
+    {
+        if (!_.isEqual(prevProps.initialSelections, this.props.initialSelections))
+        {
+            this.setState({
+                values: this.props.initialSelections
+            });
+        }
+    }
+
+    /**
      * Adds a new selection.
      */
     addSelection()

@@ -59,9 +59,9 @@ function handleUpdateData(state, pageKey, data)
   }
 
   _.forEach(Object.keys(data), dataKey => 
-    {
-      PageUtils.replaceData(page, dataKey, data[dataKey]);
-    });
+  {
+    PageUtils.replaceData(page, dataKey, data[dataKey]);
+  });
 
   return state;
 }
