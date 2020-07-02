@@ -100,6 +100,15 @@ namespace Betkeeper.Actions
             TargetRepository.ClearTargets(competitionId);
         }
 
+        /// <summary>
+        /// Removes a specified target.
+        /// </summary>
+        /// <param name="targetId"></param>
+        public void RemoveTarget(int targetId)
+        {
+            TargetRepository.RemoveTarget(targetId);
+        }
+
         private bool ValidScoringForType(Target target)
         {
             switch (target.Type)

@@ -15,6 +15,8 @@ namespace Betkeeper.Test.Models
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
+            // Set Connectionstring so base constructor runs
+            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
             _targetRepository = new TargetRepository(_context);
         }
@@ -94,6 +96,44 @@ namespace Betkeeper.Test.Models
 
             Assert.AreEqual(1, existingTargets.Count);
             Assert.AreEqual(2, existingTargets[0].CompetitionId);
+        }
+
+        [Test]
+        public void RemoveTarget_TargetNotFound_NothingRemoves()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                }
+            };
+
+            Tools.CreateTestData(_context, targets: targets);
+
+            _targetRepository.RemoveTarget(2);
+
+            Assert.AreEqual(1, _targetRepository.GetTargets(1).Count);
+        }
+
+        [Test]
+        public void RemoveTarget_TargetFound_TargetRemoved()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                }
+            };
+
+            Tools.CreateTestData(_context, targets: targets);
+
+            _targetRepository.RemoveTarget(1);
+
+            Assert.AreEqual(0, _targetRepository.GetTargets(1).Count);
         }
     }
 }

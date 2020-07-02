@@ -174,5 +174,22 @@ namespace Betkeeper.Models
             _context.Target.RemoveRange(competitionTargets);
             _context.SaveChanges();
         }
+
+        /// <summary>
+        /// Removes specified target
+        /// </summary>
+        /// <param name="targetId"></param>
+        public void RemoveTarget(int targetId)
+        {
+            var targetToRemove = _context.Target.FirstOrDefault(target => target.TargetId == targetId);
+
+            if (targetToRemove == null)
+            {
+                return;
+            }
+
+            _context.Target.Remove(targetToRemove);
+            _context.SaveChanges();
+        }
     }
 }
