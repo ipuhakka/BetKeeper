@@ -180,6 +180,7 @@
     <Compile Include="src\Betkeeper\Pages\CompetitionPageTests\ManageBetsTests.cs" />
     <Compile Include="src\Betkeeper\Pages\CompetitionsPageTests\CompetitionsPageTests.cs" />
     <Compile Include="src\Betkeeper\Page\ComponentParserTests.cs" />
+    <Compile Include="src\Betkeeper\Page\ComponentToolTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\BetRepositoryTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\FolderRepositoryTests.cs" />
     <Compile Include="src\Betkeeper\Repositories\UserRepositoryTests.cs" />
