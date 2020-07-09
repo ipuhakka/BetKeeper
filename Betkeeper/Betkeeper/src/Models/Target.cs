@@ -33,13 +33,30 @@ namespace Betkeeper.Models
         public List<string> Selections { get; set; }
 
         /// <summary>
+        /// Converts JArray into target list
+        /// </summary>
+        /// <param name="jArray"></param>
+        /// <returns></returns>
+        public static List<Target> JArrayToTargets(JArray jArray)
+        {
+            var targets = new List<Target>();
+
+            for (var i = 0; i < jArray.Count; i++)
+            {
+                targets.Add(FromJObject((JObject)jArray[i], i));
+            }
+
+            return targets;
+        }
+
+        /// <summary>
         /// Gets target from jObject.
         /// </summary>
         /// <param name="jObject"></param>
         /// <param name="i">Index used in keys</param>
         /// <param name="competitionId"></param>
         /// <returns></returns>
-        public static Target FromJObject(JObject jObject, int i, int competitionId)
+        public static Target FromJObject(JObject jObject, int i, int competitionId = 0)
         {
             var targetObject = jObject[$"bet-target-{i}"] as JObject;
 
