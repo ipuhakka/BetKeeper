@@ -159,10 +159,14 @@ namespace Betkeeper.Pages.CompetitionPage
                     return AddBetContainer(action);
 
                 case "CancelBetTargetsUpdate":
-                    return CancelBetTargetsUpdate(action);
+                    //Clears new changes to bet targets. Does not remove already save data.
+                    return GetTargetsFromDatabase(action);
 
                 case "SaveBetTargets":
-                    return SaveBetTargets(action); 
+                    return SaveBetTargets(action);
+
+                case "DeleteTarget":
+                    return DeleteTarget(action);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Betkeeper.Classes;
 using Betkeeper.Enums;
+using Betkeeper.Extensions;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
@@ -40,50 +41,13 @@ namespace Betkeeper.Pages.CompetitionPage
         }
 
         /// <summary>
-        /// Gets bet targets container.
-        /// </summary>
-        /// <param name="competitionTargets"></param>
-        private Container GetBetTargetsContainer(List<Target> competitionTargets)
-        {
-            var targets = new List<Component>();
-
-            for (var i = 0; i < competitionTargets.Count; i++)
-            {
-                targets.Add(CreateTargetContainer(i, competitionTargets[i].Type));
-            }
-
-            var components = new List<Component>
-            {
-                new PageActionButton(
-                            "CancelBetTargetsUpdate",
-                            new List<string>{ "betTargets" },
-                            "Cancel bet targets update",
-                            style: "outline-danger",
-                            requireConfirm: true,
-                            componentsToInclude: new List<string>{ "betTargets" }),
-                        new PageActionButton(
-                            "SaveBetTargets",
-                            new List<string>{ "betTargets" },
-                            "Save bet targets",
-                            requireConfirm: true)
-            };
-
-            components.AddRange(targets);
-
-            return new Container(
-                components,
-                componentKey: "betTargets",
-                storeDataAsArray: true);
-        }
-
-        /// <summary>
         /// Adds a new target to bet container.
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
         private HttpResponseMessage AddBetContainer(PageAction action)
         {
-            var betTargetContainer = ComponentTools<Container>.GetComponentFromAction(action, "betTargets");
+            var betTargetContainer = ComponentTools.GetComponentFromAction<Container>(action, "betTargets");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray
@@ -92,23 +56,6 @@ namespace Betkeeper.Pages.CompetitionPage
             if (betTargetData == null || betTargetData.Count == 0)
             {
                 var defaultBetTarget = CreateTargetContainer(0, TargetType.OpenQuestion);
-
-                betTargetContainer.Children.Add(new Container(
-                    new List<Component>
-                    {
-                        new PageActionButton(
-                            "CancelBetTargetsUpdate",
-                            new List<string>{ "betTargets" },
-                            "Cancel bet targets update",
-                            style: "outline-danger",
-                            requireConfirm: true,
-                            componentsToInclude: new List<string>{ "betTargets" }),
-                        new PageActionButton(
-                            "SaveBetTargets",
-                            new List<string>{ "betTargets" },
-                            "Save bet targets",
-                            requireConfirm: true)
-                    }));
 
                 betTargetContainer.Children.Add(defaultBetTarget);
             }
@@ -127,80 +74,22 @@ namespace Betkeeper.Pages.CompetitionPage
         }
 
         /// <summary>
-        /// Creates a target.
-        /// </summary>
-        /// <param name="index"></param>
-        private Container CreateTargetContainer(int index, TargetType targetType)
-        {
-            var options = new List<Option>
-                {
-                    new Option("result", "Result", initialValue: targetType == TargetType.Result),
-                    new Option("selection", "Selection", initialValue: targetType == TargetType.Selection),
-                    new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion)
-                };
-
-            var betTypeDropdown = new Dropdown(
-                $"bet-type-{index}",
-                "Bet type",
-                options,
-                new List<string> { $"bet-target-{index}" });
-
-            switch (targetType)
-            {
-                default:
-                    throw new NotImplementedException($"{targetType} container not implemented");
-
-                case TargetType.OpenQuestion:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextArea, dataKey: $"question-{index}"),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
-                     },
-                     $"bet-target-{index}");
-
-                case TargetType.Result:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
-                        new Field($"scoring-{index}", "Points for correct result", FieldType.Double, dataKey: $"scoring-{index}"),
-                        new Field($"winner-{index}", "Points for correct winner", FieldType.Double, dataKey: $"winner-{index}")
-                     },
-                     $"bet-target-{index}");
-
-                case TargetType.Selection:
-                    return new Container(
-                     new List<Component>
-                     {
-                        betTypeDropdown,
-                        new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
-                        new InputDropdown($"selection-{index}", "Selections", dataKey: $"selection-{index}"),
-                        new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
-                     },
-                     $"bet-target-{index}");
-            }
-        }
-
-        /// <summary>
-        /// Clears new changes to bet targets. Does not remove already save data.
+        /// Clears new changes to bet targets. Does not remove already saved data.
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage CancelBetTargetsUpdate(PageAction action)
+        private HttpResponseMessage GetTargetsFromDatabase(PageAction action)
         {
-            var betTargetsContainer = ComponentTools<Container>.GetComponentFromAction(action, "betTargets");
+            var targets = TargetAction.GetTargets((int)action.PageId);
 
-            betTargetsContainer.Clear();
+            var betTargetsContainer = GetBetTargetsContainer(targets);
 
             return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetsContainer)
             {
                 Data = new Dictionary<string, object>
                 {
                     // Clear bet targets data
-                    {"betTargets", new { } }
+                    {"betTargets", TargetsToJObject(targets) }
                 }
             });
         }
@@ -273,6 +162,168 @@ namespace Betkeeper.Pages.CompetitionPage
             return Http.CreateResponse(
                 HttpStatusCode.OK, 
                 new PageActionResponse("Targets added successfully", refresh: true));
+        }
+
+        /// <summary>
+        /// Deletes a target.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private HttpResponseMessage DeleteTarget(PageAction action)
+        {
+            /*
+             * 1: Fetch target-id- value. 
+             *  - If > 0, remove matching bet target.
+             * 2: Get bet-target-key.
+             * 3: Remove match from data and components.
+             */
+            var deleteTargetId = action.Parameters.GetInt(
+                action.Parameters
+                    .FirstOrDefault(kvp => kvp.Key.StartsWith("target-id"))
+                    .Key) ?? 0;
+
+            if (deleteTargetId > 0)
+            {
+                TargetAction.RemoveTarget(deleteTargetId);
+            }
+
+            var deleteDataIndex = Convert.ToInt32(action.Parameters
+                .First(kvp => kvp.Key.StartsWith("bet-target-"))
+                .Key
+                .Split('-')
+                .Last());
+
+            var betTargetData = action.Parameters?["betTargets"] as JArray;
+
+            var targets = Target.JArrayToTargets(betTargetData);
+
+            // Remove deleted one
+            targets.RemoveAt(deleteDataIndex);
+
+            var betTargetContainer = GetBetTargetsContainer(targets);
+
+            return Http.CreateResponse(
+                HttpStatusCode.OK, 
+                new PageActionResponse(betTargetContainer)
+                {
+                    Data = new Dictionary<string, object>
+                    {
+                        { "betTargets", TargetsToJObject(targets) }
+                    }
+                });
+        }
+
+        /// <summary>
+        /// Gets bet targets container.
+        /// </summary>
+        /// <param name="competitionTargets"></param>
+        private Container GetBetTargetsContainer(List<Target> competitionTargets)
+        {
+            var components = new List<Component>
+            {
+                new PageActionButton(
+                    "CancelBetTargetsUpdate",
+                    new List<string>{ "betTargets" },
+                    "Cancel bet targets update",
+                    style: "outline-danger",
+                    requireConfirm: true,
+                    componentsToInclude: new List<string>{ "betTargets" }),
+                new PageActionButton(
+                    "SaveBetTargets",
+                    new List<string>{ "betTargets" },
+                    "Save bet targets",
+                    requireConfirm: true)
+            };
+
+            var targets = new List<Component>();
+            for (var i = 0; i < competitionTargets.Count; i++)
+            {
+                targets.Add(CreateTargetContainer(
+                    i,
+                    competitionTargets[i].Type));
+            }
+
+            components.AddRange(targets);
+
+            return new Container(
+                components,
+                componentKey: "betTargets",
+                storeDataAsArray: true);
+        }
+
+        /// <summary>
+        /// Creates a target.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="targetType"></param>
+        /// <param name="includeDeleteButton"></param>
+        private Container CreateTargetContainer(
+            int index,
+            TargetType targetType)
+        {
+            var options = new List<Option>
+            {
+                new Option("result", "Result", initialValue: targetType == TargetType.Result),
+                new Option("selection", "Selection", initialValue: targetType == TargetType.Selection),
+                new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion)
+            };
+
+            var components = new List<Component>
+            {
+                new Dropdown(
+                $"bet-type-{index}",
+                "Bet type",
+                options,
+                new List<string> { $"bet-target-{index}" })
+            };
+
+            switch (targetType)
+            {
+                default:
+                    throw new NotImplementedException($"{targetType} container not implemented");
+
+                case TargetType.OpenQuestion:
+                    components.AddRange(
+                        new List<Component>
+                        {
+                            new Field($"question-{index}", "Bet", FieldType.TextArea, dataKey: $"question-{index}"),
+                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
+                        });
+                    break;
+
+                case TargetType.Result:
+                    components.AddRange(
+                        new List<Component>
+                        {
+                            new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
+                            new Field($"scoring-{index}", "Points for correct result", FieldType.Double, dataKey: $"scoring-{index}"),
+                            new Field($"winner-{index}", "Points for correct winner", FieldType.Double, dataKey: $"winner-{index}"),
+                        });
+                    break;
+
+                case TargetType.Selection:
+                    components.AddRange(
+                        new List<Component>
+                        {
+                            new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
+                            new InputDropdown($"selection-{index}", "Selections", dataKey: $"selection-{index}"),
+                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
+                        });
+                    break;
+            }
+
+            components.Add(new PageActionButton(
+                "DeleteTarget",
+                new List<string> { $"target-id-{index}", $"bet-target-{index}", "betTargets" },
+                "Delete",
+                componentsToInclude: new List<string> { "betTargets" },
+                style: "outline-danger",
+                requireConfirm: false)
+            );
+
+            return new Container(
+                components,
+                $"bet-target-{index}");
         }
     }
 }

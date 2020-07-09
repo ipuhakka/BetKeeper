@@ -1,4 +1,5 @@
-﻿using Betkeeper.Models;
+﻿using Betkeeper.Enums;
+using Betkeeper.Models;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
@@ -74,17 +75,18 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <param name="i"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static JObject GetInnerTargetObject(int i, Target target)
+        private static JObject GetInnerTargetObject(int i, Target target)
         {
             var valueDict = new Dictionary<string, object>
                 {
                     { $"question-{i}", target.Bet },
-                    { $"bet-type-{i}", target.Type.ToString() }
+                    { $"bet-type-{i}", target.Type.ToString() },
+                    { $"target-id-{i}", target.TargetId }
                 };
 
             target.Scoring?.ForEach(scoring =>
             {
-                var key = scoring.Score == Enums.TargetScore.CorrectResult
+                var key = scoring.Score == TargetScore.CorrectResult
                     ? $"scoring-{i}"
                     : $"winner-{i}";
 
