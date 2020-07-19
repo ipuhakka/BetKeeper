@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Betkeeper.Classes;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
@@ -11,6 +12,12 @@ namespace Betkeeper.Page.Components
         PageAction,
         ModalAction,
         Navigation
+    }
+
+    public enum DisplayType
+    {
+        Text,
+        Icon
     }
 
     [Serializable]
@@ -27,12 +34,18 @@ namespace Betkeeper.Page.Components
 
         public string NavigateTo { get; }
 
+        public string IconName { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public DisplayType DisplayType { get; set; }
+
         public Button(
             ButtonType buttonType,
             string text,
             string style = "primary",
             bool requireConfirm = false,
-            string navigateTo = null)
+            string navigateTo = null,
+            DisplayType displayType = DisplayType.Text)
             : base(ComponentType.Button)
         {
             Text = text;
@@ -40,6 +53,7 @@ namespace Betkeeper.Page.Components
             Style = style;
             RequireConfirm = requireConfirm;
             NavigateTo = navigateTo;
+            DisplayType = displayType;
         }
 
         /// <summary>
@@ -49,23 +63,23 @@ namespace Betkeeper.Page.Components
         /// <returns></returns>
         public static Button Parse(JObject asJObject)
         {
-            var buttonType = asJObject["buttonType"].ToString();
+            var buttonType = EnumHelper.FromString<ButtonType>(asJObject["buttonType"].ToString());
 
             switch (buttonType)
             {
                 default:
                     throw new ArgumentOutOfRangeException();
 
-                case "PageAction":
+                case ButtonType.PageAction:
                     return asJObject.ToObject<PageActionButton>();
 
-                case "ModalAction":
+                case ButtonType.ModalAction:
                     var children = ComponentParser.ParseComponents(asJObject["components"].ToString());
                     var modalActionButton = asJObject.ToObject<ModalActionButton>();
                     modalActionButton.Components = children;
                     return modalActionButton;
 
-                case "Navigation":
+                case ButtonType.Navigation:
                     return asJObject.ToObject<NavigationButton>();
             }
         }
@@ -102,8 +116,9 @@ namespace Betkeeper.Page.Components
             string style = "outline-primary",
             bool requireConfirm = false,
             string navigateTo = null,
-            List<string> componentsToInclude = null)
-            : base(ButtonType.PageAction, text, style, requireConfirm, navigateTo)
+            List<string> componentsToInclude = null,
+            DisplayType displayType = DisplayType.Text)
+            : base(ButtonType.PageAction, text, style, requireConfirm, navigateTo, displayType)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;

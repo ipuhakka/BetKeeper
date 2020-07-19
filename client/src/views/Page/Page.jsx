@@ -29,6 +29,7 @@ class Page extends Component
         };
         
         this.clickModalAction = this.clickModalAction.bind(this);
+        this.closeConfirm = this.closeConfirm.bind(this);
         this.navigateTo = this.navigateTo.bind(this);
         this.clickPageAction = this.clickPageAction.bind(this);
         this.onDataChange = this.onDataChange.bind(this);

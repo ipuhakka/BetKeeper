@@ -42,6 +42,16 @@ class Button extends Component
     {
         const { props } = this;
 
+        if (props.displayType === 'Icon')
+        {
+            return <RBButton 
+                className='page-image-button' 
+                variant='outline-danger'
+                onClick={this.onClick}>
+            <i className={props.iconName}></i>
+          </RBButton>;
+        }
+
         return <RBButton
             className='button'
             variant={props.style}
@@ -65,7 +75,15 @@ Button.propTypes = {
     navigateTo: PropTypes.string,
     onClick: PropTypes.func.isRequired,
     requireConfirm: PropTypes.bool.isRequired,
-    componentsToInclude: PropTypes.arrayOf(PropTypes.string)
+    componentsToInclude: PropTypes.arrayOf(PropTypes.string),
+    displayType: PropTypes.oneOf(['Text', 'Icon']).isRequired,
+    iconName: function(props, propName) 
+    {
+        if (props['displayType'] === 'Icon' && typeof(props[propName]) !== 'string') 
+        {
+            return new Error('iconName prop invalid or missing');
+        }
+    }
 };
 
 export default Button;

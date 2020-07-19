@@ -318,7 +318,11 @@ namespace Betkeeper.Pages.CompetitionPage
                 "Delete",
                 componentsToInclude: new List<string> { "betTargets" },
                 style: "outline-danger",
-                requireConfirm: false)
+                requireConfirm: false,
+                displayType: DisplayType.Icon)
+                {
+                    IconName = "far fa-trash-alt"
+            }
             );
 
             return new Container(
