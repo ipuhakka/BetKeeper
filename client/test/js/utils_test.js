@@ -1,8 +1,41 @@
 import moment from 'moment';
-import {isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime} from '../../src/js/utils';
+import {
+  isValidDouble, isValidString, deepCopy, shallowEquals, formatDateTime, camelCaseToText, findNestedValue
+} 
+  from '../../src/js/utils';
 
 var chai = require('chai');
 var expect = chai.expect;
+
+describe('camelCaseToText', function()
+{
+  it('Capitalizes first letter', function(done)
+  {
+    expect(camelCaseToText('test')).to.equal('Test');
+    done();
+  });
+
+  it('Returns empty string on null and empty input', function(done)
+  {
+    expect(camelCaseToText('')).to.equal('');
+    expect(camelCaseToText(null)).to.equal('');
+    done();
+  });
+
+  it('Returns string splitted with spaces with first word capitalized', function(done)
+  {
+    const result = camelCaseToText('camelCasedText');
+    expect(result.split(' ').length).to.equal(3);
+
+    const splitted = result.split(' ');
+
+    expect(splitted[0]).to.equal('Camel');
+    expect(splitted[1]).to.equal('cased');
+    expect(splitted[2]).to.equal('text');
+
+    done();
+  });
+});
 
 describe('formatDateTime', function()
 {
@@ -147,4 +180,37 @@ describe('deepCopy', function(){
 
     done();
   });
-})
+});
+
+describe('findNestedValue', function()
+{
+  it('Finds value from a single level object', function(done)
+  {
+    const testObject = {
+      key1: 2,
+      key2: null,
+      find: 'found'
+    }
+
+    expect(findNestedValue(testObject, 'find')).to.equal('found');
+    done();
+  });
+
+  it('Finds value from nested object', function(done)
+  {
+    const testObject = {
+      key1: 3,
+      key2: {
+        nestedKey1: {},
+        nestedKey2: {
+          nestedNestedKey1: {
+            find: 'found'
+          }
+        }
+      }
+    };
+    
+    expect(findNestedValue(testObject, 'find')).to.equal('found');
+    done();
+  });
+});

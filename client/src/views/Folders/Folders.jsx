@@ -22,7 +22,6 @@ class Folders extends Component {
 		super(props);
 
 		this.state = {
-			disabled: [false, false, false, true, false],
 			folders: [],
 			deleteDisabled: true,
 			newFolder: "",
@@ -45,7 +44,7 @@ class Folders extends Component {
 		return(
 			<div onLoad={this.onLoad}>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-				<Menu disable={this.state.disabled}></Menu>
+				<Menu disableValue='Folders'></Menu>
 				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
 				<Info></Info>
 				<Row className="content">

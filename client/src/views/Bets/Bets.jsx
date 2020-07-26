@@ -22,7 +22,6 @@ class Bets extends Component
 		super(props);
 
 		this.state = {
-			menuDisabled: [false, true, false, false, false],
       showModal: false,
       visibleBets: null
     };
@@ -48,7 +47,7 @@ class Bets extends Component
     return (
       <div className="content">
     		<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-    		<Menu disable={state.menuDisabled}></Menu>
+    		<Menu disableValue='Bets'></Menu>
     		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>

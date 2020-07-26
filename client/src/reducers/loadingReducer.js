@@ -8,10 +8,12 @@ const LoadingReducer = (state = { loading: false, ongoingLoads: [] }, action ) =
     case loadingActions.SET_LOADING:
       let ongoingLoads = state.ongoingLoads;
 
-      if (action.isLoading){
+      if (action.isLoading)
+      {
         ongoingLoads.push(true);
       }
-      else {
+      else 
+      {
         ongoingLoads.pop();
       }
 

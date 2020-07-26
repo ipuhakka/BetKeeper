@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using Betkeeper;
 using System.Configuration;
+using System.IO;
 using System.Web.Http;
-using Betkeeper;
 
 namespace Api
 {
@@ -13,7 +11,7 @@ namespace Api
         {
             // Set database connection
             Settings.ConnectionString = ConfigurationManager
-                .ConnectionStrings["sql"]?.ConnectionString 
+                .ConnectionStrings["sql"]?.ConnectionString
                 ?? File.ReadAllText(
                     ConfigurationManager
                     .AppSettings.Get("devSecretsPath"));

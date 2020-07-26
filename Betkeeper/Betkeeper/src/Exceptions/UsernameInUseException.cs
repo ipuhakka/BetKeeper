@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Betkeeper.Exceptions
 {
     [Serializable]
-    public class UsernameInUseException: Exception, ISerializable
+    public class UsernameInUseException : Exception, ISerializable
     {
 
         public string ErrorMessage { get; }

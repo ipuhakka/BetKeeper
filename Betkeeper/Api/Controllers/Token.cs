@@ -1,17 +1,28 @@
-﻿using System.Net;
+﻿using Api.Classes;
+using Betkeeper.Classes;
+using Betkeeper.Models;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Api.Classes;
-using Betkeeper.Classes;
-using Betkeeper.Repositories;
 
 namespace Api.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class TokenController : ApiController
     {
-        public IUserRepository _UserRepository { get; set; }
+        protected UserRepository UserRepository { get; set; }
+
+        public TokenController()
+        {
+            UserRepository = new UserRepository();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            UserRepository.Dispose();
+            base.Dispose(disposing);
+        }
 
         // GET: api/Token/5
         /// <summary>
@@ -51,8 +62,6 @@ namespace Api.Controllers
         /// </returns>
         public HttpResponseMessage Post()
         {
-            _UserRepository = _UserRepository ?? new UserRepository();
-
             var password = Request.Headers.Authorization?.ToString();
 
             if (password == null)
@@ -62,14 +71,19 @@ namespace Api.Controllers
 
             var username = Http.GetHttpContent(Request)["username"].ToString();
 
-            var userId = _UserRepository.GetUserId(username);
+            var userId = UserRepository.GetUserId(username.ToString());
 
-            if (!_UserRepository.Authenticate(userId, password))
+            if (userId == null)
             {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var token = TokenLog.GetExistingToken(userId) 
+            if (!UserRepository.Authenticate(userId, password))
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            var token = TokenLog.GetExistingToken(userId)
                 ?? TokenLog.CreateToken(userId);
 
             return Http.CreateResponse(HttpStatusCode.OK, token);

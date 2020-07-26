@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Betkeeper.Models;
+using System;
 using System.Collections.Generic;
-using Betkeeper.Models;
 
 namespace Betkeeper.Repositories
 {

@@ -1,0 +1,10 @@
+.button {
+    margin: 0.3em;
+}
+
+.page-image-button {
+    flex: 0.2 1 auto !important;
+    height: 2.3em;
+    width: 2.3em;
+    margin-top: 2.2em;
+}
