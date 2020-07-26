@@ -154,6 +154,8 @@ class Field extends Component
 
         let input;
 
+        let wrapperClassName = '';
+
         switch (type)
         {
             default: 
@@ -171,6 +173,7 @@ class Field extends Component
                 break;
 
             case 'Dropdown':
+                wrapperClassName='dropdown';
                 input = <Dropdown 
                     onChange={this.onChange} 
                     handleServerUpdate={onHandleDropdownServerUpdate}
@@ -187,7 +190,7 @@ class Field extends Component
 
         }
 
-        return <div className='input-field-wrapper'>
+        return <div className={`${wrapperClassName} input-field-wrapper`}>
             <label className='input-label'>{label}</label>
             <div className='input-wrapper'>{input}</div>
         </div>

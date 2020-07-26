@@ -1,18 +1,14 @@
 .input-field-wrapper {
     display: flex;
     margin-top: 0.2em;
-    margin-bottom: 1em;
     margin-right: 0.3em;
+    flex-direction: column;
 }
 
-.input-label {
-    flex: 0 0 5em;
-    margin-right: 1em;
-    align-self: center;
-}
-
-.input-wrapper {
-    flex: 1 0 auto;
+.dropdown.input-field-wrapper {
+    flex: 0 1 auto !important;
+    margin-left: .25em;
+    margin-right: .25em;
 }
 
 .react-datepicker-wrapper {
