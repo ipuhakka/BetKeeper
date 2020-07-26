@@ -1,14 +1,14 @@
-﻿using System;
-using System.Net;
+﻿using Api.Classes;
+using Betkeeper.Classes;
+using Betkeeper.Exceptions;
+using Betkeeper.Models;
+using Betkeeper.Repositories;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using Betkeeper.Models;
-using Betkeeper.Repositories;
-using Betkeeper.Classes;
-using Betkeeper.Exceptions;
-using Api.Classes;
 
 namespace Api.Controllers
 {
@@ -33,7 +33,7 @@ namespace Api.Controllers
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
-            { 
+            {
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
@@ -240,8 +240,8 @@ namespace Api.Controllers
         }
 
         private HttpResponseMessage DeleteFromFolders(
-            int betId, 
-            int userId, 
+            int betId,
+            int userId,
             List<string> folders)
         {
             var deletedFromFolders = _BetRepository.DeleteBetFromFolders(

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using Betkeeper.Classes;
+﻿using Betkeeper.Classes;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace Betkeeper.Repositories
 {
@@ -24,7 +24,7 @@ namespace Betkeeper.Repositories
         }
 
         public BetRepository(
-            IUserRepository userRepository = null, 
+            IUserRepository userRepository = null,
             IDatabase database = null,
             IFolderRepository folderRepository = null)
         {
@@ -90,7 +90,7 @@ namespace Betkeeper.Repositories
                 { "userId", userId }
             };
 
-            foreach(var folder in folders)
+            foreach (var folder in folders)
             {
                 if (!_FolderRepository.UserHasFolder(userId, folder)
                     || _FolderRepository.FolderHasBet(userId, folder, betId))
@@ -155,7 +155,7 @@ namespace Betkeeper.Repositories
                 { "userId", userId }
             };
 
-            foreach(var folder in folders)
+            foreach (var folder in folders)
             {
                 if (!_FolderRepository.UserHasFolder(userId, folder)
                     || !_FolderRepository.FolderHasBet(userId, folder, betId))
@@ -292,14 +292,14 @@ namespace Betkeeper.Repositories
         /// <param name="userId"></param>
         /// <returns></returns>
         public List<Bet> GetBets(
-            int? userId = null, 
+            int? userId = null,
             bool? betFinished = null,
             string folder = null)
         {
             if (folder != null && userId != null)
             {
                 return GetBetsFromFolder((int)userId, folder, betFinished);
-            }            
+            }
 
             var query = "SELECT * FROM bets";
             var queryParameters = new Dictionary<string, object>();
@@ -324,7 +324,7 @@ namespace Betkeeper.Repositories
             if (queryParameters.Count > 0)
             {
                 query += " WHERE ";
-                query += string.Join(" AND ", whereConditions);           
+                query += string.Join(" AND ", whereConditions);
             }
 
             return DatatableToBetList(
@@ -432,13 +432,13 @@ namespace Betkeeper.Repositories
                 : "bet_won = @betFinished");
 
                 queryParameters.Add("betFinished", -1);
-            }      
+            }
 
             return DatatableToBetList(
                 _Database.ExecuteQuery(
                     query,
                     queryParameters));
-    }
+        }
 
         private static List<Bet> DatatableToBetList(DataTable datatable)
         {

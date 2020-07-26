@@ -1,10 +1,10 @@
-﻿using System.Data;
-using System.Collections.Generic;
-using Betkeeper.Data;
-using Betkeeper.Repositories;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
-using NUnit.Framework;
+using Betkeeper.Repositories;
 using Moq;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Betkeeper.Test.Repositories
 {
@@ -56,7 +56,7 @@ namespace Betkeeper.Test.Repositories
                     It.Is<string>(query =>
                         query.Contains(
                             "SELECT DISTINCT folder " +
-                            "FROM  bet_in_bet_folder bf" )),
+                            "FROM  bet_in_bet_folder bf")),
                     It.Is<Dictionary<string, object>>(
                         dict => (int)dict["owner"] == 1
                             && (int)dict["betId"] == 2
@@ -228,7 +228,7 @@ namespace Betkeeper.Test.Repositories
                     It.Is<Dictionary<string, object>>(dict =>
                         (int)dict["userId"] == 1
                         && dict["folderName"].ToString() == "folderToDelete"),
-                    false), 
+                    false),
                 Times.Once);
         }
 

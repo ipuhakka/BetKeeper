@@ -1,7 +1,7 @@
-﻿using System;
-using System.Data;
-using Betkeeper.Extensions;
+﻿using Betkeeper.Extensions;
 using NUnit.Framework;
+using System;
+using System.Data;
 
 namespace Betkeeper.Test.Extensions
 {
@@ -85,7 +85,7 @@ namespace Betkeeper.Test.Extensions
             TestDataTable.Rows.Add(TestDataRow);
 
             Assert.Throws<Exception>(() =>
-                TestDataRow.ToInt32("test"));  
+                TestDataRow.ToInt32("test"));
         }
 
         [Test]

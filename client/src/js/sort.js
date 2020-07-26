@@ -24,7 +24,7 @@ function byRank(data, key, sortByHighest){
 }
 
 /*
-  Sorts and array alphabetically.
+  Sorts an array of objects alphabetically.
 */
 function alphabetically(data, key, sortOrderNormal){
 

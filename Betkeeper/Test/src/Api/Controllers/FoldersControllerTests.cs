@@ -1,11 +1,11 @@
-﻿using System.Net;
-using System.Collections.Generic;
-using Betkeeper.Repositories;
-using Betkeeper.Classes;
-using Api.Classes;
+﻿using Api.Classes;
 using Api.Controllers;
-using NUnit.Framework;
+using Betkeeper.Classes;
+using Betkeeper.Repositories;
 using Moq;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Net;
 using TestTools;
 
 namespace Api.Test.Controllers

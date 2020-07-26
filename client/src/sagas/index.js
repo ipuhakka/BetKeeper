@@ -1,8 +1,9 @@
 import { all } from 'redux-saga/effects';
-import * as betSagas from './betSagas.js';
-import * as folderSagas from './folderSagas.js';
-import * as alertSagas from './alertSagas.js';
-import * as sessionSagas from './sessionSagas.js';
+import * as betSagas from './betSagas';
+import * as folderSagas from './folderSagas';
+import * as alertSagas from './alertSagas';
+import * as sessionSagas from './sessionSagas';
+import * as pageSagas from './pageSagas';
 
 export default function* rootSaga() {
   yield all([
@@ -23,6 +24,9 @@ export default function* rootSaga() {
     sessionSagas.watchLogin(),
     sessionSagas.watchLogOut(),
     sessionSagas.watchCheckLogin(),
-    sessionSagas.watchSignUp()
+    sessionSagas.watchSignUp(),
+    pageSagas.watchGetPage(),
+    pageSagas.watchCallModalAction(),
+    pageSagas.watchHandleServerDropdownUpdate()
   ]);
 }

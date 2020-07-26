@@ -1,32 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
-class Confirm extends Component{
+class Confirm extends Component
+{
 
-  render(){
-
+  render()
+  {
     const { props } = this;
 
-    if (props.visible){
-
-      return (
-          <Alert variant={props.variant}>
-            <Alert.Heading>{props.headerText}</Alert.Heading>
-            <div className="d-flex justify-content-center">
-              <Button onClick={props.cancelAction} variant="outline-danger">
-                {props.cancelText}
-              </Button>
-              <Button onClick={props.confirmAction} variant="outline-success">
-              {props.confirmText}
-              </Button>
-          </div>
-          </Alert>
-        );
-    }
-
-    return (<div/>);
+    return <Modal show={props.visible} onHide={props.cancelAction}>
+          <Modal.Header closeButton>
+            <Modal.Title>{props.headerText}</Modal.Title>
+          </Modal.Header>
+        
+          <Modal.Footer>
+            <Button 
+              variant="outline-secondary" 
+              onClick={props.cancelAction}>Cancel</Button>
+            <Button 
+              variant={props.variant}
+              onClick={props.confirmAction}>Ok</Button>
+          </Modal.Footer>
+        </Modal>;
   }
 }
 

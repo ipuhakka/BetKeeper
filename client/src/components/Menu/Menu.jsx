@@ -28,8 +28,17 @@ class Menu extends Component{
 
 	render()
 	{
-		const { disable } = this.props;
+		const { disableValue } = this.props;
 		const {scrollLeft, scrollRight} = this.state;
+
+		const items = [
+			{key: 0, value: 'Home'},
+			{key: 1, value: 'Bets'},
+			{key: 2, value: 'Statistics'},
+			{key: 3, value: 'Folders'},
+			{key: 4, value: 'Competitions'},
+			{key: 5, value: 'Logout'}
+		]
 
 		return(
 			<div ref={this.menuRef} className='menu-div'>
@@ -40,21 +49,14 @@ class Menu extends Component{
 					: ' hidden'}`}>{'<'}</button>
 				<Navbar bg='none'>
 					<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
-						<Nav.Item as="li">
-							<Nav.Link eventKey={0} disabled={disable[0]}>Home</Nav.Link>
-						</Nav.Item>
-						<Nav.Item as="li">
-							<Nav.Link eventKey={1} disabled={disable[1]}>Bets</Nav.Link>
-						</Nav.Item>
-						<Nav.Item as="li">
-							<Nav.Link eventKey={2} disabled={disable[2]}>Statistics</Nav.Link>
-						</Nav.Item>
-						<Nav.Item as="li">
-							<Nav.Link eventKey={3} disabled={disable[3]}>Folders</Nav.Link>
-						</Nav.Item>
-						<Nav.Item as="li">
-							<Nav.Link eventKey={4} disabled={disable[4]}>Logout</Nav.Link>
-						</Nav.Item>
+						{_.map(items, item =>
+							{
+								return <Nav.Item key={`nav-item-${item.value}`} as='li'>
+									<Nav.Link eventKey={item.key} disabled={disableValue === item.value}>
+										{item.value}
+									</Nav.Link>
+								</Nav.Item>
+							})}
 					</Nav>
 				</Navbar>
 				<button
@@ -105,7 +107,6 @@ class Menu extends Component{
 		const { scrollWidth, clientWidth, scrollLeft } = this.menuRef.current;
 
 		const overflows = scrollWidth > clientWidth;
-		console.log(`${scrollWidth} > ${clientWidth}`);
 
 		if (overflows)
 		{
@@ -137,7 +138,14 @@ class Menu extends Component{
 	handleSelect = async (key) => {
 		const {history} = this.props;
 
-		switch(parseInt(key)){
+		this.setState({
+			disabled: key
+		});
+
+		history.push('/');
+		
+		switch(parseInt(key))
+		{
 			case 0:
 				history.push('/home');
 				break;
@@ -151,6 +159,9 @@ class Menu extends Component{
 				history.push('/folders');
 				break;
 			case 4:
+				history.push('page/competitions');
+				break;
+			case 5:
 				store.dispatch({type: 'LOGOUT'});
 				history.push('/');
 				break;
@@ -161,7 +172,7 @@ class Menu extends Component{
 }
 
 Menu.propTypes = {
-  disable: PropTypes.array
+  disableValue: PropTypes.string
 };
 
 export default withRouter(Menu);

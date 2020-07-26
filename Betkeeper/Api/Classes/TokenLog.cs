@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Betkeeper.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using Betkeeper.Exceptions;
 
 namespace Api.Classes
 {
@@ -35,7 +34,7 @@ namespace Api.Classes
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static int? GetUserIdFromRequest(HttpRequestMessage request) 
+        public static int? GetUserIdFromRequest(HttpRequestMessage request)
         {
             var tokenString = request.Headers.Authorization?.ToString();
 
@@ -57,7 +56,7 @@ namespace Api.Classes
         public static void DeleteToken(int userId, string tokenString)
         {
             var tokenToRemove = TokensInUse.Find(token =>
-                token.Owner == userId 
+                token.Owner == userId
                 && token.TokenString == tokenString);
 
             if (tokenToRemove == null)
@@ -67,7 +66,7 @@ namespace Api.Classes
                     userId));
             }
 
-            TokensInUse.Remove(tokenToRemove);                 
+            TokensInUse.Remove(tokenToRemove);
         }
 
         public static bool ContainsToken(string tokenString)

@@ -47,9 +47,9 @@ namespace Betkeeper.Extensions
 
         public static DateTime ToDateTime(this DataRow dataRow, string fieldKey)
         {
-           if (DateTime.TryParse(
-               dataRow[fieldKey].ToString(),
-               out DateTime result))
+            if (DateTime.TryParse(
+                dataRow[fieldKey].ToString(),
+                out DateTime result))
             {
                 return result;
             }

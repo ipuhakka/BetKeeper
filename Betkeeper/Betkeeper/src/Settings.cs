@@ -1,6 +1,4 @@
-﻿using Betkeeper.Exceptions;
-
-namespace Betkeeper
+﻿namespace Betkeeper
 {
     public static class Settings
     {

@@ -1,7 +1,7 @@
-﻿using System.Net.Http;
-using Api.Classes;
+﻿using Api.Classes;
 using Betkeeper.Exceptions;
 using NUnit.Framework;
+using System.Net.Http;
 
 namespace Api.Test.Classes
 {
@@ -20,7 +20,7 @@ namespace Api.Test.Classes
         {
             var testToken = TokenLog.CreateToken(1);
 
-            Assert.AreEqual(testToken.TokenString, 
+            Assert.AreEqual(testToken.TokenString,
                 TokenLog.GetExistingToken(1).TokenString);
             Assert.AreEqual(testToken.Owner, 1);
         }

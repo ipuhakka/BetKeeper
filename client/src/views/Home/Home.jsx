@@ -12,7 +12,6 @@ class Home extends Component{
 		super(props);
 
 		this.state = {
-			menuDisabled: [true, false, false, false, false],
 			alertState: null,
 			alertText: ""
 		};
@@ -50,7 +49,7 @@ class Home extends Component{
 		return (
 		<div className="content">
 			<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
-			<Menu disable={this.state.menuDisabled}></Menu>
+			<Menu disableValue='Home'></Menu>
 			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 			<div className="content">{this.cardGrid()}</div>
 		</div>

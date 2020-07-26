@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using System.Collections.Generic;
 
 namespace Betkeeper.Repositories
 {
@@ -32,7 +31,7 @@ namespace Betkeeper.Repositories
             {
                 throw new UsernameInUseException(
                     string.Format(
-                        "Username {0} already in use, user not created", 
+                        "Username {0} already in use, user not created",
                         username));
             }
 
@@ -45,53 +44,6 @@ namespace Betkeeper.Repositories
                 {
                     {"username", username },
                     {"password", password }
-                });
-        }
-
-        /// <summary>
-        /// Returns user id of matching username.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <exception cref="NotFoundException"></exception>
-        /// <returns></returns>
-        public int GetUserId(string username)
-        {
-            if (!UsernameInUse(username))
-            {
-                throw new NotFoundException(
-                    string.Format("Username {0} not found", username));
-            }
-
-            var queryText = "SELECT user_id FROM users " +
-                    "WHERE username=@username";
-
-            return _Database.ReadInt(
-                queryText,
-                new Dictionary<string, object>
-                {
-                    {"username", username }
-                });
-        }
-
-        /// <summary>
-        /// Checks if userId matches a given password.
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public bool Authenticate(int userId, string password)
-        {
-            var query = "IF EXISTS (SELECT * FROM users " +
-                "WHERE user_id = @user_id AND password = @password)" +
-                "BEGIN SELECT 1 END " +
-                "ELSE BEGIN SELECT 0 END";
-
-            return new SQLDatabase().ReadBoolean(
-                query,
-                new Dictionary<string, object>
-                {
-                    { "user_id", userId },
-                    { "password", password }
                 });
         }
 

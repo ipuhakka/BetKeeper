@@ -1,8 +1,8 @@
-﻿using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using Betkeeper.Data;
+﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace Betkeeper.Repositories
 {
@@ -110,8 +110,8 @@ namespace Betkeeper.Repositories
             {
                 throw new FolderExistsException(
                     string.Format(
-                        "{0} already has folder named {1}", 
-                        userId, 
+                        "{0} already has folder named {1}",
+                        userId,
                         folderName));
             }
 

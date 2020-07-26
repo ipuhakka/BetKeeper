@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Betkeeper.Exceptions;
+using Betkeeper.Extensions;
+using Microsoft.CSharp.RuntimeBinder;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.CSharp.RuntimeBinder;
-using Betkeeper.Extensions;
-using Betkeeper.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Models
 {
@@ -26,16 +26,15 @@ namespace Betkeeper.Models
 
         public List<string> Folders { get; }
 
-        // TODO: Eroon bool?:sta, käytä enumia
         public Bet(
-            bool? betResult,
+            Enums.BetResult betResult,
             string name,
             double odd,
             double stake,
             DateTime playedDate,
             int userId)
         {
-            BetResult = GetBetResult(betResult);
+            BetResult = betResult;
             Name = name;
             Odd = odd;
             Stake = stake;

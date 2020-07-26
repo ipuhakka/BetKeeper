@@ -1,10 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using Betkeeper.Classes;
+﻿using Betkeeper.Classes;
 using Betkeeper.Exceptions;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
+using System.Net;
+using System.Net.Http;
 
 namespace Betkeeper.Test.Classes
 {
@@ -28,7 +28,7 @@ namespace Betkeeper.Test.Classes
         }
 
         [Test]
-        public void CreateResponse_SerializeAsCamelCaseFalse_CasingIgnored()
+        public void CreateResponse_CasingChangedToCamelCase()
         {
             var camelCaseData = new
             {
@@ -37,27 +37,7 @@ namespace Betkeeper.Test.Classes
 
             var response = Http.CreateResponse(
                 HttpStatusCode.OK,
-                camelCaseData,
-                serializeAsCamelCase: false);
-
-            var dataAsDynamic = Http.GetHttpContent(response);
-
-            Assert.AreEqual(1, (int)dataAsDynamic.TestVar1);
-            Assert.IsNull(dataAsDynamic.testVar1);
-        }
-
-        [Test]
-        public void CreateResponse_SerializeAsCamelCaseTrue_CasingChangedToCamelCase()
-        {
-            var camelCaseData = new
-            {
-                TestVar1 = 1
-            };
-
-            var response = Http.CreateResponse(
-                HttpStatusCode.OK,
-                camelCaseData,
-                serializeAsCamelCase: true);
+                camelCaseData);
 
             var dataAsDynamic = Http.GetHttpContent(response);
 
@@ -115,7 +95,7 @@ namespace Betkeeper.Test.Classes
             var asDynamic = Http.GetHttpContent(request);
 
             Assert.AreEqual(
-                new DateTime(2019, 1, 1, 12, 20, 20), 
+                new DateTime(2019, 1, 1, 12, 20, 20),
                 (DateTime)asDynamic.testDateTime);
         }
 
@@ -130,6 +110,52 @@ namespace Betkeeper.Test.Classes
             var asDynamic = Http.GetHttpContent(request);
 
             Assert.IsTrue(asDynamic.testNull == null);
+        }
+
+        [Test]
+        public void GetHttpContent_WorksWithLowerCaseKeys()
+        {
+            var testJson = "{ 'testInt': 1, 'testString': 'tst', 'testDouble': 2.7, 'testBool': true }";
+
+            var request = new HttpRequestMessage();
+            request.Content = new StringContent(testJson);
+
+            var result = Http.GetHttpContent<ContentTest>(request.Content);
+
+            Assert.AreEqual(1, result.TestInt);
+            Assert.AreEqual("tst", result.TestString);
+            Assert.AreEqual(2.7, result.TestDouble);
+            Assert.IsTrue(result.TestBool);
+        }
+
+        [Test]
+        public void GetHttpContent_WorksWithUpperCaseKeys()
+        {
+            var testJson = "{ 'TestInt': 1, 'TestString': 'tst', 'TestDouble': 2.7, 'TestBool': true }";
+
+            var request = new HttpRequestMessage();
+            request.Content = new StringContent(testJson);
+
+            var result = Http.GetHttpContent<ContentTest>(request.Content);
+
+            Assert.AreEqual(1, result.TestInt);
+            Assert.AreEqual("tst", result.TestString);
+            Assert.AreEqual(2.7, result.TestDouble);
+            Assert.IsTrue(result.TestBool);
+        }
+
+        /// <summary>
+        /// Class to test Getting typed Http content.
+        /// </summary>
+        private class ContentTest
+        {
+            public int TestInt { get; set; }
+
+            public string TestString { get; set; }
+
+            public double TestDouble { get; set; }
+
+            public bool TestBool { get; set; }
         }
     }
 }

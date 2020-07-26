@@ -36,8 +36,8 @@ namespace Betkeeper.Data
                         return int.Parse(
                             command.ExecuteScalar().ToString());
                     }
-                    
-                    return command.ExecuteNonQuery();         
+
+                    return command.ExecuteNonQuery();
                 }
             }
         }
