@@ -135,5 +135,54 @@ namespace Betkeeper.Test.Models
 
             Assert.AreEqual(0, _targetRepository.GetTargets(1).Count);
         }
+
+        [Test]
+        public void GetPointInformation_TypeOpenQuestion_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                },
+                Type = Enums.TargetType.OpenQuestion
+            };
+
+            Assert.AreEqual("Correct: 2 points", target.GetPointInformation());
+        }
+
+        [Test]
+        public void GetPointInformation_TypeResult_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult },
+                    new Scoring{ Points = 1, Score = Enums.TargetScore.CorrectWinner }
+                },
+                Type = Enums.TargetType.Result
+            };
+
+            Assert.AreEqual("Result: 2 points, Winner: 1 points", target.GetPointInformation());
+        }
+
+        [Test]
+        public void GetPointInformation_TypeSelection_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                },
+                Type = Enums.TargetType.Selection
+            };
+
+            Assert.AreEqual("Correct: 2 points", target.GetPointInformation());
+        }
     }
 }

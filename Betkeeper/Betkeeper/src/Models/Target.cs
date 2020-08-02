@@ -120,6 +120,22 @@ namespace Betkeeper.Models
         {
             return Scoring.Any(score => score.Score == scoring && score.Points != null);
         }
+
+        /// <summary>
+        /// Returns point information as string for target.
+        /// </summary>
+        /// <returns></returns>
+        public string GetPointInformation()
+        {
+            // Score term for CorrectResult typed score.
+            var scoreTerm = Type != TargetType.Result
+                ? "Correct"
+                : "Result";
+
+            return string.Join(", ", Scoring.Select(score => score.Score == TargetScore.CorrectResult
+                ? $"{scoreTerm}: {score.Points} points"
+                : $"Winner: {score.Points} points"));
+        }
     }
 
     public class Scoring

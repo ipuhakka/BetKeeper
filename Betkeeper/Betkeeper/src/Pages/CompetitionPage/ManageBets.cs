@@ -286,8 +286,8 @@ namespace Betkeeper.Pages.CompetitionPage
                     components.AddRange(
                         new List<Component>
                         {
-                            new Field($"question-{index}", "Bet", FieldType.TextArea, dataKey: $"question-{index}"),
-                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
+                            new Field($"question-{index}", "Bet", FieldType.TextArea),
+                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
                         });
                     break;
 
@@ -296,8 +296,8 @@ namespace Betkeeper.Pages.CompetitionPage
                         new List<Component>
                         {
                             new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
-                            new Field($"scoring-{index}", "Points for correct result", FieldType.Double, dataKey: $"scoring-{index}"),
-                            new Field($"winner-{index}", "Points for correct winner", FieldType.Double, dataKey: $"winner-{index}"),
+                            new Field($"scoring-{index}", "Points for correct result", FieldType.Double),
+                            new Field($"winner-{index}", "Points for correct winner", FieldType.Double),
                         });
                     break;
 
@@ -305,9 +305,9 @@ namespace Betkeeper.Pages.CompetitionPage
                     components.AddRange(
                         new List<Component>
                         {
-                            new Field($"question-{index}", "Bet", FieldType.TextBox, dataKey: $"question-{index}"),
-                            new InputDropdown($"selection-{index}", "Selections", dataKey: $"selection-{index}"),
-                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double, dataKey: $"scoring-{index}")
+                            new Field($"question-{index}", "Bet", FieldType.TextBox),
+                            new InputDropdown($"selection-{index}", "Selections"),
+                            new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
                         });
                     break;
             }

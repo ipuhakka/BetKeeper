@@ -54,6 +54,8 @@ namespace Betkeeper.Pages.CompetitionPage
                 return response;
             }
 
+            var competitionTargets = TargetAction.GetTargets(competitionId);
+
             // Yleinen näkymä, osallistujat, vedot, hostille kilpailun hallinta
             var tabs = new List<Component>
             {
@@ -97,17 +99,9 @@ namespace Betkeeper.Pages.CompetitionPage
                 // Results
                 GetResultsTab(competitionId),
 
-                //Bets
-                new Tab(
-                "bets",
-                "Bets",
-                new List<Component>
-                {
-
-                })
+                // Bets
+                GetBetsTab(competitionTargets)
             };
-
-            var competitionTargets = TargetAction.GetTargets(competitionId);
 
             if (participator.Role == CompetitionRole.Host)
             {
