@@ -60,6 +60,9 @@ class PageContent extends Component
                             dataPath={dataPath} 
                             {...component} />;
 
+                    case 'Label':
+                        return <label key={`label-${i}`}>{component.text}</label>;
+
                     case 'Table':
                         return <Table onRowClick={props.onTableRowClick} key={`itemlist-${i}`} {...component} />;
 
