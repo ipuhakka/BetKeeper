@@ -53,30 +53,32 @@ namespace TestTools
            List<Participator> participators = null,
            List<Competition> competitions = null,
            List<User> users = null,
-           List<Target> targets = null)
+           List<Target> targets = null,
+           List<TargetBet> targetBets = null)
         {
             if (participators != null)
             {
-                participators.ForEach(participator =>
-                    context.Participator.Add(participator));
+                context.Participator.AddRange(participators);
             }
 
             if (competitions != null)
             {
-                competitions.ForEach(competition =>
-                    context.Competition.Add(competition));
+                context.Competition.AddRange(competitions);
             }
 
             if (users != null)
             {
-                users.ForEach(user =>
-                    context.User.Add(user));
+                context.User.AddRange(users);
             }
 
             if (targets != null)
             {
-                targets.ForEach(target =>
-                    context.Target.Add(target));
+                context.Target.AddRange(targets);
+            }
+
+            if (targetBets != null)
+            {
+                context.TargetBet.AddRange(targetBets);
             }
 
             context.SaveChanges();

@@ -175,6 +175,7 @@
     <Compile Include="src\Betkeeper\Extensions\JTokenExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />
+    <Compile Include="src\Betkeeper\Models\TargetBetTests.cs" />
     <Compile Include="src\Betkeeper\Models\TargetTests.cs" />
     <Compile Include="src\Betkeeper\Models\UserTests.cs" />
     <Compile Include="src\Betkeeper\Pages\CompetitionPageTests\CompetitionPageTests.cs" />
