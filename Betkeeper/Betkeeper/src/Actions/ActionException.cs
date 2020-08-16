@@ -10,6 +10,7 @@ namespace Betkeeper.Actions
         InvalidInput = 400,
         Unauthorized = 401,
         Conflict = 409,
+        ServerError = 500
     }
 
     /// <summary>
