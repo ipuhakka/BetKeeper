@@ -31,6 +31,7 @@ namespace Betkeeper.Test.Models
         public void TearDown()
         {
             _context.Target.RemoveRange(_context.Target);
+            _context.SaveChanges();
         }
 
         [Test]

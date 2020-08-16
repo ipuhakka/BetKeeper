@@ -62,7 +62,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                _targetBetAction.AddTargetBets(1, 1, targetBets);
+                _targetBetAction.SaveTargetBets(1, 1, targetBets);
                 Assert.Fail("Failed");
             }
             catch (ActionException e)
@@ -93,7 +93,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                _targetBetAction.AddTargetBets(1, 1, targetBets);
+                _targetBetAction.SaveTargetBets(1, 1, targetBets);
                 Assert.Fail("Failed");
             }
             catch (ActionException e)
@@ -137,7 +137,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                _targetBetAction.AddTargetBets(1, 1, targetBets);
+                _targetBetAction.SaveTargetBets(1, 1, targetBets);
                 Assert.Fail("Failed");
             }
             catch (ActionException e)
@@ -148,7 +148,7 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void AddBetTargets_NoAnswer_ThrowsActionException()
+        public void SaveBetTargets_NoAnswer_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -191,7 +191,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                _targetBetAction.AddTargetBets(1, 1, targetBets);
+                _targetBetAction.SaveTargetBets(1, 1, targetBets);
                 Assert.Fail("Failed");
             }
             catch (ActionException e)
@@ -202,7 +202,7 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void AddBetTargets_InvalidResult_ThrowsActionException()
+        public void SaveBetTargets_InvalidResult_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -253,7 +253,7 @@ namespace Betkeeper.Test.Actions
             {
                 try
                 {
-                    _targetBetAction.AddTargetBets(1, 1, new List<TargetBet> { target });
+                    _targetBetAction.SaveTargetBets(1, 1, new List<TargetBet> { target });
                     Assert.Fail("Failed");
                 }
                 catch (ActionException e)
@@ -265,7 +265,7 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void AddBetTargets_SelectionNotAvailable_ThrowsActionException()
+        public void SaveBetTargets_SelectionNotAvailable_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -314,7 +314,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                _targetBetAction.AddTargetBets(1, 1, targetBets);
+                _targetBetAction.SaveTargetBets(1, 1, targetBets);
                 Assert.Fail("Failed");
             }
             catch (ActionException e)
@@ -324,8 +324,12 @@ namespace Betkeeper.Test.Actions
             }
         }
 
+        /// <summary>
+        /// Tests that with valid inputs already saved target bets are updated and
+        /// others created.
+        /// </summary>
         [Test]
-        public void AddBetTargets_ValidInput_Succeeds()
+        public void SaveBetTargets_ValidInput_Succeeds()
         {
             var competitions = new List<Competition>
             {
@@ -373,23 +377,49 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
+            var targetBets = new List<TargetBet>
+            {
+                new TargetBet
+                {
+                    Target = 1,
+                    Bet = "1-1",
+                    Participator = 1
+                },
+                new TargetBet
+                {
+                    Target = 3,
+                    Bet = "Barcelona",
+                    Participator = 1
+                }
+            };
+
             Tools.CreateTestData(
                 _context,
                 competitions: competitions,
                 participators: participators,
-                targets: targets);
+                targets: targets,
+                targetBets: targetBets);
 
-            var targetBets = new List<TargetBet>
+            var newTargetBets = new List<TargetBet>
             {
-                new TargetBet { Target = 1, Bet = "1-1" },
+                new TargetBet { Target = 1, Bet = "2-1" },
                 new TargetBet { Target = 2, Bet = "Open answer"},
-                new TargetBet { Target = 3, Bet = "Barcelona"}
+                new TargetBet { Target = 3, Bet = "ManU"}
             };
 
-            _targetBetAction.AddTargetBets(1, 1, targetBets);
+            // Verify two target bets in database before saving
 
-            // Check that target bets were created
-            Assert.AreEqual(3, _context.TargetBet.Count());
+            Assert.AreEqual(2, _context.TargetBet.Count());
+            _targetBetAction.SaveTargetBets(1, 1, newTargetBets);
+
+            var resultTargetBets = _context.TargetBet.ToList();
+
+            // Check that correct number of target bets were created
+            Assert.AreEqual(3, resultTargetBets.Count);
+
+            Assert.AreEqual("2-1", resultTargetBets[0].Bet);
+            Assert.AreEqual("ManU", resultTargetBets[1].Bet);
+            Assert.AreEqual("Open answer", resultTargetBets[2].Bet);
         }
     }
 }

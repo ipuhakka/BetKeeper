@@ -37,13 +37,13 @@ namespace Betkeeper.Actions
         }
 
         /// <summary>
-        /// Adds targets.
+        /// Adds target bets. Only allows adding bets which have a bet provided
         /// </summary>
         /// <param name="competitionId"></param>
         /// <param name="userId"></param>
         /// <param name="targetBets"></param>
         /// <exception cref="ActionException"></exception>
-        public void AddTargetBets(
+        public void SaveTargetBets(
             int competitionId, 
             int userId,
             List<TargetBet> targetBets)
@@ -78,7 +78,56 @@ namespace Betkeeper.Actions
                 ValidateTarget(targetBets[i], competitionTargets, i);
             }
 
-            TargetBetRepository.AddTargetBets(targetBets);
+            SetParticipatorToTargetBets(targetBets, participator);
+
+            AddOrUpdateTargetBets(participator.ParticipatorId, targetBets);
+        }
+
+        /// <summary>
+        /// Add or update target bets.
+        /// </summary>
+        /// <param name="participator"></param>
+        /// <param name="targetBets"></param>
+        private void AddOrUpdateTargetBets(
+            int participator,
+            List<TargetBet> targetBets)
+        {
+            // Get existing target bets to know which ones to update
+            var existingTargetBets = TargetBetRepository
+                .GetTargetBets(participator: participator);
+
+            var insertList = new List<TargetBet>();
+
+            foreach (var targetBet in targetBets)
+            {
+                var existingTargetBet = existingTargetBets.SingleOrDefault(oldTargetBet =>
+                    oldTargetBet.Target == targetBet.Target);
+
+                if (existingTargetBet != null)
+                {
+                    existingTargetBet.Bet = targetBet.Bet;
+                }
+                else
+                {
+                    insertList.Add(targetBet);
+                }
+            }
+
+            TargetBetRepository.AddTargetBets(insertList);
+            TargetBetRepository.UpdateTargetBets(existingTargetBets);
+        }
+
+        /// <summary>
+        /// Set participator to target bets.
+        /// </summary>
+        private void SetParticipatorToTargetBets(
+            List<TargetBet> targetBets, 
+            Participator participator)
+        {
+            targetBets.ForEach(targetBet =>
+            {
+                targetBet.Participator = participator.ParticipatorId;
+            });
         }
 
         /// <summary>

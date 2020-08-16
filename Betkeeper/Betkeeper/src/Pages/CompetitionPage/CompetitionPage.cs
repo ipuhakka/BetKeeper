@@ -21,21 +21,30 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private TargetAction TargetAction { get; }
 
+        private TargetBetAction TargetBetAction { get; }
+
         public CompetitionPage()
         {
             CompetitionAction = new CompetitionAction();
             TargetAction = new TargetAction();
+            TargetBetAction = new TargetBetAction();
         }
 
-        public CompetitionPage(CompetitionAction competitionAction = null, TargetAction targetAction = null)
+        public CompetitionPage(
+            CompetitionAction competitionAction = null, 
+            TargetAction targetAction = null,
+            TargetBetAction targetBetAction = null)
         {
             CompetitionAction = competitionAction;
             TargetAction = targetAction;
+            TargetBetAction = targetBetAction;
         }
 
         public void Dispose()
         {
             CompetitionAction.Dispose();
+            TargetAction.Dispose();
+            TargetBetAction.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageId, int userId)
@@ -161,6 +170,9 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 case "DeleteTarget":
                     return DeleteTarget(action);
+
+                case "SaveUserBets":
+                    return SaveUserBets(action);
             }
         }
 

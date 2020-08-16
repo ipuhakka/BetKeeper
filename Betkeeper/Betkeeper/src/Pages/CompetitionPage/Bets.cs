@@ -3,6 +3,10 @@ using Betkeeper.Page.Components;
 using Betkeeper.Enums;
 using System.Linq;
 using System.Collections.Generic;
+using Betkeeper.Page;
+using System.Net.Http;
+using Newtonsoft.Json.Linq;
+using Betkeeper.Classes;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -47,11 +51,12 @@ namespace Betkeeper.Pages.CompetitionPage
                     requireConfirm: true));
             }
             components.AddRange(targets
-                .Select((target, i) => GetBetContainer(target, i)));
+                .Select(target => GetBetContainer(target)));
 
             return new Container(
                 children: components,
-                componentKey: "betsContainer");
+                componentKey: "betsContainer",
+                storeDataAsArray: true);
         }
 
         /// <summary>
@@ -59,7 +64,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        private Container GetBetContainer(Target target, int index)
+        private Container GetBetContainer(Target target)
         {
             var children = new List<Component>();
 
@@ -68,7 +73,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 case TargetType.Selection:
                     children.Add(
                         new Dropdown(
-                            $"bet-selection-{index}", 
+                            $"bet-answer-{target.TargetId}", 
                             $"{target.Bet} ({target.GetPointInformation()})", 
                             target.Selections));
                     break;
@@ -76,7 +81,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 case TargetType.OpenQuestion:
                     children.Add(
                         new Field(
-                            $"bet-answer-{index}", 
+                            $"bet-answer-{target.TargetId}", 
                             $"{target.Bet} ({target.GetPointInformation()})", 
                             FieldType.TextArea));
                     break;
@@ -84,16 +89,42 @@ namespace Betkeeper.Pages.CompetitionPage
                 case TargetType.Result:
                     children.Add(
                         new Field(
-                            $"bet-answer-{index}", 
+                            $"bet-answer-{target.TargetId}", 
                             $"{target.Bet} ({target.GetPointInformation()})", 
                             FieldType.TextBox));
                     break;
             }
 
-            return new Container(children, "betsContainer", storeDataAsArray: true);
+            return new Container(children, $"target-{target.TargetId}");
         }
 
-        // TODO: Tallennusaction
+        /// <summary>
+        /// Save users bets for competition.
+        /// </summary>
+        /// <param name="pageAction"></param>
+        /// <returns></returns>
+        private HttpResponseMessage SaveUserBets(PageAction pageAction)
+        {
+            var asJArray = pageAction.Parameters["betsContainer"] as JArray;
+
+            var targetBets = new List<TargetBet>();
+            foreach (var jToken in asJArray)
+            {
+                var targetBet = TargetBet.FromJObject(jToken as JObject);
+
+                // Only manage bets which have a bet inputted
+                if (!string.IsNullOrEmpty(targetBet.Bet))
+                {
+                    targetBets.Add(targetBet);
+                }
+            }
+
+            TargetBetAction.SaveTargetBets((int)pageAction.PageId, pageAction.UserId, targetBets);
+
+            return Http.CreateResponse(
+                System.Net.HttpStatusCode.OK,
+                new PageActionResponse("Bets saved succesfully"));
+        }
 
         // TODO: Muutoksien peruutusaction
     }
