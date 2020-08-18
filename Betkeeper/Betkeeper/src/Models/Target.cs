@@ -101,13 +101,20 @@ namespace Betkeeper.Models
                 }
             }
 
+            int targetId = targetObject.TryGetValue(
+                $"target-id-{i}", 
+                out JToken targetIdToken)
+                ? targetIdToken.Value<int>()
+                : 0;
+            
             return new Target
             {
                 Type = type,
                 Bet = questionJToken?.ToString(),
                 CompetitionId = competitionId,
                 Scoring = scorings,
-                Selections = selections
+                Selections = selections,
+                TargetId = targetId
             };
         }
 
@@ -179,6 +186,16 @@ namespace Betkeeper.Models
         public void AddTargets(List<Target> targets)
         {
             _context.Target.AddRange(targets);
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Updates target bets.
+        /// </summary>
+        /// <param name="targets"></param>
+        public void UpdateTargets(List<Target> targets)
+        {
+            _context.Target.UpdateRange(targets);
             _context.SaveChanges();
         }
 

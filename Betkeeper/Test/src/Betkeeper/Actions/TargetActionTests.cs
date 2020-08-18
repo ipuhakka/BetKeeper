@@ -47,14 +47,14 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void AddTargets_CompetitionDoesNotExist_ThrowsNotFoundException()
+        public void HandleTargetsUpdate_CompetitionDoesNotExist_ThrowsNotFoundException()
         {
             Assert.Throws<NotFoundException>(() =>
-                _targetAction.AddTargets(1, 1, new List<Target>()));
+                _targetAction.HandleTargetsUpdate(1, 1, new List<Target>()));
         }
 
         [Test]
-        public void AddTargets_UserNotCompetitionHost_ThrowsInvalidOperationException()
+        public void HandleTargetsUpdate_UserNotCompetitionHost_ThrowsInvalidOperationException()
         {
             var competitions = new List<Competition>
             {
@@ -82,11 +82,11 @@ namespace Betkeeper.Test.Actions
                 participators: participators);
 
             Assert.Throws<InvalidOperationException>(() =>
-                _targetAction.AddTargets(1, 1, new List<Target>()));
+                _targetAction.HandleTargetsUpdate(1, 1, new List<Target>()));
         }
 
         [Test]
-        public void AddTargets_CompetitionStarted_ThrowsInvalidOperationException()
+        public void HandleTargetsUpdate_CompetitionStarted_ThrowsInvalidOperationException()
         {
             var competitions = new List<Competition>
             {
@@ -110,11 +110,11 @@ namespace Betkeeper.Test.Actions
             Tools.CreateTestData(_context, participators: participators, competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
-                _targetAction.AddTargets(1, 1, new List<Target>()));
+                _targetAction.HandleTargetsUpdate(1, 1, new List<Target>()));
         }
 
         [Test]
-        public void AddTargets_ScoringContainsDuplicates_ThrowsArgumentException()
+        public void HandleTargetsUpdate_ScoringContainsDuplicates_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -155,14 +155,12 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _targetAction.AddTargets(1, 1, new List<Target> { target }));
-
-            Assert.AreEqual("Invalid scoring arguments", exception.Message);
+            var exception = Assert.Throws<ActionException>(() =>
+                _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target }));
         }
 
         [Test]
-        public void AddTargets_InvalidScoringsForType_ThrowsArgumentException()
+        public void HandleTargetsUpdate_InvalidScoringsForType_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -198,7 +196,8 @@ namespace Betkeeper.Test.Actions
                             Score = TargetScore.CorrectWinner
                         }
                     },
-                    Type = TargetType.OpenQuestion
+                    Type = TargetType.OpenQuestion,
+                    Bet = "Some bet"
                 },
                 new Target
                 {
@@ -210,7 +209,8 @@ namespace Betkeeper.Test.Actions
                             Score = TargetScore.CorrectWinner
                         }
                     },
-                    Type = TargetType.OpenQuestion
+                    Type = TargetType.OpenQuestion,
+                    Bet = "Some bet"
                 },
                 new Target
                 {
@@ -227,19 +227,18 @@ namespace Betkeeper.Test.Actions
                             Score = TargetScore.CorrectResult
                         }
                     },
-                    Type = TargetType.OpenQuestion
+                    Type = TargetType.OpenQuestion,
+                    Bet = "Some bet"
                 }
             }.ForEach(target =>
             {
-                var exception = Assert.Throws<ArgumentException>(() =>
-                    _targetAction.AddTargets(1, 1, new List<Target> { target }));
-
-                Assert.AreEqual("Invalid scoring type for target", exception.Message);
+                var exception = Assert.Throws<ActionException>(() =>
+                    _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target }));
             });
         }
 
         [Test]
-        public void AddTargets_AddsTarget()
+        public void HandleTargetsUpdate_AddsTarget()
         {
             var competitions = new List<Competition>
             {
@@ -278,10 +277,11 @@ namespace Betkeeper.Test.Actions
                         Points = 1,
                         Score = TargetScore.CorrectWinner
                     },
-                }
+                },
+                Bet = "Some bet"
             };
 
-            _targetAction.AddTargets(1, 1, new List<Target> { target });
+            _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target });
 
             var targets = _context.Target.ToList();
             Assert.AreEqual(1, targets.Count);

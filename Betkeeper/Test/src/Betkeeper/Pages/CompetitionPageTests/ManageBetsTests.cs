@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Betkeeper.Actions;
-using Betkeeper.Classes;
 using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Pages.CompetitionPage;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using TestTools;
 
@@ -50,7 +47,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             _competitionAction = new CompetitionAction(competitionRepository, participatorRepository);
             _targetAction = new TargetAction(competitionRepository, participatorRepository, targetRepository);
 
-            _competitionPage = new CompetitionPage(_competitionAction, _targetAction);
+            _competitionPage = new CompetitionPage(_competitionAction, _targetAction, new TargetBetAction(_context));
         }
 
         [OneTimeTearDown]
@@ -59,183 +56,28 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             _competitionPage.Dispose();
         }
 
-        [Test]
-        public void SaveBetTargets_NoQuestionGiven_ReturnsBadRequest()
-        {
-            var testTargetsJArray = CompetitionPage.TargetsToJArray(new List<Target>
-            {
-                new Target
-                {
-                    Bet = null
-                }
-            });
-
-            var action = new PageAction(
-                userId: 1,
-                page: "test",
-                action: "SaveBetTargets",
-                parameters: new Dictionary<string, object>
-                {
-                    { "betTargets", (object)testTargetsJArray }
-                },
-                pageId: 1);
-
-            var response = _competitionPage.HandleAction(action);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-
-            // First error validated
-            var actionResponse = Http.GetHttpContent<PageActionResponse>(response.Content);
-            Assert.AreEqual("Row 1: No question given", actionResponse.Message);
-        }
-        
-        [Test]
-        public void SaveBetTargets_NoResultPointsGiven_ReturnsBadRequest()
-        {
-            var testTargetsJArray = CompetitionPage.TargetsToJArray(new List<Target>
-            {
-                new Target
-                {
-                    Bet = "Question"
-                }
-            });
-
-            var action = new PageAction(
-                userId: 1,
-                page: "test",
-                action: "SaveBetTargets",
-                parameters: new Dictionary<string, object>
-                {
-                    { "betTargets", (object)testTargetsJArray }
-                },
-                pageId: 1);
-
-            var response = _competitionPage.HandleAction(action);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-
-            // First error validated
-            var actionResponse = Http.GetHttpContent<PageActionResponse>(response.Content);
-            Assert.AreEqual(
-                "Row 1: Missing points for correct result", 
-                actionResponse.Message);
-        }
-
-        [Test]
-        public void SaveBetTargets_NoCorrectWinnerPointsGiven_ReturnsBadRequest()
-        {
-            var testTargetsJArray = CompetitionPage.TargetsToJArray(new List<Target>
-            {
-                new Target
-                {
-                    Bet = "Question",
-                    Scoring = new List<Scoring>
-                    {
-                        new Scoring
-                        {
-                            Score = Enums.TargetScore.CorrectResult,
-                            Points = 1
-                        }
-                    }
-                }
-            });
-
-            var action = new PageAction(
-                userId: 1,
-                page: "test",
-                action: "SaveBetTargets",
-                parameters: new Dictionary<string, object>
-                {
-                    { "betTargets", (object)testTargetsJArray }
-                },
-                pageId: 1);
-
-            var response = _competitionPage.HandleAction(action);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-
-            // First error validated
-            var actionResponse = Http.GetHttpContent<PageActionResponse>(response.Content);
-            Assert.AreEqual(
-                "Row 1: Missing points for correct winner",
-                actionResponse.Message);
-        }
-
-        [Test]
-        public void SaveBetTargets_SelectionBetWithNoSelections_ReturnsBadRequest()
-        {
-            var jArrays = new List<List<Target>>
-            {
-                new List<Target>
-                {
-                    new Target
-                    {
-                        Bet = "Question",
-                        Scoring = new List<Scoring>
-                        {
-                            new Scoring
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 1
-                            },
-                            new Scoring
-                            {
-                                Score = Enums.TargetScore.CorrectWinner,
-                                Points = 0.5
-                            }
-                        },
-                        Type = Enums.TargetType.Selection,
-                        Selections = null
-                    }
-                },
-                new List<Target>
-                {
-                    new Target
-                    {
-                        Bet = "Question",
-                        Scoring = new List<Scoring>
-                        {
-                            new Scoring
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 1
-                            },
-                            new Scoring
-                            {
-                                Score = Enums.TargetScore.CorrectWinner,
-                                Points = 0.5
-                            }
-                        },
-                        Type = Enums.TargetType.Selection,
-                        Selections = new List<string>()
-                    }
-                }
-            }.Select(targetList => CompetitionPage.TargetsToJArray(targetList))
-            .ToList();
-
-            jArrays.ForEach(jArray =>
-            {
-                var action = new PageAction(
-                userId: 1,
-                page: "test",
-                action: "SaveBetTargets",
-                parameters: new Dictionary<string, object>
-                {
-                    { "betTargets", (object)jArray }
-                },
-                pageId: 1);
-
-                var response = _competitionPage.HandleAction(action);
-                Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-
-                // First error validated
-                var actionResponse = Http.GetHttpContent<PageActionResponse>(response.Content);
-                Assert.AreEqual(
-                    "Row 1: No selections given for selection typed bet",
-                    actionResponse.Message);
-            });
-        }
-
+        /// <summary>
+        /// Tests that new targets are created and existing one's updated.
+        /// </summary>
         [Test]
         public void SaveBetTargets_ValidTargetsAreCreated()
         {
+            var updateTarget = new Target
+            {
+                Bet = "Bet",
+                Type = Enums.TargetType.OpenQuestion,
+                Scoring = new List<Scoring>
+                        {
+                            new Scoring
+                            {
+                                Score = Enums.TargetScore.CorrectResult,
+                                Points = 1
+                            }
+                        },
+                CompetitionId = 1,
+                TargetId = 1
+            };
+
             Tools.CreateTestData(
                 _context,
                 participators: new List<Participator>
@@ -246,14 +88,22 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                         UserId = 1,
                         Role = Enums.CompetitionRole.Host
                     }
+                },
+                targets: new List<Target>
+                {
+                    updateTarget
                 });
+
+            // Mark entry state as detached so update works.
+            _context.Entry(updateTarget).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
 
             var jArray = CompetitionPage.TargetsToJArray(
                 new List<Target>
                 {
                     new Target
                     {
-                        Bet = "Bet",
+                        TargetId = 1,
+                        Bet = "Updated",
                         Type = Enums.TargetType.OpenQuestion,
                         Scoring = new List<Scoring>
                         {
@@ -315,7 +165,9 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             var response = _competitionPage.HandleAction(action);
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            Assert.AreEqual(3, _targetAction.GetTargets(competitionId: 1).Count);
+            var competitionTargets = _targetAction.GetTargets(competitionId: 1);
+            Assert.AreEqual(3, competitionTargets.Count);
+            Assert.AreEqual(1, competitionTargets.Count(target => target.Bet == "Updated"));
 
             _context.Target.RemoveRange(_context.Target);
             _context.Participator.RemoveRange(_context.Participator);

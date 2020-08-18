@@ -101,8 +101,6 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <returns></returns>
         private HttpResponseMessage SaveBetTargets(PageAction action)
         {
-            var targetData = action.Parameters["betTargets"] as JArray;
-
             var competitionId = (int)action.PageId;
 
             var competition = CompetitionAction.GetCompetition(competitionId);
@@ -115,49 +113,16 @@ namespace Betkeeper.Pages.CompetitionPage
             }
 
             List<Target> targets = new List<Target>();
+            var targetData = action.Parameters["betTargets"] as JArray;
             // Create targets
             for (int i = 0; i < targetData.Count; i++)
             {
                 var targetObject = targetData[i]as JObject;
-
                 var target = Target.FromJObject(targetObject, i, competitionId);
-
-                if (string.IsNullOrWhiteSpace(target.Bet))
-                {
-                    return Http.CreateResponse(
-                        HttpStatusCode.BadRequest,
-                        new PageActionResponse($"Row {i + 1}: No question given"));
-                }
-
-                if (!target.HasScoringType(TargetScore.CorrectResult))
-                {
-                    return Http.CreateResponse(
-                        HttpStatusCode.BadRequest,
-                        new PageActionResponse($"Row {i + 1}: Missing points for correct result"));
-                }
-
-                if (target.Type == TargetType.Result && !target.HasScoringType(TargetScore.CorrectWinner))
-                {
-                    return Http.CreateResponse(
-                        HttpStatusCode.BadRequest,
-                        new PageActionResponse($"Row {i + 1}: Missing points for correct winner"));
-                }
-
-                if (target.Type == TargetType.Selection && 
-                   (target.Selections == null || target.Selections.Count == 0))
-                {
-                    return Http.CreateResponse(
-                        HttpStatusCode.BadRequest,
-                        new PageActionResponse($"Row {i + 1}: No selections given for selection typed bet"));
-                }
-
                 targets.Add(target);
             }
 
-            // Delete previous targets before adding new ones
-            TargetAction.ClearTargets((int)action.PageId);
-
-            TargetAction.AddTargets(action.UserId, competitionId, targets);
+            TargetAction.HandleTargetsUpdate(action.UserId, competitionId, targets);
 
             return Http.CreateResponse(
                 HttpStatusCode.OK, 

@@ -42,7 +42,7 @@ namespace Betkeeper.Actions
             TargetRepository.Dispose();
         }
 
-        public void AddTargets(int userId, int competitionId, List<Target> targets)
+        public void HandleTargetsUpdate(int userId, int competitionId, List<Target> targets)
         {
             var competition = CompetitionRepository.GetCompetition(competitionId);
 
@@ -63,22 +63,18 @@ namespace Betkeeper.Actions
                 throw new InvalidOperationException("Competition not open for new targets");
             }
 
-            targets.ForEach(target =>
-            {
-                if (!ValidScoringForType(target))
-                {
-                    throw new ArgumentException("Invalid scoring type for target");
-                }
+            ValidateTargets(targets);
 
-                if (target.Scoring
-                    .GroupBy(scoring => scoring.Score)
-                    .Any(group => group.Count() > 1))
-                {
-                    throw new ArgumentException("Invalid scoring arguments");
-                }
-            });
+            var updateList = targets
+                .Where(target => target.TargetId != 0)
+                .ToList();
 
-            TargetRepository.AddTargets(targets);
+            var insertList = targets
+                .Where(target => target.TargetId == 0)
+                .ToList();
+
+            TargetRepository.UpdateTargets(updateList);
+            TargetRepository.AddTargets(insertList);
         }
 
         /// <summary>
@@ -92,15 +88,6 @@ namespace Betkeeper.Actions
         }
 
         /// <summary>
-        /// Deletes competitions targets.
-        /// </summary>
-        /// <param name="competitionId"></param>
-        public void ClearTargets(int competitionId)
-        {
-            TargetRepository.ClearTargets(competitionId);
-        }
-
-        /// <summary>
         /// Removes a specified target.
         /// </summary>
         /// <param name="targetId"></param>
@@ -109,6 +96,62 @@ namespace Betkeeper.Actions
             TargetRepository.RemoveTarget(targetId);
         }
 
+        /// <summary>
+        /// Validates targets
+        /// </summary>
+        /// <param name="targets"></param>
+        /// <exception cref="ActionException"></exception>
+        private void ValidateTargets(List<Target> targets)
+        {
+            var i = 0;
+            targets.ForEach(target =>
+            {
+                if (string.IsNullOrWhiteSpace(target.Bet))
+                {
+                    throw new ActionException(
+                        ActionExceptionType.InvalidInput,
+                        $"Row {i + 1}: No question given");
+                }
+
+                if (!target.HasScoringType(TargetScore.CorrectResult))
+                {
+                    throw new ActionException(
+                        ActionExceptionType.InvalidInput,
+                        $"Row {i + 1}: Missing points for correct result");
+                }
+
+                if (target.Type == TargetType.Result && !target.HasScoringType(TargetScore.CorrectWinner))
+                {
+                    throw new ActionException(
+                        ActionExceptionType.InvalidInput,
+                        $"Row {i + 1}: Missing points for correct winner");
+                }
+
+                if (!ValidScoringForType(target))
+                {
+                    throw new ActionException(
+                        ActionExceptionType.ServerError,
+                        $"Row {i + 1}: Invalid points");
+                }
+
+                if (target.Type == TargetType.Selection &&
+                   (target.Selections == null || target.Selections.Count == 0))
+                {
+                    throw new ActionException(
+                        ActionExceptionType.InvalidInput,
+                        $"Row {i + 1}: No selections given for selection typed bet");
+                }
+
+                if (target.Scoring
+                    .GroupBy(scoring => scoring.Score)
+                    .Any(group => group.Count() > 1))
+                {
+                    throw new ArgumentException("Invalid scoring arguments");
+                }
+
+                i++;
+            });
+        }
         private bool ValidScoringForType(Target target)
         {
             switch (target.Type)
