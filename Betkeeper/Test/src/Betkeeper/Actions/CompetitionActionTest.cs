@@ -86,7 +86,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var resultCompetitions = _action.GetUsersCompetitions(1);
 
@@ -108,7 +108,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
 
             var testAction = _action;
 
@@ -158,7 +158,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             _action.JoinCompetition("joincode", 1);
 
@@ -188,7 +188,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             competitions.ForEach(competition =>
             {
@@ -216,7 +216,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators);
+            Tools.CreateTestData(participators: participators);
 
             participators.ForEach(participator =>
             {
@@ -238,7 +238,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators);
+            Tools.CreateTestData(participators: participators);
 
             participators.ForEach(participator =>
             {
@@ -268,7 +268,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var existingCompetitions = _context.Competition.ToList();
             Assert.AreEqual(1, existingCompetitions.Count);
@@ -293,7 +293,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             Assert.IsNull(_action.GetParticipator(1, 1));
         }
@@ -320,7 +320,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var participator = _action.GetParticipator(1, 1);
 

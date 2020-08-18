@@ -56,7 +56,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             var resultTargets = _targetRepository.GetTargets(competitionId: 1);
 
@@ -89,7 +89,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.ClearTargets(competitionId: 1);
 
@@ -111,7 +111,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.RemoveTarget(2);
 
@@ -130,7 +130,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.RemoveTarget(1);
 

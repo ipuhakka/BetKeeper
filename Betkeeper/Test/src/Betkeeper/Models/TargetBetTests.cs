@@ -90,7 +90,6 @@ namespace Betkeeper.Test.Models
         public void UpdateTargetBets_NoParticipator_ThrowsInvalidOperationException()
         {
             Tools.CreateTestData(
-                _context, 
                 targetBets: new List<TargetBet>
                 {
                     new TargetBet
@@ -152,7 +151,6 @@ namespace Betkeeper.Test.Models
             };
 
             Tools.CreateTestData(
-                _context,
                 targetBets: targetBets);
 
             targetBets.ForEach(targetBet =>

@@ -77,7 +77,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context, 
                 competitions: competitions,
                 participators: participators);
 
@@ -107,7 +106,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
                 _targetAction.HandleTargetsUpdate(1, 1, new List<Target>()));
@@ -136,7 +135,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var target = new Target
             {
@@ -182,7 +181,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             new List<Target>
             {
@@ -260,7 +259,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var target = new Target
             {

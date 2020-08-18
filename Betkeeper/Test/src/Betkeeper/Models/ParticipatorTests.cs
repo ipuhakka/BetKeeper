@@ -80,7 +80,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions, participators: participators);
+            Tools.CreateTestData(competitions: competitions, participators: participators);
 
             Assert.AreEqual(4, _participatorRepository.GetParticipators().Count);
             Assert.AreEqual(2, _participatorRepository.GetParticipators(competitionId: 2).Count);
@@ -109,7 +109,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             _participatorRepository.AddParticipator(
                 userId: 1, competitionId: 1, Enums.CompetitionRole.Host);

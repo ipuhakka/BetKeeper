@@ -41,21 +41,21 @@ namespace TestTools
         }
 
         /// <summary>
-        /// Creates test data for given context.
+        /// Creates test data.
         /// </summary>
-        /// <param name="context"></param>
         /// <param name="participators"></param>
         /// <param name="competitions"></param>
         /// <param name="users"></param>
         /// <param name="targets"></param>
+        /// <param name="targetBets"></param>
         public static void CreateTestData(
-           BetkeeperDataContext context,
            List<Participator> participators = null,
            List<Competition> competitions = null,
            List<User> users = null,
            List<Target> targets = null,
            List<TargetBet> targetBets = null)
         {
+            var context = GetTestContext();
             if (participators != null)
             {
                 context.Participator.AddRange(participators);

@@ -53,7 +53,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var targetBets = new List<TargetBet>
             {
@@ -84,7 +84,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var targetBets = new List<TargetBet>
             {
@@ -126,7 +126,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context, 
                 competitions: competitions, 
                 participators: participators);
 
@@ -179,7 +178,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context,
                 competitions: competitions,
                 participators: participators,
                 targets: targets);
@@ -234,7 +232,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context,
                 competitions: competitions,
                 participators: participators,
                 targets: targets);
@@ -302,7 +299,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context,
                 competitions: competitions,
                 participators: participators,
                 targets: targets);
@@ -394,7 +390,6 @@ namespace Betkeeper.Test.Actions
             };
 
             Tools.CreateTestData(
-                _context,
                 competitions: competitions,
                 participators: participators,
                 targets: targets,

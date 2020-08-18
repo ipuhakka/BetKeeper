@@ -33,7 +33,6 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             var targetRepository = new TargetRepository(_context);
 
             Tools.CreateTestData(
-                _context,
                 competitions: new List<Competition>
                 {
                     new Competition
@@ -79,7 +78,6 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             };
 
             Tools.CreateTestData(
-                _context,
                 participators: new List<Participator>
                 {
                     new Participator
@@ -93,9 +91,6 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                 {
                     updateTarget
                 });
-
-            // Mark entry state as detached so update works.
-            _context.Entry(updateTarget).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
 
             var jArray = CompetitionPage.TargetsToJArray(
                 new List<Target>
