@@ -168,5 +168,34 @@ namespace Betkeeper.Test.Models
                 Assert.AreEqual("Updated", targetBet.Bet);
             });
         }
+
+        [Test]
+        public void GetTargetBets_ParticipatorParam_ReturnsParticipatorsBets()
+        {
+            var targetBets = new List<TargetBet>
+            {
+                new TargetBet
+                {
+                    Target = 1,
+                    Participator = 1
+                },
+                new TargetBet
+                {
+                    Target = 2,
+                    Participator = 1
+                },
+                new TargetBet
+                {
+                    Target = 1,
+                    Participator = 2
+                }
+            };
+
+            Tools.CreateTestData(targetBets: targetBets);
+
+            Assert.AreEqual(
+                2, 
+                _targetBetRepository.GetTargetBets(participator: 1).Count);
+        }
     }
 }

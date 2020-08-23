@@ -36,6 +36,11 @@ namespace Betkeeper.Actions
             CompetitionRepository.Dispose();
         }
 
+        public List<TargetBet> GetParticipatorsBets(int participatorId)
+        {
+            return TargetBetRepository.GetTargetBets(participatorId);
+        }
+
         /// <summary>
         /// Adds target bets. Only allows adding bets which have a bet provided
         /// </summary>

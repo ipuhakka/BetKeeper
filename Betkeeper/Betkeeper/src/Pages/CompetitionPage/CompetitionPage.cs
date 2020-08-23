@@ -134,11 +134,14 @@ namespace Betkeeper.Pages.CompetitionPage
                     }));
             }
 
+            var usersBets = TargetBetAction.GetParticipatorsBets(participator.ParticipatorId);
+
             var data = new Dictionary<string, object>
             {
                 { "CompetitionId", competitionId },
                 { "Competition", competition },
-                { "betTargets", TargetsToJObject(competitionTargets) }
+                { "betTargets", TargetsToJObject(competitionTargets) },
+                { "betsContainer", TargetBetsToJObject(usersBets) }
             };
 
             return Http.CreateResponse(
@@ -173,6 +176,14 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 case "SaveUserBets":
                     return SaveUserBets(action);
+
+                case "CancelUserBetsUpdate":
+                    return Http.CreateResponse(
+                        HttpStatusCode.OK,
+                        new PageActionResponse()
+                        {
+                            Refresh = true
+                        });
             }
         }
 
