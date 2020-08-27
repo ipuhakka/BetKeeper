@@ -101,13 +101,20 @@ namespace Betkeeper.Models
                 }
             }
 
+            int targetId = targetObject.TryGetValue(
+                $"target-id-{i}", 
+                out JToken targetIdToken)
+                ? targetIdToken.Value<int>()
+                : 0;
+            
             return new Target
             {
                 Type = type,
                 Bet = questionJToken?.ToString(),
                 CompetitionId = competitionId,
                 Scoring = scorings,
-                Selections = selections
+                Selections = selections,
+                TargetId = targetId
             };
         }
 
@@ -119,6 +126,22 @@ namespace Betkeeper.Models
         public bool HasScoringType(TargetScore scoring)
         {
             return Scoring.Any(score => score.Score == scoring && score.Points != null);
+        }
+
+        /// <summary>
+        /// Returns point information as string for target.
+        /// </summary>
+        /// <returns></returns>
+        public string GetPointInformation()
+        {
+            // Score term for CorrectResult typed score.
+            var scoreTerm = Type != TargetType.Result
+                ? "Correct"
+                : "Result";
+
+            return string.Join(", ", Scoring.Select(score => score.Score == TargetScore.CorrectResult
+                ? $"{scoreTerm}: {score.Points} points"
+                : $"Winner: {score.Points} points"));
         }
     }
 
@@ -163,6 +186,16 @@ namespace Betkeeper.Models
         public void AddTargets(List<Target> targets)
         {
             _context.Target.AddRange(targets);
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Updates target bets.
+        /// </summary>
+        /// <param name="targets"></param>
+        public void UpdateTargets(List<Target> targets)
+        {
+            _context.Target.UpdateRange(targets);
             _context.SaveChanges();
         }
 

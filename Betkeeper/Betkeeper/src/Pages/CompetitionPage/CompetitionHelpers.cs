@@ -70,6 +70,25 @@ namespace Betkeeper.Pages.CompetitionPage
         }
 
         /// <summary>
+        /// Converts a list of target bets to JObject.
+        /// </summary>
+        /// <param name="targetBets"></param>
+        /// <returns></returns>
+        private static JObject TargetBetsToJObject(List<TargetBet> targetBets)
+        {
+            JObject targetsBetsObject = new JObject();
+
+            for (int i = 0; i < targetBets.Count; i++)
+            {
+                var innerObject = GetInnerTargetBetObject(i, targetBets[i]);
+
+                targetsBetsObject.Add($"target-{targetBets[i].Target}", innerObject);
+            }
+
+            return targetsBetsObject;
+        }
+
+        /// <summary>
         /// Returns inner target object formed from specific target
         /// </summary>
         /// <param name="i"></param>
@@ -105,6 +124,15 @@ namespace Betkeeper.Pages.CompetitionPage
                 target.Selections == null
                     ? (JToken)new JValue((object)null)
                     : new JArray(target.Selections));
+
+            return innerObject;
+        }
+
+        private static JObject GetInnerTargetBetObject(int i, TargetBet targetBet)
+        {
+            var innerObject = new JObject();
+
+            innerObject.Add($"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet));
 
             return innerObject;
         }

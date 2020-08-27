@@ -21,21 +21,30 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private TargetAction TargetAction { get; }
 
+        private TargetBetAction TargetBetAction { get; }
+
         public CompetitionPage()
         {
             CompetitionAction = new CompetitionAction();
             TargetAction = new TargetAction();
+            TargetBetAction = new TargetBetAction();
         }
 
-        public CompetitionPage(CompetitionAction competitionAction = null, TargetAction targetAction = null)
+        public CompetitionPage(
+            CompetitionAction competitionAction = null, 
+            TargetAction targetAction = null,
+            TargetBetAction targetBetAction = null)
         {
             CompetitionAction = competitionAction;
             TargetAction = targetAction;
+            TargetBetAction = targetBetAction;
         }
 
         public void Dispose()
         {
             CompetitionAction.Dispose();
+            TargetAction.Dispose();
+            TargetBetAction.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageId, int userId)
@@ -53,6 +62,8 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 return response;
             }
+
+            var competitionTargets = TargetAction.GetTargets(competitionId);
 
             // Yleinen näkymä, osallistujat, vedot, hostille kilpailun hallinta
             var tabs = new List<Component>
@@ -97,17 +108,9 @@ namespace Betkeeper.Pages.CompetitionPage
                 // Results
                 GetResultsTab(competitionId),
 
-                //Bets
-                new Tab(
-                "bets",
-                "Bets",
-                new List<Component>
-                {
-
-                })
+                // Bets
+                GetBetsTab(competitionTargets)
             };
-
-            var competitionTargets = TargetAction.GetTargets(competitionId);
 
             if (participator.Role == CompetitionRole.Host)
             {
@@ -131,11 +134,14 @@ namespace Betkeeper.Pages.CompetitionPage
                     }));
             }
 
+            var usersBets = TargetBetAction.GetParticipatorsBets(participator.ParticipatorId);
+
             var data = new Dictionary<string, object>
             {
                 { "CompetitionId", competitionId },
                 { "Competition", competition },
-                { "betTargets", TargetsToJObject(competitionTargets) }
+                { "betTargets", TargetsToJObject(competitionTargets) },
+                { "betsContainer", TargetBetsToJObject(usersBets) }
             };
 
             return Http.CreateResponse(
@@ -167,6 +173,17 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 case "DeleteTarget":
                     return DeleteTarget(action);
+
+                case "SaveUserBets":
+                    return SaveUserBets(action);
+
+                case "CancelUserBetsUpdate":
+                    return Http.CreateResponse(
+                        HttpStatusCode.OK,
+                        new PageActionResponse()
+                        {
+                            Refresh = true
+                        });
             }
         }
 

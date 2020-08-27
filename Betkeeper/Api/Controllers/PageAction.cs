@@ -1,4 +1,5 @@
 ﻿using Api.Classes;
+using Betkeeper.Actions;
 using Betkeeper.Classes;
 using Betkeeper.Page;
 using System.Net;
@@ -61,8 +62,18 @@ namespace Api.Controllers
 
             var parameters = Http.GetContentAsDictionary(Request);
 
-            return PageResponse.HandlePageAction(
-                new PageAction((int)userId, page, pageAction, parameters, pageId));
+            try
+            {
+                return PageResponse.HandlePageAction(
+                    new PageAction((int)userId, page, pageAction, parameters, pageId));
+            }
+            catch (ActionException actionException)
+            {
+                // Create page action response from action exception
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    new PageActionResponse(actionException.ErrorMessage));
+            }
         }
     }
 }

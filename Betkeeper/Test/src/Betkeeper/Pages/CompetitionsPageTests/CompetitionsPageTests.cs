@@ -108,7 +108,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
 
             var parameters = new Dictionary<string, object>
             {
@@ -180,7 +180,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var action = new PageAction(
             1,
@@ -209,7 +209,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var action = new PageAction(
             1,

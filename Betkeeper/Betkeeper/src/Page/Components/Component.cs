@@ -19,7 +19,12 @@ namespace Betkeeper.Page.Components
 
         Container,
 
-        Tab
+        Tab,
+
+        /// <summary>
+        /// Label without attached field
+        /// </summary>
+        Label
     }
 
     [Serializable]

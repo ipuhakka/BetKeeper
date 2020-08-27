@@ -65,7 +65,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var action = new PageAction(
                 1,
@@ -131,7 +131,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                 }
             };
 
-            Tools.CreateTestData(_context, participators: participators, competitions: competitions);
+            Tools.CreateTestData(participators: participators, competitions: competitions);
 
             var action = new PageAction(
                 1,
