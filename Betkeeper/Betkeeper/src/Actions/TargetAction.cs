@@ -97,6 +97,29 @@ namespace Betkeeper.Actions
         }
 
         /// <summary>
+        /// Set target results.
+        /// </summary>
+        /// <param name="targetIdResultDictionary"></param>
+        /// <exception cref="ActionException"></exception>
+        public void SetTargetResults(Dictionary<int, string> targetIdResultDictionary)
+        {
+            var targets = TargetRepository.GetTargets(
+                targetIds: targetIdResultDictionary
+                .Select(kvp => kvp.Key)
+                .ToList());
+
+            if (targets.Count != targetIdResultDictionary.Count)
+            {
+                throw new ActionException(ActionExceptionType.Conflict, "Some targets not found");
+            }
+
+            targets.ForEach(target =>
+            {
+                target.Result = targetIdResultDictionary[target.TargetId];
+            });
+        }
+
+        /// <summary>
         /// Validates targets
         /// </summary>
         /// <param name="targets"></param>

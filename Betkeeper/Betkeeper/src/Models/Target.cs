@@ -199,13 +199,24 @@ namespace Betkeeper.Models
             _context.SaveChanges();
         }
 
-        public List<Target> GetTargets(int? competitionId = null)
+        /// <summary>
+        /// Get targets.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <param name="targetIds"></param>
+        /// <returns></returns>
+        public List<Target> GetTargets(int? competitionId = null, List<int> targetIds = null)
         {
             var query = _context.Target.AsQueryable();
 
             if (competitionId != null)
             {
-                query = query.Where(competition => competition.CompetitionId == competitionId);
+                query = query.Where(target => target.CompetitionId == competitionId);
+            }
+
+            if (targetIds != null)
+            {
+                query = query.Where(target => targetIds.Contains(target.TargetId));
             }
 
             return query.ToList();

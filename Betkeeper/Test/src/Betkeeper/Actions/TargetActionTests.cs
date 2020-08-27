@@ -287,5 +287,57 @@ namespace Betkeeper.Test.Actions
             Assert.AreEqual(2, targets[0].Scoring.Count);
             Assert.AreEqual(TargetType.Result, targets[0].Type);
         }
+
+        [Test]
+        public void SetTargetResults_ReturnedTargetCountUnexpected_ThrowsActionException()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1
+                }
+            };
+
+            Tools.CreateTestData(targets: targets);
+
+            Assert.Throws<ActionException>(() => 
+                _targetAction.SetTargetResults(new Dictionary<int, string>
+                {
+                    { 1, "result 1" },
+                    { 2, "result 2" }
+                }));
+        }
+
+        [Test]
+        public void SetTargetResults_UpdatesTargets()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 2,
+                    CompetitionId = 1
+                }
+            };
+
+            Tools.CreateTestData(targets: targets);
+            
+            _targetAction.SetTargetResults(new Dictionary<int, string>
+            {
+                { 1, "result 1" },
+                { 2, "result 2" }
+            });
+
+            var resultTargets = _targetAction.GetTargets(competitionId: 1);
+
+            Assert.AreEqual("result 1", resultTargets[0].Result);
+            Assert.AreEqual("result 2", resultTargets[1].Result);
+        }
     }
 }
