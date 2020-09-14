@@ -42,6 +42,12 @@ namespace Betkeeper.Actions
             TargetRepository.Dispose();
         }
 
+        /// <summary>
+        /// Updates targets. Needs host rights
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="competitionId"></param>
+        /// <param name="targets"></param>
         public void HandleTargetsUpdate(int userId, int competitionId, List<Target> targets)
         {
             var competition = CompetitionRepository.GetCompetition(competitionId);
@@ -78,6 +84,47 @@ namespace Betkeeper.Actions
         }
 
         /// <summary>
+        /// Sets results for targets.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <param name="targets"></param>
+        public void SetTargetResults(int competitionId, int userId, List<Target> targets)
+        {
+            // TODO: Yksikkötestit
+            var competition = CompetitionRepository.GetCompetition(competitionId);
+
+            if (competition == null)
+            {
+                throw new NotFoundException("Competition does not exist");
+            }
+
+            if (ParticipatorRepository
+                    .GetParticipators(userId, competitionId, CompetitionRole.Host)
+                    .Count == 0)
+            {
+                throw new InvalidOperationException("User not in competition");
+            }
+
+            if (competition.State == CompetitionState.Open)
+            {
+                throw new InvalidOperationException("Competition not started yet");
+            }
+
+            ValidateTargets(targets);
+
+            var updateList = targets
+                .Where(target => target.TargetId != 0)
+                .ToList();
+
+            var insertList = targets
+                .Where(target => target.TargetId == 0)
+                .ToList();
+
+            TargetRepository.UpdateTargets(updateList);
+            TargetRepository.AddTargets(insertList);
+        }
+
+        /// <summary>
         /// Returns targets for competition.
         /// </summary>
         /// <param name="competitionId"></param>
@@ -94,29 +141,6 @@ namespace Betkeeper.Actions
         public void RemoveTarget(int targetId)
         {
             TargetRepository.RemoveTarget(targetId);
-        }
-
-        /// <summary>
-        /// Set target results.
-        /// </summary>
-        /// <param name="targetIdResultDictionary"></param>
-        /// <exception cref="ActionException"></exception>
-        public void SetTargetResults(Dictionary<int, string> targetIdResultDictionary)
-        {
-            var targets = TargetRepository.GetTargets(
-                targetIds: targetIdResultDictionary
-                .Select(kvp => kvp.Key)
-                .ToList());
-
-            if (targets.Count != targetIdResultDictionary.Count)
-            {
-                throw new ActionException(ActionExceptionType.Conflict, "Some targets not found");
-            }
-
-            targets.ForEach(target =>
-            {
-                target.Result = targetIdResultDictionary[target.TargetId];
-            });
         }
 
         /// <summary>
@@ -163,6 +187,27 @@ namespace Betkeeper.Actions
                     throw new ActionException(
                         ActionExceptionType.InvalidInput,
                         $"Row {i + 1}: No selections given for selection typed bet");
+                }
+
+                if (target.Type == TargetType.Result && 
+                    !string.IsNullOrEmpty(target.Result?.Result))
+                {
+                    var scores = target.Result.Result.Split('-');
+
+                    if (scores.Length != 2)
+                    {
+                        throw new ActionException(
+                            ActionExceptionType.InvalidInput,
+                            $"Target {i + 1} has invalid result");
+                    }
+
+                    if (!int.TryParse(scores[0], out int homescore)
+                        || !int.TryParse(scores[1], out int awayscore))
+                    {
+                        throw new ActionException(
+                            ActionExceptionType.InvalidInput,
+                            $"Target {i + 1} has invalid result");
+                    }
                 }
 
                 if (target.Scoring

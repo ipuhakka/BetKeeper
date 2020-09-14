@@ -24,6 +24,12 @@ class PageContent extends Component
     renderComponents(components, className, depth = 0, dataPath = null)
     {
         const { props } = this;
+        
+        let completeDataPath = dataPath;
+        if (!_.isNil(props.absoluteDataPath))
+        {
+            completeDataPath = _.join(_.compact([props.absoluteDataPath, dataPath]), '.');
+        }
 
         return <div key={`${className}-${depth}`} className={className}>
             {_.map(components, (component, i) => 
@@ -54,10 +60,10 @@ class PageContent extends Component
                             componentKey={component.componentKey}
                             initialValue={_.get(
                                 props.data, 
-                                _.compact([dataPath, component.dataKey]).join('.'),
+                                _.compact([completeDataPath, component.dataKey]).join('.'),
                                  null) ||
                                  _.get(props.data, component.dataKey, null)}
-                            dataPath={dataPath} 
+                            dataPath={completeDataPath} 
                             {...component} />;
 
                     case 'Label':
@@ -92,7 +98,8 @@ PageContent.propTypes = {
     onTableRowClick: PropTypes.func,
     onFieldValueChange: PropTypes.func.isRequired,
     onHandleDropdownServerUpdate: PropTypes.func,
-    data: PropTypes.object
+    data: PropTypes.object,
+    absoluteDataPath: PropTypes.string
 };
 
 export default PageContent;

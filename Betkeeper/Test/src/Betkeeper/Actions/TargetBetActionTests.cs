@@ -412,9 +412,62 @@ namespace Betkeeper.Test.Actions
             // Check that correct number of target bets were created
             Assert.AreEqual(3, resultTargetBets.Count);
 
-            Assert.AreEqual("2-1", resultTargetBets[0].Bet);
-            Assert.AreEqual("ManU", resultTargetBets[1].Bet);
-            Assert.AreEqual("Open answer", resultTargetBets[2].Bet);
+            new List<string> { "2-1", "ManU", "Open answer" }.ForEach(bet =>
+            {
+                Assert.IsTrue(resultTargetBets.Count(target => target.Bet == bet) == 1);
+            });
+        }
+
+        [Test]
+        public void GetCompetitionsTargetBets_ReturnsValidTargetBets()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 2,
+                    CompetitionId = 2
+                },
+                new Target
+                {
+                    TargetId = 3,
+                    CompetitionId = 1
+                }
+            };
+
+            var targetBets = new List<TargetBet>
+            {
+                new TargetBet
+                {
+                    Target = 1
+                },
+                new TargetBet
+                {
+                    Target = 2
+                },
+                new TargetBet
+                {
+                    Target = 3
+                }
+            };
+
+            Tools.CreateTestData(targets: targets, targetBets: targetBets);
+
+            var resultTargetBets = _targetBetAction.GetCompetitionsTargetBets(competitionId: 1);
+
+            Assert.AreEqual(2, resultTargetBets.Count);
+
+            new List<int> { 1, 3 }
+            .ForEach(id =>
+            {
+                Assert.IsTrue(
+                    resultTargetBets.Count(targetBet => targetBet.Target == id) == 1);
+            });
         }
     }
 }

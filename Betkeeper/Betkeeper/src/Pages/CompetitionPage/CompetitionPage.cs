@@ -2,6 +2,7 @@
 using Betkeeper.Classes;
 using Betkeeper.Enums;
 using Betkeeper.Extensions;
+using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using System;
@@ -22,6 +23,8 @@ namespace Betkeeper.Pages.CompetitionPage
         private TargetAction TargetAction { get; }
 
         private TargetBetAction TargetBetAction { get; }
+
+        private Dictionary<string, object> Data { get; set; }
 
         public CompetitionPage()
         {
@@ -49,6 +52,8 @@ namespace Betkeeper.Pages.CompetitionPage
 
         public HttpResponseMessage GetResponse(string pageId, int userId)
         {
+            Data = new Dictionary<string, object>();
+
             var competitionId = int.Parse(pageId);
 
             var participator = CompetitionAction.GetParticipator(userId, competitionId);
@@ -114,9 +119,29 @@ namespace Betkeeper.Pages.CompetitionPage
 
             if (participator.Role == CompetitionRole.Host)
             {
+                var targetBets = new List<TargetBet>();
                 if (competition.State == CompetitionState.Open)
                 {
                     tabs.Add(GetManageBetsTab(competitionTargets));
+                }
+                if (competition.State != CompetitionState.Open)
+                {
+                    // Setting bet results
+                    targetBets = TargetBetAction.GetCompetitionsTargetBets(competition.CompetitionId);
+
+                    var betDict = new Dictionary<Target, List<TargetBet>>();
+
+                    // Add dictionary mapping for target and its target bets
+                    competitionTargets.ForEach(target =>
+                    {
+                        betDict.Add(target, targetBets
+                            .Where(targetBet =>
+                                targetBet.Target == target.TargetId)
+                            .ToList());
+                    });
+                    Data.Add("setResultsContainer", TargetResultsToJObject(competitionTargets, targetBets));
+
+                    tabs.Add(GetSetResultsTab(betDict));
                 }
 
                 tabs.Add(new Tab(
@@ -136,17 +161,14 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var usersBets = TargetBetAction.GetParticipatorsBets(participator.ParticipatorId);
 
-            var data = new Dictionary<string, object>
-            {
-                { "CompetitionId", competitionId },
-                { "Competition", competition },
-                { "betTargets", TargetsToJObject(competitionTargets) },
-                { "betsContainer", TargetBetsToJObject(usersBets) }
-            };
+            Data.Add("CompetitionId", competitionId);
+            Data.Add("Competition", competition);
+            Data.Add("betTargets", TargetsToJObject(competitionTargets));
+            Data.Add("betsContainer", TargetBetsToJObject(usersBets));
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
-                new PageResponse($"competitions/{pageId}", tabs, data));
+                new PageResponse($"competitions/{pageId}", tabs, Data));
         }
 
         public HttpResponseMessage HandleAction(PageAction action)
@@ -184,6 +206,9 @@ namespace Betkeeper.Pages.CompetitionPage
                         {
                             Refresh = true
                         });
+
+                case "SaveBetResults":
+                    return SaveBetResults(action);
             }
         }
 

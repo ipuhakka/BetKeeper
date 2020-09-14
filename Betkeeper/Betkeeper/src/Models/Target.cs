@@ -2,6 +2,7 @@
 using Betkeeper.Data;
 using Betkeeper.Enums;
 using Betkeeper.Extensions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Betkeeper.Models
 
         public TargetType Type { get; set; }
 
-        public string Result { get; set; }
+        public TargetResultItem Result { get; set; }
 
         public List<string> Selections { get; set; }
 
@@ -156,6 +157,59 @@ namespace Betkeeper.Models
         /// Score type
         /// </summary>
         public TargetScore Score { get; set; }
+    }
+
+    public class TargetResultItem
+    {
+        /// <summary>
+        /// Result property for targets typed selection and result.
+        /// </summary>
+        public string Result { get; set; }
+
+        /// <summary>
+        /// Stores target bets and their results.
+        /// </summary>
+        public Dictionary<int, string> TargetBetResultDictionary { get; set; }
+
+        [JsonIgnore]
+        public int TargetId { get; }
+
+        [JsonConstructor]
+        public TargetResultItem()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a target result item from JObject.
+        /// </summary>
+        /// <param name="jObject"></param>
+        public TargetResultItem(JObject jObject)
+        {
+            TargetId = jObject.GetIdentifierValueFromKeyLike("setResultsContainer-");
+
+            var innerObject = jObject[$"setResultsContainer-{TargetId}"] as JObject;
+
+            var targetType = (TargetType)int.Parse(innerObject["type"].ToString());
+
+            if (targetType == TargetType.OpenQuestion)
+            {
+                TargetBetResultDictionary = new Dictionary<int, string>();
+                // Handle open questions
+                innerObject
+                .GetKeysLike("result-")
+                    .ForEach(key =>
+                    {
+                        var targetBetId = innerObject.GetIdentifierValueFromKeyLike("result-");
+                        TargetBetResultDictionary.Add(targetBetId, innerObject[key].ToString());
+                    });
+            }
+            else
+            {
+                // Selections and result bets
+                Result = innerObject[$"result-{TargetId}"].ToString();
+            }
+        }
     }
 
     public class TargetRepository : BaseRepository, IDisposable
