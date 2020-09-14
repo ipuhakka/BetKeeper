@@ -2,6 +2,7 @@
 using Betkeeper.Models;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -80,9 +81,31 @@ namespace Betkeeper.Pages.CompetitionPage
 
             for (int i = 0; i < targetBets.Count; i++)
             {
-                var innerObject = GetInnerTargetBetObject(i, targetBets[i]);
+                var innerObject = GetInnerTargetBetObject(targetBets[i]);
 
                 targetsBetsObject.Add($"target-{targetBets[i].Target}", innerObject);
+            }
+
+            return targetsBetsObject;
+        }
+
+        private static JObject TargetResultsToJObject(
+            List<Target> targets,
+            List<TargetBet> targetBets)
+        {
+            JObject targetsBetsObject = new JObject();
+
+            for (int i = 0; i < targets.Count; i++)
+            {
+                var innerObject = targets[i].Type == TargetType.OpenQuestion
+                    ? GetInnerOpenQuestionResultObject(
+                        targets[i], 
+                        targetBets
+                            .Where(targetBet => targetBet.Target == targets[i].TargetId)
+                            .ToList())
+                    : GetInnerTargetResultObject(targets[i]);
+
+                targetsBetsObject.Add($"setResultsContainer-{targets[i].TargetId}", innerObject);
             }
 
             return targetsBetsObject;
@@ -128,11 +151,42 @@ namespace Betkeeper.Pages.CompetitionPage
             return innerObject;
         }
 
-        private static JObject GetInnerTargetBetObject(int i, TargetBet targetBet)
+        private static JObject GetInnerTargetBetObject(TargetBet targetBet)
         {
             var innerObject = new JObject();
 
             innerObject.Add($"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet));
+
+            return innerObject;
+        }
+
+        private static JObject GetInnerTargetResultObject(Target target)
+        {
+            var innerObject = new JObject();
+
+            innerObject.Add($"question-{target.TargetId}", new JValue(target.Bet));
+            innerObject.Add($"result-{target.TargetId}", new JValue(target.Result?.Result));
+            innerObject.Add("type", new JValue(target.Type));
+            return innerObject;
+        }
+
+        private static JObject GetInnerOpenQuestionResultObject(Target target, List<TargetBet> targetBets)
+        {
+            var innerObject = new JObject();
+
+            innerObject.Add($"question-{target.TargetId}", new JValue(target.Bet));
+            targetBets.ForEach(targetBet =>
+            {
+                var targetBetValue = target.Result?.TargetBetResultDictionary.ContainsKey(targetBet.TargetBetId) ?? false
+                    ? target.Result.TargetBetResultDictionary[targetBet.TargetBetId]
+                    : "Wrong";
+
+                innerObject.Add($"answer-{target.TargetId}-{targetBet.TargetBetId}", new JValue(targetBet.Bet));
+                innerObject.Add(
+                    $"result-{target.TargetId}-{targetBet.TargetBetId}", 
+                    new JValue(targetBetValue));
+                innerObject.Add("type", new JValue(target.Type));
+            });
 
             return innerObject;
         }

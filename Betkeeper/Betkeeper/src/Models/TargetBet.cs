@@ -105,7 +105,9 @@ namespace Betkeeper.Models
         /// </summary>
         /// <param name="participator"></param>
         /// <param name="targetId"></param>
-        public List<TargetBet> GetTargetBets(int? participator = null, int? targetId = null)
+        public List<TargetBet> GetTargetBets(
+            int? participator = null, 
+            List<int> targetIds = null)
         {
             var query = _context.TargetBet.AsQueryable();
 
@@ -115,10 +117,10 @@ namespace Betkeeper.Models
                     targetBet.Participator == participator);
             }
 
-            if (targetId != null)
+            if (targetIds != null)
             {
                 query = query.Where(targetBet =>
-                    targetBet.Target == targetId);
+                    targetIds.Contains(targetBet.Target));
             }
 
             return query.ToList();

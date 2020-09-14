@@ -41,6 +41,16 @@ namespace Betkeeper.Actions
             return TargetBetRepository.GetTargetBets(participatorId);
         }
 
+        public List<TargetBet> GetCompetitionsTargetBets(int competitionId)
+        {
+            var targetIds = TargetRepository
+                .GetTargets(competitionId: competitionId)
+                .Select(target => target.TargetId)
+                .ToList();
+
+            return TargetBetRepository.GetTargetBets(targetIds: targetIds);
+        }
+
         /// <summary>
         /// Adds target bets. Only allows adding bets which have a bet provided
         /// </summary>

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import * as pageActions from '../../actions/pageActions';
+import * as PageActions from '../../actions/pageActions';
 import Confirm from '../Confirm/Confirm';
 import PageContent from '../Page/PageContent';
 
@@ -28,6 +29,7 @@ class Modal extends Component
 
     onChangeInputValue(key, newValue)
     {
+      // TODO: Eroon erillisestä datasäiliöstä actionille?
       const actionResponse = {...this.state.actionResponseValues};
 
       actionResponse[key] = newValue;
@@ -36,11 +38,36 @@ class Modal extends Component
         actionResponseValues: actionResponse,
         hasInvalidInputs: false
       });
+
+      PageActions.onDataChange(this.props.page, key, newValue);
     }
 
     render()
     {
         const { props, state } = this;
+
+        const acceptButton = _.isNil(props.action) 
+          || props.action.length === 0
+          ? null
+          : <Button 
+          variant="outline-primary"
+          disabled={state.hasInvalidInputs}
+          onClick={() => 
+          {
+            if (props.requireConfirm)
+            {
+              this.setState({
+                confirm: {
+                  ...this.state.confirm,
+                  show: true
+                }
+              })
+            }
+            else 
+            {
+              PageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
+            }
+          }}>Ok</Button>;
         
         return <RBModal show={props.show} onHide={props.onClose}>
           <RBModal.Header closeButton>
@@ -64,7 +91,7 @@ class Modal extends Component
                 }}
                 confirmAction={() => 
                 {
-                  pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
+                  PageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
                 }}
                 variant={props.confirmVariant}/>
               <PageContent 
@@ -72,6 +99,8 @@ class Modal extends Component
                 components={props.components}
                 getButtonClick={() => { throw new Error('No button click')}}
                 className='modal-content'
+                absoluteDataPath={props.absoluteDataPath}
+                data={props.data}
                 />
             </div>
           </RBModal.Body>
@@ -80,25 +109,7 @@ class Modal extends Component
             <Button 
               variant="outline-secondary" 
               onClick={props.onClose}>Close</Button>
-            <Button 
-              variant="outline-primary"
-              disabled={state.hasInvalidInputs}
-              onClick={() => 
-              {
-                if (props.requireConfirm)
-                {
-                  this.setState({
-                    confirm: {
-                      ...this.state.confirm,
-                      show: true
-                    }
-                  })
-                }
-                else 
-                {
-                  pageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
-                }
-              }}>Ok</Button>
+            {acceptButton}
           </RBModal.Footer>
         </RBModal>;
     }
@@ -119,7 +130,9 @@ Modal.propTypes = {
   title: PropTypes.string.isRequired,
   requireConfirm: PropTypes.bool.isRequired,
   confirmVariant: PropTypes.string,
-  components: PropTypes.array.isRequired
+  components: PropTypes.array.isRequired,
+  absoluteDataPath: PropTypes.string,
+  data: PropTypes.object
 };
 
 export default Modal;

@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using System.Linq;
+using Betkeeper.Data;
 using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -64,6 +65,39 @@ namespace Betkeeper.Test.Models
             resultTargets.ForEach(target =>
             {
                 Assert.AreEqual(1, target.CompetitionId);
+            });
+        }
+
+        [Test]
+        public void GetTargets_FilterByIdList_ReturnsCorrectTargets()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 2,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 3,
+                    CompetitionId = 2
+                }
+            };
+
+            Tools.CreateTestData(targets: targets);
+
+            var resultTargets = _targetRepository.GetTargets(targetIds: new List<int>{ 1, 3 });
+
+            Assert.AreEqual(2, resultTargets.Count);
+            new List<int> { 1, 3 }.ForEach(value =>
+            {
+                Assert.IsTrue(resultTargets.Any(target => target.TargetId == value));
             });
         }
 

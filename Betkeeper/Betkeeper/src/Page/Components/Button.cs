@@ -135,6 +135,11 @@ namespace Betkeeper.Page.Components
         public string Action { get; set; }
 
         /// <summary>
+        /// Root for data path. Used to set page content to look data from correct data path
+        /// </summary>
+        public string AbsoluteDataPath { get; set; }
+
+        /// <summary>
         /// Modal fields.
         /// </summary>
         public List<Component> Components { get; set; }
@@ -145,11 +150,13 @@ namespace Betkeeper.Page.Components
             string text,
             string style = "primary",
             bool requireConfirm = false,
-            string navigateTo = null)
+            string navigateTo = null,
+            string absoluteDataPath = null)
             : base(ButtonType.ModalAction, text, style, requireConfirm, navigateTo)
         {
             Action = action;
             Components = components;
+            AbsoluteDataPath = absoluteDataPath;
         }
     }
 }
