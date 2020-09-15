@@ -113,7 +113,8 @@ namespace Betkeeper.Pages.CompetitionPage
                                 new List<Option>
                                 {
                                     new Option("Correct", "Correct"),
-                                    new Option("Wrong", "Wrong")
+                                    new Option("Wrong", "Wrong"),
+                                    new Option("Unresolved", "Unresolved")
                                 })
                         }));
             });
