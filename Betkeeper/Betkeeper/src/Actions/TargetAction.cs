@@ -18,21 +18,31 @@ namespace Betkeeper.Actions
 
         private TargetRepository TargetRepository { get; set; }
 
+        private TargetBetAction TargetBetAction { get; set; }
+
+        private UserRepository UserRepository { get; set; }
+
         public TargetAction()
         {
             CompetitionRepository = new CompetitionRepository();
             ParticipatorRepository = new ParticipatorRepository();
             TargetRepository = new TargetRepository();
+            TargetBetAction = new TargetBetAction();
+            UserRepository = new UserRepository();
         }
 
         public TargetAction(
-            CompetitionRepository competitionRepository,
-            ParticipatorRepository participatorRepository,
-            TargetRepository targetRepository)
+            CompetitionRepository competitionRepository = null,
+            ParticipatorRepository participatorRepository = null,
+            TargetRepository targetRepository = null,
+            TargetBetAction targetBetAction = null,
+            UserRepository userRepository = null)
         {
             CompetitionRepository = competitionRepository;
             ParticipatorRepository = participatorRepository;
             TargetRepository = targetRepository;
+            TargetBetAction = targetBetAction;
+            UserRepository = userRepository;
         }
 
         public void Dispose()
@@ -40,6 +50,8 @@ namespace Betkeeper.Actions
             CompetitionRepository.Dispose();
             ParticipatorRepository.Dispose();
             TargetRepository.Dispose();
+            TargetBetAction.Dispose();
+            UserRepository.Dispose();
         }
 
         /// <summary>
@@ -141,6 +153,47 @@ namespace Betkeeper.Actions
         public void RemoveTarget(int targetId)
         {
             TargetRepository.RemoveTarget(targetId);
+        }
+
+        public Dictionary<string, double> CalculateCompetitionPoints(int competitionId)
+        {
+            var targets = GetTargets(competitionId)
+                .Where(target => !string.IsNullOrEmpty(target.Result?.Result)
+                    || target.Result?.TargetBetResultDictionary.Count > 0)
+                .ToList();
+
+            var targetBets = TargetBetAction.GetCompetitionsTargetBets(competitionId);
+
+            var userPointsDict = new Dictionary<string, double>();
+
+            var participators = ParticipatorRepository
+                .GetParticipators(competitionId: competitionId);
+
+            var users = UserRepository.GetUsersById(
+                participators.Select(participator => participator.UserId).ToList());
+
+            participators
+                .ForEach(participator =>
+                {
+                    var username = users.Single(user => user.UserId == participator.UserId).Username;
+                    userPointsDict.Add(username, 0);
+
+                    foreach(var target in targets)
+                    {
+                        var targetBet = targetBets.SingleOrDefault(bet =>
+                            bet.Target == target.TargetId
+                            && bet.Participator == participator.ParticipatorId);
+
+                        if (targetBet == null)
+                        {
+                            continue;
+                        }
+
+                        userPointsDict[username] += target.GetPoints(targetBet);
+                    }
+                });
+
+            return userPointsDict;
         }
 
         /// <summary>

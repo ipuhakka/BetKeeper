@@ -179,7 +179,7 @@ namespace Betkeeper.Pages.CompetitionPage
             {
                 var targetBetValue = target.Result?.TargetBetResultDictionary.ContainsKey(targetBet.TargetBetId) ?? false
                     ? target.Result.TargetBetResultDictionary[targetBet.TargetBetId]
-                    : "Wrong";
+                    : "Unresolved";
 
                 innerObject.Add($"answer-{target.TargetId}-{targetBet.TargetBetId}", new JValue(targetBet.Bet));
                 innerObject.Add(
