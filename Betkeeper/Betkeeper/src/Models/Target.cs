@@ -34,6 +34,56 @@ namespace Betkeeper.Models
         public List<string> Selections { get; set; }
 
         /// <summary>
+        /// Returns points for a given target bet
+        /// </summary>
+        /// <param name="targetBet"></param>
+        /// <returns></returns>
+        public double GetPoints(TargetBet targetBet)
+        {
+            var participator = (int)targetBet.Participator;
+
+            if (Type == TargetType.OpenQuestion)
+            {
+                return Result.TargetBetResultDictionary.TryGetValue(participator, out string result) 
+                    && result == "Correct"
+                    ? (double)Scoring.Single().Points
+                    : 0;
+            }
+
+            if (Type == TargetType.Result)
+            {
+                var resultArray = Result.Result.Split('-');
+                var homescore = int.Parse(resultArray[0]);
+                var awayscore = int.Parse(resultArray[1]);
+
+                var betResultsArray = targetBet.Bet.Split('-');
+                var betHomescore = int.Parse(betResultsArray[0]);
+                var betAwayscore = int.Parse(betResultsArray[1]);
+
+                if (homescore == betHomescore && awayscore == betAwayscore)
+                {
+                    // Result correct
+                    return (double)Scoring.Single(score => score.Score == TargetScore.CorrectResult).Points;
+                }
+                else if (Math.Sign(homescore - awayscore) == Math.Sign(betHomescore - betAwayscore))
+                {
+                    // Winner correct
+                    return (double)Scoring.Single(score => score.Score == TargetScore.CorrectWinner).Points;
+                }
+
+                return 0;
+            }
+
+            // Selection
+            if (targetBet.Bet == Result.Result)
+            {
+                return (double)Scoring.Single().Points;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
         /// Converts JArray into target list
         /// </summary>
         /// <param name="jArray"></param>

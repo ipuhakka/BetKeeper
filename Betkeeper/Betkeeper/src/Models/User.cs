@@ -41,6 +41,19 @@ namespace Betkeeper.Models
             _context.Dispose();
         }
 
+        /// <summary>
+        /// Gets users by user id
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <returns></returns>
+        public List<User> GetUsersById(List<int> userIds)
+        {
+            return _context
+                .User
+                .Where(user => userIds.Contains(user.UserId))
+                .ToList();
+        }
+
         public List<string> GetUsernamesById(List<int> userIds)
         {     
             return _context

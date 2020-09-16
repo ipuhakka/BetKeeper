@@ -2,6 +2,7 @@
 using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using TestTools;
 
 namespace Betkeeper.Test.Models
@@ -62,8 +63,8 @@ namespace Betkeeper.Test.Models
             var usernames = _userRepository.GetUsernamesById(new List<int> { 1, 3 });
 
             Assert.AreEqual(2, usernames.Count);
-            Assert.AreEqual("Username 1", usernames[0]);
-            Assert.AreEqual("Username 3", usernames[1]);
+            Assert.AreEqual(1, usernames.Count(user => user == "Username 1"));
+            Assert.AreEqual(1, usernames.Count(user => user == "Username 3"));
         }
 
         [Test]
