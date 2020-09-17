@@ -155,16 +155,17 @@ namespace Betkeeper.Actions
             TargetRepository.RemoveTarget(targetId);
         }
 
-        public Dictionary<string, double> CalculateCompetitionPoints(int competitionId)
+        /// <summary>
+        /// Returns competition points
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <returns></returns>
+        public CompetitionScores CalculateCompetitionPoints(int competitionId)
         {
             var targets = GetTargets(competitionId)
-                .Where(target => !string.IsNullOrEmpty(target.Result?.Result)
-                    || target.Result?.TargetBetResultDictionary.Count > 0)
                 .ToList();
 
             var targetBets = TargetBetAction.GetCompetitionsTargetBets(competitionId);
-
-            var userPointsDict = new Dictionary<string, double>();
 
             var participators = ParticipatorRepository
                 .GetParticipators(competitionId: competitionId);
@@ -172,28 +173,53 @@ namespace Betkeeper.Actions
             var users = UserRepository.GetUsersById(
                 participators.Select(participator => participator.UserId).ToList());
 
+            var competitionScores = new CompetitionScores();
             participators
                 .ForEach(participator =>
                 {
                     var username = users.Single(user => user.UserId == participator.UserId).Username;
-                    userPointsDict.Add(username, 0);
+                    competitionScores.UserPointsDictionary.Add(username, 0);
 
                     foreach(var target in targets)
                     {
+                        // TODO: Älä mahdollista antaa betsejä joissa sama kyssäri, tämä ei toimi
+                        if (!competitionScores.TargetItems.Any(item => item.Question == target.Bet))
+                        {
+                            competitionScores.TargetItems.Add(new CompetitionScores.TargetItem(target.Bet));
+                        }
+
                         var targetBet = targetBets.SingleOrDefault(bet =>
                             bet.Target == target.TargetId
                             && bet.Participator == participator.ParticipatorId);
 
                         if (targetBet == null)
                         {
+                            competitionScores
+                                .TargetItems
+                                .Single(targetItem => targetItem.Question == target.Bet)
+                                .BetItems
+                                .Add(new CompetitionScores.TargetItem.BetItem(
+                                    TargetResult.DidNotBet, 
+                                    null,
+                                    username));
+
                             continue;
                         }
 
-                        userPointsDict[username] += target.GetPoints(targetBet);
+                        competitionScores
+                            .TargetItems
+                            .Single(targetItem => targetItem.Question == target.Bet)
+                            .BetItems
+                            .Add(new CompetitionScores.TargetItem.BetItem(
+                                target.GetResult(targetBet), 
+                                targetBet.Bet,
+                                username));
+
+                        competitionScores.UserPointsDictionary[username] += target.GetPoints(targetBet);
                     }
                 });
 
-            return userPointsDict;
+            return competitionScores;
         }
 
         /// <summary>
@@ -284,6 +310,78 @@ namespace Betkeeper.Actions
 
                 default:
                     return true;
+            }
+        }
+
+        /// <summary>
+        /// Class for presenting competition scores
+        /// </summary>
+        public class CompetitionScores
+        {
+            /// <summary>
+            /// Usernames and users points
+            /// </summary>
+            public Dictionary<string, double> UserPointsDictionary { get; }
+
+            /// <summary>
+            /// Bet question and answers
+            /// </summary>
+            public List<TargetItem> TargetItems { get; }
+
+            public CompetitionScores()
+            {
+                UserPointsDictionary = new Dictionary<string, double>();
+                TargetItems = new List<TargetItem>();
+            }
+
+            /// <summary>
+            /// Target item
+            /// </summary>
+            public class TargetItem
+            {
+                /// <summary>
+                /// Target question
+                /// </summary>
+                public string Question { get; set; }
+
+                /// <summary>
+                /// Targets bets
+                /// </summary>
+                public List<BetItem> BetItems { get; set; }
+
+                public TargetItem(string question)
+                {
+                    Question = question;
+                    BetItems = new List<BetItem>();
+                }
+
+                /// <summary>
+                /// Bet item
+                /// </summary>
+                public class BetItem
+                {
+                    /// <summary>
+                    /// Bet
+                    /// </summary>
+                    public string Bet { get; set; }
+
+                    /// <summary>
+                    /// Username
+                    /// </summary>
+                    public string User { get; set; }
+
+                    /// <summary>
+                    /// Result
+                    /// </summary>
+                    public TargetResult Result { get; set; }
+
+                    public BetItem(TargetResult result, string bet, string user)
+                    {
+                        Result = result;
+                        Bet = bet;
+                        User = user;
+                    }
+                }
             }
         }
     }

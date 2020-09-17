@@ -40,14 +40,43 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public double GetPoints(TargetBet targetBet)
         {
+            var result = GetResult(targetBet);
+
+            if (result == TargetResult.CorrectResult)
+            {
+                return (double)Scoring.Single(score => score.Score == TargetScore.CorrectResult).Points;
+            }
+
+            if (result == TargetResult.CorrectWinner)
+            {
+                return (double)Scoring.Single(score => score.Score == TargetScore.CorrectWinner).Points;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns result for bet
+        /// </summary>
+        /// <param name="targetBet"></param>
+        /// <returns></returns>
+        public TargetResult GetResult(TargetBet targetBet)
+        {
+            // No results given
+            if (string.IsNullOrEmpty(Result?.Result)
+                && Result?.TargetBetResultDictionary.Count == 0)
+            {
+                return TargetResult.Unresolved;
+            }
+
             var participator = (int)targetBet.Participator;
 
             if (Type == TargetType.OpenQuestion)
             {
-                return Result.TargetBetResultDictionary.TryGetValue(participator, out string result) 
+                return Result.TargetBetResultDictionary.TryGetValue(participator, out string result)
                     && result == "Correct"
-                    ? (double)Scoring.Single().Points
-                    : 0;
+                    ? TargetResult.CorrectResult
+                    : TargetResult.Wrong;
             }
 
             if (Type == TargetType.Result)
@@ -63,24 +92,24 @@ namespace Betkeeper.Models
                 if (homescore == betHomescore && awayscore == betAwayscore)
                 {
                     // Result correct
-                    return (double)Scoring.Single(score => score.Score == TargetScore.CorrectResult).Points;
+                    return TargetResult.CorrectResult;
                 }
                 else if (Math.Sign(homescore - awayscore) == Math.Sign(betHomescore - betAwayscore))
                 {
                     // Winner correct
-                    return (double)Scoring.Single(score => score.Score == TargetScore.CorrectWinner).Points;
+                    return TargetResult.CorrectWinner;
                 }
 
-                return 0;
+                return TargetResult.Wrong;
             }
 
             // Selection
             if (targetBet.Bet == Result.Result)
             {
-                return (double)Scoring.Single().Points;
+                return TargetResult.CorrectResult;
             }
 
-            return 0;
+            return TargetResult.Wrong;
         }
 
         /// <summary>
