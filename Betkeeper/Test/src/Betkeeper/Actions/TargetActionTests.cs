@@ -309,6 +309,7 @@ namespace Betkeeper.Test.Actions
                 {
                     TargetId = 1,
                     Type = TargetType.OpenQuestion,
+                    Bet = "Test",
                     Result = new TargetResultItem
                     {
                         TargetBetResultDictionary = new Dictionary<int, string>
@@ -321,7 +322,8 @@ namespace Betkeeper.Test.Actions
                     {
                         new Scoring
                         {
-                            Points = 2
+                            Points = 2,
+                            Score = TargetScore.CorrectResult
                         }
                     },
                     CompetitionId = 1
@@ -338,7 +340,8 @@ namespace Betkeeper.Test.Actions
                     {
                         new Scoring
                         {
-                            Points = 2
+                            Points = 2,
+                            Score = TargetScore.CorrectResult
                         }
                     },
                     CompetitionId = 1
@@ -347,6 +350,7 @@ namespace Betkeeper.Test.Actions
                 {
                     TargetId = 3,
                     Type = TargetType.Result,
+                    Bet = "Barca-Manu",
                     Result = new TargetResultItem
                     {
                         Result = "2-1"
@@ -474,12 +478,32 @@ namespace Betkeeper.Test.Actions
 
             Tools.CreateTestData(participators, competitions, users, targets, targetBets);
 
-            var points = _targetAction.CalculateCompetitionPoints(1);
+            var scores = _targetAction.CalculateCompetitionPoints(1);
+            var points = scores.UserPointsDictionary;
+            var targetItems = scores.TargetItems;
 
             Assert.AreEqual(3, points.Count);
             Assert.AreEqual(6, points["user1"]);
             Assert.AreEqual(1, points["user2"]);
             Assert.AreEqual(0, points["user3"]);
+
+            var didNotPlayTestTargetItem = targetItems[0];
+            Assert.AreEqual(
+                TargetResult.DidNotBet,
+                didNotPlayTestTargetItem.BetItems.Single(bet => bet.User == "user3").Result);
+
+            // Check results with last target
+            var testTargetItem = targetItems[2];
+            Assert.AreEqual("Barca-Manu", testTargetItem.Question);
+            Assert.AreEqual(
+                TargetResult.CorrectResult, 
+                testTargetItem.BetItems.Single(bet => bet.User == "user1").Result);
+            Assert.AreEqual(
+                TargetResult.CorrectWinner,
+                testTargetItem.BetItems.Single(bet => bet.User == "user2").Result);
+            Assert.AreEqual(
+                TargetResult.Wrong,
+                testTargetItem.BetItems.Single(bet => bet.User == "user3").Result);
         }
     }
 }
