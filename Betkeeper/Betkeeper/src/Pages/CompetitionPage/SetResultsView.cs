@@ -2,7 +2,6 @@
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
-using Betkeeper.Extensions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -149,7 +148,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             return Http.CreateResponse(
                 System.Net.HttpStatusCode.OK,
-                new PageActionResponse("Results saved succesfully"));
+                new PageActionResponse("Results saved succesfully", refresh: true));
         }
     }
 }

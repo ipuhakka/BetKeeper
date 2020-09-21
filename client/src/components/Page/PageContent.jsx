@@ -6,6 +6,7 @@ import Tab from 'react-bootstrap/Tab';
 import Button from '../../components/Page/Button';
 import Field from '../../components/Page/Field';
 import Table from '../../components/Page/Table';
+import StaticTable from '../../components/Page/StaticTable';
 
 class PageContent extends Component
 {
@@ -72,6 +73,8 @@ class PageContent extends Component
                     case 'Table':
                         return <Table onRowClick={props.onTableRowClick} key={`itemlist-${i}`} {...component} />;
 
+                    case 'StaticTable':
+                        return <StaticTable componentKey={component.componentKey} key={`custom-table-${i}`} rows={component.rows} header={component.header}/>
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
                 }

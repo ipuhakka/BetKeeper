@@ -24,7 +24,12 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Label without attached field
         /// </summary>
-        Label
+        Label,
+
+        /// <summary>
+        /// Table which data is purely constructed server side
+        /// </summary>
+        StaticTable
     }
 
     [Serializable]

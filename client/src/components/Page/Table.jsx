@@ -65,7 +65,7 @@ class Table extends Component
             throw new Error(`Specified data key ${dataKey} not found`);
         }
 
-        return <RBTable hover responsive striped>
+        return <RBTable hover responsive striped bordered>
             <thead>
                 {this.getHeaders()}
             </thead>

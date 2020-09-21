@@ -70,7 +70,6 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var competitionTargets = TargetAction.GetTargets(competitionId);
 
-            // Yleinen näkymä, osallistujat, vedot, hostille kilpailun hallinta
             var tabs = new List<Component>
             {
                 // General view
@@ -80,34 +79,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 new List<Component>
                 {
                     new Field("name", "Name", true, FieldType.TextBox, "competition.name"),
-                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
-                    new Container(
-                        children: new List<Component>
-                        {
-                            new Dropdown(
-                                "test",
-                                "Testlabel",
-                                new List<Option>
-                                {
-                                    new Option("0", "Rainbow"),
-                                    new Option("1", "Dark", initialValue: true)
-                                },
-                                "test",
-                                componentsToUpdate: new List<string>{ "testUpdateContainer" }
-                            ),
-                            new Dropdown(
-                                "test2",
-                                "test 2 label",
-                                new List<Option>
-                                {
-                                    new Option("0", "Marshmellows"),
-                                    new Option("1", "Chocolate"),
-                                    new Option("2", "Whipped cream"),
-                                    new Option("3", "Fudge")
-                                }
-                            )
-                        },
-                        componentKey: "testUpdateContainer")
+                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
                 }),
 
                 // Results
@@ -282,31 +254,6 @@ namespace Betkeeper.Pages.CompetitionPage
 
             throw new ArgumentException($"{componentKey} options update not implemented");
         }
-
-        private Tab GetResultsTab(int competitionId)
-        {
-
-            // TODO: Käyttäjätaulu entitymalliin
-            var components = new List<Component>();
-
-            //components.Add(new Table(
-            //    "participators",
-            //    new List<DataField>
-            //    {
-            //    }));
-
-            return new Tab("participators", "Participators", components);
-        }
-
-        //private Tab GetBetsTab(Competition competition, Participator participator)
-        //{
-        //    var components = new List<Component>();
-
-        //    if (participator.Role == (int)CompetitionRole.Host)
-        //    {
-        //        components.Add(new ModalActionButton("AddTargets", new List<Field>(), "Add targets"))
-        //    }
-        //}
 
         private HttpResponseMessage DeleteCompetition(PageAction action)
         {
