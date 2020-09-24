@@ -16,6 +16,8 @@ namespace Betkeeper.Data
 
         public DbSet<Target> Target { get; set; }
 
+        public DbSet<TargetBet> TargetBet { get; set; }
+
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)
         {
@@ -43,6 +45,13 @@ namespace Betkeeper.Data
                 .HasConversion(
                     selections => JsonConvert.SerializeObject(selections),
                     selections => JsonConvert.DeserializeObject<List<string>>(selections));
+
+            modelBuilder
+                .Entity<Target>()
+                .Property(target => target.Result)
+                .HasConversion(
+                    result => JsonConvert.SerializeObject(result),
+                    result => JsonConvert.DeserializeObject<TargetResultItem>(result));
 
             modelBuilder
                 .Entity<Participator>()

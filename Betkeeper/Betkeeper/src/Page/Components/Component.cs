@@ -19,7 +19,17 @@ namespace Betkeeper.Page.Components
 
         Container,
 
-        Tab
+        Tab,
+
+        /// <summary>
+        /// Label without attached field
+        /// </summary>
+        Label,
+
+        /// <summary>
+        /// Table which data is purely constructed server side
+        /// </summary>
+        StaticTable
     }
 
     [Serializable]

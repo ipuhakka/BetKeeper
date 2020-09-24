@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Betkeeper.Page.Components
 {
@@ -35,14 +36,17 @@ namespace Betkeeper.Page.Components
             Label = label;
             FieldType = fieldType;
             ReadOnly = false;
+            DataKey = componentKey;
         }
 
         /// <summary>
         /// Constructor for data bound field.
         /// </summary>
-        /// <param name="dataKey"></param>
+        /// <param name="componentKey"></param>
+        /// <param name="label"></param>
         /// <param name="readOnly"></param>
         /// <param name="fieldType"></param>
+        /// <param name="dataKey"></param>
         public Field(
             string componentKey,
             string label,
@@ -52,7 +56,8 @@ namespace Betkeeper.Page.Components
             : this(componentKey, label, fieldType)
         {
             ReadOnly = readOnly;
-            DataKey = dataKey;
+            // Set DataKey either as specified or as componentKey
+            DataKey = dataKey ?? componentKey;
         }
 
         [JsonConstructor]
@@ -124,6 +129,26 @@ namespace Betkeeper.Page.Components
             : base(componentKey, label, FieldType.Dropdown)
         {
             Options = options;
+            ComponentsToUpdate = componentsToUpdate;
+        }
+
+        /// <summary>
+        /// Constructor for making options list using available options.
+        /// </summary>
+        /// <param name="componentKey"></param>
+        /// <param name="label"></param>
+        /// <param name="options"></param>
+        /// <param name="componentsToUpdate"></param>
+        public Dropdown(
+            string componentKey,
+            string label,
+            List<string> options,
+            List<string> componentsToUpdate = null)
+            : base(componentKey, label, FieldType.Dropdown)
+        {
+            Options = options
+                .Select(option => new Option(option.ToLower(), option))
+                .ToList();
             ComponentsToUpdate = componentsToUpdate;
         }
 

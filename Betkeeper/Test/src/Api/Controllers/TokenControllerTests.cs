@@ -54,7 +54,7 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             var testData = new { username = "user" };
 
@@ -83,7 +83,7 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             var testData = new { username = "notexistingusername" };
 
@@ -112,7 +112,7 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             var testData = new { username = "user" };
 
@@ -144,7 +144,7 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             var testToken = TokenLog.CreateToken(1);
 

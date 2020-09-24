@@ -2,6 +2,7 @@
 using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using TestTools;
 
 namespace Betkeeper.Test.Models
@@ -57,13 +58,13 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             var usernames = _userRepository.GetUsernamesById(new List<int> { 1, 3 });
 
             Assert.AreEqual(2, usernames.Count);
-            Assert.AreEqual("Username 1", usernames[0]);
-            Assert.AreEqual("Username 3", usernames[1]);
+            Assert.AreEqual(1, usernames.Count(user => user == "Username 1"));
+            Assert.AreEqual(1, usernames.Count(user => user == "Username 3"));
         }
 
         [Test]
@@ -78,7 +79,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             Assert.IsNull(_userRepository.GetUserId("username"));
         }
@@ -100,7 +101,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             Assert.AreEqual(2, _userRepository.GetUserId("username"));
         }
@@ -122,7 +123,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             Assert.IsFalse(_userRepository.Authenticate(1, "secret2"));
         }
@@ -144,7 +145,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, users: users);
+            Tools.CreateTestData(users: users);
 
             Assert.IsTrue(_userRepository.Authenticate(2, "secret2"));
         }

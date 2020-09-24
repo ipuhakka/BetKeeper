@@ -55,7 +55,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var results = _competitionRepository
                 .GetCompetitionsById(new List<int> { 1, 3, 4 });
@@ -89,7 +89,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<NameInUseException>(() =>
@@ -119,7 +119,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: inDatabaseCompetitions);
+            Tools.CreateTestData(competitions: inDatabaseCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentException>(() =>
@@ -169,7 +169,7 @@ namespace Betkeeper.Test.Models
                 },
             };
 
-            Tools.CreateTestData(_context, competitions: testCompetitions);
+            Tools.CreateTestData(competitions: testCompetitions);
 
             testCompetitions.ForEach(competition =>
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -204,7 +204,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             Assert.Throws<InvalidOperationException>(() =>
                 _competitionRepository.DeleteCompetition(competitionId: 5));
@@ -224,7 +224,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             Assert.DoesNotThrow(() =>
                 _competitionRepository.DeleteCompetition(competitionId: 3));
@@ -239,7 +239,7 @@ namespace Betkeeper.Test.Models
                 new Competition{ CompetitionId = 2 },
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             Assert.IsNull(_competitionRepository.GetCompetition(3));
         }
@@ -253,7 +253,7 @@ namespace Betkeeper.Test.Models
                 new Competition{ CompetitionId = 2, Description = "Description 2" },
             };
 
-            Tools.CreateTestData(_context, competitions: competitions);
+            Tools.CreateTestData(competitions: competitions);
 
             var competition = _competitionRepository.GetCompetition(1);
 

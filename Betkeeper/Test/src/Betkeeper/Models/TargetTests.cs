@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using System.Linq;
+using Betkeeper.Data;
 using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace Betkeeper.Test.Models
         public void TearDown()
         {
             _context.Target.RemoveRange(_context.Target);
+            _context.SaveChanges();
         }
 
         [Test]
@@ -55,7 +57,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             var resultTargets = _targetRepository.GetTargets(competitionId: 1);
 
@@ -63,6 +65,39 @@ namespace Betkeeper.Test.Models
             resultTargets.ForEach(target =>
             {
                 Assert.AreEqual(1, target.CompetitionId);
+            });
+        }
+
+        [Test]
+        public void GetTargets_FilterByIdList_ReturnsCorrectTargets()
+        {
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    TargetId = 1,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 2,
+                    CompetitionId = 1
+                },
+                new Target
+                {
+                    TargetId = 3,
+                    CompetitionId = 2
+                }
+            };
+
+            Tools.CreateTestData(targets: targets);
+
+            var resultTargets = _targetRepository.GetTargets(targetIds: new List<int>{ 1, 3 });
+
+            Assert.AreEqual(2, resultTargets.Count);
+            new List<int> { 1, 3 }.ForEach(value =>
+            {
+                Assert.IsTrue(resultTargets.Any(target => target.TargetId == value));
             });
         }
 
@@ -88,7 +123,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.ClearTargets(competitionId: 1);
 
@@ -110,7 +145,7 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.RemoveTarget(2);
 
@@ -129,11 +164,60 @@ namespace Betkeeper.Test.Models
                 }
             };
 
-            Tools.CreateTestData(_context, targets: targets);
+            Tools.CreateTestData(targets: targets);
 
             _targetRepository.RemoveTarget(1);
 
             Assert.AreEqual(0, _targetRepository.GetTargets(1).Count);
+        }
+
+        [Test]
+        public void GetPointInformation_TypeOpenQuestion_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                },
+                Type = Enums.TargetType.OpenQuestion
+            };
+
+            Assert.AreEqual("Correct: 2 points", target.GetPointInformation());
+        }
+
+        [Test]
+        public void GetPointInformation_TypeResult_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult },
+                    new Scoring{ Points = 1, Score = Enums.TargetScore.CorrectWinner }
+                },
+                Type = Enums.TargetType.Result
+            };
+
+            Assert.AreEqual("Result: 2 points, Winner: 1 points", target.GetPointInformation());
+        }
+
+        [Test]
+        public void GetPointInformation_TypeSelection_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new List<Scoring>
+                {
+                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                },
+                Type = Enums.TargetType.Selection
+            };
+
+            Assert.AreEqual("Correct: 2 points", target.GetPointInformation());
         }
     }
 }

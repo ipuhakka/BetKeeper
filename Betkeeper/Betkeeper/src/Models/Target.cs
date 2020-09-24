@@ -2,6 +2,7 @@
 using Betkeeper.Data;
 using Betkeeper.Enums;
 using Betkeeper.Extensions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -28,9 +29,86 @@ namespace Betkeeper.Models
 
         public TargetType Type { get; set; }
 
-        public string Result { get; set; }
+        public TargetResultItem Result { get; set; }
 
         public List<string> Selections { get; set; }
+
+        /// <summary>
+        /// Returns points for a given target bet
+        /// </summary>
+        /// <param name="targetBet"></param>
+        /// <returns></returns>
+        public double GetPoints(TargetBet targetBet)
+        {
+            var result = GetResult(targetBet);
+
+            if (result == TargetResult.CorrectResult)
+            {
+                return (double)Scoring.Single(score => score.Score == TargetScore.CorrectResult).Points;
+            }
+
+            if (result == TargetResult.CorrectWinner)
+            {
+                return (double)Scoring.Single(score => score.Score == TargetScore.CorrectWinner).Points;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns result for bet
+        /// </summary>
+        /// <param name="targetBet"></param>
+        /// <returns></returns>
+        public TargetResult GetResult(TargetBet targetBet)
+        {
+            // No results given
+            if (string.IsNullOrEmpty(Result?.Result)
+                && (Result?.TargetBetResultDictionary?.Count ?? 0) == 0)
+            {
+                return TargetResult.Unresolved;
+            }
+
+            if (Type == TargetType.OpenQuestion)
+            {
+                return Result.TargetBetResultDictionary.TryGetValue(targetBet.TargetBetId, out string result)
+                    && result == "Correct"
+                    ? TargetResult.CorrectResult
+                    : TargetResult.Wrong;
+            }
+
+            if (Type == TargetType.Result)
+            {
+                var resultArray = Result.Result.Split('-');
+                var homescore = int.Parse(resultArray[0]);
+                var awayscore = int.Parse(resultArray[1]);
+
+                var betResultsArray = targetBet.Bet.Split('-');
+                var betHomescore = int.Parse(betResultsArray[0]);
+                var betAwayscore = int.Parse(betResultsArray[1]);
+
+                if (homescore == betHomescore && awayscore == betAwayscore)
+                {
+                    // Result correct
+                    return TargetResult.CorrectResult;
+                }
+                else if (Math.Sign(homescore - awayscore) == Math.Sign(betHomescore - betAwayscore))
+                {
+                    // Winner correct
+                    return TargetResult.CorrectWinner;
+                }
+
+                return TargetResult.Wrong;
+            }
+
+            // Selection
+            if (targetBet.Bet == Result.Result)
+            {
+                return TargetResult.CorrectResult;
+            }
+
+            return TargetResult.Wrong;
+        }
 
         /// <summary>
         /// Converts JArray into target list
@@ -101,13 +179,20 @@ namespace Betkeeper.Models
                 }
             }
 
+            int targetId = targetObject.TryGetValue(
+                $"target-id-{i}", 
+                out JToken targetIdToken)
+                ? targetIdToken.Value<int>()
+                : 0;
+            
             return new Target
             {
                 Type = type,
                 Bet = questionJToken?.ToString(),
                 CompetitionId = competitionId,
                 Scoring = scorings,
-                Selections = selections
+                Selections = selections,
+                TargetId = targetId
             };
         }
 
@@ -119,6 +204,22 @@ namespace Betkeeper.Models
         public bool HasScoringType(TargetScore scoring)
         {
             return Scoring.Any(score => score.Score == scoring && score.Points != null);
+        }
+
+        /// <summary>
+        /// Returns point information as string for target.
+        /// </summary>
+        /// <returns></returns>
+        public string GetPointInformation()
+        {
+            // Score term for CorrectResult typed score.
+            var scoreTerm = Type != TargetType.Result
+                ? "Correct"
+                : "Result";
+
+            return string.Join(", ", Scoring.Select(score => score.Score == TargetScore.CorrectResult
+                ? $"{scoreTerm}: {score.Points} points"
+                : $"Winner: {score.Points} points"));
         }
     }
 
@@ -133,6 +234,59 @@ namespace Betkeeper.Models
         /// Score type
         /// </summary>
         public TargetScore Score { get; set; }
+    }
+
+    public class TargetResultItem
+    {
+        /// <summary>
+        /// Result property for targets typed selection and result.
+        /// </summary>
+        public string Result { get; set; }
+
+        /// <summary>
+        /// Stores target bets and their results.
+        /// </summary>
+        public Dictionary<int, string> TargetBetResultDictionary { get; set; }
+
+        [JsonIgnore]
+        public int TargetId { get; }
+
+        [JsonConstructor]
+        public TargetResultItem()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a target result item from JObject.
+        /// </summary>
+        /// <param name="jObject"></param>
+        public TargetResultItem(JObject jObject)
+        {
+            TargetId = jObject.GetIdentifierValueFromKeyLike("setResultsContainer-");
+
+            var innerObject = jObject[$"setResultsContainer-{TargetId}"] as JObject;
+
+            var targetType = (TargetType)int.Parse(innerObject["type"].ToString());
+
+            if (targetType == TargetType.OpenQuestion)
+            {
+                TargetBetResultDictionary = new Dictionary<int, string>();
+                // Handle open questions
+                innerObject
+                .GetKeysLike("result-")
+                    .ForEach(key =>
+                    {
+                        var targetBetId = innerObject.GetIdentifierValueFromKeyLike(key);
+                        TargetBetResultDictionary.Add(targetBetId, innerObject[key].ToString());
+                    });
+            }
+            else
+            {
+                // Selections and result bets
+                Result = innerObject[$"result-{TargetId}"].ToString();
+            }
+        }
     }
 
     public class TargetRepository : BaseRepository, IDisposable
@@ -166,13 +320,34 @@ namespace Betkeeper.Models
             _context.SaveChanges();
         }
 
-        public List<Target> GetTargets(int? competitionId = null)
+        /// <summary>
+        /// Updates target bets.
+        /// </summary>
+        /// <param name="targets"></param>
+        public void UpdateTargets(List<Target> targets)
+        {
+            _context.Target.UpdateRange(targets);
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Get targets.
+        /// </summary>
+        /// <param name="competitionId"></param>
+        /// <param name="targetIds"></param>
+        /// <returns></returns>
+        public List<Target> GetTargets(int? competitionId = null, List<int> targetIds = null)
         {
             var query = _context.Target.AsQueryable();
 
             if (competitionId != null)
             {
-                query = query.Where(competition => competition.CompetitionId == competitionId);
+                query = query.Where(target => target.CompetitionId == competitionId);
+            }
+
+            if (targetIds != null)
+            {
+                query = query.Where(target => targetIds.Contains(target.TargetId));
             }
 
             return query.ToList();

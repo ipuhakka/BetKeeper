@@ -27,7 +27,8 @@ class Dropdown extends Component
         }
 
         // Check if an option is declared as initialvalue
-        const initialOption = _.find(options, option => option.initialValue);
+        const initialOption = _.find(options, option => option.initialValue 
+            || option.key === this.props.initialValue);
 
         const initialOptionKey = !_.isNil(initialOption)
             ? initialOption.key

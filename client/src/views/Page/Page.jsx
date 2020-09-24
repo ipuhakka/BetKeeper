@@ -146,14 +146,15 @@ class Page extends Component
     }
 
     /**
-     * 
+     * Handle modal action click
      * @param {string} action 
      * @param {Array.<object>} actionFields Fiels to be shown in action modal.
      * @param {title} title 
      * @param {bool} requireConfirm 
      * @param {string} confirmStyle 
+     * @param {string} absoluteDataPath
      */
-    clickModalAction(action, components, title, requireConfirm, confirmStyle)
+    clickModalAction(action, components, title, requireConfirm, confirmStyle, absoluteDataPath)
     {
         this.setState({
             actionModalOpen: true,
@@ -162,7 +163,8 @@ class Page extends Component
                 title,
                 requireConfirm,
                 confirmVariant: confirmStyle,
-                components
+                components,
+                absoluteDataPath
             }
         });
     }
@@ -229,7 +231,8 @@ class Page extends Component
                 }} 
                 page={pageKey || ''}
                 show={state.actionModalOpen} 
-                {...state.actionModalProps}/>
+                {...state.actionModalProps}
+                data={props.data}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
             <Confirm 

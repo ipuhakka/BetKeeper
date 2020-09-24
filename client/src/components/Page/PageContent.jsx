@@ -6,6 +6,7 @@ import Tab from 'react-bootstrap/Tab';
 import Button from '../../components/Page/Button';
 import Field from '../../components/Page/Field';
 import Table from '../../components/Page/Table';
+import StaticTable from '../../components/Page/StaticTable';
 
 class PageContent extends Component
 {
@@ -24,6 +25,12 @@ class PageContent extends Component
     renderComponents(components, className, depth = 0, dataPath = null)
     {
         const { props } = this;
+        
+        let completeDataPath = dataPath;
+        if (!_.isNil(props.absoluteDataPath))
+        {
+            completeDataPath = _.join(_.compact([props.absoluteDataPath, dataPath]), '.');
+        }
 
         return <div key={`${className}-${depth}`} className={className}>
             {_.map(components, (component, i) => 
@@ -54,15 +61,20 @@ class PageContent extends Component
                             componentKey={component.componentKey}
                             initialValue={_.get(
                                 props.data, 
-                                _.compact([dataPath, component.dataKey]).join('.'),
+                                _.compact([completeDataPath, component.dataKey]).join('.'),
                                  null) ||
                                  _.get(props.data, component.dataKey, null)}
-                            dataPath={dataPath} 
+                            dataPath={completeDataPath} 
                             {...component} />;
+
+                    case 'Label':
+                        return <label key={`label-${i}`}>{component.text}</label>;
 
                     case 'Table':
                         return <Table onRowClick={props.onTableRowClick} key={`itemlist-${i}`} {...component} />;
 
+                    case 'StaticTable':
+                        return <StaticTable componentKey={component.componentKey} key={`custom-table-${i}`} rows={component.rows} header={component.header}/>
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
                 }
@@ -89,7 +101,8 @@ PageContent.propTypes = {
     onTableRowClick: PropTypes.func,
     onFieldValueChange: PropTypes.func.isRequired,
     onHandleDropdownServerUpdate: PropTypes.func,
-    data: PropTypes.object
+    data: PropTypes.object,
+    absoluteDataPath: PropTypes.string
 };
 
 export default PageContent;

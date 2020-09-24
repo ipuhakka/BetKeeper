@@ -30,7 +30,7 @@ class Button extends Component
         }
         else if (props.buttonType === 'ModalAction')
         {
-            props.onClick(props.action, props.components, props.text, props.requireConfirm, props.style);
+            props.onClick(props.action, props.components, props.text, props.requireConfirm, props.style, props.absoluteDataPath);
         }
         else if (props.buttonType === 'Navigation')
         {
@@ -77,6 +77,7 @@ Button.propTypes = {
     requireConfirm: PropTypes.bool.isRequired,
     componentsToInclude: PropTypes.arrayOf(PropTypes.string),
     displayType: PropTypes.oneOf(['Text', 'Icon']).isRequired,
+    absoluteDataPath: PropTypes.string,
     iconName: function(props, propName) 
     {
         if (props['displayType'] === 'Icon' && typeof(props[propName]) !== 'string') 

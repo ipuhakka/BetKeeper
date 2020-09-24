@@ -37,6 +37,15 @@
         CorrectResult = 1
     }
 
+    public enum TargetResult
+    {
+        Unresolved = 0,
+        Wrong = 1,
+        CorrectWinner = 2,
+        CorrectResult = 3,
+        DidNotBet = 4
+    }
+
     public enum TargetType
     {
         /// <summary>

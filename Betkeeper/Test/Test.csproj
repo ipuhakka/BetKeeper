@@ -164,6 +164,7 @@
     <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
     <Compile Include="src\Betkeeper\Actions\CompetitionActionTest.cs" />
     <Compile Include="src\Betkeeper\Actions\TargetActionTests.cs" />
+    <Compile Include="src\Betkeeper\Actions\TargetBetActionTests.cs" />
     <Compile Include="src\Betkeeper\Classes\EnumTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\QueryTests.cs" />
@@ -172,9 +173,11 @@
     <Compile Include="src\Betkeeper\Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DictionaryExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JArrayExtensionTests.cs" />
+    <Compile Include="src\Betkeeper\Extensions\JObjectExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JTokenExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />
+    <Compile Include="src\Betkeeper\Models\TargetBetTests.cs" />
     <Compile Include="src\Betkeeper\Models\TargetTests.cs" />
     <Compile Include="src\Betkeeper\Models\UserTests.cs" />
     <Compile Include="src\Betkeeper\Pages\CompetitionPageTests\CompetitionPageTests.cs" />
