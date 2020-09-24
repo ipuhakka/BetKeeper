@@ -182,7 +182,6 @@ namespace Betkeeper.Actions
 
                     foreach(var target in targets)
                     {
-                        // TODO: Älä mahdollista antaa betsejä joissa sama kyssäri, tämä ei toimi
                         if (!competitionScores.TargetItems.Any(item => item.Question == target.Bet))
                         {
                             competitionScores.TargetItems.Add(new CompetitionScores.TargetItem(target.Bet));
@@ -230,6 +229,14 @@ namespace Betkeeper.Actions
         private void ValidateTargets(List<Target> targets)
         {
             var i = 0;
+
+            if (targets.Select(target => target.Bet).Distinct().Count() != targets.Count)
+            {
+                throw new ActionException(
+                    ActionExceptionType.InvalidInput,
+                    "Two or more bets contain same question");
+            }
+
             targets.ForEach(target =>
             {
                 if (string.IsNullOrWhiteSpace(target.Bet))
@@ -299,6 +306,7 @@ namespace Betkeeper.Actions
                 i++;
             });
         }
+
         private bool ValidScoringForType(Target target)
         {
             switch (target.Type)

@@ -117,6 +117,63 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
+        public void HandleTargetsUpdate_DuplicateQuestions_ThrowsInvalidOperationException()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    StartTime = DateTime.Now.AddDays(1)
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            var targets = new List<Target>
+            {
+                new Target
+                {
+                    Scoring = new List<Scoring>
+                    {
+                        new Scoring
+                        {
+                            Points = 1,
+                            Score = TargetScore.CorrectResult
+                        },
+                    },
+                    Bet = "Bet"
+                },
+                new Target
+                {
+                    Scoring = new List<Scoring>
+                    {
+                        new Scoring
+                        {
+                            Points = 1,
+                            Score = TargetScore.CorrectResult
+                        },
+                    },
+                    Bet = "Bet"
+                },
+            };
+
+            var exception = Assert.Throws<ActionException>(() =>
+                _targetAction.HandleTargetsUpdate(1, 1, targets));
+        }
+
+        [Test]
         public void HandleTargetsUpdate_ScoringContainsDuplicates_ThrowsActionException()
         {
             var competitions = new List<Competition>

@@ -185,9 +185,9 @@ namespace Betkeeper.Pages.CompetitionPage
                 innerObject.Add(
                     $"result-{target.TargetId}-{targetBet.TargetBetId}", 
                     new JValue(targetBetValue));
-                innerObject.Add("type", new JValue(target.Type));
             });
 
+            innerObject.Add("type", new JValue(target.Type));
             return innerObject;
         }
     }

@@ -43,7 +43,11 @@ class Field extends Component
         if (!_.isEqual(prevProps.initialValue, this.props.initialValue))
         {
             this.setState({
-                value: this.props.initialValue
+                value: this.props.type === 'DateTime'
+                    ? _.isNil(this.props.initialValue)
+                        ? null
+                        : this.props.initialValue.utc().toDate()
+                    : this.props.initialValue
             });
         }
     }

@@ -64,16 +64,14 @@ namespace Betkeeper.Models
         {
             // No results given
             if (string.IsNullOrEmpty(Result?.Result)
-                && Result?.TargetBetResultDictionary.Count == 0)
+                && (Result?.TargetBetResultDictionary?.Count ?? 0) == 0)
             {
                 return TargetResult.Unresolved;
             }
 
-            var participator = (int)targetBet.Participator;
-
             if (Type == TargetType.OpenQuestion)
             {
-                return Result.TargetBetResultDictionary.TryGetValue(participator, out string result)
+                return Result.TargetBetResultDictionary.TryGetValue(targetBet.TargetBetId, out string result)
                     && result == "Correct"
                     ? TargetResult.CorrectResult
                     : TargetResult.Wrong;
@@ -279,7 +277,7 @@ namespace Betkeeper.Models
                 .GetKeysLike("result-")
                     .ForEach(key =>
                     {
-                        var targetBetId = innerObject.GetIdentifierValueFromKeyLike("result-");
+                        var targetBetId = innerObject.GetIdentifierValueFromKeyLike(key);
                         TargetBetResultDictionary.Add(targetBetId, innerObject[key].ToString());
                     });
             }

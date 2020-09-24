@@ -130,7 +130,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                     new Target
                     {
                         Type = Enums.TargetType.Selection,
-                        Bet = "Bet",
+                        Bet = "Bet2",
                         Scoring = new List<Scoring>
                         {
                             new Scoring

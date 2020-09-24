@@ -84,10 +84,12 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 // Results
                 GetResultsTab(competitionId),
-
-                // Bets
-                GetBetsTab(competitionTargets)
             };
+
+            if (competition.State == CompetitionState.Open)
+            {
+                GetBetsTab(competitionTargets);
+            }
 
             if (participator.Role == CompetitionRole.Host)
             {
