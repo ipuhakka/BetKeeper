@@ -45,9 +45,9 @@ namespace Betkeeper.Pages.CompetitionPage
 
         public void Dispose()
         {
-            CompetitionAction.Dispose();
-            TargetAction.Dispose();
-            TargetBetAction.Dispose();
+            CompetitionAction?.Dispose();
+            TargetAction?.Dispose();
+            TargetBetAction?.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageId, int userId)
