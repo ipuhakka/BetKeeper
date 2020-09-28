@@ -125,7 +125,5 @@ namespace Betkeeper.Pages.CompetitionPage
                 System.Net.HttpStatusCode.OK,
                 new PageActionResponse("Bets saved succesfully"));
         }
-
-        // TODO: Muutoksien peruutusaction
     }
 }

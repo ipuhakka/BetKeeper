@@ -539,6 +539,8 @@ namespace Betkeeper.Test.Actions
             var points = scores.UserPointsDictionary;
             var targetItems = scores.TargetItems;
 
+            Assert.AreEqual(6, scores.MaximumPoints);
+
             Assert.AreEqual(3, points.Count);
             Assert.AreEqual(6, points["user1"]);
             Assert.AreEqual(1, points["user2"]);

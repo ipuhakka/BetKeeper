@@ -93,7 +93,7 @@ namespace TestTools
             return new BetkeeperDataContext(GetTestOptionsBuilder());
         }
 
-        private static DbContextOptionsBuilder GetTestOptionsBuilder()
+        public static DbContextOptionsBuilder GetTestOptionsBuilder()
         {
             return new DbContextOptionsBuilder()
                 .UseInMemoryDatabase("TestDatabase");

@@ -88,7 +88,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             if (competition.State == CompetitionState.Open)
             {
-                GetBetsTab(competitionTargets);
+                tabs.Add(GetBetsTab(competitionTargets));
             }
 
             if (participator.Role == CompetitionRole.Host)

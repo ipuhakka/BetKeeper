@@ -36,6 +36,64 @@ namespace Betkeeper.Test.Models
         }
 
         [Test]
+        public void Target_TargetResultSet_ResultNull_ReturnsFalse()
+        {
+            var target = new Target
+            {
+                Result = null
+            };
+
+            Assert.IsFalse(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_ResultStringNotEmpty_ReturnsTrue()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    Result = "test"
+                }
+            };
+
+            Assert.IsTrue(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_DictionaryNotEmpty_ReturnsTrue()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    TargetBetResultDictionary = new Dictionary<int, string>
+                    {
+                        {1, "test"}
+                    }
+                },
+                Type = Enums.TargetType.OpenQuestion
+            };
+
+            Assert.IsTrue(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_DictionaryEmptyResultEmpty_ReturnsFalse()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    TargetBetResultDictionary = new Dictionary<int, string>(),
+                    Result = ""
+                }
+            };
+
+            Assert.IsFalse(target.TargetResultSet());
+        }
+
+        [Test]
         public void GetTargets_FilterByCompetition_ReturnsCompetitionsTargets()
         {
             var targets = new List<Target>

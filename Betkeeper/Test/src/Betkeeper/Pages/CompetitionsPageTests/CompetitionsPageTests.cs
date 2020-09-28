@@ -2,6 +2,7 @@
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Pages;
+using Betkeeper.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             _competitionRepository = new CompetitionRepository(_context);
             _competitionsPage = new CompetitionsPage(
                 new Betkeeper.Actions.CompetitionAction(_competitionRepository, new ParticipatorRepository(_context)));
+            TargetService.InitializeTargetService(Tools.GetTestOptionsBuilder());
         }
 
         [OneTimeTearDown]

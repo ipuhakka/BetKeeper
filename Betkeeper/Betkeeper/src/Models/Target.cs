@@ -63,8 +63,7 @@ namespace Betkeeper.Models
         public TargetResult GetResult(TargetBet targetBet)
         {
             // No results given
-            if (string.IsNullOrEmpty(Result?.Result)
-                && (Result?.TargetBetResultDictionary?.Count ?? 0) == 0)
+            if (!TargetResultSet())
             {
                 return TargetResult.Unresolved;
             }
@@ -108,6 +107,25 @@ namespace Betkeeper.Models
             }
 
             return TargetResult.Wrong;
+        }
+
+        /// <summary>
+        /// Has target result been set
+        /// </summary>
+        /// <returns></returns>
+        public bool TargetResultSet()
+        {
+            if (Type == TargetType.OpenQuestion)
+            {
+                return (Result?.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0) > 0;
+            }
+
+            if (Type == TargetType.Selection)
+            {
+                return Result != null && !string.IsNullOrEmpty(Result.Result) && Result.Result != "UNRESOLVED-BET";
+            }
+
+            return !string.IsNullOrEmpty(Result?.Result);
         }
 
         /// <summary>
