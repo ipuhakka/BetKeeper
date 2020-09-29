@@ -66,23 +66,13 @@ namespace Betkeeper.Models
     /// <summary>
     /// Class for accessing competition data.
     /// </summary>
-    public class CompetitionRepository : BaseRepository, IDisposable
+    public class CompetitionRepository
     {
         private readonly BetkeeperDataContext _context;
 
         public CompetitionRepository()
         {
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public CompetitionRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public void AddCompetition(Competition competition)

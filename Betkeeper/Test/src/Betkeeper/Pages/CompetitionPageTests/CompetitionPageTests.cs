@@ -19,12 +19,9 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
             _competitionPage = new CompetitionPage(
-                new Betkeeper.Actions.CompetitionAction(
-                    new CompetitionRepository(_context), new ParticipatorRepository(_context)));
+                new Betkeeper.Actions.CompetitionAction());
         }
 
         [TearDown]

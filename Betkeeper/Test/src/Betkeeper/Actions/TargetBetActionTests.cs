@@ -4,7 +4,6 @@ using System.Linq;
 using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Models;
-using Betkeeper.Services;
 using NUnit.Framework;
 using TestTools;
 
@@ -16,20 +15,12 @@ namespace Betkeeper.Test.Actions
         private TargetBetAction _targetBetAction;
         private BetkeeperDataContext _context;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _targetBetAction = new TargetBetAction(_context);
-            TargetService.InitializeTargetService(Tools.GetTestOptionsBuilder());
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _targetBetAction.Dispose();
+            _targetBetAction = new TargetBetAction();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]

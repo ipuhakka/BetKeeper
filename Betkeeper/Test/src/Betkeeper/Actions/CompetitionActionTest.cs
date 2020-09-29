@@ -2,7 +2,6 @@
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
-using Betkeeper.Services;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -20,21 +19,13 @@ namespace Betkeeper.Test.Actions
 
         private BetkeeperDataContext _context;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _competitionRepository = new CompetitionRepository(_context);
-            _action = new CompetitionAction(_competitionRepository, new ParticipatorRepository(_context));
-            TargetService.InitializeTargetService(Tools.GetTestOptionsBuilder());
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _action.Dispose();
+            _competitionRepository = new CompetitionRepository();
+            _action = new CompetitionAction();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]

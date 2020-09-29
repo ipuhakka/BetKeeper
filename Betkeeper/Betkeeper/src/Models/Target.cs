@@ -307,23 +307,13 @@ namespace Betkeeper.Models
         }
     }
 
-    public class TargetRepository : BaseRepository, IDisposable
+    public class TargetRepository
     {
         private readonly BetkeeperDataContext _context;
 
         public TargetRepository()
         {
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public TargetRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public void AddTarget(Target target)

@@ -1,5 +1,4 @@
 ﻿using Betkeeper;
-using Betkeeper.Services;
 using System.Configuration;
 using System.IO;
 using System.Web.Http;
@@ -23,7 +22,7 @@ namespace Api
                     "Connection string was not given");
             }
 
-            TargetService.InitializeTargetService();
+            Settings.InitializeOptionsBuilderService();
 
             // Web API configuration and services
             config.EnableCors();

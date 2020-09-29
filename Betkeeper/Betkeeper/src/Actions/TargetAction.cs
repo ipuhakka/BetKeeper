@@ -10,7 +10,7 @@ namespace Betkeeper.Actions
     /// <summary>
     /// Actions for competition bet targets.
     /// </summary>
-    public class TargetAction : IDisposable
+    public class TargetAction
     {
         private CompetitionRepository CompetitionRepository { get; set; }
 
@@ -29,29 +29,6 @@ namespace Betkeeper.Actions
             TargetRepository = new TargetRepository();
             TargetBetAction = new TargetBetAction();
             UserRepository = new UserRepository();
-        }
-
-        public TargetAction(
-            CompetitionRepository competitionRepository = null,
-            ParticipatorRepository participatorRepository = null,
-            TargetRepository targetRepository = null,
-            TargetBetAction targetBetAction = null,
-            UserRepository userRepository = null)
-        {
-            CompetitionRepository = competitionRepository;
-            ParticipatorRepository = participatorRepository;
-            TargetRepository = targetRepository;
-            TargetBetAction = targetBetAction;
-            UserRepository = userRepository;
-        }
-
-        public void Dispose()
-        {
-            CompetitionRepository.Dispose();
-            ParticipatorRepository.Dispose();
-            TargetRepository.Dispose();
-            TargetBetAction.Dispose();
-            UserRepository.Dispose();
         }
 
         /// <summary>
@@ -173,12 +150,13 @@ namespace Betkeeper.Actions
             var users = UserRepository.GetUsersById(
                 participators.Select(participator => participator.UserId).ToList());
 
-            var competitionScores = new CompetitionScores();
-
-            competitionScores.MaximumPoints = targets.Sum(target =>
+            var competitionScores = new CompetitionScores
             {
-                return target.Scoring.Max(score => score.Points);
-            }) ?? 0;
+                MaximumPoints = targets.Sum(target =>
+                {
+                    return target.Scoring.Max(score => score.Points);
+                }) ?? 0
+            };
 
             participators
                 .ForEach(participator =>

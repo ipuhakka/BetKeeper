@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Betkeeper.Actions
 {
-    public class CompetitionAction : IDisposable
+    public class CompetitionAction
     {
         private CompetitionRepository CompetitionRepository { get; set; }
         private ParticipatorRepository ParticipatorRepository { get; set; }
@@ -17,18 +17,6 @@ namespace Betkeeper.Actions
         {
             CompetitionRepository = new CompetitionRepository();
             ParticipatorRepository = new ParticipatorRepository();
-        }
-
-        public CompetitionAction(CompetitionRepository competitionRepository, ParticipatorRepository participatorRepository)
-        {
-            CompetitionRepository = competitionRepository;
-            ParticipatorRepository = participatorRepository;
-        }
-
-        public void Dispose()
-        {
-            CompetitionRepository.Dispose();
-            ParticipatorRepository.Dispose();
         }
 
         public Competition GetCompetition(int competitionId)

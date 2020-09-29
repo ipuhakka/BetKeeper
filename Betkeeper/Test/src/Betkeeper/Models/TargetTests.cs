@@ -16,16 +16,8 @@ namespace Betkeeper.Test.Models
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _targetRepository = new TargetRepository(_context);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _targetRepository.Dispose();
+            _targetRepository = new TargetRepository();
         }
 
         [TearDown]

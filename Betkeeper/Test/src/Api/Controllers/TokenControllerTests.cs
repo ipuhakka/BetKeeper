@@ -21,10 +21,9 @@ namespace Api.Test.Controllers
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
-            _controller = new TestController(_context);
+            _controller = new TestController();
         }
 
         [OneTimeTearDown]
@@ -280,9 +279,9 @@ namespace Api.Test.Controllers
 
         private class TestController : TokenController
         {
-            public TestController(BetkeeperDataContext context)
+            public TestController()
             {
-                UserRepository = new UserRepository(context);
+                UserRepository = new UserRepository();
             }
         }
     }
