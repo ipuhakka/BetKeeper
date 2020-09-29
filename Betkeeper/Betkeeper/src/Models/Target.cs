@@ -117,7 +117,8 @@ namespace Betkeeper.Models
         {
             if (Type == TargetType.OpenQuestion)
             {
-                return (Result?.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0) > 0;
+                var resolvedCount = Result?.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0;
+                return resolvedCount > 0 && resolvedCount == Result.TargetBetResultDictionary.Count;
             }
 
             if (Type == TargetType.Selection)
