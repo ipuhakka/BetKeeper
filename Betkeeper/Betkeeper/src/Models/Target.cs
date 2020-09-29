@@ -63,8 +63,7 @@ namespace Betkeeper.Models
         public TargetResult GetResult(TargetBet targetBet)
         {
             // No results given
-            if (string.IsNullOrEmpty(Result?.Result)
-                && (Result?.TargetBetResultDictionary?.Count ?? 0) == 0)
+            if (!TargetResultSet())
             {
                 return TargetResult.Unresolved;
             }
@@ -108,6 +107,26 @@ namespace Betkeeper.Models
             }
 
             return TargetResult.Wrong;
+        }
+
+        /// <summary>
+        /// Has target result been set
+        /// </summary>
+        /// <returns></returns>
+        public bool TargetResultSet()
+        {
+            if (Type == TargetType.OpenQuestion)
+            {
+                var resolvedCount = Result?.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0;
+                return resolvedCount > 0 && resolvedCount == Result.TargetBetResultDictionary.Count;
+            }
+
+            if (Type == TargetType.Selection)
+            {
+                return Result != null && !string.IsNullOrEmpty(Result.Result) && Result.Result != "UNRESOLVED-BET";
+            }
+
+            return !string.IsNullOrEmpty(Result?.Result);
         }
 
         /// <summary>
@@ -289,23 +308,13 @@ namespace Betkeeper.Models
         }
     }
 
-    public class TargetRepository : BaseRepository, IDisposable
+    public class TargetRepository
     {
         private readonly BetkeeperDataContext _context;
 
         public TargetRepository()
         {
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public TargetRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public void AddTarget(Target target)

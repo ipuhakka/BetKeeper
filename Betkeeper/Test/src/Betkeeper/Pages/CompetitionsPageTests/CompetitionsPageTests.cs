@@ -16,21 +16,14 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
         private CompetitionRepository _competitionRepository;
         private BetkeeperDataContext _context;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _competitionRepository = new CompetitionRepository(_context);
+            _competitionRepository = new CompetitionRepository();
             _competitionsPage = new CompetitionsPage(
-                new Betkeeper.Actions.CompetitionAction(_competitionRepository, new ParticipatorRepository(_context)));
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _competitionRepository.Dispose();
+                new Betkeeper.Actions.CompetitionAction());
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]

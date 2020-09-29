@@ -23,14 +23,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
-
             _context = Tools.GetTestContext();
-
-            var competitionRepository = new CompetitionRepository(_context);
-            var participatorRepository = new ParticipatorRepository(_context);
-            var targetRepository = new TargetRepository(_context);
 
             Tools.CreateTestData(
                 competitions: new List<Competition>
@@ -43,16 +36,10 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                     }
                 });
 
-            _competitionAction = new CompetitionAction(competitionRepository, participatorRepository);
-            _targetAction = new TargetAction(competitionRepository, participatorRepository, targetRepository);
+            _competitionAction = new CompetitionAction();
+            _targetAction = new TargetAction();
 
-            _competitionPage = new CompetitionPage(_competitionAction, _targetAction, new TargetBetAction(_context));
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _competitionPage.Dispose();
+            _competitionPage = new CompetitionPage(_competitionAction, _targetAction, new TargetBetAction());
         }
 
         /// <summary>

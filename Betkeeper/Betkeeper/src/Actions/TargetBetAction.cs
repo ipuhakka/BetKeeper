@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Betkeeper.Actions
 {
-    public class TargetBetAction : IDisposable
+    public class TargetBetAction
     {
         private TargetRepository TargetRepository { get; set; }
         private TargetBetRepository TargetBetRepository { get; set; }
@@ -19,21 +19,6 @@ namespace Betkeeper.Actions
             TargetRepository = new TargetRepository();
             CompetitionRepository = new CompetitionRepository();
             ParticipatorRepository = new ParticipatorRepository();
-        }
-
-        public TargetBetAction(BetkeeperDataContext context)
-        {
-            TargetBetRepository = new TargetBetRepository(context);
-            TargetRepository = new TargetRepository(context);
-            CompetitionRepository = new CompetitionRepository(context);
-            ParticipatorRepository = new ParticipatorRepository(context);
-        }
-
-        public void Dispose()
-        {
-            TargetBetRepository.Dispose();
-            TargetRepository.Dispose();
-            CompetitionRepository.Dispose();
         }
 
         public List<TargetBet> GetParticipatorsBets(int participatorId)

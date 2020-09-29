@@ -1,5 +1,4 @@
 ﻿using Betkeeper.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,23 +21,13 @@ namespace Betkeeper.Models
         public string Password { get; set; }
     }
 
-    public class UserRepository : BaseRepository, IDisposable
+    public class UserRepository
     {
-        private BetkeeperDataContext _context;
+        private readonly BetkeeperDataContext _context;
 
         public UserRepository()
         {
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public UserRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Betkeeper.Models
         public int Competition { get; set; }
     }
 
-    public class ParticipatorRepository : BaseRepository, IDisposable
+    public class ParticipatorRepository
     {
         private CompetitionRepository CompetitionHandler { get; set; }
 
@@ -28,19 +28,7 @@ namespace Betkeeper.Models
         public ParticipatorRepository()
         {
             CompetitionHandler = new CompetitionRepository();
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public ParticipatorRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-            CompetitionHandler = new CompetitionRepository(context);
-        }
-
-        public void Dispose()
-        {
-            CompetitionHandler.Dispose();
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public List<Participator> GetParticipators(

@@ -14,19 +14,11 @@ namespace Betkeeper.Test.Models
 
         private BetkeeperDataContext _context;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _participatorRepository = new ParticipatorRepository(_context);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _participatorRepository.Dispose();
+            _participatorRepository = new ParticipatorRepository();
         }
 
         [TearDown]

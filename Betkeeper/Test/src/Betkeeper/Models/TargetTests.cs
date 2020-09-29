@@ -16,16 +16,8 @@ namespace Betkeeper.Test.Models
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _targetRepository = new TargetRepository(_context);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _targetRepository.Dispose();
+            _targetRepository = new TargetRepository();
         }
 
         [TearDown]
@@ -33,6 +25,84 @@ namespace Betkeeper.Test.Models
         {
             _context.Target.RemoveRange(_context.Target);
             _context.SaveChanges();
+        }
+
+        [Test]
+        public void Target_TargetResultSet_ResultNull_ReturnsFalse()
+        {
+            var target = new Target
+            {
+                Result = null
+            };
+
+            Assert.IsFalse(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_ResultStringNotEmpty_ReturnsTrue()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    Result = "test"
+                }
+            };
+
+            Assert.IsTrue(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_DictionaryNotEmpty_ReturnsTrue()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    TargetBetResultDictionary = new Dictionary<int, string>
+                    {
+                        {1, "test"}
+                    }
+                },
+                Type = Enums.TargetType.OpenQuestion
+            };
+
+            Assert.IsTrue(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_DictionaryEmptyResultEmpty_ReturnsFalse()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    TargetBetResultDictionary = new Dictionary<int, string>(),
+                    Result = ""
+                }
+            };
+
+            Assert.IsFalse(target.TargetResultSet());
+        }
+
+        [Test]
+        public void Target_TargetResultSet_OpenQuestionSomeUnresolved_ReturnsFalse()
+        {
+            var target = new Target
+            {
+                Result = new TargetResultItem
+                {
+                    TargetBetResultDictionary = new Dictionary<int, string>
+                    {
+                        {1, "Wrong"},
+                        {2, "Unresolved"}
+                    },
+                    Result = ""
+                },
+                Type = Enums.TargetType.OpenQuestion
+            };
+
+            Assert.IsFalse(target.TargetResultSet());
         }
 
         [Test]

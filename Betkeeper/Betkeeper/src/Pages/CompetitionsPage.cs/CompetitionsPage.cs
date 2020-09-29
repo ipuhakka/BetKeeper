@@ -11,7 +11,7 @@ using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
-    public class CompetitionsPage : IPage, IDisposable
+    public class CompetitionsPage : IPage
     {
         private CompetitionAction CompetitionAction { get; set; }
 
@@ -23,11 +23,6 @@ namespace Betkeeper.Pages
         public CompetitionsPage(CompetitionAction competitionAction)
         {
             CompetitionAction = competitionAction;
-        }
-
-        public void Dispose()
-        {
-            CompetitionAction.Dispose();
         }
 
         public HttpResponseMessage GetResponse(string pageKey, int userId)

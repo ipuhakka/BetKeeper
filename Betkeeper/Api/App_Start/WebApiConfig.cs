@@ -22,6 +22,8 @@ namespace Api
                     "Connection string was not given");
             }
 
+            Settings.InitializeOptionsBuilderService();
+
             // Web API configuration and services
             config.EnableCors();
 

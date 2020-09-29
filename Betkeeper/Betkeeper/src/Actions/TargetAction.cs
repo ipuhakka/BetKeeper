@@ -10,7 +10,7 @@ namespace Betkeeper.Actions
     /// <summary>
     /// Actions for competition bet targets.
     /// </summary>
-    public class TargetAction : IDisposable
+    public class TargetAction
     {
         private CompetitionRepository CompetitionRepository { get; set; }
 
@@ -29,29 +29,6 @@ namespace Betkeeper.Actions
             TargetRepository = new TargetRepository();
             TargetBetAction = new TargetBetAction();
             UserRepository = new UserRepository();
-        }
-
-        public TargetAction(
-            CompetitionRepository competitionRepository = null,
-            ParticipatorRepository participatorRepository = null,
-            TargetRepository targetRepository = null,
-            TargetBetAction targetBetAction = null,
-            UserRepository userRepository = null)
-        {
-            CompetitionRepository = competitionRepository;
-            ParticipatorRepository = participatorRepository;
-            TargetRepository = targetRepository;
-            TargetBetAction = targetBetAction;
-            UserRepository = userRepository;
-        }
-
-        public void Dispose()
-        {
-            CompetitionRepository.Dispose();
-            ParticipatorRepository.Dispose();
-            TargetRepository.Dispose();
-            TargetBetAction.Dispose();
-            UserRepository.Dispose();
         }
 
         /// <summary>
@@ -173,7 +150,14 @@ namespace Betkeeper.Actions
             var users = UserRepository.GetUsersById(
                 participators.Select(participator => participator.UserId).ToList());
 
-            var competitionScores = new CompetitionScores();
+            var competitionScores = new CompetitionScores
+            {
+                MaximumPoints = targets.Sum(target =>
+                {
+                    return target.Scoring.Max(score => score.Points);
+                }) ?? 0
+            };
+
             participators
                 .ForEach(participator =>
                 {
@@ -184,7 +168,15 @@ namespace Betkeeper.Actions
                     {
                         if (!competitionScores.TargetItems.Any(item => item.Question == target.Bet))
                         {
-                            competitionScores.TargetItems.Add(new CompetitionScores.TargetItem(target.Bet));
+                            var result = target?.Result?.Result ?? "-";
+                            
+                            if (result == "UNRESOLVED-BET")
+                            {
+                                result = "-";
+                            }
+
+                            competitionScores.TargetItems.Add(
+                                new CompetitionScores.TargetItem(target.Bet, result));
                         }
 
                         var targetBet = targetBets.SingleOrDefault(bet =>
@@ -336,6 +328,11 @@ namespace Betkeeper.Actions
             /// </summary>
             public List<TargetItem> TargetItems { get; }
 
+            /// <summary>
+            /// Maximum points possible to get in competition
+            /// </summary>
+            public double MaximumPoints { get; set; }
+
             public CompetitionScores()
             {
                 UserPointsDictionary = new Dictionary<string, double>();
@@ -353,13 +350,19 @@ namespace Betkeeper.Actions
                 public string Question { get; set; }
 
                 /// <summary>
+                /// Actual result
+                /// </summary>
+                public string Result { get; set; }
+
+                /// <summary>
                 /// Targets bets
                 /// </summary>
                 public List<BetItem> BetItems { get; set; }
 
-                public TargetItem(string question)
+                public TargetItem(string question, string result)
                 {
                     Question = question;
+                    Result = result;
                     BetItems = new List<BetItem>();
                 }
 

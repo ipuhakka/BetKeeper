@@ -13,7 +13,8 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var tableHeaderItems = new List<string>
             {
-                "Bet"
+                "Bet",
+                "Result"
             };
 
             tableHeaderItems.AddRange(scores.UserPointsDictionary.Keys.ToList());
@@ -25,7 +26,6 @@ namespace Betkeeper.Pages.CompetitionPage
                     style: CellStyle.Bold));
 
             // Add data. Question first, then bets in same order as in header
-            // TODO: Onko käyttäjät samassa järjestyksessä
             scores.TargetItems.ForEach(target =>
             {
                 var row = new Row();
@@ -34,6 +34,12 @@ namespace Betkeeper.Pages.CompetitionPage
                 {
                     Style = CellStyle.Bold,
                     Value = target.Question
+                });
+
+                row.Cells.Add(new Cell
+                {
+                    Style = CellStyle.Bold,
+                    Value = target.Result
                 });
 
                 target.BetItems.ForEach(bet =>
@@ -68,7 +74,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 table.Rows.Add(row);
             });
 
-            var summaryRowCellValues = new List<string> { "Points" };
+            var summaryRowCellValues = new List<string> { "Points", scores.MaximumPoints.ToString() };
 
             summaryRowCellValues.AddRange(scores.UserPointsDictionary.Values.Select(value => value.ToString()));
 

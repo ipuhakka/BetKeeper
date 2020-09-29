@@ -15,19 +15,12 @@ namespace Betkeeper.Test.Models
 
         private CompetitionRepository _competitionRepository;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _competitionRepository = new CompetitionRepository(_context);
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _competitionRepository.Dispose();
+            _competitionRepository = new CompetitionRepository();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]

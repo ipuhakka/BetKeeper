@@ -1,5 +1,6 @@
 ﻿using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using Betkeeper.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -21,12 +22,41 @@ namespace Betkeeper.Models
 
         public DateTime StartTime { get; set; }
 
-        // TODO: Huomioi valmiiden vetojen määrä finishediä varten.
+        private Enums.CompetitionState? _state;
         [JsonConverter(typeof(StringEnumConverter))]
-        public Enums.CompetitionState State => StartTime == null
-            || StartTime > DateTime.UtcNow
-            ? Enums.CompetitionState.Open
-            : Enums.CompetitionState.Ongoing;
+        public Enums.CompetitionState State
+        {
+            get
+            {
+                if (_state != null)
+                {
+                    return (Enums.CompetitionState)_state;
+                }
+
+                if (StartTime == null || StartTime > DateTime.UtcNow)
+                {
+                    _state = Enums.CompetitionState.Open;
+                    return (Enums.CompetitionState)_state;
+                }
+
+                var targets = TargetService.GetCompetitionTargets(CompetitionId);
+
+                if (targets.Count == 0)
+                {
+                    _state = Enums.CompetitionState.Ongoing;
+                    return (Enums.CompetitionState)_state;
+                }
+
+                if (targets.Count(target => target.TargetResultSet()) < targets.Count)
+                {
+                    _state = Enums.CompetitionState.Ongoing;
+                    return (Enums.CompetitionState)_state;
+                }
+
+                _state = Enums.CompetitionState.Finished;
+                return (Enums.CompetitionState)_state;
+            }
+        }
 
         public string JoinCode { get; set; }
 
@@ -36,23 +66,13 @@ namespace Betkeeper.Models
     /// <summary>
     /// Class for accessing competition data.
     /// </summary>
-    public class CompetitionRepository : BaseRepository, IDisposable
+    public class CompetitionRepository
     {
         private readonly BetkeeperDataContext _context;
 
         public CompetitionRepository()
         {
-            _context = new BetkeeperDataContext(OptionsBuilder);
-        }
-
-        public CompetitionRepository(BetkeeperDataContext context)
-        {
-            _context = context;
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
+            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public void AddCompetition(Competition competition)

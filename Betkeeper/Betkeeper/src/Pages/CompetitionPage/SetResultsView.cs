@@ -60,13 +60,17 @@ namespace Betkeeper.Pages.CompetitionPage
                         FieldType.TextBox));
                     break;
                 case Enums.TargetType.Selection:
+                    var options = new List<Option>
+                    {
+                        new Option("UNRESOLVED-BET", "Unresolved")
+                    };
+
+                    options.AddRange(target.Selections
+                        .Select(selection => new Option(selection, selection)));
                     content.Add(new Dropdown(
                         $"result-{target.TargetId}",
                         "Result",
-                        target.Selections
-                            .Select(selection =>
-                                new Option(selection, selection))
-                            .ToList()));
+                        options.ToList()));
                     break;
                 case Enums.TargetType.OpenQuestion:
                     content.Add(new ModalActionButton(

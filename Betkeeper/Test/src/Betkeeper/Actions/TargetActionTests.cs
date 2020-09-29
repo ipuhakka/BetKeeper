@@ -18,24 +18,11 @@ namespace Betkeeper.Test.Actions
 
         private BetkeeperDataContext _context;
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void SetUp()
         {
-            // Set Connectionstring so base constructor runs
-            Settings.ConnectionString = "TestDatabase";
             _context = Tools.GetTestContext();
-            _targetAction = new TargetAction(
-                new CompetitionRepository(_context),
-                new ParticipatorRepository(_context),
-                new TargetRepository(_context),
-                new TargetBetAction(_context),
-                new UserRepository(_context));
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            _targetAction.Dispose();
+            _targetAction = new TargetAction();
         }
 
         [TearDown]
@@ -538,6 +525,8 @@ namespace Betkeeper.Test.Actions
             var scores = _targetAction.CalculateCompetitionPoints(1);
             var points = scores.UserPointsDictionary;
             var targetItems = scores.TargetItems;
+
+            Assert.AreEqual(6, scores.MaximumPoints);
 
             Assert.AreEqual(3, points.Count);
             Assert.AreEqual(6, points["user1"]);
