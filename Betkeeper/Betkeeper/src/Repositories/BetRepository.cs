@@ -235,7 +235,6 @@ namespace Betkeeper.Repositories
             double? odd = null,
             string name = null)
         {
-            // TODO: Paranna GetBetsiä niin että voitaisiin tehdä täsmähaku?
             var allUsersBets = GetBets(userId);
 
             var existingBetIds = betIds
