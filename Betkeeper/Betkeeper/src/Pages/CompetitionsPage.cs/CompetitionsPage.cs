@@ -138,22 +138,7 @@ namespace Betkeeper.Pages
                     "Join code empty");
             }
 
-            try
-            {
-                CompetitionAction.JoinCompetition(joinCode, action.UserId);
-            }
-            catch (InvalidOperationException)
-            {
-                return Http.CreateResponse(
-                    HttpStatusCode.Conflict,
-                    new PageActionResponse("Competition has already started and does not accept new players"));
-            }
-            catch (NotFoundException)
-            {
-                return Http.CreateResponse(
-                    HttpStatusCode.NotFound,
-                    new PageActionResponse("Join code did not match any competition", refresh: true));
-            }
+            CompetitionAction.JoinCompetition(joinCode, action.UserId);
 
             return Http.CreateResponse(
                     HttpStatusCode.OK,

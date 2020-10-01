@@ -104,12 +104,17 @@ namespace Betkeeper.Actions
 
             if (competition == null)
             {
-                throw new NotFoundException($"{joinCode} did not match any competition");
+                throw new ActionException(ActionExceptionType.NotFound, $"{joinCode} did not match any competition");
             }
 
             if (competition.State != Enums.CompetitionState.Open)
             {
-                throw new InvalidOperationException("Competition not open for new players");
+                throw new ActionException(ActionExceptionType.Conflict, "Competition not open for new players");
+            }
+
+            if (ParticipatorRepository.GetParticipators(userId, competition.CompetitionId).Count > 0)
+            {
+                throw new ActionException(ActionExceptionType.Conflict, "Already joined competition");
             }
 
             ParticipatorRepository.AddParticipator(

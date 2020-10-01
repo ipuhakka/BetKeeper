@@ -79,7 +79,6 @@ namespace Betkeeper.Actions
         /// <param name="targets"></param>
         public void SetTargetResults(int competitionId, int userId, List<Target> targets)
         {
-            // TODO: Yksikkötestit
             var competition = CompetitionRepository.GetCompetition(competitionId);
 
             if (competition == null)

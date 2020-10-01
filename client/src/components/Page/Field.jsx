@@ -115,9 +115,13 @@ class Field extends Component
             ? null
             : new Date(minimumDateTime);
 
+        const dateValue = typeof this.state.value === 'string'
+            ? new Date(this.state.value)
+            : this.state.value;
+
         return <DatePicker
             className='datetime-input'
-            selected={this.state.value}
+            selected={dateValue}
             showTimeSelect
             timeFormat='HH:mm'
             timeIntervals={30}

@@ -72,7 +72,10 @@ namespace Betkeeper.Pages.CompetitionPage
                 new List<Component>
                 {
                     new Field("name", "Name", true, FieldType.TextBox, "competition.name"),
-                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode")
+                    new Field("joinCode", "Join code", true, FieldType.TextBox, "competition.joinCode"),
+                    new Field("description", "Description", true, FieldType.TextArea, "competition.description"),
+                    new Field("startTime", "Start", true, FieldType.TextBox, "competition.startTime"),
+                    new Field("state", "State", true, FieldType.TextBox, "competition.state")
                 }),
 
                 // Results

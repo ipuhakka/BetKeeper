@@ -35,8 +35,18 @@ namespace Api.Controllers
 
             var parameters = Http.GetContentAsDictionary(Request);
 
-            return PageResponse.HandlePageAction(
-                new PageAction((int)userId, page, pageAction, parameters));
+            try
+            {
+                return PageResponse.HandlePageAction(
+                    new PageAction((int)userId, page, pageAction, parameters));
+            }
+            catch (ActionException actionException)
+            {
+                // Create page action response from action exception
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    new PageActionResponse(actionException.ErrorMessage));
+            }
         }
 
         /// <summary>
