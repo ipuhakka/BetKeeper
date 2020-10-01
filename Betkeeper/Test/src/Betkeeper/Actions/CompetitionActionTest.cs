@@ -23,9 +23,9 @@ namespace Betkeeper.Test.Actions
         public void SetUp()
         {
             _context = Tools.GetTestContext();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _competitionRepository = new CompetitionRepository();
             _action = new CompetitionAction();
-            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]
@@ -128,7 +128,7 @@ namespace Betkeeper.Test.Actions
         [Test]
         public void JoinCompetition_CompetitionNotFound_ThrowsNotFoundException()
         {
-            Assert.Throws<NotFoundException>(() =>
+            Assert.Throws<ActionException>(() =>
             {
                 _action.JoinCompetition("joincode", 1);
             });
@@ -163,7 +163,7 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
-        public void JoinCompetition_OnGoingOrFinished_ThrowsInvalidOperationException()
+        public void JoinCompetition_OnGoingOrFinished_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -185,9 +185,40 @@ namespace Betkeeper.Test.Actions
 
             competitions.ForEach(competition =>
             {
-                Assert.Throws<InvalidOperationException>(() =>
+                Assert.Throws<ActionException>(() =>
                     _action.JoinCompetition(competition.JoinCode, 1));
             });
+        }
+
+        [Test]
+        public void JoinCompetition_AlreadyInCompetition_ThrowsActionException()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    JoinCode = "joincode1",
+                    StartTime = DateTime.UtcNow.AddDays(-1)
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator{ Competition = 1, UserId = 1}
+            };
+
+            Tools.CreateTestData(competitions: competitions);
+
+            try
+            {
+                _action.JoinCompetition("joincode1", 1);
+                Assert.Fail();
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+            }
         }
 
         [Test]

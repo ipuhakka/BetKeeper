@@ -58,7 +58,6 @@ namespace Betkeeper.Models
 
         public void AddParticipator(int userId, int competitionId, CompetitionRole role)
         {
-            // TODO: Käyttäjän validointi kun taulu tuodaan entitymalliin
             var competition = CompetitionHandler.GetCompetition(competitionId: competitionId);
 
             if (competition == null)

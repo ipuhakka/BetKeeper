@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Actions;
+using Betkeeper.Data;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Pages;
@@ -155,9 +156,15 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
                     { "JoinCode", "joincode"}
                 });
 
-            Assert.AreEqual(
-                HttpStatusCode.NotFound,
-                _competitionsPage.HandleAction(action).StatusCode);
+            try
+            {
+                _competitionsPage.HandleAction(action);
+                Assert.Fail();
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+            }
         }
 
         [Test]
@@ -184,9 +191,15 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
                 { "JoinCode", "joincode"}
             });
 
-            Assert.AreEqual(
-                HttpStatusCode.Conflict,
-                _competitionsPage.HandleAction(action).StatusCode);
+            try
+            {
+                _competitionsPage.HandleAction(action);
+                Assert.Fail();
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+            }
         }
 
         [Test]

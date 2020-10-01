@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace Betkeeper.Page
 {
-    // TODO: Component-luokan alle staattiseksi metodiksi
     public class ComponentParser
     {
 
