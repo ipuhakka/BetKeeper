@@ -47,7 +47,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <returns></returns>
         private HttpResponseMessage AddBetContainer(PageAction action)
         {
-            var betTargetContainer = ComponentTools.GetComponentFromAction<Container>(action, "betTargets");
+            var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray

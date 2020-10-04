@@ -1,17 +1,61 @@
-﻿using Betkeeper.Page;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Betkeeper.Test.Page
+namespace Betkeeper.Test.Page.Components
 {
     [TestFixture]
-    public class ComponentParserTests
+    public class ComponentTests
     {
+        [Test]
+        public void DeleteComponent_DeletesComponenFromSingleLevelList()
+        {
+            var components = new List<Component>
+            {
+                new Field("key", "label", FieldType.DateTime),
+                new PageActionButton("action", new List<string>(), "text"),
+                new Container(new List<Component>(), "compKeyToDelete"),
+                new PageActionButton("action", new List<string>(), "text"),
+            };
+
+            Component.DeleteComponent(components, "compKeyToDelete");
+            Assert.AreEqual(3, components.Count);
+        }
+
+        [Test]
+        public void DeleteComponent_DeletesComponenFromMultiLevelList()
+        {
+            var components = new List<Component>
+            {
+                new Field("key", "label", FieldType.DateTime),
+                new PageActionButton("action", new List<string>(), "text"),
+                new Container(
+                    new List<Component>
+                    {
+                        new Container(
+                            new List<Component>
+                            {
+                                new Field("deleteThis", "label", FieldType.DateTime),
+                                // Not deleted because second match
+                                new Field("deleteThis", "label", FieldType.DateTime),
+                            })
+                    },
+                    "key"),
+                new PageActionButton("action", new List<string>(), "text"),
+            };
+
+            Component.DeleteComponent(components, "deleteThis");
+            // Nothing deleted on highest level
+            Assert.AreEqual(4, components.Count);
+
+            var targetContainer = ((components[2] as Container).Children[0] as Container);
+            Assert.AreEqual(1, targetContainer.Children.Count);
+        }
 
         [Test]
         public void ParseComponent_ParsesPageActionButtonCorrectly()
@@ -25,7 +69,7 @@ namespace Betkeeper.Test.Page
                 "navigateTo",
                 new List<string> { "include1", "include2" });
 
-            var result = ComponentParser
+            var result = Component
                 .ParseComponent(SerializeAsCamelCase(button)) as PageActionButton;
 
             Assert.AreEqual(button.Action, result.Action);
@@ -62,7 +106,7 @@ namespace Betkeeper.Test.Page
                 true,
                 "navigateTo");
 
-            var result = ComponentParser
+            var result = Component
                 .ParseComponent(SerializeAsCamelCase(button)) as ModalActionButton;
 
             Assert.AreEqual(button.Action, result.Action);
@@ -95,7 +139,7 @@ namespace Betkeeper.Test.Page
         {
             var button = new NavigationButton("navigateTo", "text", "style");
 
-            var result = ComponentParser
+            var result = Component
                 .ParseComponent(SerializeAsCamelCase(button)) as NavigationButton;
 
             Assert.AreEqual(button.Text, result.Text);
@@ -116,7 +160,7 @@ namespace Betkeeper.Test.Page
                 new Field("key5", "label5", false, FieldType.TextBox, "dataKey5")
             };
 
-            var results = ComponentParser
+            var results = Component
                 .ParseComponents(SerializeAsCamelCase(fields))
                 .Select(component => component as Field)
                 .ToList();
@@ -140,7 +184,7 @@ namespace Betkeeper.Test.Page
                     new Option("option2", "value2")
                 });
 
-            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(dropdown)) as Dropdown;
+            var result = Component.ParseComponent(SerializeAsCamelCase(dropdown)) as Dropdown;
 
             Assert.AreEqual(dropdown.ComponentKey, result.ComponentKey);
             Assert.AreEqual(dropdown.Label, result.Label);
@@ -157,7 +201,7 @@ namespace Betkeeper.Test.Page
             var now = DateTime.Now;
             var dateTimeInput = new DateTimeInput("key", "label", now);
 
-            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(dateTimeInput)) as DateTimeInput;
+            var result = Component.ParseComponent(SerializeAsCamelCase(dateTimeInput)) as DateTimeInput;
 
             Assert.AreEqual(dateTimeInput.ComponentKey, result.ComponentKey);
             Assert.AreEqual(dateTimeInput.Label, result.Label);
@@ -179,7 +223,7 @@ namespace Betkeeper.Test.Page
                 },
                 "navigation key");
 
-            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(tableToTest)) as Table;
+            var result = Component.ParseComponent(SerializeAsCamelCase(tableToTest)) as Table;
 
             Assert.AreEqual(tableToTest.DataKey, result.DataKey);
             Assert.AreEqual(tableToTest.NavigationKey, result.NavigationKey);
@@ -206,7 +250,7 @@ namespace Betkeeper.Test.Page
                     "buttonText")
             });
 
-            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(tab)) as Tab;
+            var result = Component.ParseComponent(SerializeAsCamelCase(tab)) as Tab;
 
             Assert.AreEqual(tab.ComponentKey, result.ComponentKey);
             Assert.AreEqual(tab.Title, result.Title);
@@ -248,7 +292,7 @@ namespace Betkeeper.Test.Page
                     new Field("key1", "label1", FieldType.Double)
                 });
 
-            var result = ComponentParser.ParseComponent(SerializeAsCamelCase(container)) as Container;
+            var result = Component.ParseComponent(SerializeAsCamelCase(container)) as Container;
 
             var originalChildAsField = container.Children[0] as Field;
             var childAsField = result.Children[0] as Field;
