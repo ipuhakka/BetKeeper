@@ -191,47 +191,6 @@ namespace Betkeeper.Pages.CompetitionPage
 
             if (data.ContainsKey("components"))
             {
-                if (componentKey == "test")
-                {
-                    var options = new List<Option>
-                        {
-                            new Option("0", "Marshmellows"),
-                            new Option("1", "Chocolate")
-                        };
-
-                    if (value == "1")
-                    {
-                        options.Add(new Option("2", "Whipped cream"));
-                        options.Add(new Option("3", "Fudge"));
-                    }
-
-                    var newContainer = new Container(
-                        children: new List<Component>
-                        {
-                            new Dropdown(
-                                "test",
-                                "Testlabel",
-                                new List<Option>
-                                {
-                                    new Option("0", "Rainbow"),
-                                    new Option("1", "Dark")
-                                },
-                                "test",
-                                componentsToUpdate: new List<string>{ "testUpdateContainer" }
-                            ),
-                            new Dropdown(
-                                "test2",
-                                "test 2 label",
-                                options
-                            )
-                        },
-                        componentKey: "testUpdateContainer");
-
-                    return Http.CreateResponse(
-                        HttpStatusCode.OK,
-                        new PageResponse(new List<Component> { newContainer }));
-                }
-
                 if (componentKey.Contains("bet-type-"))
                 {
                     var newTargetType = EnumHelper.FromString<TargetType>(value);

@@ -12,23 +12,17 @@ namespace Betkeeper.Page.Components
     public enum ComponentType
     {
         Button,
-
         /// <summary>
         /// Field not containing preliminary data
         /// </summary>
         Field,
-
         Table,
-
         Container,
-
         Tab,
-
         /// <summary>
         /// Label without attached field
         /// </summary>
         Label,
-
         /// <summary>
         /// Table which data is purely constructed server side
         /// </summary>
@@ -42,6 +36,8 @@ namespace Betkeeper.Page.Components
         public ComponentType ComponentType { get; }
 
         public string ComponentKey { get; set; }
+
+        public string CustomCssClass { get; set; }
 
         public Component(ComponentType componentType, string componentKey = null)
         {

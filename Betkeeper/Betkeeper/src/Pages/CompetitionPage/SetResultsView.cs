@@ -87,7 +87,25 @@ namespace Betkeeper.Pages.CompetitionPage
                     throw new NotImplementedException();
             }
 
-            return new Container(content, $"setResultsContainer-{target.TargetId}");
+            var customCssClass = "setResults ";
+
+            switch (target.Type)
+            {
+                case Enums.TargetType.OpenQuestion:
+                    customCssClass += "openQuestion";
+                    break;
+                case Enums.TargetType.Result:
+                    customCssClass += "result";
+                    break;
+                case Enums.TargetType.Selection:
+                    customCssClass += "selection";
+                    break;
+            }
+
+            return new Container(content, $"setResultsContainer-{target.TargetId}")
+            {
+                CustomCssClass = customCssClass
+            };
         }
 
         /// <summary>

@@ -284,16 +284,18 @@ namespace Betkeeper.Pages.CompetitionPage
                 "Delete",
                 componentsToInclude: new List<string> { "betTargets" },
                 style: "outline-danger",
-                requireConfirm: false,
+                requireConfirm: true,
                 displayType: DisplayType.Icon)
                 {
                     IconName = "far fa-trash-alt"
-            }
-            );
+            });
 
             return new Container(
                 components,
-                $"bet-target-{index}");
+                $"bet-target-{index}")
+            {
+                CustomCssClass = $"manageBets {targetType.ToString().ToCamelCase()}"
+            };
         }
     }
 }

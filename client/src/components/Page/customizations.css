@@ -1,0 +1,45 @@
+/* Page customizations */
+
+.bets.selection .dropdown.input-field-wrapper {
+    width: 100%;
+}
+
+.setResults {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5em;
+    background: #f8f9fa;
+}
+
+/* Set set results button to take as much height as field (without label)*/ 
+.setResults.openQuestion button{
+    align-self: flex-end;
+    margin: 0;
+    margin-right: 0.1em;
+}
+
+/* Set result field to take less space than bet */
+.setResults.result .input-field-wrapper:last-child {
+    flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .setResults.openQuestion button {
+        flex: 0.8;
+    }
+
+    .manageBets {
+        grid-template-columns: auto;
+        display: block !important;
+        background: #dee2e6;
+        margin-bottom: 0.3em;
+        border-radius: 4px;
+    }
+
+    .manageBets .page-image-button {
+          margin-bottom: 0.3em;  
+    }
+
+    .manageBets:nth-child(even){
+        background: white;
+    }
+}
