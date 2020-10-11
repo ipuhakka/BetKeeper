@@ -153,8 +153,8 @@ class Folders extends Component {
 			if (this.state.folders[i].selected)
 				folder = this.state.folders[i].name;
 		}
-		if (folder === null){
-			console.log("no folder selected");
+		if (folder === null)
+		{
 			return;
 		}
 		store.dispatch({type: 'DELETE_FOLDER', payload: {

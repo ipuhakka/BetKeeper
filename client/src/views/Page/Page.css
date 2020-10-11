@@ -2,10 +2,6 @@
     margin-bottom: 0.5em;
 }
 
-.tab-content {
-    height: 100vh;
-}
-
 .child-container-div {
     width: 100%;
     display: flex;

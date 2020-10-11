@@ -67,10 +67,12 @@ namespace Betkeeper.Pages.CompetitionPage
         private Container GetBetContainer(Target target)
         {
             var children = new List<Component>();
+            var cssClass = "bets ";
 
             switch (target.Type)
             {
                 case TargetType.Selection:
+                    cssClass += "selection";
                     children.Add(
                         new Dropdown(
                             $"bet-answer-{target.TargetId}", 
@@ -79,6 +81,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     break;
 
                 case TargetType.OpenQuestion:
+                    cssClass += "openQuestion";
                     children.Add(
                         new Field(
                             $"bet-answer-{target.TargetId}", 
@@ -87,6 +90,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     break;
 
                 case TargetType.Result:
+                    cssClass += "result";
                     children.Add(
                         new Field(
                             $"bet-answer-{target.TargetId}", 
@@ -95,7 +99,10 @@ namespace Betkeeper.Pages.CompetitionPage
                     break;
             }
 
-            return new Container(children, $"target-{target.TargetId}");
+            return new Container(children, $"target-{target.TargetId}")
+            {
+                CustomCssClass = cssClass
+            };
         }
 
         /// <summary>
@@ -123,7 +130,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             return Http.CreateResponse(
                 System.Net.HttpStatusCode.OK,
-                new PageActionResponse("Bets saved succesfully"));
+                new PageActionResponse("Bets saved succesfully") { Refresh = true });
         }
     }
 }

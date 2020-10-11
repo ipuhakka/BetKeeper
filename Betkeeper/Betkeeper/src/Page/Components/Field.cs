@@ -147,7 +147,7 @@ namespace Betkeeper.Page.Components
             : base(componentKey, label, FieldType.Dropdown)
         {
             Options = options
-                .Select(option => new Option(option.ToLower(), option))
+                .Select(option => new Option(option, option))
                 .ToList();
             ComponentsToUpdate = componentsToUpdate;
         }

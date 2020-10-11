@@ -74,7 +74,7 @@ namespace Betkeeper.Page.Components
                     return asJObject.ToObject<PageActionButton>();
 
                 case ButtonType.ModalAction:
-                    var children = ComponentParser.ParseComponents(asJObject["components"].ToString());
+                    var children = Component.ParseComponents(asJObject["components"].ToString());
                     var modalActionButton = asJObject.ToObject<ModalActionButton>();
                     modalActionButton.Components = children;
                     return modalActionButton;

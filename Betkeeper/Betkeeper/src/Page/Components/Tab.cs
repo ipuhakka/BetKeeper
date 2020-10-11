@@ -20,7 +20,7 @@ namespace Betkeeper.Page.Components
 
         public static Tab Parse(JObject asJObject)
         {
-            var tabContent = ComponentParser.ParseComponents(asJObject["tabContent"].ToString());
+            var tabContent = Component.ParseComponents(asJObject["tabContent"].ToString());
 
             var tab = asJObject.ToObject<Tab>();
 
