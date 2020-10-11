@@ -47,7 +47,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <returns></returns>
         private HttpResponseMessage AddBetContainer(PageAction action)
         {
-            var betTargetContainer = ComponentTools.GetComponentFromAction<Container>(action, "betTargets");
+            var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray
@@ -284,16 +284,18 @@ namespace Betkeeper.Pages.CompetitionPage
                 "Delete",
                 componentsToInclude: new List<string> { "betTargets" },
                 style: "outline-danger",
-                requireConfirm: false,
+                requireConfirm: true,
                 displayType: DisplayType.Icon)
                 {
                     IconName = "far fa-trash-alt"
-            }
-            );
+            });
 
             return new Container(
                 components,
-                $"bet-target-{index}");
+                $"bet-target-{index}")
+            {
+                CustomCssClass = $"manageBets {targetType.ToString().ToCamelCase()}"
+            };
         }
     }
 }

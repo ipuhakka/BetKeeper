@@ -1,0 +1,59 @@
+/* Navbar styles and overrides */
+.navbar.navbar-expand.navbar-light.bg-none {
+    width: 100%;
+}
+
+.navbar-nav.nav-tabs {
+    width: 100%;
+}
+
+.navbar {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  
+  .nav-tabs {
+    display: -webkit-box;
+  }
+  
+  .navbar-light .navbar-nav .nav-link{
+    color: #007bff;
+  }
+  
+  .menu-div {
+    display: -webkit-box;
+    overflow-x: hidden;
+  }
+  
+  .scroll-button {
+    display: flex;
+    align-items: center;
+    font-size: 1.3em;
+    background: white;
+    border: none;
+    height: 2em; 
+    width: 1.5em;
+    position: absolute;
+    padding-left: 10px;
+    z-index: 1;
+  }
+  
+  .scroll-button:hover {
+    background: #e2e5ea;
+  }
+  
+  .scroll-button:active {
+    background: #e2e5ea;
+  }
+  
+  .right {
+    right: 0;
+  }
+  
+  .left {
+    left: 0;
+  }
+  
+  .hidden {
+    display: none;
+  }

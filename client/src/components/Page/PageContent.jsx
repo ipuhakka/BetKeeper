@@ -1,25 +1,47 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
+import TabContainer from 'react-bootstrap/TabContainer';
 import Button from '../../components/Page/Button';
 import Field from '../../components/Page/Field';
 import Table from '../../components/Page/Table';
 import StaticTable from '../../components/Page/StaticTable';
+import Navbar from '../../components/Navbar/Navbar';
+import './customizations.css';
 
 class PageContent extends Component
 {
+    constructor(props)
+    {
+        super(props);
+
+        this.state = {
+            activeKey: null
+        }
+
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    handleSelect(key)
+    {
+        this.setState({ activeKey: key });
+    }
 
     renderTabs(tabs)
     {
-        return <Tabs defaultActiveKey={tabs[0].componentKey}>
-            {_.map(tabs, (tab, i) => {
-                return <Tab key={`tab-${i}`} eventKey={tab.componentKey} title={tab.title}>
-                    {this.renderComponents(tab.tabContent, 'tab-content')}
-                </Tab>  
-            })}
-        </Tabs>;
+        const { activeKey } = this.state;
+
+        const items = tabs.map(tab => {
+            return { key: tab.componentKey, text: tab.title };
+        })
+
+        const tab = _.find(tabs, tab => tab.componentKey === activeKey) || tabs[0];
+        return <div>
+            <Navbar 
+                items={items}
+                handleSelect={this.handleSelect}/>
+            <TabContainer>{this.renderComponents(tab.tabContent, 'tab-content')}</TabContainer>
+        </div>;
     }
 
     renderComponents(components, className, depth = 0, dataPath = null)
@@ -40,7 +62,9 @@ class PageContent extends Component
                     case 'Container':
                         return this.renderComponents(
                             component.children, 
-                            className !== 'container-div' ? 'container-div' : `child-container-div child-${i}`,
+                            !className.includes('container-div')
+                                ? `container-div ${component.customCssClass}` 
+                                : `child-container-div child-${i} ${component.customCssClass}`,
                             depth + 1,
                             /** Datapath */
                             _.compact([dataPath, component.componentKey]).join('.')
