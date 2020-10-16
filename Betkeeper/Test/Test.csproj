@@ -165,6 +165,7 @@
     <Compile Include="src\Betkeeper\Actions\CompetitionActionTest.cs" />
     <Compile Include="src\Betkeeper\Actions\TargetActionTests.cs" />
     <Compile Include="src\Betkeeper\Actions\TargetBetActionTests.cs" />
+    <Compile Include="src\Betkeeper\Actions\UserActionTests.cs" />
     <Compile Include="src\Betkeeper\Classes\EnumTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\QueryTests.cs" />

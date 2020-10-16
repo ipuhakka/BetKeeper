@@ -21,6 +21,7 @@ namespace Betkeeper.Test.Actions
         [SetUp]
         public void SetUp()
         {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
             _targetAction = new TargetAction();
         }

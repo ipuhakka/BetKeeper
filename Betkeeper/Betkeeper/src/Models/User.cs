@@ -72,5 +72,15 @@ namespace Betkeeper.Models
                 .Any(user => user.UserId == userId
                     && user.Password == password);           
         }
+
+        public void ChangePassword(int userId, string newPassword)
+        {
+            var userEntity =_context.User.Single(user => user.UserId == userId);
+
+            userEntity.Password = newPassword;
+
+            _context.Update(userEntity);
+            _context.SaveChanges();
+        }
     }
 }

@@ -80,6 +80,9 @@ namespace Betkeeper.Page
                     return pageId != null
                         ? new CompetitionPage().GetResponse(pageId.ToString(), userId)
                         : new CompetitionsPage().GetResponse(pageKey, userId);
+
+                case "usersettings":
+                    return new UserSettingsPage().GetResponse(pageKey, userId);
             }
         }
 
@@ -104,6 +107,9 @@ namespace Betkeeper.Page
                     }
 
                     return new CompetitionsPage().HandleAction(action);
+
+                case "usersettings":
+                    return new UserSettingsPage().HandleAction(action);
             }
         }
 
@@ -121,6 +127,9 @@ namespace Betkeeper.Page
                     }
 
                     return new CompetitionsPage();
+
+                case "usersettings":
+                    return new UserSettingsPage();
             }
         }
     }

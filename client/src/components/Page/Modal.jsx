@@ -91,6 +91,13 @@ class Modal extends Component
                 }}
                 confirmAction={() => 
                 {
+                  this.setState({
+                      confirm: {
+                        show: false,
+                        action: '',
+                        actionDataKeys: []
+                      }
+                    })
                   PageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
                 }}
                 variant={props.confirmVariant}/>
