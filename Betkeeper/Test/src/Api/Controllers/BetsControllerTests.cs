@@ -1,5 +1,7 @@
 ﻿using Api.Classes;
 using Api.Controllers;
+using Betkeeper;
+using Betkeeper.Data;
 using Betkeeper.Enums;
 using Betkeeper.Exceptions;
 using Betkeeper.Repositories;
@@ -15,6 +17,11 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class BetsControllerTests
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
+        }
 
         [Test]
         public void Get_InvalidAuthorizationToken_ReturnsUnauthorized()

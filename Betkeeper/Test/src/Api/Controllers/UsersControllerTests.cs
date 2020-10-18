@@ -1,8 +1,11 @@
 ﻿using Api.Controllers;
-using Betkeeper.Repositories;
+using Betkeeper;
+using Betkeeper.Data;
+using Betkeeper.Models;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using TestTools;
 
@@ -11,6 +14,22 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class UsersControllerTests
     {
+        BetkeeperDataContext _context;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
+            _context = Tools.GetTestContext();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.User.RemoveRange(_context.User);
+            _context.SaveChanges();
+        }
+
         [Test]
         public void Post_UsernameMissing_ReturnsBadRequest()
         {
@@ -48,11 +67,15 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_UsernameInUse_ReturnsConflict()
         {
-            var mock = new Mock<IUserRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    Username = "username"
+                }
+            };
 
-            mock.Setup(userRepo =>
-                userRepo.UsernameInUse(It.IsAny<string>()))
-                .Returns(true);
+            Tools.CreateTestData(users: users);
 
             var controller = new UsersController()
             {
@@ -64,8 +87,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", "password" }
-                    }),
-                _UserRepository = mock.Object
+                    })
             };
 
             var response = controller.Post();
@@ -76,18 +98,6 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_RequestOK_ReturnsCreated()
         {
-            var mock = new Mock<IUserRepository>();
-
-            mock.Setup(userRepo =>
-                userRepo.UsernameInUse(It.IsAny<string>()))
-                .Returns(false);
-
-            mock.Setup(userRepo =>
-                userRepo.AddUser(
-                    It.IsAny<string>(),
-                    It.IsAny<string>()))
-                .Returns(1);
-
             var controller = new UsersController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
@@ -98,16 +108,14 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", "password" }
-                    }),
-                _UserRepository = mock.Object
+                    })
             };
 
             var response = controller.Post();
 
             Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
 
-            mock.Verify(userRepo =>
-                userRepo.AddUser("username", "password"), Times.Once);
+            Assert.AreEqual(1, _context.User.Count(user => user.Username == "username"));
         }
     }
 }
