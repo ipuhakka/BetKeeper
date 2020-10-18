@@ -169,6 +169,7 @@
     <Compile Include="src\Betkeeper\Classes\EnumTests.cs" />
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\QueryTests.cs" />
+    <Compile Include="src\Betkeeper\Classes\SecurityTests.cs" />
     <Compile Include="src\Betkeeper\Classes\StringUtilsTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DataRowExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DateTimeExtensionTests.cs" />
