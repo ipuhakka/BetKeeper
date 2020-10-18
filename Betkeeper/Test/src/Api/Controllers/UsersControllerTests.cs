@@ -21,6 +21,7 @@ namespace Api.Test.Controllers
         {
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
+            Tools.InitTestSecretKey();
         }
 
         [TearDown]

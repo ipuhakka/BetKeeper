@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Classes;
+using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -68,17 +69,19 @@ namespace Betkeeper.Models
 
         public bool Authenticate(int userId, string password)
         {
+            var hashed = Security.Encrypt(password);
+
             return _context
                 .User
                 .Any(user => user.UserId == userId
-                    && user.Password == password);           
+                    && user.Password == hashed);           
         }
 
         public void ChangePassword(int userId, string newPassword)
         {
             var userEntity =_context.User.Single(user => user.UserId == userId);
 
-            userEntity.Password = newPassword;
+            userEntity.Password = Security.Encrypt(newPassword);
 
             _context.Update(userEntity);
             _context.SaveChanges();
@@ -102,7 +105,7 @@ namespace Betkeeper.Models
             _context.User.Add(new User
             {
                 Username = username,
-                Password = password
+                Password = Security.Encrypt(password)
             });
 
             _context.SaveChanges();

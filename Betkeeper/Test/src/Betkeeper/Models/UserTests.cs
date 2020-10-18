@@ -1,4 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Classes;
+using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
 using NUnit.Framework;
@@ -20,6 +21,7 @@ namespace Betkeeper.Test.Models
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
             _userRepository = new UserRepository();
+            Tools.InitTestSecretKey();
         }
 
         [OneTimeTearDown]
@@ -135,12 +137,12 @@ namespace Betkeeper.Test.Models
                 new User
                 {
                     UserId = 1,
-                    Password = "secret"
+                    Password = Security.Encrypt("secret")
                 },
                 new User
                 {
                     UserId = 2,
-                    Password = "secret2"
+                    Password = Security.Encrypt("secret2")
                 }
             };
 

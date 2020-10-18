@@ -24,6 +24,7 @@ namespace Api.Test.Controllers
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
             _controller = new TestController();
+            Tools.InitTestSecretKey();
         }
 
         [OneTimeTearDown]
@@ -49,7 +50,7 @@ namespace Api.Test.Controllers
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = "somepassword"
+                    Password = Security.Encrypt("somepassword")
                 }
             };
 
@@ -107,7 +108,7 @@ namespace Api.Test.Controllers
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = "somepassword"
+                    Password = Security.Encrypt("somepassword")
                 }
             };
 
@@ -139,7 +140,7 @@ namespace Api.Test.Controllers
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = "fakePassword"
+                    Password = Security.Encrypt("fakePassword")
                 }
             };
 

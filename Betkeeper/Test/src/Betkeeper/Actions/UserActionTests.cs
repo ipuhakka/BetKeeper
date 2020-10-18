@@ -6,6 +6,7 @@ using Betkeeper.Actions;
 using Betkeeper.Data;
 using NUnit.Framework;
 using TestTools;
+using Betkeeper.Classes;
 
 namespace Betkeeper.Test.Actions
 {
@@ -15,6 +16,12 @@ namespace Betkeeper.Test.Actions
         private UserAction userAction;
 
         private BetkeeperDataContext _context;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Tools.InitTestSecretKey();
+        }
 
         [SetUp]
         public void SetUp()
@@ -83,7 +90,7 @@ namespace Betkeeper.Test.Actions
             userAction.ChangePassword(1, "test2", "test2");
 
             var user = new UserRepository().GetUsersById(new List<int> { 1 }).Single();
-            Assert.AreEqual("test2", user.Password);
+            Assert.AreEqual("test2", Security.Decrypt(user.Password));
         }
     }
 }
