@@ -10,10 +10,10 @@ namespace Api
     {
         public static void Register(HttpConfiguration config)
         {
-            var secretsObject = JsonConvert.DeserializeObject(
-                File.ReadAllText(
-                    ConfigurationManager
-                    .AppSettings.Get("devSecretsPath"))) as dynamic;
+            var secretsObject = File.Exists(ConfigurationManager.AppSettings.Get("devSecretsPath"))
+                ? JsonConvert.DeserializeObject(File.ReadAllText(
+                    ConfigurationManager.AppSettings.Get("devSecretsPath"))) as dynamic
+                : null;
 
             // Set database connection
             Settings.ConnectionString = ConfigurationManager
