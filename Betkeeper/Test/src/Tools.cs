@@ -1,4 +1,5 @@
-﻿using Betkeeper.Actions;
+﻿using Betkeeper;
+using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Models;
 using Microsoft.EntityFrameworkCore;
@@ -97,6 +98,11 @@ namespace TestTools
         {
             return new DbContextOptionsBuilder()
                 .UseInMemoryDatabase("TestDatabase");
+        }
+
+        public static void InitTestSecretKey()
+        {
+            Settings.SecretKey = "iwqqernnjnvhlyquwqulwueuyvxvycuz";
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Classes;
+using Betkeeper.Data;
+using Betkeeper.Exceptions;
 using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -16,14 +18,16 @@ namespace Betkeeper.Test.Models
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
             _userRepository = new UserRepository();
+            Tools.InitTestSecretKey();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            _context.Dispose();;
+            _context.Dispose();
         }
 
         [TearDown]
@@ -133,18 +137,90 @@ namespace Betkeeper.Test.Models
                 new User
                 {
                     UserId = 1,
-                    Password = "secret"
+                    Password = Security.Encrypt("secret")
                 },
                 new User
                 {
                     UserId = 2,
-                    Password = "secret2"
+                    Password = Security.Encrypt("secret2")
                 }
             };
 
             Tools.CreateTestData(users: users);
 
             Assert.IsTrue(_userRepository.Authenticate(2, "secret2"));
+        }
+
+        [Test]
+        public void UsernameInUse_InUse_ReturnsTrue()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "test"
+                }
+            };
+
+            Tools.CreateTestData(users: users);
+
+            Assert.IsTrue(_userRepository.UsernameInUse("test"));
+        }
+
+        [Test]
+        public void UsernameInUse_NotInUse_ReturnsFalse()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "test"
+                }
+            };
+
+            Tools.CreateTestData(users: users);
+
+            Assert.IsFalse(_userRepository.UsernameInUse("test2"));
+        }
+
+        [Test]
+        public void AddUser_UsernameInUse_ThrowsException()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "test"
+                }
+            };
+
+            Tools.CreateTestData(users: users);
+
+            Assert.Throws<UsernameInUseException>(() =>
+                _userRepository.AddUser("test", "secret"));
+        }
+
+        [Test]
+        public void AddUser_AddedSuccessfully()
+        {
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1,
+                    Username = "test"
+                }
+            };
+
+            Tools.CreateTestData(users: users);
+
+            _userRepository.AddUser("test2", "secret");
+
+            Assert.AreEqual(2, _context.User.Count());
+            Assert.AreEqual(1, _context.User.Count(user => user.Username == "test2"));
         }
     }
 }

@@ -4,14 +4,12 @@ namespace Betkeeper
 {
     public static class Settings
     {
-        public static string DatabasePath { get; set; }
-
-        public static bool? UseForeignKeys { get; set; }
-
         /// <summary>
         /// SQL connection string
         /// </summary>
         public static string ConnectionString { get; set; }
+
+        public static string SecretKey { get; set; }
 
         public static DbContextOptionsBuilder OptionsBuilder { get; private set; }
 
@@ -20,7 +18,7 @@ namespace Betkeeper
             if (optionsBuilder == null)
             {
                 // TODO: Korjaa ja poista kun kaikki entitymallissa
-                var connectionString = Settings.ConnectionString.Replace("Data Source", "Server");
+                var connectionString = ConnectionString.Replace("Data Source", "Server");
 
                 OptionsBuilder = new DbContextOptionsBuilder()
                 .UseSqlServer(connectionString);

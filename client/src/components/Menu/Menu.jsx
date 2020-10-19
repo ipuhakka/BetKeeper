@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const menuItems = [
-	{key: 0, text: 'Home'},
-	{key: 1, text: 'Bets'},
-	{key: 2, text: 'Statistics'},
-	{key: 3, text: 'Folders'},
-	{key: 4, text: 'Competitions'},
-	{key: 5, text: 'Logout'}
+	{key: 0, text: 'Home', route: '/home'},
+	{key: 1, text: 'Bets', route: '/bets'},
+	{key: 2, text: 'Statistics', route: '/statistics'},
+	{key: 3, text: 'Folders', route: '/folders'},
+	{key: 4, text: 'Competitions', route: 'page/competitions'},
+	{key: 6, text: 'User settings', route: 'page/usersettings'},
+	{key: 5, text: 'Logout', route: '/'}
 ]
 
 /** Application menu */
@@ -46,32 +47,15 @@ class Menu extends Component
 			disabled: key
 		});
 
-		history.push('/');
-		
-		switch(parseInt(key))
+		const item = menuItems.find(item => item.key === parseInt(key));
+
+		if (item.key === 5)
 		{
-			case 0:
-				history.push('/home');
-				break;
-			case 1:
-				history.push('/bets');
-				break;
-			case 2:
-				history.push('/statistics');
-				break;
-			case 3:
-				history.push('/folders');
-				break;
-			case 4:
-				history.push('page/competitions');
-				break;
-			case 5:
-				store.dispatch({type: 'LOGOUT'});
-				history.push('/');
-				break;
-			default:
-				break;
+			store.dispatch({type: 'LOGOUT'});
 		}
+
+		history.push('/');
+		history.push(item.route);
 	}
 }
 

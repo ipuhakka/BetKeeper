@@ -11,24 +11,23 @@ namespace Betkeeper.Repositories
 {
     public class BetRepository : IBetRepository
     {
-        IUserRepository _UserRepository { get; }
+        UserRepository UserRepository { get; set; }
         IFolderRepository _FolderRepository { get; }
 
         public IDatabase _Database;
 
         public BetRepository()
         {
-            _UserRepository = new UserRepository();
+            UserRepository = new UserRepository();
             _Database = new SQLDatabase();
             _FolderRepository = new FolderRepository();
         }
 
         public BetRepository(
-            IUserRepository userRepository = null,
             IDatabase database = null,
             IFolderRepository folderRepository = null)
         {
-            _UserRepository = userRepository ?? new UserRepository();
+            UserRepository = new UserRepository();
             _Database = database ?? new SQLDatabase();
             _FolderRepository = folderRepository ?? new FolderRepository();
         }
@@ -51,7 +50,7 @@ namespace Betkeeper.Repositories
                     "DateTime cannot be null when creating a new bet");
             }
 
-            if (!_UserRepository.UserIdExists(userId))
+            if (UserRepository.GetUsersById(new List<int> { userId }).Count == 0)
             {
                 throw new NotFoundException("UserId not found");
             }

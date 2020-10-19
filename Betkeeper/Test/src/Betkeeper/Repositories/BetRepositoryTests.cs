@@ -7,11 +7,18 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using TestTools;
 
 namespace Betkeeper.Test.Repositories
 {
     public class BetRepositoryTests
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
+        }
+
         [Test]
         public void GetBet_NoBetsFound_ReturnsNull()
         {
@@ -373,14 +380,7 @@ namespace Betkeeper.Test.Repositories
         [Test]
         public void CreateBet_UserDoesNotExist_ThrowsNotFoundException()
         {
-            var mock = new Mock<IUserRepository>();
-
-            mock.Setup(userRepo =>
-                userRepo.UserIdExists(
-                    1))
-                .Returns(false);
-
-            var betRepository = new BetRepository(mock.Object);
+            var betRepository = new BetRepository();
 
             Assert.Throws<NotFoundException>(() =>
              betRepository.CreateBet(
@@ -395,13 +395,17 @@ namespace Betkeeper.Test.Repositories
         [Test]
         public void CreateBet_OnSuccess_BetAddedReturnsLastInsertedId()
         {
-            var userRepoMock = new Mock<IUserRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 3
+                }
+            };
 
-            userRepoMock.Setup(userRepo =>
-                userRepo.UserIdExists(
-                    3))
-                .Returns(true);
+            Tools.CreateTestData(users: users);
 
+            // User exists
             var databaseMock = new Mock<IDatabase>();
 
             databaseMock.Setup(database =>
@@ -410,9 +414,7 @@ namespace Betkeeper.Test.Repositories
                 It.IsAny<bool>()))
                 .Returns(1);
 
-            var betRepository = new BetRepository(
-                userRepoMock.Object,
-                databaseMock.Object);
+            var betRepository = new BetRepository(databaseMock.Object);
 
             betRepository.CreateBet(
                 Enums.BetResult.Unresolved,
@@ -438,6 +440,10 @@ namespace Betkeeper.Test.Repositories
                 },
                 true),
                 Times.Once);
+
+            var context = Tools.GetTestContext();
+            context.User.RemoveRange(context.User);
+            context.SaveChanges();
         }
 
         [Test]

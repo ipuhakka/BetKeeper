@@ -30,7 +30,10 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; }
 
-        public Field(string componentKey, string label, FieldType fieldType)
+        public Field(
+            string componentKey, 
+            string label, 
+            FieldType fieldType)
             : base(ComponentType.Field, componentKey)
         {
             Label = label;
@@ -91,6 +94,17 @@ namespace Betkeeper.Page.Components
                 default:
                     return asJObject.ToObject<Field>();
             }
+        }
+    }
+
+    public class HiddenInput : Field
+    {
+        public bool HideText = true;
+
+        public HiddenInput(string componentKey, string label)
+            : base(componentKey, label, FieldType.TextBox)
+        {
+
         }
     }
 
