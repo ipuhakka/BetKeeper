@@ -1,5 +1,5 @@
 ﻿using Betkeeper.Classes;
-using Betkeeper.Repositories;
+using Betkeeper.Models;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Net;
 using System.Net.Http;
@@ -11,8 +11,12 @@ namespace Api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class UsersController : ApiController
     {
-        public IUserRepository _UserRepository;
+        private UserRepository UserRepository { get; set; }
 
+        public UsersController()
+        {
+            UserRepository = new UserRepository();
+        }
 
         /// <summary>
         ///  Creates a new user.
@@ -21,9 +25,7 @@ namespace Api.Controllers
         // POST: api/users
         public HttpResponseMessage Post()
         {
-            _UserRepository = _UserRepository ?? new UserRepository();
-
-            string username = null;
+            string username;
 
             try
             {
@@ -42,12 +44,12 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            if (_UserRepository.UsernameInUse(username))
+            if (UserRepository.UsernameInUse(username))
             {
                 return Http.CreateResponse(HttpStatusCode.Conflict);
             }
 
-            _UserRepository.AddUser(username, password);
+            UserRepository.AddUser(username, password);
 
             return Http.CreateResponse(HttpStatusCode.Created);
         }

@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace Api
 {
@@ -9,17 +10,30 @@ namespace Api
     {
         public static void Register(HttpConfiguration config)
         {
+            var secretsObject = JsonConvert.DeserializeObject(
+                File.ReadAllText(
+                    ConfigurationManager
+                    .AppSettings.Get("devSecretsPath"))) as dynamic;
+
             // Set database connection
             Settings.ConnectionString = ConfigurationManager
                 .ConnectionStrings["sql"]?.ConnectionString
-                ?? File.ReadAllText(
-                    ConfigurationManager
-                    .AppSettings.Get("devSecretsPath"));
+                ?? secretsObject["ConnectionString"]?.ToString();
+
+            Settings.SecretKey = ConfigurationManager
+                .AppSettings.Get("secretKey")
+                ?? secretsObject["SecretKey"]?.ToString();
 
             if (string.IsNullOrEmpty(Settings.ConnectionString))
             {
                 throw new Betkeeper.Exceptions.ConfigurationException(
                     "Connection string was not given");
+            }
+
+            if (string.IsNullOrEmpty(Settings.SecretKey))
+            {
+                throw new Betkeeper.Exceptions.ConfigurationException(
+                    "Secret key was not given");
             }
 
             Settings.InitializeOptionsBuilderService();

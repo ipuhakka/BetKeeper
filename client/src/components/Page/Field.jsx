@@ -136,16 +136,26 @@ class Field extends Component
     {
         const  { props, state } = this;
 
-        const type = _.includes(['Integer', 'Double'], props.type)
-            ? 'number'
-            : 'text'
+        const getType = () => 
+        {
+            if (_.includes(['Integer', 'Double'], props.type))
+            {
+                return 'number';
+            }
+            else if (props.hideText)
+            {
+                return 'password';
+            }
+
+            return 'text';
+        }
             
         const as = props.type === 'TextArea'
             ? 'textarea'
             : 'input';
 
         return <Form.Control 
-            type={type}
+            type={getType()}
             disabled={props.readOnly}
             as={as}
             isInvalid={!state.isValid}
@@ -222,7 +232,9 @@ Field.propTypes = {
     readOnly: PropTypes.bool,
     onHandleDropdownServerUpdate: PropTypes.func,
     /** Parent container component keys joined with '.' Defines data path where components value is stored. */
-    dataPath: PropTypes.string
+    dataPath: PropTypes.string,
+    /** Should the input be treated as a password input */
+    hideText: PropTypes.bool
 };
 
 export default Field;
