@@ -18,8 +18,6 @@ namespace Api.Controllers
         {
             _FolderRepository = _FolderRepository ?? new FolderRepository();
 
-            var tokenString = Request.Headers.Authorization?.ToString();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -35,7 +33,7 @@ namespace Api.Controllers
         }
 
         // POST: api/Folders
-        public HttpResponseMessage Post([FromBody] string folder)
+        public HttpResponseMessage Post([FromBody]string folder)
         {
             _FolderRepository = _FolderRepository ?? new FolderRepository();
 

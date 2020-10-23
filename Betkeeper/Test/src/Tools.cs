@@ -49,14 +49,19 @@ namespace TestTools
         /// <param name="users"></param>
         /// <param name="targets"></param>
         /// <param name="targetBets"></param>
+        /// <param name="folders"></param>
+        /// <param name="betInBetFolders"></param>
         public static void CreateTestData(
            List<Participator> participators = null,
            List<Competition> competitions = null,
            List<User> users = null,
            List<Target> targets = null,
-           List<TargetBet> targetBets = null)
+           List<TargetBet> targetBets = null,
+           List<Folder> folders = null,
+           List<BetInBetFolder> betInBetFolders = null)
         {
             var context = GetTestContext();
+
             if (participators != null)
             {
                 context.Participator.AddRange(participators);
@@ -80,6 +85,16 @@ namespace TestTools
             if (targetBets != null)
             {
                 context.TargetBet.AddRange(targetBets);
+            }
+
+            if (folders != null)
+            {
+                context.Folder.AddRange(folders);
+            }
+
+            if (betInBetFolders != null)
+            {
+                context.BetInBetFolder.AddRange(betInBetFolders);
             }
 
             context.SaveChanges();
