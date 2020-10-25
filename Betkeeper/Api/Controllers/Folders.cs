@@ -1,6 +1,6 @@
 ﻿using Api.Classes;
 using Betkeeper.Classes;
-using Betkeeper.Repositories;
+using Betkeeper.Actions;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,12 +11,17 @@ namespace Api.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class FoldersController : ApiController
     {
-        public IFolderRepository _FolderRepository;
+        public FolderAction FolderAction;
+
+        public FoldersController()
+        {
+            FolderAction = new FolderAction();
+        }
 
         // GET: api/Folders
         public HttpResponseMessage Get([FromUri] int? betId = null)
         {
-            _FolderRepository = _FolderRepository ?? new FolderRepository();
+            FolderAction = new FolderAction();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
@@ -25,7 +30,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var folders = _FolderRepository.GetUsersFolders(
+            var folders = FolderAction.GetUsersFolders(
                 userId: (int)userId,
                 betId: betId);
 
@@ -35,8 +40,6 @@ namespace Api.Controllers
         // POST: api/Folders
         public HttpResponseMessage Post([FromBody]string folder)
         {
-            _FolderRepository = _FolderRepository ?? new FolderRepository();
-
             if (folder == null || folder.Length > 50)
             {
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
@@ -49,12 +52,12 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            if (_FolderRepository.UserHasFolder((int)userId, folder))
+            if (FolderAction.UserHasFolder((int)userId, folder))
             {
                 return Http.CreateResponse(HttpStatusCode.Conflict);
             }
 
-            _FolderRepository.AddNewFolder((int)userId, folder);
+            FolderAction.AddFolder((int)userId, folder);
 
             return Http.CreateResponse(HttpStatusCode.Created);
         }
@@ -63,8 +66,6 @@ namespace Api.Controllers
         [Route("api/folders/{folder}")]
         public HttpResponseMessage Delete([FromUri]string folder)
         {
-            _FolderRepository = _FolderRepository ?? new FolderRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -72,12 +73,15 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            if (!_FolderRepository.UserHasFolder((int)userId, folder))
+            try
             {
-                return Http.CreateResponse(HttpStatusCode.NotFound);
+                FolderAction.DeleteFolder((int)userId, folder);
             }
-
-            _FolderRepository.DeleteFolder((int)userId, folder);
+            catch (ActionException actionException)
+            {
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType);
+            }
 
             return Http.CreateResponse(HttpStatusCode.NoContent);
         }

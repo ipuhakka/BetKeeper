@@ -1,6 +1,7 @@
 ﻿using Betkeeper.Classes;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
+using Betkeeper.Actions;
 using Betkeeper.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ namespace Betkeeper.Repositories
     public class BetRepository : IBetRepository
     {
         UserRepository UserRepository { get; set; }
-        IFolderRepository _FolderRepository { get; }
+        
+        FolderAction FolderAction { get; set; }
 
         public IDatabase _Database;
 
@@ -20,16 +22,15 @@ namespace Betkeeper.Repositories
         {
             UserRepository = new UserRepository();
             _Database = new SQLDatabase();
-            _FolderRepository = new FolderRepository();
+            FolderAction = new FolderAction();
         }
 
         public BetRepository(
-            IDatabase database = null,
-            IFolderRepository folderRepository = null)
+            IDatabase database = null)
         {
             UserRepository = new UserRepository();
             _Database = database ?? new SQLDatabase();
-            _FolderRepository = folderRepository ?? new FolderRepository();
+            FolderAction = new FolderAction();
         }
 
         /// <summary>
@@ -91,8 +92,8 @@ namespace Betkeeper.Repositories
 
             foreach (var folder in folders)
             {
-                if (!_FolderRepository.UserHasFolder(userId, folder)
-                    || _FolderRepository.FolderHasBet(userId, folder, betId))
+                if (!FolderAction.UserHasFolder(userId, folder)
+                    || FolderAction.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }
@@ -156,8 +157,8 @@ namespace Betkeeper.Repositories
 
             foreach (var folder in folders)
             {
-                if (!_FolderRepository.UserHasFolder(userId, folder)
-                    || !_FolderRepository.FolderHasBet(userId, folder, betId))
+                if (!FolderAction.UserHasFolder(userId, folder)
+                    || !FolderAction.FolderHasBet(userId, folder, betId))
                 {
                     continue;
                 }

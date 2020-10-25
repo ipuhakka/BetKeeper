@@ -31,7 +31,7 @@ namespace Betkeeper.Actions
             if (UserHasFolder(userId, folder))
             {
                 throw new ActionException(
-                    ActionExceptionType.InvalidInput,
+                    ActionExceptionType.Conflict,
                     $"User already has folder named {folder}");
             }
 
@@ -43,7 +43,7 @@ namespace Betkeeper.Actions
             if (!UserHasFolder(userId, folder))
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict,
+                    ActionExceptionType.NotFound,
                     $"Folder {folder} does not exist, could not delete");
             }
 
