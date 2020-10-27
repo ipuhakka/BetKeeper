@@ -1,6 +1,7 @@
 ﻿using Betkeeper.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Betkeeper.Actions
@@ -71,6 +72,41 @@ namespace Betkeeper.Actions
         public bool FolderHasBet(int userId, string folder, int betId)
         {
             return FolderRepository.FolderHasBet(userId, folder, betId);
+        }
+
+        /// <summary>
+        /// Deletes a bet from specified folders
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="betId"></param>
+        /// <param name="folders"></param>
+        public void DeleteBetFromFolders(int userId, int betId, List<string> folders)
+        {
+            FolderRepository.DeleteBetFromFolders(userId, betId, folders);
+        }
+
+        /// <summary>
+        /// Add bet to folders
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="betId"></param>
+        /// <param name="folders"></param>
+        public void AddBetToFolders(int userId, int betId, List<string> folders)
+        {
+            var betFolders = FolderRepository.GetFoldersByBet(userId, betId);
+            var usersFolders = FolderRepository.GetFolders(userId);
+
+            // If bet is already in some of the folders or user does not have all folders -> don't add
+            if (folders.Any(folderName =>
+                betFolders.Any(betFolder => betFolder.FolderName == folderName)
+                || !usersFolders.Any(usersFolder => usersFolder.FolderName == folderName)))
+            {
+                throw new ActionException(
+                    ActionExceptionType.Conflict,
+                    "Cannot add bet to all specified folders");
+            }
+
+            FolderRepository.AddBetToFolders(userId, betId, folders);
         }
     }
 }

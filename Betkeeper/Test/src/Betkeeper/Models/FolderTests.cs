@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Betkeeper.Models;
 using Betkeeper.Data;
 using TestTools;
+using System.Linq;
 
 namespace Betkeeper.Test.Models
 {
@@ -221,6 +222,53 @@ namespace Betkeeper.Test.Models
             Assert.IsFalse(
                 new FolderRepository()
                     .FolderHasBet(1, "test", 2));
+        }
+
+        [Test]
+        public void DeleteBetFromFolders_RemovesBetFromUsersFolders()
+        {
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
+                {
+                    BetId = 1,
+                    FolderName = "test",
+                    Owner = 1
+                },
+                new BetInBetFolder
+                {
+                    BetId = 1,
+                    FolderName = "test2",
+                    Owner = 1
+                },
+                new BetInBetFolder
+                {
+                    BetId = 1,
+                    FolderName = "test3",
+                    Owner = 1
+                },
+                new BetInBetFolder
+                {
+                    BetId = 2,
+                    FolderName = "test",
+                    Owner = 1
+                }
+            };
+
+            Tools.CreateTestData(betInBetFolders: betInBetFolders);
+
+            new FolderRepository().DeleteBetFromFolders(
+                1,
+                1,
+                new List<string>
+                {
+                    "test",
+                    "test2"
+                });
+
+            var results = _context.BetInBetFolder.ToList();
+
+            Assert.AreEqual(2, results.Count);
         }
     }
 }

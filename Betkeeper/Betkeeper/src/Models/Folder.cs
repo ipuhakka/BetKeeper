@@ -1,8 +1,5 @@
-﻿using Betkeeper.Classes;
-using Betkeeper.Data;
-using Betkeeper.Exceptions;
+﻿using Betkeeper.Data;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -83,7 +80,7 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
-        /// Return folders in which
+        /// Return folders in which bet exists
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="betId"></param>
@@ -131,6 +128,58 @@ namespace Betkeeper.Models
                 folder.FolderName == folderName 
                 && folder.BetId == betId
                 && folder.Owner == userId);
+        }
+
+        /// <summary>
+        /// Returns bet ids for bets which are in specific folder
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
+        public List<int> GetBetIdsFromFolder(int userId, string folderName)
+        {
+            return _context.BetInBetFolder
+                .Where(folder => folder.Owner == userId
+                    && folder.FolderName == folderName)
+                .Select(folder => folder.BetId)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Deletes a bet from specified folders
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="betId"></param>
+        /// <param name="folderNames"></param>
+        public void DeleteBetFromFolders(int userId, int betId, List<string> folderNames)
+        {
+            _context.BetInBetFolder.RemoveRange(
+                _context.BetInBetFolder.Where(folder =>
+                    folder.Owner == userId &&
+                    folder.BetId == betId &&
+                    folderNames.Contains(folder.FolderName)));
+
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Adds a bet to folders
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="betId"></param>
+        /// <param name="folderNames"></param>
+        public void AddBetToFolders(int userId, int betId, List<string> folderNames)
+        {
+            _context.BetInBetFolder.AddRange(
+                folderNames.Select(folderName =>
+                    new BetInBetFolder
+                    {
+                        BetId = betId,
+                        Owner = userId,
+                        FolderName = folderName
+                    }));
+
+            _context.SaveChanges();
         }
     }
 }

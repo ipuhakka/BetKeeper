@@ -162,6 +162,7 @@
     <Compile Include="src\Api\Controllers\PageControllerTests.cs" />
     <Compile Include="src\Api\Controllers\TokenControllerTests.cs" />
     <Compile Include="src\Api\Controllers\UsersControllerTests.cs" />
+	   <Compile Include="src\Betkeeper\Actions\BetActionTests.cs" />
     <Compile Include="src\Betkeeper\Actions\CompetitionActionTest.cs" />
     <Compile Include="src\Betkeeper\Actions\FolderActionTests.cs" />
     <Compile Include="src\Betkeeper\Actions\TargetActionTests.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="src\Betkeeper\Extensions\JArrayExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JObjectExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JTokenExtensionTests.cs" />
+    <Compile Include="src\Betkeeper\Models\BetTests.cs" />
     <Compile Include="src\Betkeeper\Models\CompetitionTests.cs" />
     <Compile Include="src\Betkeeper\Models\FolderTests.cs" />
     <Compile Include="src\Betkeeper\Models\ParticipatorTests.cs" />

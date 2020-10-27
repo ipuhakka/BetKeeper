@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using DeprecatedBetRepository = Betkeeper.Repositories.BetRepository;
 
 namespace Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace Api.Controllers
             [FromUri]bool? finished = null,
             [FromUri]string folder = null)
         {
-            _BetRepository = _BetRepository ?? new BetRepository();
+            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
@@ -49,7 +50,7 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Post()
         {
-            _BetRepository = _BetRepository ?? new BetRepository();
+            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
@@ -97,7 +98,7 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Put(int id)
         {
-            _BetRepository = _BetRepository ?? new BetRepository();
+            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
@@ -147,7 +148,7 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Put([FromUri]List<int> betIds)
         {
-            _BetRepository = _BetRepository ?? new BetRepository();
+            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
@@ -203,7 +204,7 @@ namespace Api.Controllers
             int id, [FromUri]
             List<string> folders = null)
         {
-            _BetRepository = _BetRepository ?? new BetRepository();
+            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
 

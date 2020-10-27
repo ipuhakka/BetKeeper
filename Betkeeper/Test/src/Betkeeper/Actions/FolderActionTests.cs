@@ -27,6 +27,7 @@ namespace Betkeeper.Test.Actions
         public void TearDown()
         {
             _context.Folder.RemoveRange(_context.Folder);
+            _context.BetInBetFolder.RemoveRange(_context.BetInBetFolder);
 
             _context.SaveChanges();
         }
@@ -176,6 +177,123 @@ namespace Betkeeper.Test.Actions
             new FolderAction().DeleteFolder(1, "test");
 
             Assert.AreEqual(1, _context.Folder.Count());
+        }
+
+        [Test]
+        public void AddBetToFolders_BetAlreadyInSomeFolder_ThrowsActionException()
+        {
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
+                {
+                    BetId = 1,
+                    FolderName = "test",
+                    Owner = 1
+                }
+            };
+
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "test",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    Owner = 1,
+                    FolderName = "test2"
+                }
+            };
+
+            Tools.CreateTestData(
+                folders: folders,
+                betInBetFolders: betInBetFolders);
+
+            try
+            {
+                new FolderAction().AddBetToFolders(
+                    1, 
+                    1, 
+                    new List<string>
+                    {
+                        "test",
+                        "test2"
+                    });
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+            }
+        }
+
+        [Test]
+        public void AddBetToFolders_UserDoesNotHaveSomeFolder_ThrowsActionException()
+        {
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "test",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    FolderName = "test2",
+                    Owner = 2
+                }
+            };
+
+            Tools.CreateTestData(folders: folders);
+
+            try
+            {
+                new FolderAction().AddBetToFolders(
+                    1,
+                    1,
+                    new List<string>
+                    {
+                        "test",
+                        "test2"
+                    });
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+            }
+        }
+
+        [Test]
+        public void AddBetToFolders_AddsBetToFolders()
+        {
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "test",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    FolderName = "test2",
+                    Owner = 1
+                }
+            };
+
+            Tools.CreateTestData(folders: folders);
+
+            new FolderAction().AddBetToFolders(
+                    1,
+                    1,
+                    new List<string>
+                    {
+                        "test",
+                        "test2"
+                    });
+
+            var betInBetFolders = _context.BetInBetFolder.ToList();
+
+            Assert.AreEqual(2, betInBetFolders.Count);
         }
     }
 }

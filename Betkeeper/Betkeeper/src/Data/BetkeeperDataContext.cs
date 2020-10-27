@@ -22,6 +22,8 @@ namespace Betkeeper.Data
 
         public DbSet<BetInBetFolder> BetInBetFolder { get; set; }
 
+        public DbSet<Bet> Bet { get; set; }
+
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)
         {
@@ -71,6 +73,13 @@ namespace Betkeeper.Data
             modelBuilder
                 .Entity<BetInBetFolder>()
                 .HasKey(folderBet => new { folderBet.FolderName, folderBet.BetId });
+
+            modelBuilder
+                .Entity<Bet>()
+                .Property(bet => bet.BetResult)
+                .HasConversion(
+                    betResult => (int)betResult,
+                    betResult => (BetResult)betResult);
         }
     }
 }
