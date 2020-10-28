@@ -82,6 +82,16 @@ namespace Betkeeper.Actions
         /// <param name="folders"></param>
         public void DeleteBetFromFolders(int userId, int betId, List<string> folders)
         {
+            var betsFolders = FolderRepository.GetFoldersByBet(userId, betId);
+
+            if (folders.Any(folder => 
+                !betsFolders.Any(betsFolder => betsFolder.FolderName == folder)))
+            {
+                throw new ActionException(
+                    ActionExceptionType.NotFound,
+                    $"Bet not in one of the folders");
+            }
+
             FolderRepository.DeleteBetFromFolders(userId, betId, folders);
         }
 

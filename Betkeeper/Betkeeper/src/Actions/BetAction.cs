@@ -21,17 +21,17 @@ namespace Betkeeper.Actions
         /// Get bets by user, result, and folder
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="betResult"></param>
+        /// <param name="betFinished"></param>
         /// <param name="folder"></param>
         /// <returns></returns>
         public List<Bet> GetBets(
             int userId,
-            BetResult? betResult = null,
+            bool? betFinished = null,
             string folder = null)
         {
             return BetRepository.GetBets(
                 userId,
-                betResult,
+                betFinished,
                 folder);
         }
 
@@ -55,7 +55,7 @@ namespace Betkeeper.Actions
         /// <param name="stake"></param>
         /// <param name="playedDate"></param>
         /// <param name="userId"></param>
-        public void CreateBet(
+        public int CreateBet(
             BetResult betResult,
             string name,
             double odd,
@@ -70,7 +70,7 @@ namespace Betkeeper.Actions
                     "User not found");
             }
 
-            BetRepository.CreateBet(
+            return BetRepository.CreateBet(
                 new Bet
                 {
                     Owner = userId,

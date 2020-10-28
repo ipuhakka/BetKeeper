@@ -1,36 +1,41 @@
 ﻿using Api.Classes;
 using Betkeeper.Classes;
 using Betkeeper.Exceptions;
-using Betkeeper.Models;
-using Betkeeper.Repositories;
+using Betkeeper.Actions;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using DeprecatedBetRepository = Betkeeper.Repositories.BetRepository;
+using Betkeeper.Models;
 
 namespace Api.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class BetsController : ApiController
     {
-        public IBetRepository _BetRepository { get; set; }
+        private BetAction BetAction { get; }
+
+        private FolderAction FolderAction { get; }
+
+        public BetsController()
+        {
+            BetAction = new BetAction();
+            FolderAction = new FolderAction();
+        }
 
         // GET: api/Bets
         /// <summary>
         /// Gets bets.
         /// </summary>
         /// <param name="folder"></param>
-        /// <param name="finished"></param>
+        /// <param name="finished">Should only finished, not finished, or all bets be returned</param>
         /// <returns></returns>
         public HttpResponseMessage Get(
             [FromUri]bool? finished = null,
             [FromUri]string folder = null)
         {
-            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -38,7 +43,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.Unauthorized);
             }
 
-            var bets = _BetRepository.GetBets(userId, finished, folder);
+            var bets = BetAction.GetBets(userId.Value, finished, folder);
 
             return Http.CreateResponse(HttpStatusCode.OK, bets);
         }
@@ -50,8 +55,6 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Post()
         {
-            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -74,7 +77,7 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var betId = _BetRepository.CreateBet(
+            var betId = BetAction.CreateBet(
                 bet.BetResult,
                 bet.Name,
                 (double)bet.Odd,
@@ -84,7 +87,7 @@ namespace Api.Controllers
 
             if (bet.Folders != null && bet.Folders.Count > 0)
             {
-                _BetRepository.AddBetToFolders(betId, (int)userId, bet.Folders);
+                FolderAction.AddBetToFolders((int)userId, betId, bet.Folders);
             }
 
             return Http.CreateResponse(HttpStatusCode.Created);
@@ -98,8 +101,6 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Put(int id)
         {
-            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -122,19 +123,28 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            _BetRepository.ModifyBet(
-                id,
-                (int)userId,
-                bet.BetResult,
-                bet.Stake,
-                bet.Odd,
-                bet.Name);
+            try
+            {
+                BetAction.ModifyBet(
+                    id,
+                    (int)userId,
+                    bet.BetResult,
+                    bet.Stake,
+                    bet.Odd,
+                    bet.Name);
+            }
+            catch (ActionException actionException)
+            {
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    actionException.ErrorMessage);
+            }
 
             if (bet.Folders != null && bet.Folders.Count > 0)
             {
-                _BetRepository.AddBetToFolders(
-                    id,
+                FolderAction.AddBetToFolders(
                     (int)userId,
+                    id,
                     bet.Folders);
             }
 
@@ -148,8 +158,6 @@ namespace Api.Controllers
         /// <returns></returns>
         public HttpResponseMessage Put([FromUri]List<int> betIds)
         {
-            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -172,25 +180,29 @@ namespace Api.Controllers
                 return Http.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            var modifiedCount = _BetRepository.ModifyBets(
-                betIds,
-                bet.Owner,
-                bet.BetResult,
-                bet.Stake,
-                bet.Odd,
-                bet.Name);
+            try
+            {
+                betIds.ForEach(betId =>
+                {
+                    BetAction.ModifyBet(
+                        betId,
+                        bet.Owner,
+                        bet.BetResult,
+                        bet.Stake,
+                        bet.Odd,
+                        bet.Name);
+                });
+            }
+            catch (ActionException actionException)
+            {
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    actionException.ErrorMessage);
+            }
 
             // TODO: Kansioihin lisäys?
 
-            return modifiedCount == 0
-                ? Http.CreateResponse(
-                    HttpStatusCode.Unauthorized,
-                    "No bets could be modified")
-                : Http.CreateResponse(
-                    HttpStatusCode.OK,
-                    modifiedCount == 1
-                        ? "Bet updated successfully"
-                        : $"Updated: {modifiedCount} bets");
+            return Http.CreateResponse(HttpStatusCode.OK, "Bets updated successfully");
         }
 
         // DELETE: api/Bets/5
@@ -204,8 +216,6 @@ namespace Api.Controllers
             int id, [FromUri]
             List<string> folders = null)
         {
-            _BetRepository = _BetRepository ?? new DeprecatedBetRepository();
-
             var userId = TokenLog.GetUserIdFromRequest(Request);
 
             if (userId == null)
@@ -230,11 +240,13 @@ namespace Api.Controllers
         {
             try
             {
-                _BetRepository.DeleteBet(betId: betId, userId: userId);
+                BetAction.DeleteBet(betId: betId, userId: userId);
             }
-            catch (NotFoundException)
+            catch (ActionException actionException)
             {
-                return Http.CreateResponse(HttpStatusCode.NotFound);
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    actionException.ErrorMessage);
             }
 
             return Http.CreateResponse(HttpStatusCode.NoContent);
@@ -245,14 +257,18 @@ namespace Api.Controllers
             int userId,
             List<string> folders)
         {
-            var deletedFromFolders = _BetRepository.DeleteBetFromFolders(
+            try
+            {
+                FolderAction.DeleteBetFromFolders(
                     betId: betId,
                     userId: userId,
                     folders: folders);
-
-            if (deletedFromFolders.Count == 0)
+            }
+            catch (ActionException actionException)
             {
-                return Http.CreateResponse(HttpStatusCode.NotFound);
+                return Http.CreateResponse(
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    actionException.ErrorMessage);
             }
 
             return Http.CreateResponse(HttpStatusCode.OK);

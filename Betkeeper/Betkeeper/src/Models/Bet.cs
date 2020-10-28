@@ -13,7 +13,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Betkeeper.Models
 {
-    [Table("bet_folders")]
+    [Table("bets")]
     public class Bet
     {
         [Column("bet_won")]
@@ -46,7 +46,7 @@ namespace Betkeeper.Models
         }
 
         public Bet(
-            Enums.BetResult betResult,
+            BetResult betResult,
             string name,
             double odd,
             double stake,
@@ -161,6 +161,18 @@ namespace Betkeeper.Models
                 throw new ParsingException("Parsing dynamic bet content failed");
             }
         }
+
+        public static BetResult GetBetResult(bool? betResult)
+        {
+            if (betResult == null)
+            {
+                return BetResult.Unresolved;
+            }
+
+            return betResult.Value
+                ? BetResult.Won
+                : BetResult.Lost;
+        }
     }
 
     public class BetRepository
@@ -174,14 +186,19 @@ namespace Betkeeper.Models
 
         public List<Bet> GetBets(
             int userId,
-            BetResult? betResult = null,
+            bool? betFinished = null,
             string folder = null)
         {
             var query = _context.Bet.Where(bet => bet.Owner == userId);
 
-            if (betResult != null)
+            if (betFinished == true)
             {
-                query = query.Where(bet => bet.BetResult == betResult);
+                query = query.Where(bet => bet.BetResult == BetResult.Lost
+                    || bet.BetResult == BetResult.Won);
+            }
+            else if (betFinished == false)
+            {
+                query = query.Where(bet => bet.BetResult == BetResult.Unresolved);
             }
 
             if (folder != null)
@@ -200,10 +217,11 @@ namespace Betkeeper.Models
                 && bet.Owner == userId);
         }
 
-        public void CreateBet(Bet bet)
+        public int CreateBet(Bet bet)
         {
             _context.Bet.Add(bet);
             _context.SaveChanges();
+            return bet.BetId;
         }
 
         public void ModifyBet(Bet bet)

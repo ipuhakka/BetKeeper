@@ -180,6 +180,36 @@ namespace Betkeeper.Test.Actions
         }
 
         [Test]
+        public void DeleteBetFromFolders_UserMissingSomeFolder_ThrowsActionException()
+        {
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
+                {
+                    FolderName = "test",
+                    BetId = 1,
+                    Owner = 1
+                }
+            };
+
+            Tools.CreateTestData(betInBetFolders: betInBetFolders);
+
+            try
+            {
+                new FolderAction().DeleteBetFromFolders(
+                    1,
+                    1,
+                    new List<string> { "test", "test2" });
+
+                Assert.Fail();
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+            }
+        }
+
+        [Test]
         public void AddBetToFolders_BetAlreadyInSomeFolder_ThrowsActionException()
         {
             var betInBetFolders = new List<BetInBetFolder>

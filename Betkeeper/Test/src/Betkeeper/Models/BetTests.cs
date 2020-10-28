@@ -118,7 +118,7 @@ namespace Betkeeper.Test.Models
 
             var results = new BetRepository().GetBets(
                 1,
-                Enums.BetResult.Unresolved,
+                false,
                 "testFolder");
 
             Assert.AreEqual(1, results.Count);

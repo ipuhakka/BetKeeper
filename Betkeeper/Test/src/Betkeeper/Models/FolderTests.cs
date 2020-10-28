@@ -55,8 +55,12 @@ namespace Betkeeper.Test.Models
             var usersFolders = new FolderRepository().GetFolders(1);
 
             Assert.AreEqual(2, usersFolders.Count);
-            Assert.AreEqual("test1", usersFolders[0].FolderName);
-            Assert.AreEqual("test3", usersFolders[1].FolderName);
+            Assert.AreEqual(
+                1,
+                usersFolders.Count(folder => folder.FolderName == "test1"));
+            Assert.AreEqual(
+                1,
+                usersFolders.Count(folder => folder.FolderName == "test3"));
         }
 
         [Test]
