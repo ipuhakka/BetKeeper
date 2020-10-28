@@ -301,10 +301,14 @@ export function* removeBet(action){
   try {
     yield put(setLoading(true));
     let res = yield call(deleteBet, action.payload.betId, action.payload.folders);
+
     yield put(fetchFoldersOfBetSuccess([]));
-    if (res === undefined){
+
+    if (res === undefined)
+    {
       yield put(setAlertStatus(204, "Bet deleted successfully"));
     }
+
     yield call(fetchAllBets);
     let usedFolder = yield select(getUsedFolder);
     if (usedFolder !== ""){
@@ -312,13 +316,16 @@ export function* removeBet(action){
     }
     yield call(fetchUnresolvedBets);
 
-    if (action.callback !== undefined){
+    if (action.callback !== undefined)
+    {
       action.callback();
     }
 
   }
-  catch(error){
-    switch(error){
+  catch(error)
+  {
+    switch(error)
+    {
       case 401:
         yield put(setAlertStatus(error, "Session expired, please login again"));
         break;
