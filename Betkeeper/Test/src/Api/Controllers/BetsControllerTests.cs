@@ -1,14 +1,15 @@
 ﻿using Api.Classes;
 using Api.Controllers;
 using Betkeeper;
+using Betkeeper.Classes;
 using Betkeeper.Data;
 using Betkeeper.Enums;
-using Betkeeper.Exceptions;
-using Betkeeper.Repositories;
-using Moq;
+using Betkeeper.Models;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using TestTools;
 
@@ -17,10 +18,24 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class BetsControllerTests
     {
+        BetkeeperDataContext _context { get; set; }
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
+            _context = Tools.GetTestContext();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.User.RemoveRange(_context.User);
+            _context.Bet.RemoveRange(_context.Bet);
+            _context.BetInBetFolder.RemoveRange(_context.BetInBetFolder);
+            _context.Folder.RemoveRange(_context.Folder);
+
+            _context.SaveChanges();
         }
 
         [Test]
@@ -45,13 +60,41 @@ namespace Api.Test.Controllers
         [Test]
         public void Get_CallsGetBetsWithCorrectParameters()
         {
-            var mock = new Mock<IBetRepository>();
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
+                {
+                    FolderName = "test",
+                    BetId = 2,
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.GetBets(
-                    It.IsAny<int>(),
-                    It.IsAny<bool?>(),
-                    It.IsAny<string>()));
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    Owner = 1,
+                    BetId = 1,
+                    BetResult = BetResult.Unresolved
+                },
+                new Bet
+                {
+                    BetResult = BetResult.Lost,
+                    Owner = 1,
+                    BetId = 2
+                },
+                new Bet
+                {
+                    BetResult = BetResult.Won,
+                    Owner = 1,
+                    BetId = 3
+                }
+            };
+
+            Tools.CreateTestData(
+                bets: bets,
+                betInBetFolders: betInBetFolders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -61,24 +104,15 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
-            var testCases = new[]
-            {
-                new { Finished = (bool?)true, Folder = (string)null },
-                new { Finished = (bool?)null, Folder = "testFolder"},
-                new { Finished = (bool?)false, Folder = "testFolder"},
-            };
+            var response = controller.Get(finished: true, folder: "test");
 
-            foreach (var testCase in testCases)
-            {
-                controller.Get(testCase.Finished, testCase.Folder);
+            var results = JsonConvert.DeserializeObject<List<Bet>>(Http.GetHttpContent(response).ToString());
 
-                mock.Verify(betRepository =>
-                    betRepository.GetBets(1, testCase.Finished, testCase.Folder));
-            }
+            Assert.AreEqual(1, results.Count);
+            Assert.AreEqual(BetResult.Lost, results[0].BetResult);
         }
 
         [Test]
@@ -101,24 +135,17 @@ namespace Api.Test.Controllers
         }
 
         [Test]
-        public void Post_CreateBetCalledWithCorrectParameters()
+        public void Post_CreateBet_BetCreated()
         {
-            var mock = new Mock<IBetRepository>();
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.CreateBet(
-                    It.IsAny<BetResult>(),
-                    It.IsAny<string>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<DateTime>(),
-                    It.IsAny<int>()));
-
-            mock.Setup(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()));
+            Tools.CreateTestData(users: users);
 
             var token = TokenLog.CreateToken(1);
 
@@ -135,54 +162,58 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             controller.Post();
 
-            mock.Verify(betRepository =>
-                betRepository.CreateBet(
-                    BetResult.Won,
-                    "testBet",
-                    2.1,
-                    2.2,
-                    It.IsNotNull<DateTime>(),
-                    1));
+            var bets = _context.Bet.ToList();
 
-            mock.Verify(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()), Times.Never);
+            Assert.AreEqual(1, bets.Count);
+
+            Assert.AreEqual(BetResult.Won, bets[0].BetResult);
+            Assert.AreEqual(2.1, bets[0].Odd);
+            Assert.AreEqual(2.2, bets[0].Stake);
         }
 
         [Test]
-        public void Post_AddBetToFolders_CalledWithCorrectParameters()
+        public void Post_AddBetToFolders_BetAddedToFolders()
         {
-            var mock = new Mock<IBetRepository>();
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "test",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    FolderName = "test",
+                    Owner = 2
+                },
+                new Folder
+                {
+                    FolderName = "test2",
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.CreateBet(
-                    It.IsAny<BetResult>(),
-                    It.IsAny<string>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<DateTime>(),
-                    It.IsAny<int>())).Returns(1);
+            var users = new List<User>
+            {
+                new User
+                {
+                    UserId = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()));
+            Tools.CreateTestData(folders: folders, users: users);
 
             var token = TokenLog.CreateToken(1);
 
             var testFolders = new List<string>
             {
-                "folder1",
-                "folder2"
+                "test",
+                "test2"
             };
 
             var controller = new BetsController()
@@ -199,17 +230,13 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             controller.Post();
 
-            mock.Verify(betRepository =>
-                betRepository.AddBetToFolders(
-                    1,
-                    1,
-                    testFolders));
+            Assert.AreEqual(2, _context.BetInBetFolder.Count());
+            Assert.AreEqual(1, _context.Bet.Count());
         }
 
         [Test]
@@ -259,14 +286,6 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_NoFoldersThrowsNotFoundException_ReturnsNotFound()
         {
-            var mock = new Mock<IBetRepository>();
-
-            mock.Setup(betRepository =>
-                betRepository.DeleteBet(
-                    It.IsAny<int>(),
-                    It.IsAny<int>()
-                    )).Throws(new NotFoundException("testError"));
-
             var token = TokenLog.CreateToken(1);
 
             var controller = new BetsController()
@@ -275,8 +294,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete(1);
@@ -289,17 +307,8 @@ namespace Api.Test.Controllers
         /// not found is returned.
         /// </summary>
         [Test]
-        public void Delete_DeleteFromFoldersReturnsEmptyList_ReturnsNotFound()
+        public void Delete_DeleteFromFoldersNothingDeleted_ReturnsNotFound()
         {
-            var mock = new Mock<IBetRepository>();
-
-            mock.Setup(betRepository =>
-                betRepository.DeleteBetFromFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()
-                    )).Returns(new List<string>());
-
             var token = TokenLog.CreateToken(1);
 
             var controller = new BetsController()
@@ -308,8 +317,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete(1, new List<string>
@@ -323,14 +331,17 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_DeleteFromFoldersReturnsList_ReturnsOK()
         {
-            var mock = new Mock<IBetRepository>();
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
+                {
+                    FolderName = "testFolderToDelete",
+                    Owner = 1,
+                    BetId = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.DeleteBetFromFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()
-                    )).Returns(new List<string> { "testFolderToDelete" });
+            Tools.CreateTestData(betInBetFolders: betInBetFolders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -340,8 +351,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete(1, new List<string>
@@ -355,13 +365,16 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_DeleteDoesNotThrowException_ReturnsNoContent()
         {
-            var mock = new Mock<IBetRepository>();
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    BetId = 1,
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.DeleteBet(
-                    It.IsAny<int>(),
-                    It.IsAny<int>()
-                    ));
+            Tools.CreateTestData(bets: bets);
 
             var token = TokenLog.CreateToken(1);
 
@@ -371,13 +384,14 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete(1);
 
             Assert.AreEqual(HttpStatusCode.NoContent, response.StatusCode);
+
+            Assert.AreEqual(0, _context.Bet.Count());
         }
 
         [Test]
@@ -426,28 +440,20 @@ namespace Api.Test.Controllers
         }
 
         [Test]
-        public void PutBet_ModifyBetCalledWithCorrectParameters()
+        public void PutBet_ModifyBet_ModifiesBet()
         {
-            var mock = new Mock<IBetRepository>();
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    BetId = 1,
+                    Owner = 1,
+                    BetResult = BetResult.Unresolved,
+                    Name = "test"
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()))
-                .Returns(new List<string>());
-
-            mock.Setup(betRepository =>
-                betRepository.ModifyBet(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<BetResult>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<string>()
-                    ))
-                .Returns(1);
-
+            Tools.CreateTestData(bets: bets);
 
             TokenLog.CreateToken(1);
             var token = TokenLog.CreateToken(1);
@@ -465,55 +471,39 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Put(1);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            mock.Verify(betRepository =>
-                betRepository.ModifyBet(
-                    1,
-                    1,
-                    BetResult.Won,
-                    2.2,
-                    2.0,
-                    "testName"),
-                    Times.Once);
+            var results = _context.Bet.ToList();
 
-            mock.Verify(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()),
-                    Times.Never);
+            Assert.AreEqual(1, results.Count);
 
+            Assert.AreEqual("testName", results[0].Name);
+            Assert.AreEqual(BetResult.Won, results[0].BetResult);
         }
 
         [Test]
         public void PutBet_NullParametersIgnored()
         {
-            var mock = new Mock<IBetRepository>();
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    BetId = 1,
+                    Owner = 1,
+                    Stake = 5,
+                    Odd = 2.1,
+                    Name = "test",
+                    PlayedDate = new System.DateTime(2000, 1, 1),
+                    BetResult = BetResult.Unresolved
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()))
-                .Returns(new List<string>());
-
-            mock.Setup(betRepository =>
-                betRepository.ModifyBet(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<BetResult>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<string>()
-                    ))
-                .Returns(1);
+            Tools.CreateTestData(bets: bets);
 
             TokenLog.CreateToken(1);
             var token = TokenLog.CreateToken(1);
@@ -528,56 +518,49 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Put(1);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            mock.Verify(betRepository =>
-                betRepository.ModifyBet(
-                    1,
-                    1,
-                    BetResult.Unresolved,
-                    2.2,
-                    null,
-                    null),
-                    Times.Once);
+            var bet = _context.Bet.Single(betEntity => betEntity.BetId == 1);
 
-            mock.Verify(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()),
-                    Times.Never);
-
+            Assert.AreEqual("test", bet.Name);
+            Assert.AreEqual(new DateTime(2000, 1, 1), bet.PlayedDate);
+            Assert.AreEqual(2.1, bet.Odd);
+            Assert.AreEqual(BetResult.Unresolved, bet.BetResult);
+            Assert.AreEqual(2.2, bet.Stake);
         }
 
         [Test]
         public void PutBet_ModifyBetCalledWithFolders_AddToFoldersCalled()
         {
-            var mock = new Mock<IBetRepository>();
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "folder1",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    FolderName = "folder2",
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.AddBetToFolders(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<List<string>>()))
-                .Returns(new List<string>());
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    BetId = 1,
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.ModifyBet(
-                    It.IsAny<int>(),
-                    It.IsAny<int>(),
-                    It.IsAny<BetResult>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<string>()
-                    ))
-                .Returns(1);
-
+            Tools.CreateTestData(folders: folders, bets: bets);
 
             TokenLog.CreateToken(1);
             var token = TokenLog.CreateToken(1);
@@ -600,24 +583,16 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _BetRepository = mock.Object
+                    })
             };
 
             var response = controller.Put(1);
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            mock.Verify(betRepository =>
-                betRepository.AddBetToFolders(
-                    1,
-                    1,
-                    new List<string>
-                    {
-                        "folder1",
-                        "folder2"
-                    }),
-                    Times.Once);
+            var betInBetFolders = _context.BetInBetFolder.ToList();
+
+            Assert.AreEqual(2, betInBetFolders.Count);
         }
 
         [Test]
@@ -667,28 +642,8 @@ namespace Api.Test.Controllers
         /// When no bets belong to user, modifybets returns 0 as nothing was modified.
         /// </summary>
         [Test]
-        public void PutBets_NoBetsBelongToUser_ReturnsUnauthorized()
+        public void PutBets_NoBetsBelongToUser_ReturnsNotFound()
         {
-            var mock = new Mock<IBetRepository>();
-
-            mock.Setup(betRepository =>
-                betRepository.GetBets(
-                    It.IsAny<int>(),
-                    It.IsAny<bool?>(),
-                    It.IsAny<string>()))
-                .Returns(new List<Betkeeper.Models.Bet>());
-
-            mock.Setup(betRepository =>
-                betRepository.ModifyBets(
-                    It.IsAny<List<int>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<BetResult>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<string>()
-                    ))
-                .Returns(0);
-
             var token = TokenLog.CreateToken(1);
 
             var data = new
@@ -700,7 +655,6 @@ namespace Api.Test.Controllers
 
             var controller = new BetsController
             {
-                _BetRepository = mock.Object,
                 ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
@@ -711,31 +665,37 @@ namespace Api.Test.Controllers
 
             var response = controller.Put(new List<int> { 1, 2 });
 
-            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Test]
-        public void PutBets_ValidRequest_ReturnsOK()
+        public void PutBets_ValidRequest_UpdatesAllProperties()
         {
-            var mock = new Mock<IBetRepository>();
+            var bets = new List<Bet>
+            {
+                new Bet
+                {
+                    BetId = 1,
+                    Owner = 1,
+                    Stake = 5,
+                    Odd = 2.1,
+                    Name = "test",
+                    PlayedDate = new DateTime(2000, 1, 1),
+                    BetResult = BetResult.Unresolved
+                },
+                new Bet
+                {
+                    BetId = 2,
+                    Owner = 1,
+                    Stake = 5,
+                    Odd = 2.1,
+                    Name = "test",
+                    PlayedDate = new DateTime(2000, 1, 1),
+                    BetResult = BetResult.Unresolved
+                },
+            };
 
-            mock.Setup(betRepository =>
-                betRepository.GetBets(
-                    It.IsAny<int>(),
-                    It.IsAny<bool?>(),
-                    It.IsAny<string>()))
-                .Returns(new List<Betkeeper.Models.Bet>());
-
-            mock.Setup(betRepository =>
-                betRepository.ModifyBets(
-                    It.IsAny<List<int>>(),
-                    It.IsAny<int>(),
-                    It.IsAny<BetResult>(),
-                    It.IsAny<double>(),
-                    It.IsAny<double>(),
-                    It.IsAny<string>()
-                    ))
-                .Returns(1);
+            Tools.CreateTestData(bets: bets);
 
             var token = TokenLog.CreateToken(1);
 
@@ -743,12 +703,12 @@ namespace Api.Test.Controllers
             {
                 betResult = 1,
                 odd = 2,
-                stake = 2.1
+                stake = 2.1,
+                name = "test2"
             };
 
             var controller = new BetsController
             {
-                _BetRepository = mock.Object,
                 ControllerContext = Tools.MockHttpControllerContext(
                     headers: new Dictionary<string, string>
                     {
@@ -760,6 +720,18 @@ namespace Api.Test.Controllers
             var response = controller.Put(new List<int> { 1, 2 });
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+            var results = _context.Bet.ToList();
+
+            Assert.AreEqual(2, results.Count);
+
+            results.ForEach(updatedBet =>
+            {
+                Assert.AreEqual(2, updatedBet.Odd);
+                Assert.AreEqual(2.1, updatedBet.Stake);
+                Assert.AreEqual("test2", updatedBet.Name);
+                Assert.AreEqual(BetResult.Won, updatedBet.BetResult);
+            });
         }
     }
 }

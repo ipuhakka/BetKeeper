@@ -17,11 +17,8 @@ namespace Betkeeper
         {
             if (optionsBuilder == null)
             {
-                // TODO: Korjaa ja poista kun kaikki entitymallissa
-                var connectionString = ConnectionString.Replace("Data Source", "Server");
-
                 OptionsBuilder = new DbContextOptionsBuilder()
-                .UseSqlServer(connectionString);
+                .UseSqlServer(ConnectionString);
             }
             else
             {

@@ -64,7 +64,7 @@ class Bets extends Component
               selectedItemAsTitle
               stateKey=''
               id='bets_folder_dropdown'
-              onUpdate={(key, stateKey) => 
+              onUpdate={(key) => 
               {
                 props.onShowFromFolder(key - 1);
               }}

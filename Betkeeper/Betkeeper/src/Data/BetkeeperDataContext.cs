@@ -18,6 +18,12 @@ namespace Betkeeper.Data
 
         public DbSet<TargetBet> TargetBet { get; set; }
 
+        public DbSet<Folder> Folder { get; set; }
+
+        public DbSet<BetInBetFolder> BetInBetFolder { get; set; }
+
+        public DbSet<Bet> Bet { get; set; }
+
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)
         {
@@ -59,6 +65,21 @@ namespace Betkeeper.Data
                 .HasConversion(
                     role => (int)role,
                     role => (CompetitionRole)role);
+
+            modelBuilder
+                .Entity<Folder>()
+                .HasKey(folder => new { folder.FolderName, folder.Owner });
+
+            modelBuilder
+                .Entity<BetInBetFolder>()
+                .HasKey(folderBet => new { folderBet.FolderName, folderBet.BetId });
+
+            modelBuilder
+                .Entity<Bet>()
+                .Property(bet => bet.BetResult)
+                .HasConversion(
+                    betResult => (int)betResult,
+                    betResult => (BetResult)betResult);
         }
     }
 }

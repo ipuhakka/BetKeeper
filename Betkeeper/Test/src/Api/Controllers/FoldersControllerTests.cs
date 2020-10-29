@@ -1,8 +1,9 @@
 ﻿using Api.Classes;
 using Api.Controllers;
+using Betkeeper;
 using Betkeeper.Classes;
-using Betkeeper.Repositories;
-using Moq;
+using Betkeeper.Data;
+using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
@@ -14,19 +15,41 @@ namespace Api.Test.Controllers
     [TestFixture]
     public class FoldersControllerTests
     {
+        BetkeeperDataContext _context { get; set; }
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _context = Tools.GetTestContext();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Folder.RemoveRange(_context.Folder);
+            _context.BetInBetFolder.RemoveRange(_context.BetInBetFolder);
+            _context.SaveChanges();
+        }
 
         [Test]
         public void Get_ValidTokenBetIdNull_ReturnsUsersFolders()
         {
-            var mock = new Mock<IFolderRepository>();
-
-            mock.Setup(folderRepository =>
-                folderRepository.GetUsersFolders(It.IsAny<int>(), null)).Returns(
-                new List<string>
+            var folders = new List<Folder>
+            {
+                new Folder
                 {
-                    "folder1",
-                    "folder2"
-                });
+                    FolderName = "folder1",
+                    Owner = 1
+                },
+                new Folder
+                {
+                    FolderName = "folder2",
+                    Owner = 1
+                }
+            };
+
+            Tools.CreateTestData(folders: folders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -36,38 +59,38 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Get();
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            var folders = Http.GetHttpContent(response);
+            var returnedFolders = Http.GetHttpContent(response);
 
-            Assert.AreEqual(2, folders.Count);
+            Assert.AreEqual(2, returnedFolders.Count);
         }
 
         [Test]
         public void Get_ValidTokenBetId1_ReturnsUsersFolders()
         {
-            var mock = new Mock<IFolderRepository>();
-
-            mock.Setup(folderRepository =>
-                folderRepository.GetUsersFolders(It.IsAny<int>(), null)).Returns(
-                new List<string>
+            var betInBetFolders = new List<BetInBetFolder>
+            {
+                new BetInBetFolder
                 {
-                    "folder1",
-                    "folder2"
-                });
-
-            mock.Setup(folderRepository =>
-                folderRepository.GetUsersFolders(It.IsAny<int>(), 1)).Returns(
-                new List<string>
+                    FolderName = "test",
+                    Owner = 1,
+                    BetId = 1
+                },
+                new BetInBetFolder
                 {
-                    "folder1"
-                });
+                    FolderName = "test2",
+                    Owner = 1,
+                    BetId = 2
+                }
+            };
+
+            Tools.CreateTestData(betInBetFolders: betInBetFolders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -77,8 +100,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Get(1);
@@ -156,11 +178,16 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_UserHasFolder_ReturnsConflict()
         {
-            var mock = new Mock<IFolderRepository>();
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "folderToAdd",
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(folderRepository =>
-                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(true);
+            Tools.CreateTestData(folders: folders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -170,8 +197,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Post("folderToAdd");
@@ -182,16 +208,6 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_UserDoesNotHaveFolder_ReturnsCreated()
         {
-            var mock = new Mock<IFolderRepository>();
-
-            mock.Setup(folderRepository =>
-                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(false);
-
-            mock.Setup(folderRepository =>
-                folderRepository.AddNewFolder(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(1);
-
             var token = TokenLog.CreateToken(1);
 
             var controller = new FoldersController()
@@ -200,8 +216,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Post("folderToAdd");
@@ -229,12 +244,6 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_UserDoesNotHaveFolder_ReturnsNotFound()
         {
-            var mock = new Mock<IFolderRepository>();
-
-            mock.Setup(folderRepository =>
-                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(false);
-
             var token = TokenLog.CreateToken(1);
 
             var controller = new FoldersController()
@@ -243,8 +252,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete("folderToDelete");
@@ -255,11 +263,16 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_UserHasFolder_ReturnsNoContent()
         {
-            var mock = new Mock<IFolderRepository>();
+            var folders = new List<Folder>
+            {
+                new Folder
+                {
+                    FolderName = "folderToDelete",
+                    Owner = 1
+                }
+            };
 
-            mock.Setup(folderRepository =>
-                folderRepository.UserHasFolder(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(true);
+            Tools.CreateTestData(folders: folders);
 
             var token = TokenLog.CreateToken(1);
 
@@ -269,8 +282,7 @@ namespace Api.Test.Controllers
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
-                    }),
-                _FolderRepository = mock.Object
+                    })
             };
 
             var response = controller.Delete("folderToDelete");
