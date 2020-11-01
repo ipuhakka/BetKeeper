@@ -1,8 +1,11 @@
 ﻿using Betkeeper;
+using Betkeeper.Classes;
 using System.Configuration;
 using System.IO;
 using System.Web.Http;
 using Newtonsoft.Json;
+using System;
+using System.Web.Http.ExceptionHandling;
 
 namespace Api
 {
@@ -10,6 +13,8 @@ namespace Api
     {
         public static void Register(HttpConfiguration config)
         {
+            config.Services.Add(typeof(IExceptionLogger), new ErrorLogger());
+
             var secretsObject = File.Exists(ConfigurationManager.AppSettings.Get("devSecretsPath"))
                 ? JsonConvert.DeserializeObject(File.ReadAllText(
                     ConfigurationManager.AppSettings.Get("devSecretsPath"))) as dynamic
