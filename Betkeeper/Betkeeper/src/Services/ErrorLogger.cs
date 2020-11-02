@@ -38,6 +38,11 @@ namespace Betkeeper.Services
         /// <param name="errorLog"></param>
         public static void LogClientError(ErrorLog errorLog)
         {
+            if (!bool.Parse(ConfigurationManager.AppSettings.Get("logErrors")))
+            {
+                return;
+            }
+
             new ErrorLogRepository().AddError(errorLog);
         }
     }
