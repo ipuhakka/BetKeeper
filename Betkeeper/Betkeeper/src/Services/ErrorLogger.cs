@@ -1,14 +1,16 @@
 ﻿using Betkeeper.Models;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
 using System.Web.Http.ExceptionHandling;
 
-namespace Betkeeper.Classes
+namespace Betkeeper.Services
 {
     public class ErrorLogger : ExceptionLogger
     {
+        /// <summary>
+        /// Log a backend exception
+        /// </summary>
+        /// <param name="context"></param>
         public override void Log(ExceptionLoggerContext context)
         {
             base.Log(context);
@@ -30,9 +32,13 @@ namespace Betkeeper.Classes
             new ErrorLogRepository().AddError(error);
         }
 
-        public static void LogClientError()
+        /// <summary>
+        /// Log client error
+        /// </summary>
+        /// <param name="errorLog"></param>
+        public static void LogClientError(ErrorLog errorLog)
         {
-            // TODO: Joku luokkamalli parameterinä
+            new ErrorLogRepository().AddError(errorLog);
         }
     }
 }

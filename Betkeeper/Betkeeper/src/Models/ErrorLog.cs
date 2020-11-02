@@ -40,6 +40,11 @@ namespace Betkeeper.Models
 
         public void AddError(ErrorLog errorLog)
         {
+            if (errorLog.Time == default)
+            {
+                throw new Exception("No time given for error");
+            }
+
             _context.ErrorLog.Add(errorLog);
             _context.SaveChanges();
         }
