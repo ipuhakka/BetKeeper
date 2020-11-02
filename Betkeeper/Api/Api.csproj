@@ -261,6 +261,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Classes\Token.cs" />
     <Compile Include="Classes\TokenLog.cs" />
+    <Compile Include="Controllers\Error.cs" />
     <Compile Include="Controllers\PageAction.cs" />
     <Compile Include="Controllers\Bets.cs" />
     <Compile Include="Controllers\Folders.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ClientError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -326,7 +328,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

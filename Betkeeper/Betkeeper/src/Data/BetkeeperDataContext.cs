@@ -24,6 +24,8 @@ namespace Betkeeper.Data
 
         public DbSet<Bet> Bet { get; set; }
 
+        public DbSet<ErrorLog> ErrorLog { get; set; }
+
         public BetkeeperDataContext(DbContextOptionsBuilder optionsBuilder)
             : base(optionsBuilder.Options)
         {

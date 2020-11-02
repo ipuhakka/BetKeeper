@@ -32,14 +32,15 @@ class Folders extends Component {
 	componentDidUpdate()
 	{
 		const {props} = this;
-		
+
 		if (props.folders.length !== this.state.folders.length)
 		{
 			this.setFolders(props.folders);
 		}
 	}
 
-	render(){
+	render()
+	{
 		var folders = this.renderFoldersList();
 		return(
 			<div onLoad={this.onLoad}>
