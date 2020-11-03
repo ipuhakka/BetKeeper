@@ -1,6 +1,6 @@
 ﻿using System;
-using Betkeeper.Services;
 using Betkeeper.Models;
+using Api.Classes;
 
 namespace Api.Models
 {

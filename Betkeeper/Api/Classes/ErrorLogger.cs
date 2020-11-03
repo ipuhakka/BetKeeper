@@ -3,7 +3,7 @@ using System;
 using System.Configuration;
 using System.Web.Http.ExceptionHandling;
 
-namespace Betkeeper.Services
+namespace Api.Classes
 {
     public class ErrorLogger : ExceptionLogger
     {
