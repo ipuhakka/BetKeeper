@@ -9,8 +9,8 @@ const TIME_VISIBLE = 2500;
 
 class Info extends Component{
 
-	render(){
-
+	render()
+	{
 		let style = "success";
 		if (this.props.status >= 400 || this.props.status === -1){
 			style = "warning";
