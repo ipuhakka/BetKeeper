@@ -10,37 +10,26 @@ import {
   getUnresolvedBets, postBet, putBet, putBets, deleteBet}
   from '../js/Requests/Bets.js';
 import {setLoading} from '../actions/loadingActions';
-import {setAlertStatus} from '../actions/alertActions';
+import {setAlertStatus, setErrorResponseAlertStatus} from '../actions/alertActions';
 
 const getUsedFolder = (state) => {return state.bets.betsFromFolder.folder};
 
 export function* fetchAllBets()
 {
- try 
- {
-   yield put(setLoading(true));
-   let bets = yield call(getAllBetsByUser);
-   yield put(fetchBetsSuccess(bets));
- }
- catch(error)
- {
-   switch(error)
-   {
-     case 401:
-       yield put(setAlertStatus(error, "Session expired, please login again"));
-       break;
-     case 0:
-       yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-       break;
-     default:
-       yield put(setAlertStatus(error, "Unexpected error occurred"));
-       break;
-   }
- }
- finally
- {
-   yield put(setLoading(false));
- }
+  try 
+  {
+    yield put(setLoading(true));
+    let bets = yield call(getAllBetsByUser);
+    yield put(fetchBetsSuccess(bets));
+  }
+  catch(error)
+  {
+    yield put(setErrorResponseAlertStatus(error));
+  }
+  finally
+  {
+    yield put(setLoading(false));
+  }
 }
 
 export function* fetchBetsFromFolder(action)
@@ -60,18 +49,7 @@ export function* fetchBetsFromFolder(action)
   }
   catch(error)
   {
-    switch(error)
-    {
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally 
   {
@@ -102,18 +80,7 @@ export function* fetchBetsFromAllFolders(action)
     }
     catch(error)
     {
-      switch(error)
-      {
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
-      }
+      yield put(setErrorResponseAlertStatus(error));
     }
     finally
     {
@@ -132,17 +99,7 @@ export function* fetchFinishedBets()
   }
   catch(error)
   {
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally
   {
@@ -158,18 +115,9 @@ export function* fetchUnresolvedBets()
     let bets = yield call(getUnresolvedBets);
     yield put(fetchUnresolvedBetsSuccess(bets));
   }
-  catch(error){
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+  catch(error)
+  {
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally {
     yield put(setLoading(false));
@@ -191,20 +139,9 @@ export function* createBet(action)
     }
     yield call(fetchUnresolvedBets);
   }
-  catch (error)
+  catch(error)
   {
-      switch(error)
-      {
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
-      }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally 
   {
@@ -230,20 +167,9 @@ export function* modifyBets(action)
     }
     yield call(fetchUnresolvedBets);
   }
-  catch (errorResponse)
+  catch(error)
   {
-    switch(errorResponse)
-    {
-      case 401:
-        yield put(setAlertStatus(errorResponse.status, errorResponse.responseText));
-        break;
-      case 0:
-        yield put(setAlertStatus(errorResponse.status, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(errorResponse.status, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally 
   {
@@ -276,21 +202,9 @@ export function* modifyBet(action)
       action.callback();
     }
   }
-  catch(error){
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      case 404:
-        yield put(setAlertStatus(error, "Bet trying to be modified was not found in the database"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+  catch(error)
+  {
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally{
     yield put(setLoading(false));
@@ -324,23 +238,10 @@ export function* removeBet(action){
   }
   catch(error)
   {
-    switch(error)
-    {
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      case 404:
-        yield put(setAlertStatus(error, "Bet trying to be deleted was not found in the database"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
-  finally{
+  finally
+  {
     yield put(setLoading(false));
   }
 }

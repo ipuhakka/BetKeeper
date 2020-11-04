@@ -25,7 +25,7 @@ export function getFinishedBets()
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -61,7 +61,7 @@ export function getUnresolvedBets()
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -90,7 +90,7 @@ export function getBetsFromFolder(folder){
           resolve(JSON.parse(xmlHttp.responseText));
         }
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -122,7 +122,7 @@ export function getAllBetsByUser()
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -162,7 +162,7 @@ export function deleteBet(betId, folders){
           resolve(JSON.parse(xmlHttp.responseText));
         }
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -202,7 +202,7 @@ export function postBet(data)
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -234,7 +234,7 @@ export function putBet(betId, data){
           resolve();
         }
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
