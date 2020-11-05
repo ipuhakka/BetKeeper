@@ -40,9 +40,13 @@ namespace Api.Controllers
         // POST: api/Folders
         public HttpResponseMessage Post([FromBody]string folder)
         {
-            if (folder == null || folder.Length > 50)
+            if (string.IsNullOrEmpty(folder) || folder.Length > 50)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(HttpStatusCode.BadRequest, 
+                    string.IsNullOrEmpty(folder) 
+                        ? "Folder name cannot be empty"
+                        : "Folder name cannot exceed 50 characters", 
+                    Http.ContentType.Text);
             }
 
             var userId = TokenLog.GetUserIdFromRequest(Request);
@@ -54,12 +58,18 @@ namespace Api.Controllers
 
             if (FolderAction.UserHasFolder((int)userId, folder))
             {
-                return Http.CreateResponse(HttpStatusCode.Conflict);
+                return Http.CreateResponse(
+                    HttpStatusCode.Conflict, 
+                    "User already has folder with same name", 
+                    Http.ContentType.Text);
             }
 
             FolderAction.AddFolder((int)userId, folder);
 
-            return Http.CreateResponse(HttpStatusCode.Created);
+            return Http.CreateResponse(
+                HttpStatusCode.Created, 
+                "Folder created successfully",
+                Http.ContentType.Text);
         }
 
         // DELETE: api/Folders/folderToDelete
@@ -80,10 +90,14 @@ namespace Api.Controllers
             catch (ActionException actionException)
             {
                 return Http.CreateResponse(
-                    (HttpStatusCode)actionException.ActionExceptionType);
+                    (HttpStatusCode)actionException.ActionExceptionType,
+                    actionException.Message);
             }
 
-            return Http.CreateResponse(HttpStatusCode.NoContent);
+            return Http.CreateResponse(
+                HttpStatusCode.NoContent, 
+                "Deleted successfully",
+                Http.ContentType.Text);
         }
     }
 }

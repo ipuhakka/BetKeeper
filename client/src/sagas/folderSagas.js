@@ -3,28 +3,21 @@ import {FETCH_FOLDERS, POST_FOLDER, DELETE_FOLDER, FETCH_FOLDERS_OF_BET,
   fetchFoldersSuccess, fetchFoldersOfBetSuccess} from '../actions/foldersActions';
 import {getFolders, getFoldersOfBet, postFolder, deleteFolder} from '../js/Requests/Folders.js';
 import {setLoading} from '../actions/loadingActions';
-import {setAlertStatus} from '../actions/alertActions';
+import {setAlertStatus, setErrorResponseAlertStatus} from '../actions/alertActions';
 
 export function* fetchFolders(){
-  try {
+  try 
+  {
     yield put(setLoading(true));
     let folders = yield call(getFolders);
     yield put(fetchFoldersSuccess(folders));
   }
-  catch(error){
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+  catch(error)
+  {
+    yield put(setErrorResponseAlertStatus(error));
   }
-  finally{
+  finally
+  {
     yield put(setLoading(false));
   }
 }
@@ -41,18 +34,7 @@ export function* fetchFoldersOfBet(action)
   }
   catch(error)
   {
-    switch(error)
-    {
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally
   {
@@ -69,24 +51,7 @@ export function* createFolder(action){
   }
   catch(error)
   {
-    switch(error)
-    {
-      case 400:
-        yield put(setAlertStatus(error, "Folder name contained over 50 characters"));
-        break;
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 409:
-        yield put(setAlertStatus(error, "You already have a folder with given name, please select another name or delete old folder."));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally
   {
@@ -95,26 +60,19 @@ export function* createFolder(action){
 }
 
 export function* removeFolder(action){
-  try {
+  try 
+  {
     yield put(setLoading(true));
     yield call(deleteFolder, action.payload.folderToDelete);
     yield call(fetchFolders);
     yield put(setAlertStatus(204, "Folder deleted successfully"));
   }
-  catch (error){
-      switch(error){
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
-      }
+  catch (error)
+  {
+    yield put(setErrorResponseAlertStatus(error));
   }
-  finally{
+  finally
+  {
     yield put(setLoading(false));
   }
 }
