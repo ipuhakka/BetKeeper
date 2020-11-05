@@ -2,7 +2,7 @@ import { call, put, takeEvery} from 'redux-saga/effects';
 import {logOut} from '../actions/sessionActions.js';
 import {postToken, deleteToken, getToken} from '../js/Requests/Token';
 import { postUser } from '../js/Requests/Users';
-import {setAlertStatus} from '../actions/alertActions';
+import {setAlertStatus, setErrorResponseAlertStatus} from '../actions/alertActions';
 import {setLoading} from '../actions/loadingActions';
 import _ from 'lodash';
 
@@ -56,7 +56,6 @@ export function* handleLogin(action){
 
 function* handleLogOut()
 {
-
   try 
   {
     yield put(setLoading(true));
@@ -64,7 +63,7 @@ function* handleLogOut()
   }
   catch (e)
   {
-
+    // TODO: Tyhjä catch?
   }
   finally 
   {
@@ -112,16 +111,7 @@ function* signUp(action)
   } 
   catch (error)
   {
-    switch(error)
-    {
-      case 409:
-        yield put(setAlertStatus(error, "User with same username already exists"));
-        break;
-
-      default:
-        yield put(setAlertStatus(error, "Something went wrong with the request"));
-        break;
-    }
+    yield put(setErrorResponseAlertStatus(error));
   }
   finally 
   {
