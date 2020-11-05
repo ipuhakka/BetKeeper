@@ -28,6 +28,16 @@ namespace Betkeeper.Test.Classes
         }
 
         [Test]
+        public void CreateResponse_DataNull_NotConvertedToString()
+        {
+            var httpResponse = Http.CreateResponse(HttpStatusCode.BadRequest);
+
+            var content = httpResponse.Content;
+
+            Assert.IsNull(content);
+        }
+
+        [Test]
         public void CreateResponse_CasingChangedToCamelCase()
         {
             var camelCaseData = new

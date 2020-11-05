@@ -94,18 +94,22 @@ namespace Betkeeper.Classes
 
         private static HttpContent SetHttpContent(object data, ContentType contentType = ContentType.Json)
         {
+            if (data == null)
+            {
+                return null;
+            }
+
             var serializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 DateFormatString = "yyyy-MM-dd HH:mm:ss"
             };
 
-
             var contentTypeHeader = contentType == ContentType.Json
                 ? "application/json"
                 : "application/text";
 
-            return data?.GetType() == typeof(string)
+            return data.GetType() == typeof(string)
                 ? new StringContent(data.ToString())
                 : new StringContent(JsonConvert.SerializeObject(
                     data,
