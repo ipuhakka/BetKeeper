@@ -37,10 +37,9 @@ namespace Api.Controllers
             [FromUri]string folder = null)
         {
             var userId = TokenLog.GetUserIdFromRequest(Request);
-
             if (userId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+                return Http.CreateResponse(HttpStatusCode.Unauthorized, "Session expired", Http.ContentType.Text);
             }
 
             var bets = BetAction.GetBets(userId.Value, finished, folder);
@@ -59,7 +58,7 @@ namespace Api.Controllers
 
             if (userId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+                return Http.CreateResponse(HttpStatusCode.Unauthorized, "Session expired", Http.ContentType.Text);
             }
 
             Bet bet;
@@ -74,7 +73,7 @@ namespace Api.Controllers
             }
             catch (ParsingException)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(HttpStatusCode.BadRequest, "Parsing bet failed", Http.ContentType.Text);
             }
 
             var betId = BetAction.CreateBet(
@@ -105,7 +104,7 @@ namespace Api.Controllers
 
             if (userId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+                return Http.CreateResponse(HttpStatusCode.Unauthorized, "Session expired", Http.ContentType.Text);
             }
 
             Bet bet;
@@ -120,7 +119,7 @@ namespace Api.Controllers
             }
             catch (ParsingException)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(HttpStatusCode.BadRequest, "Parsing bet failed", Http.ContentType.Text);
             }
 
             try
@@ -162,7 +161,7 @@ namespace Api.Controllers
 
             if (userId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+                return Http.CreateResponse(HttpStatusCode.Unauthorized, "Session expired", Http.ContentType.Text);
             }
 
             Bet bet;
@@ -177,7 +176,7 @@ namespace Api.Controllers
             }
             catch (ParsingException)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(HttpStatusCode.BadRequest, "Parsing bet failed", Http.ContentType.Text);
             }
 
             try
@@ -202,7 +201,7 @@ namespace Api.Controllers
 
             // TODO: Kansioihin lisäys?
 
-            return Http.CreateResponse(HttpStatusCode.OK, "Bets updated successfully");
+            return Http.CreateResponse(HttpStatusCode.OK, "Bets updated successfully", Http.ContentType.Text);
         }
 
         // DELETE: api/Bets/5
@@ -220,7 +219,7 @@ namespace Api.Controllers
 
             if (userId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+                return Http.CreateResponse(HttpStatusCode.Unauthorized, "Session expired", Http.ContentType.Text);
             }
 
             if (folders == null || folders.Count == 0)
@@ -249,7 +248,7 @@ namespace Api.Controllers
                     actionException.ErrorMessage);
             }
 
-            return Http.CreateResponse(HttpStatusCode.NoContent);
+            return Http.CreateResponse(HttpStatusCode.NoContent, "Bet deleted", Http.ContentType.Text);
         }
 
         private HttpResponseMessage DeleteFromFolders(
@@ -271,7 +270,7 @@ namespace Api.Controllers
                     actionException.ErrorMessage);
             }
 
-            return Http.CreateResponse(HttpStatusCode.OK);
+            return Http.CreateResponse(HttpStatusCode.OK, "Bet deleted from selected folders", Http.ContentType.Text);
         }
     }
 }

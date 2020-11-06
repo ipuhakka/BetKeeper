@@ -41,12 +41,18 @@ namespace Api.Controllers
             if (string.IsNullOrEmpty(username)
                 || string.IsNullOrEmpty(password))
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return Http.CreateResponse(
+                    HttpStatusCode.BadRequest, 
+                    "Empty username or password",
+                    Http.ContentType.Text);
             }
 
             if (UserRepository.UsernameInUse(username))
             {
-                return Http.CreateResponse(HttpStatusCode.Conflict);
+                return Http.CreateResponse(
+                    HttpStatusCode.Conflict,
+                    "Username already in use",
+                    Http.ContentType.Text);
             }
 
             UserRepository.AddUser(username, password);

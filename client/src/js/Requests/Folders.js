@@ -19,7 +19,7 @@ export function postFolder(folder){
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -53,7 +53,7 @@ export function deleteFolder(folder){
         }
         else 
         {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
@@ -81,7 +81,7 @@ export function getFolders(){
           resolve(JSON.parse(xmlHttp.responseText));
         }
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
 
@@ -112,7 +112,7 @@ export function getFoldersOfBet(id)
           resolve(JSON.parse(xmlHttp.responseText));
         }
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });

@@ -9,340 +9,194 @@ import {
   getAllBetsByUser, getBetsFromFolder, getFinishedBets, 
   getUnresolvedBets, postBet, putBet, putBets, deleteBet}
   from '../js/Requests/Bets.js';
-import {setLoading} from '../actions/loadingActions';
 import {setAlertStatus} from '../actions/alertActions';
+import { withErrorResponseHandler, withLoading } from './helperSagas';
 
 const getUsedFolder = (state) => {return state.bets.betsFromFolder.folder};
 
 export function* fetchAllBets()
 {
- try 
- {
-   yield put(setLoading(true));
-   let bets = yield call(getAllBetsByUser);
-   yield put(fetchBetsSuccess(bets));
- }
- catch(error)
- {
-   switch(error)
-   {
-     case 401:
-       yield put(setAlertStatus(error, "Session expired, please login again"));
-       break;
-     case 0:
-       yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-       break;
-     default:
-       yield put(setAlertStatus(error, "Unexpected error occurred"));
-       break;
-   }
- }
- finally
- {
-   yield put(setLoading(false));
- }
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
+    {
+      let bets = yield call(getAllBetsByUser);
+      yield put(fetchBetsSuccess(bets));
+    }); 
+  });
 }
 
 export function* fetchBetsFromFolder(action)
 {
-  try 
-  {
-    yield put(setLoading(true));
-
-    let bets = yield call(getBetsFromFolder, action.payload.folder);
-
-    yield put(fetchBetsFromFolderSuccess({folder: action.payload.folder, bets: bets}));
-
-    if (action.callback !== undefined)
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
-      action.callback({folder: action.payload.folder, bets: bets});
-    }
-  }
-  catch(error)
-  {
-    switch(error)
-    {
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally 
-  {
-    yield put(setLoading(false));
-  }
+      let bets = yield call(getBetsFromFolder, action.payload.folder);
+
+      yield put(fetchBetsFromFolderSuccess({folder: action.payload.folder, bets: bets}));
+  
+      if (action.callback !== undefined)
+      {
+        action.callback({folder: action.payload.folder, bets: bets});
+      }
+    }); 
+  });
 }
 
 export function* fetchBetsFromAllFolders(action)
 {
-  if (action.payload !== undefined)
-  {
-    yield put(setLoading(true));
-    let folders = action.payload.folders;
-    let betFolders = [];
 
-    try 
+  if (action.payload === undefined || action.payload === null)
+  {
+    return;
+  }
+
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
+      let folders = action.payload.folders;
+      let betFolders = [];
+  
       let promises = folders.map((folder) => {
         return getBetsFromFolder(folder);
       });
-      yield Promise.all(promises).then(function(results){
+
+      yield Promise.all(promises).then(function(results)
+      {
         for (var i = 0; i < results.length; i++)
         {
           betFolders.push({folder: folders[i], bets: results[i]});
         }
       });
       yield put(fetchBetsFromAllFoldersSuccess(betFolders));
-    }
-    catch(error)
-    {
-      switch(error)
-      {
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
-      }
-    }
-    finally
-    {
-      yield put(setLoading(false));
-    }
-  }
+    }); 
+  });
 }
 
 export function* fetchFinishedBets()
 {
-  try 
-  {
-    yield put(setLoading(true));
-    let bets = yield call(getFinishedBets);
-    yield put(fetchFinishedBetsSuccess(bets));
-  }
-  catch(error)
-  {
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally
-  {
-    yield put(setLoading(false));
-  }
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
+    {
+      let bets = yield call(getFinishedBets);
+      yield put(fetchFinishedBetsSuccess(bets));
+    }); 
+  });
 }
 
 export function* fetchUnresolvedBets()
 {
-  try 
-  {
-    yield put(setLoading(true));
-    let bets = yield call(getUnresolvedBets);
-    yield put(fetchUnresolvedBetsSuccess(bets));
-  }
-  catch(error){
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally {
-    yield put(setLoading(false));
-  }
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
+    {
+      let bets = yield call(getUnresolvedBets);
+      yield put(fetchUnresolvedBetsSuccess(bets));
+    }); 
+  });
 }
 
 export function* createBet(action)
 {
-  try 
-  {
-    yield put(setLoading(true));
-    yield call(postBet, action.payload.bet);
-    yield put(setAlertStatus(201, "Bet added successfully"));
-    yield call(fetchAllBets);
-    let usedFolder = yield select(getUsedFolder);
-    if (usedFolder !== "")
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
-      yield call(fetchBetsFromFolder, usedFolder);
-    }
-    yield call(fetchUnresolvedBets);
-  }
-  catch (error)
-  {
-      switch(error)
+      yield call(postBet, action.payload.bet);
+      yield put(setAlertStatus(201, "Bet added successfully"));
+      yield call(fetchAllBets);
+      let usedFolder = yield select(getUsedFolder);
+      if (usedFolder !== "")
       {
-        case 401:
-          yield put(setAlertStatus(error, "Session expired, please login again"));
-          break;
-        case 0:
-          yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-          break;
-        default:
-          yield put(setAlertStatus(error, "Unexpected error occurred"));
-          break;
+        yield call(fetchBetsFromFolder, usedFolder);
       }
-  }
-  finally 
-  {
-    yield put(setLoading(false));
-  }
+      yield call(fetchUnresolvedBets);
+    }); 
+  });
 }
 
 export function* modifyBets(action)
 {
-  try 
-  {
-    yield put(setLoading(true));
-    const response = yield call(putBets, action.payload.betIds, action.payload.betsData);
-
-    yield put(setAlertStatus(response.status, response.responseText));
-
-    yield call(fetchAllBets);
-    let usedFolder = yield select(getUsedFolder);
-
-    if (usedFolder !== "")
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
-      yield call(fetchBetsFromFolder, usedFolder);
-    }
-    yield call(fetchUnresolvedBets);
-  }
-  catch (errorResponse)
-  {
-    switch(errorResponse)
-    {
-      case 401:
-        yield put(setAlertStatus(errorResponse.status, errorResponse.responseText));
-        break;
-      case 0:
-        yield put(setAlertStatus(errorResponse.status, "Connection refused, server is likely down"));
-        break;
-      default:
-        yield put(setAlertStatus(errorResponse.status, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally 
-  {
-    yield put(setLoading(false));
-  }
+      const response = yield call(putBets, action.payload.betIds, action.payload.betsData);
+
+      yield put(setAlertStatus(response.status, response.responseText));
+  
+      yield call(fetchAllBets);
+      let usedFolder = yield select(getUsedFolder);
+  
+      if (usedFolder !== "")
+      {
+        yield call(fetchBetsFromFolder, usedFolder);
+      }
+      yield call(fetchUnresolvedBets);
+    }); 
+  });
 }
 
 export function* modifyBet(action)
 {
-  try 
-  {
-    yield put(setLoading(true));
-    yield call(putBet, action.payload.betId, action.payload.data);
-
-    if (action.showAlert)
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
-      yield put(setAlertStatus(204, "Updated successfully"));
-    }
+      yield call(putBet, action.payload.betId, action.payload.data);
 
-    yield call(fetchAllBets);
-    let usedFolder = yield select(getUsedFolder);
-
-    if (usedFolder !== "")
-    {
-      yield call(fetchBetsFromFolder, usedFolder);
-    }
-    yield call(fetchUnresolvedBets);
-    if (action.callback !== undefined)
-    {
-      action.callback();
-    }
-  }
-  catch(error){
-    switch(error){
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      case 404:
-        yield put(setAlertStatus(error, "Bet trying to be modified was not found in the database"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally{
-    yield put(setLoading(false));
-  }
+      if (action.showAlert)
+      {
+        yield put(setAlertStatus(204, "Updated successfully"));
+      }
+  
+      yield call(fetchAllBets);
+      let usedFolder = yield select(getUsedFolder);
+  
+      if (usedFolder !== "")
+      {
+        yield call(fetchBetsFromFolder, usedFolder);
+      }
+      yield call(fetchUnresolvedBets);
+      if (action.callback !== undefined)
+      {
+        action.callback();
+      }
+    }); 
+  });
 }
 
-export function* removeBet(action){
-  try {
-    yield put(setLoading(true));
-    let res = yield call(deleteBet, action.payload.betId, action.payload.folders);
-
-    yield put(fetchFoldersOfBetSuccess([]));
-
-    if (res === undefined)
+export function* removeBet(action)
+{
+  yield call(withLoading, function*() 
+  { 
+    yield call(withErrorResponseHandler, function*()
     {
-      yield put(setAlertStatus(204, "Bet deleted successfully"));
-    }
+      let res = yield call(deleteBet, action.payload.betId, action.payload.folders);
 
-    yield call(fetchAllBets);
-    let usedFolder = yield select(getUsedFolder);
-    if (usedFolder !== ""){
-      yield call(fetchBetsFromFolder, usedFolder);
-    }
-    yield call(fetchUnresolvedBets);
-
-    if (action.callback !== undefined)
-    {
-      action.callback();
-    }
-
-  }
-  catch(error)
-  {
-    switch(error)
-    {
-      case 401:
-        yield put(setAlertStatus(error, "Session expired, please login again"));
-        break;
-      case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
-        break;
-      case 404:
-        yield put(setAlertStatus(error, "Bet trying to be deleted was not found in the database"));
-        break;
-      default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
-        break;
-    }
-  }
-  finally{
-    yield put(setLoading(false));
-  }
+      yield put(fetchFoldersOfBetSuccess([]));
+  
+      if (res === undefined)
+      {
+        yield put(setAlertStatus(204, "Bet deleted successfully"));
+      }
+  
+      yield call(fetchAllBets);
+      let usedFolder = yield select(getUsedFolder);
+      if (usedFolder !== ""){
+        yield call(fetchBetsFromFolder, usedFolder);
+      }
+      yield call(fetchUnresolvedBets);
+  
+      if (action.callback !== undefined)
+      {
+        action.callback();
+      }
+    }); 
+  });
 }
 
 export function* watchAllBets(){

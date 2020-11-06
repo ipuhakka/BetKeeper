@@ -11,7 +11,7 @@ Excpected responses:
   username and password.
   Rejects with status of the response.
 */
-export function postUser(username, password, callback){
+export function postUser(username, password){
   return new Promise(function(resolve, reject){
     var xmlHttp = new XMLHttpRequest();
 
@@ -20,7 +20,7 @@ export function postUser(username, password, callback){
         if (xmlHttp.status === 201)
           resolve({username: username, password: password});
         else {
-          reject(xmlHttp.status);
+          reject(xmlHttp);
         }
       }
     });
