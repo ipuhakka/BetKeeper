@@ -61,10 +61,6 @@ function* handleLogOut()
     yield put(setLoading(true));
     yield call(deleteToken);
   }
-  catch (e)
-  {
-    // TODO: Tyhjä catch?
-  }
   finally 
   {
     yield put(setLoading(false));

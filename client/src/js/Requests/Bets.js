@@ -159,7 +159,7 @@ export function deleteBet(betId, folders){
           resolve();
         }
         else if (xmlHttp.status === 200){
-          resolve(JSON.parse(xmlHttp.responseText));
+          resolve(xmlHttp.responseText);
         }
         else {
           reject(xmlHttp);
