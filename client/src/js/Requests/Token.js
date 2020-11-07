@@ -13,21 +13,21 @@ Rejects with status of received http-response.
 */
 export async function postToken(username, password)
 {
-      const response = await new HttpRequest(
-        'token', 
-        'POST',
-        [
-          { key: 'Authorization', value: password },
-          { key: 'Content-Type', value: 'application/json'}
-        ],
-        JSON.stringify({username: username})).sendRequest();
+  const response = await new HttpRequest(
+    'token', 
+    'POST',
+    [
+      { key: 'Authorization', value: password },
+      { key: 'Content-Type', value: 'application/json'}
+    ],
+    JSON.stringify({username: username})).sendRequest();
 
-        const responseBody = JSON.parse(response.responseText);
-        return {
-          token: responseBody.tokenString, 
-          owner: responseBody.owner, 
-          username: username
-        };
+    const responseBody = JSON.parse(response.responseText);
+    return {
+      token: responseBody.tokenString, 
+      owner: responseBody.owner, 
+      username: username
+    };
 }
 
 /*
