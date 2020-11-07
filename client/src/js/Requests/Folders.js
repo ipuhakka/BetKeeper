@@ -1,36 +1,19 @@
-import ConstVars from '../consts.js';
+import HttpRequest from './httpRequest';
 
 /*
   POST-request to uri/folders. Resolves on 201 Created response,
   rejects on any other response status, with given status.
 */
-export function postFolder(folder){
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 201)
-        {
-          resolve();
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("POST", ConstVars.URI + "folders");
-
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');
-
-    xmlHttp.send(JSON.stringify(folder));
-  });
+export function postFolder(folder)
+{
+  return new HttpRequest(
+    'folders', 
+    'POST',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-Type', value: 'application/json'}
+    ],
+    JSON.stringify(folder)).sendRequest();
 }
 
 /*
@@ -38,32 +21,14 @@ export function postFolder(folder){
   Resolves on 204 No content response,
   rejects on any other response status, with given status.
 */
-export function deleteFolder(folder){
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 204)
-        {
-          resolve();
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("DELETE", ConstVars.URI + "folders/" + folder);
-
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    
-    xmlHttp.send();
-  });
+export function deleteFolder(folder)
+{
+  return new HttpRequest(
+    'folders/' + folder, 
+    'DELETE',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -71,25 +36,14 @@ export function deleteFolder(folder){
   Resolves on 200 OK response,
   rejects on any other response status, with given status.
 */
-export function getFolders(){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else {
-          reject(xmlHttp);
-        }
-      }
-
-    });
-    xmlHttp.open("GET", ConstVars.URI + "folders/");
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-  });
+export function getFolders()
+{
+  return new HttpRequest(
+    'folders/', 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -99,28 +53,10 @@ rejects on any other response status, with given status.
 */
 export function getFoldersOfBet(id)
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =(() => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("GET", ConstVars.URI + "folders?betId=" + id);
-
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    'folders?betId=' + id, 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }

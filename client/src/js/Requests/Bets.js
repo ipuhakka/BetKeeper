@@ -1,5 +1,5 @@
-import ConstVars from '../consts.js';
 import _ from 'lodash';
+import HttpRequest from './httpRequest';
 
 /*
 GET-request to uri/bets?finished=true.
@@ -11,31 +11,12 @@ status as parameter.
 */
 export function getFinishedBets()
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("GET", ConstVars.URI + 'bets?finished=true');
-
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    'bets?finished=true', 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -47,31 +28,12 @@ export function getFinishedBets()
 */
 export function getUnresolvedBets()
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("GET", ConstVars.URI + "bets?finished=false");
-
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    'bets?finished=false', 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -80,24 +42,14 @@ Resolved on response with status 200 OK with bets array as parameter,
 rejects on any other response, with response
 status as parameter.
 */
-export function getBetsFromFolder(folder){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else {
-          reject(xmlHttp);
-        }
-      }
-    });
-    xmlHttp.open("GET", ConstVars.URI + "bets?folder=" + folder);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-  });
+export function getBetsFromFolder(folder)
+{
+  return new HttpRequest(
+    'bets?folder=' + folder, 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -108,28 +60,12 @@ status as parameter.
 */
 export function getAllBetsByUser()
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(JSON.parse(xmlHttp.responseText));
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-    xmlHttp.open("GET", ConstVars.URI + "bets/");
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    'bets/', 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -144,32 +80,21 @@ and with 200 OK if bet was only deleted from specified folders.
 In such a case, returns array of folders from which bet was deleted.
 Rejects on any other response, with response status as parameter.
 */
-export function deleteBet(betId, folders){
-  return new Promise(function(resolve, reject){
-    var uri = ConstVars.URI + "bets/" + betId;
+export function deleteBet(betId, folders)
+{
+  let url = 'bets/' + betId;
 
-    if (folders.length > 0){
-      uri = uri + '?folders=' + folders;
-    }
-    var xmlHttp = new XMLHttpRequest();
+  if (folders.length > 0)
+  {
+    url = url + '?folders=' + folders;
+  }
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 204){
-          resolve();
-        }
-        else if (xmlHttp.status === 200){
-          resolve(xmlHttp.responseText);
-        }
-        else {
-          reject(xmlHttp);
-        }
-      }
-    });
-    xmlHttp.open("DELETE", uri);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    url, 
+    'DELETE',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*
@@ -188,30 +113,14 @@ POST-request to create a new bet to the database.
 */
 export function postBet(data)
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 201)
-        {
-          resolve();
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("POST", ConstVars.URI + "bets/");
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send(JSON.stringify(data));
-  });
+  return new HttpRequest(
+    'bets/', 
+    'POST',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-type', value: 'application/json' }
+    ],
+    JSON.stringify(data)).sendRequest();
 }
 
 /*
@@ -224,25 +133,16 @@ PUT-request to create a new bet to the database.
   rejects on any other response, with response
   status as parameter.
 */
-export function putBet(betId, data){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
-          resolve();
-        }
-        else {
-          reject(xmlHttp);
-        }
-      }
-    });
-    xmlHttp.open("PUT", ConstVars.URI + "bets/" + betId);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
-    xmlHttp.send(JSON.stringify(data));
-  });
+export function putBet(betId, data)
+{
+  return new HttpRequest(
+    'bets/' + betId, 
+    'PUT',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-type', value: 'application/json' }
+    ],
+    JSON.stringify(data)).sendRequest();
 }
 
 /**
@@ -250,27 +150,14 @@ export function putBet(betId, data){
  * @param {array} betIds
  * @param {object} data
  */
-export function putBets(betIds, data){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(xmlHttp);
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-    xmlHttp.open("PUT", `${ConstVars.URI}bets?betIds=${_.join(betIds, '&betIds=')}`);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
-    xmlHttp.send(JSON.stringify(data));
-  });
+export function putBets(betIds, data)
+{
+  return new HttpRequest(
+    `bets?betIds=${_.join(betIds, '&betIds=')}`, 
+    'PUT',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-type', value: 'application/json' }
+    ],
+    JSON.stringify(data)).sendRequest();
 }

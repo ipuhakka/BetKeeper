@@ -11,7 +11,9 @@ export function* fetchFolders()
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let folders = yield call(getFolders);
+      const response = yield call(getFolders);
+
+      const folders = JSON.parse(response.responseText);
       yield put(fetchFoldersSuccess(folders));
     }); 
   });
@@ -23,7 +25,8 @@ export function* fetchFoldersOfBet(action)
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let folders = yield call(getFoldersOfBet, action.payload.betId);
+      const response = yield call(getFoldersOfBet, action.payload.betId);
+      const folders = JSON.parse(response.responseText);
       yield put(fetchFoldersOfBetSuccess(folders));
     }); 
   });

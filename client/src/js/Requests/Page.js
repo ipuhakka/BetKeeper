@@ -1,86 +1,48 @@
-import ConstVars from '../consts';
+import HttpRequest from './httpRequest';
 
 /** Get page structure. */
 export function getPage(pathname)
 {
-    return new Promise(function(resolve, reject){
-        var xmlHttp = new XMLHttpRequest();
-    
-        xmlHttp.onreadystatechange =( () => {
-          if (xmlHttp.readyState === 4)
-          {
-            if (xmlHttp.status === 200)
-            {
-              resolve(xmlHttp);
-            }
-            else 
-            {
-              reject(xmlHttp);
-            }
-          }
-        });
-    
-        // Remove '/' char from start
-        xmlHttp.open("GET", `${ConstVars.URI}${pathname.substr(1)}`);
-        xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-        xmlHttp.setRequestHeader('Content-type', 'application/json');
-
-        xmlHttp.send();
-      });
+  return new HttpRequest(
+    `${pathname.substr(1)}`, 
+    'GET',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-Type', value: 'application/json'}
+    ]).sendRequest();
 }
 
+/**
+ * Execute an action
+ * @param {string} page 
+ * @param {string} action 
+ * @param {object} parameters 
+ */
 export function postAction(page, action, parameters)
 {
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status < 300 && xmlHttp.status >= 200)
-        {
-          resolve(xmlHttp);
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-
-    xmlHttp.open("POST", `${ConstVars.URI}pageaction/${page.toLowerCase()}/${action}`);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
-
-    xmlHttp.send(JSON.stringify(parameters));
-  });
+  return new HttpRequest(
+    `pageaction/${page.toLowerCase()}/${action}`, 
+    'POST',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-Type', value: 'application/json'}
+    ],
+    JSON.stringify(parameters)).sendRequest();
 }
 
+/**
+ * Update request based on a dropdownlist value change.
+ * @param {object} requestBody 
+ * @param {string} pageRoute 
+ */
 export function handleServerDropdownUpdate(requestBody, pageRoute)
 {
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve(xmlHttp);
-        }
-        else 
-        {
-          reject(xmlHttp);
-        }
-      }
-    });
-
-
-    xmlHttp.open("POST", `${ConstVars.URI}/page/handleDropdownUpdate${pageRoute}`);
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.setRequestHeader('Content-type', 'application/json');
-
-    xmlHttp.send(JSON.stringify(requestBody));
-  });
+  return new HttpRequest(
+    `page/handleDropdownUpdate${pageRoute}`, 
+    'POST',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-Type', value: 'application/json'}
+    ],
+    JSON.stringify(requestBody)).sendRequest();
 }

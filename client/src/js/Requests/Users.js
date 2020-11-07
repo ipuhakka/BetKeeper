@@ -1,4 +1,4 @@
-import ConstVars from '../consts.js';
+import HttpRequest from './httpRequest';
 
 /*
 POST-request to uri/users.
@@ -9,24 +9,18 @@ Excpected responses:
 
   Resolves with data object with
   username and password.
-  Rejects with status of the response.
+  Rejects with response.
 */
-export function postUser(username, password){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
+export async function postUser(username, password)
+{
+  await new HttpRequest(
+    'users', 
+    'POST',
+    [
+      { key: 'Authorization', value: password },
+      { key: 'Content-Type', value: 'application/json' }
+    ],
+    JSON.stringify({username: username})).sendRequest();
 
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 201)
-          resolve({username: username, password: password});
-        else {
-          reject(xmlHttp);
-        }
-      }
-    });
-    xmlHttp.open("POST", ConstVars.URI + "users");
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');
-    xmlHttp.setRequestHeader('Authorization', password);
-    xmlHttp.send(JSON.stringify({username: username}));
-  });
+    return { username: username, password: password };
 }
