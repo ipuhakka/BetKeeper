@@ -20,7 +20,8 @@ export function* fetchAllBets()
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let bets = yield call(getAllBetsByUser);
+      const response = yield call(getAllBetsByUser);
+      const bets = JSON.parse(response.responseText);
       yield put(fetchBetsSuccess(bets));
     }); 
   });
@@ -32,7 +33,8 @@ export function* fetchBetsFromFolder(action)
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let bets = yield call(getBetsFromFolder, action.payload.folder);
+      const response = yield call(getBetsFromFolder, action.payload.folder);
+      const bets = JSON.parse(response.responseText);
 
       yield put(fetchBetsFromFolderSuccess({folder: action.payload.folder, bets: bets}));
   
@@ -81,7 +83,9 @@ export function* fetchFinishedBets()
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let bets = yield call(getFinishedBets);
+      const response = yield call(getFinishedBets);
+      const bets = JSON.parse(response.responseText);
+
       yield put(fetchFinishedBetsSuccess(bets));
     }); 
   });
@@ -93,7 +97,9 @@ export function* fetchUnresolvedBets()
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let bets = yield call(getUnresolvedBets);
+      const response = yield call(getUnresolvedBets);
+      const bets = JSON.parse(response.responseText);
+
       yield put(fetchUnresolvedBetsSuccess(bets));
     }); 
   });
