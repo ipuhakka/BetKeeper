@@ -1,4 +1,4 @@
-import ConstVars from '../consts.js';
+import HttpRequest from './httpRequest';
 
 /*
 POST-request to get a token to use in the app.
@@ -11,35 +11,23 @@ data:{
 On success, resolved with parsed token, user-id and username as parameters.
 Rejects with status of received http-response.
 */
-export function postToken(username, password){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
+export async function postToken(username, password)
+{
+      const response = await new HttpRequest(
+        'token', 
+        'POST',
+        [
+          { key: 'Authorization', value: password },
+          { key: 'Content-Type', value: 'application/json'}
+        ],
+        JSON.stringify({username: username})).sendRequest();
 
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 200)
-        {
-          resolve({
-              token: JSON.parse(xmlHttp.responseText).tokenString, 
-              owner: JSON.parse(xmlHttp.responseText).owner, username: username
-            });
-        }
-        else 
-        {
-          reject(xmlHttp.status);
-        }
-      }
-    });
-
-    xmlHttp.open("POST", ConstVars.URI + "token");
-
-    xmlHttp.setRequestHeader('Content-Type', 'application/json');
-    xmlHttp.setRequestHeader('Authorization', password);
-    
-    xmlHttp.send(JSON.stringify({username: username}));
-  });
+        const responseBody = JSON.parse(response.responseText);
+        return {
+          token: responseBody.tokenString, 
+          owner: responseBody.owner, 
+          username: username
+        };
 }
 
 /*
@@ -48,29 +36,12 @@ rejects on other responses.
 */
 export function deleteToken()
 {
-  return new Promise(function(resolve, reject)
-  {
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => 
-    {
-      if (xmlHttp.readyState === 4)
-      {
-        if (xmlHttp.status === 204)
-        {
-          resolve();
-        }
-        else 
-        {
-          reject(xmlHttp.status);
-        }
-      }
-    });
-
-    xmlHttp.open("DELETE", ConstVars.URI + "token/" + sessionStorage.getItem("loggedUserId"));
-    xmlHttp.setRequestHeader('Authorization', sessionStorage.getItem('token'));
-    xmlHttp.send();
-  });
+  return new HttpRequest(
+    'token/' + sessionStorage.getItem('loggedUserId'), 
+    'DELETE',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') }
+    ]).sendRequest();
 }
 
 /*GET-request to check if token is already in use. If it is, it means user
@@ -78,22 +49,12 @@ is logged in, and is redirected to home page. Returns 404 if user hasn't got a t
 and a new one must be requested.
 
 Resolves on 200 OK, rejects on any other response status*/
-export function getToken(token, user_id){
-  return new Promise(function(resolve, reject){
-    var xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange =( () => {
-      if (xmlHttp.readyState === 4){
-        if (xmlHttp.status === 200){
-          resolve();
-        }
-        else {
-          reject(xmlHttp.status);
-        }
-      }
-    });
-    xmlHttp.open("GET", ConstVars.URI + "token/" + user_id);
-    xmlHttp.setRequestHeader('Authorization', token);
-    xmlHttp.send();
-  });
+export function getToken(token, userId)
+{
+  return new HttpRequest(
+    'token/' + userId, 
+    'GET',
+    [
+      { key: 'Authorization', value: token }
+    ]).sendRequest();
 }
