@@ -10,7 +10,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import FormControl from 'react-bootstrap/FormControl';
 import Confirm from '../../components/Confirm/Confirm.jsx';
-import Info from '../../components/Info/Info.jsx';
 import Header from '../../components/Header/Header.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv.jsx';
@@ -47,7 +46,6 @@ class Folders extends Component {
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disableValue='Folders'></Menu>
 				<Confirm variant="danger" headerText="Delete folder?" visible={this.state.showConfirm} confirmAction={this.deleteFolder} cancelAction={this.toggleConfirm}/>
-				<Info></Info>
 				<Row className="content">
 					<Col lg={6} sm={12}>
 						<ScrollableDiv className='list margins'>						

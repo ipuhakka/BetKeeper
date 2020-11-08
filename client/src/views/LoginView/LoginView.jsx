@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import store from '../../store';
 import Header from '../../components/Header/Header.jsx';
-import Info from '../../components/Info/Info.jsx';
 import Login from '../../components/Login/Login.jsx';
 import SignUp from '../../components/SignUp/SignUp.jsx';
 import { checkCurrentLoginCredentials } from '../../actions/sessionActions';
@@ -33,7 +32,6 @@ class LoginView extends Component
     return (
     <div className='loginView'>
       <Header title={"Welcome to Betkeeper"}></Header>
-      <Info></Info>
       <Login requestToken={this.requestToken}></Login>
       <p>Or</p>
       <SignUp requestToken={this.requestToken}></SignUp>

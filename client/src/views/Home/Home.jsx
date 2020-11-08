@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
 import MenuCard from '../../components/MenuCard/MenuCard.jsx';
 import Header from '../../components/Header/Header.jsx';
-import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import './Home.css';
 
@@ -50,7 +49,6 @@ class Home extends Component{
 		<div className="content">
 			<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue='Home'></Menu>
-			<Info alertState={this.state.alertState} alertText={this.state.alertText} dismiss={this.dismissAlert}></Info>
 			<div className="content">{this.cardGrid()}</div>
 		</div>
 		);

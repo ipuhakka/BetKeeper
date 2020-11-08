@@ -181,14 +181,11 @@ export function* removeBet(action)
   { 
     yield call(withErrorResponseHandler, function*()
     {
-      let res = yield call(deleteBet, action.payload.betId, action.payload.folders);
+      yield call(deleteBet, action.payload.betId, action.payload.folders);
 
       yield put(fetchFoldersOfBetSuccess([]));
   
-      if (res === undefined)
-      {
-        yield put(setAlertStatus(204, "Bet deleted successfully"));
-      }
+      yield put(setAlertStatus(204, "Bet deleted successfully"));
   
       yield call(fetchAllBets);
       let usedFolder = yield select(getUsedFolder);

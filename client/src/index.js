@@ -7,6 +7,7 @@ import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import registerServiceWorker from './registerServiceWorker';
 import * as ErrorActions from './actions/errorActions';
+import Info from './components/Info/Info';
 
 window.onerror = (errorMessage, url, lineNumber, columnNumber, error) => 
 {
@@ -16,6 +17,7 @@ window.onerror = (errorMessage, url, lineNumber, columnNumber, error) =>
 const app = (
   <Provider store={store}>
     <Routes />
+    <Info/>
   </Provider>
 );
 

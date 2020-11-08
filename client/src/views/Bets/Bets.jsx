@@ -9,7 +9,6 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import Filter from '../../components/Filter/Filter';
 import Filters from '../../components/Filters/Filters';
 import Header from '../../components/Header/Header';
-import Info from '../../components/Info/Info';
 import Menu from '../../components/Menu/Menu';
 import UnresolvedBets from '../../components/UnresolvedBets/UnresolvedBets';
 import ScrollableDiv from '../../components/ScrollableDiv/ScrollableDiv';
@@ -48,7 +47,6 @@ class Bets extends Component
       <div className="content">
     		<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
     		<Menu disableValue='Bets'></Menu>
-    		<Info></Info>
         <i className="fas fa-plus-circle fa-2x addButton" onClick={this.showModal}></i>
         <AddBet show={state.showModal} hide={this.hideModal} folders={props.folders}/>
         <Row>

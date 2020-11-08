@@ -34,17 +34,16 @@ export function* handleLogin(action){
   catch (error)
   {
     yield call(logOut);
-
-    switch(error)
+    switch(error.status)
     {
       case 401:
-        yield put(setAlertStatus(error, "Username or password given was incorrect"));
+        yield put(setAlertStatus(error.status, "Username or password given was incorrect"));
         break;
       case 0:
-        yield put(setAlertStatus(error, "Connection refused, server is likely down"));
+        yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
         break;
       default:
-        yield put(setAlertStatus(error, "Unexpected error occurred"));
+        yield put(setAlertStatus(error.status, "Unexpected error occurred"));
       }
   }
   finally 

@@ -4,7 +4,6 @@ import Col from 'react-bootstrap/Col';
 import BarGraph from '../../components/BarGraph/BarGraph.jsx';
 import Dropdown from '../../components/Dropdown/Dropdown.jsx';
 import Header from '../../components/Header/Header.jsx';
-import Info from '../../components/Info/Info.jsx';
 import Menu from '../../components/Menu/Menu.jsx';
 import ObjectTable from '../../components/ObjectTable/ObjectTable.jsx';
 import OverviewTable from '../../components/OverviewTable/OverviewTable.jsx';
@@ -33,7 +32,6 @@ class Statistics extends Component{
 			<div>
 				<Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 				<Menu disableValue='Statistics'></Menu>
-				<Info></Info>
 				<div className="content">
 					<Row>
 						<Col md={6} xs={12}>
