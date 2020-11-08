@@ -8,7 +8,6 @@ import Menu from '../../components/Menu/Menu';
 import Confirm from '../../components/Confirm/Confirm';
 import Modal from '../../components/Page/Modal';
 import PageContent from '../../components/Page/PageContent';
-import Info from '../../components/Info/Info.jsx';
 import './Page.css';
 
 class Page extends Component
@@ -245,7 +244,6 @@ class Page extends Component
                         this.closeConfirm();
                     }}
                 variant={state.confirm.variant}/>
-            <Info alertState={state.alertState} alertText={state.alertText} dismiss={this.dismissAlert} />
             <PageContent 
                 components={props.components}
                 className='page-content'

@@ -1,58 +1,52 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {clearAlert} from '../../actions/alertActions';
-import Alert from 'react-bootstrap/Alert';
-import {Transition} from 'react-transition-group';
+import Toast from 'react-bootstrap/Toast';
 import './Info.css';
+import _ from 'lodash';
 
-const TIME_VISIBLE = 2500;
-
-class Info extends Component{
-
+class Info extends Component
+{
 	render()
 	{
-		let style = "success";
-		if (this.props.status >= 400 || this.props.status === -1){
+		let style = '';
+
+		if (this.props.status >= 200 && this.props.status < 300)
+		{
+			style = 'success';
+		}
+
+		if (this.props.status >= 400 || this.props.status === -1)
+		{
 			style = "warning";
 		}
-		if (this.props.status >= 500 || this.props.status === 0){
+		if (this.props.status >= 500 || this.props.status === 0)
+		{
 			style = "danger";
 		}
 
-		if (this.props.status !== null){
-			setTimeout(() => {
-				this.dismiss();
-			}, TIME_VISIBLE);
-		}
-
-		const transitionStyles = {
-			entering: {opacity: 1, display: 'inherit'},
-			entered: {opacity: 1},
-			exited: {opacity: 0, display: 'none'}
-		}
-
-		return(
-				<Transition in={this.props.status !== null}
-					timeout={{enter:300, exit: 500}}>
-					{status => (
-						<Alert 
-							dismissible 
-							className="info" 
-							style={{...transitionStyles[status]}} 
-							variant={style} 
-							onClose={this.dismiss}>
-							<p>{this.props.statusMessage}</p>
-						</Alert>
-					)}
-			</Transition>);
+		const { props } = this;
+		return <Toast 
+			onClose={this.dismiss} 
+			show={!_.isNil(props.status)} 
+			autohide 
+			delay={2500}
+			className={`info ${style}`}>
+		<Toast.Header>
+		  <strong className="mr-auto">Betkeeper</strong>
+		  <small>{new Date().toLocaleDateString()}</small>
+		</Toast.Header>
+		<Toast.Body>{props.statusMessage}</Toast.Body>
+	  </Toast>;
 	}
 
-	dismiss = () => {
+	dismiss = () => 
+	{
 		this.props.clearAlert();
 	}
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return { ...state.alert}
 };
 
