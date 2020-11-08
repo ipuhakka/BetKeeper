@@ -107,21 +107,25 @@ class BetsContainer extends Component {
 
     const {props, state} = this;
 
-    let bets = props.betListFromFolder ? props.betsFromFolder.bets : props.allBets;
+    const bets = state.betListFromFolder ? props.betsFromFolder.bets : props.allBets;
 
-		var value = -1;
+		let value = -1;
 
-		if (state.selectedBet !== key){ //set key and get folders.
+    if (state.selectedBet !== key)
+    { 
+      //set key and get folders.
 			value = key;
 			this.getBetsFolders(bets[key].betId);
 		}
 
-		else {
+    else 
+    {
 			this.setState({
 				folders: [],
 				selectedFolders: []
 			});
-		}
+    }
+    
 		this.setState({
 			selectedBet: value
 		});
