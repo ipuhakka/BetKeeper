@@ -69,7 +69,8 @@ export function* fetchBetsFromAllFolders(action)
       {
         for (var i = 0; i < results.length; i++)
         {
-          betFolders.push({folder: folders[i], bets: results[i]});
+          const bets = JSON.parse(results[i].responseText);
+          betFolders.push({folder: folders[i], bets: bets});
         }
       });
       yield put(fetchBetsFromAllFoldersSuccess(betFolders));

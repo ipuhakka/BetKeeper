@@ -1,8 +1,8 @@
 function byHighest(data, key)
 {
-    return data.sort(function (a, b) {
-			return compareNumber(b[key], a[key]);
-    });
+  return data.sort(function (a, b) {
+    return compareNumber(b[key], a[key]);
+  });
 }
 
 function byLowest(data, key){
