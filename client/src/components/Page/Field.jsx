@@ -46,7 +46,7 @@ class Field extends Component
                 value: this.props.type === 'DateTime'
                     ? _.isNil(this.props.initialValue)
                         ? null
-                        : this.props.initialValue.utc().toDate()
+                        : moment(this.props.initialValue).local().toDate()
                     : this.props.initialValue
             });
         }
@@ -61,14 +61,14 @@ class Field extends Component
         if (!newDate)
         {
             this.onChange(null);
-            
             return;
         }
 
-        const newDateAsMoment = moment(newDate, consts.DATEPICKER_FORMAT);
+        const asMoment = moment(newDate, consts.DATEPICKER_FORMAT);
 
-        if (newDateAsMoment.isValid())
+        if (asMoment.isValid())
         {
+            newDate = asMoment.utc().toDate();
             this.onChange(newDate);
         }
     }
@@ -91,14 +91,10 @@ class Field extends Component
 
         if (isValid)
         {
-            const dataValue = props.type === 'DateTime'
-                ? moment(newValue).utc()
-                : newValue;
-                
             /** Join dataPath and component key */
             const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
 
-            props.onChange(dataPath, dataValue);
+            props.onChange(dataPath, newValue);
         }
         else 
         {
@@ -109,7 +105,7 @@ class Field extends Component
 
     renderDateTimeInput()
     {   
-        const { minimumDateTime } = this.props;
+        const { minimumDateTime, readOnly } = this.props;
 
         const minDate = _.isNil(minimumDateTime)
             ? null
@@ -120,13 +116,14 @@ class Field extends Component
             : this.state.value;
 
         return <DatePicker
-            className='datetime-input'
+            readOnly={readOnly}
+            className={`datetime-input${readOnly ? ' disabled': ''}`}
             selected={dateValue}
             showTimeSelect
             timeFormat='HH:mm'
             timeIntervals={30}
             minDate={minDate}
-            isClearable
+            isClearable={!readOnly}
             onChange={(date) => this.setDateTime(date)}
             onChangeRaw={(input) => this.setDateTime(input)}
             dateFormat={consts.DATEPICKER_FORMAT}/>;

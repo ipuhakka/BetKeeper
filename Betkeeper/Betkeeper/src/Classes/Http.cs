@@ -102,7 +102,7 @@ namespace Betkeeper.Classes
             var serializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                DateFormatString = "yyyy-MM-dd HH:mm:ss"
+                DateTimeZoneHandling = DateTimeZoneHandling.Utc
             };
 
             var contentTypeHeader = contentType == ContentType.Json
