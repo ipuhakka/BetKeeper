@@ -127,7 +127,7 @@ namespace Betkeeper.Models
                 }
                 else
                 {
-                    BetResult = Enums.BetResult.Unresolved;
+                    BetResult = BetResult.Unresolved;
                 }
 
                 if (!(bet.name is null))

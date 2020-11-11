@@ -239,8 +239,14 @@ namespace Api.Test.Controllers
             Assert.AreEqual(1, _context.Bet.Count());
         }
 
-        [Test]
-        public void Post_MissingRequiredParameters_ReturnsBadRequest()
+        [TestCase(1, 1.0, null, "test")]
+        [TestCase(1, null, 1.0, "test")]
+        [TestCase(null, 1.0, 1.0, "test")]
+        public void Post_MissingRequiredParameters_ReturnsBadRequest(
+            int? betResult,
+            double? stake,
+            double? odd,
+            string name)
         {
             var token = TokenLog.CreateToken(1);
 
@@ -249,9 +255,10 @@ namespace Api.Test.Controllers
                 ControllerContext = Tools.MockHttpControllerContext(
                     dataContent: new
                     {
-                        betResult = 1,
-                        name = "testBet",
-                        stake = 2.2
+                        betResult,
+                        name,
+                        stake,
+                        odd
                     },
                     headers: new Dictionary<string, string>
                     {
@@ -413,8 +420,9 @@ namespace Api.Test.Controllers
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-        [Test]
-        public void PutBet_InvalidDouble_ReturnsBadRequest()
+        [TestCase(2.0, "not double")]
+        [TestCase("not double", 2.0)]
+        public void PutBet_InvalidDouble_ReturnsBadRequest(object odd, object stake)
         {
             var token = TokenLog.CreateToken(1);
 
@@ -423,8 +431,8 @@ namespace Api.Test.Controllers
                 ControllerContext = Tools.MockHttpControllerContext(
                     dataContent: new
                     {
-                        stake = "not double",
-                        odd = 2.0,
+                        odd,
+                        stake,
                         name = "testName",
                         betResult = (int)BetResult.Won
                     },
@@ -498,7 +506,7 @@ namespace Api.Test.Controllers
                     Stake = 5,
                     Odd = 2.1,
                     Name = "test",
-                    PlayedDate = new System.DateTime(2000, 1, 1),
+                    PlayedDate = new DateTime(2000, 1, 1),
                     BetResult = BetResult.Unresolved
                 }
             };
@@ -511,10 +519,7 @@ namespace Api.Test.Controllers
             var controller = new BetsController()
             {
                 ControllerContext = Tools.MockHttpControllerContext(
-                    dataContent: new
-                    {
-                        stake = 2.2
-                    },
+                    dataContent: new {},
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", token.TokenString }
@@ -531,7 +536,7 @@ namespace Api.Test.Controllers
             Assert.AreEqual(new DateTime(2000, 1, 1), bet.PlayedDate);
             Assert.AreEqual(2.1, bet.Odd);
             Assert.AreEqual(BetResult.Unresolved, bet.BetResult);
-            Assert.AreEqual(2.2, bet.Stake);
+            Assert.AreEqual(5, bet.Stake);
         }
 
         [Test]
