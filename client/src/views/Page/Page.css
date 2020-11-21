@@ -2,6 +2,10 @@
     margin-bottom: 0.5em;
 }
 
+.tab-content {
+    overflow-y: auto;
+}
+
 .child-container-div {
     width: 100%;
     display: flex;
