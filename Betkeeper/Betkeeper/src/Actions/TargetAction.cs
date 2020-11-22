@@ -167,15 +167,8 @@ namespace Betkeeper.Actions
                     {
                         if (!competitionScores.TargetItems.Any(item => item.Question == target.Bet))
                         {
-                            var result = target?.Result?.Result ?? "-";
-                            
-                            if (result == "UNRESOLVED-BET")
-                            {
-                                result = "-";
-                            }
-
                             competitionScores.TargetItems.Add(
-                                new CompetitionScores.TargetItem(target.Bet, result));
+                                new CompetitionScores.TargetItem(target));
                         }
 
                         var targetBet = targetBets.SingleOrDefault(bet =>
@@ -354,14 +347,49 @@ namespace Betkeeper.Actions
                 public string Result { get; set; }
 
                 /// <summary>
+                /// Points possible to get for bet
+                /// </summary>
+                private List<Scoring> _scoring { get; set; }
+
+                /// <summary>
+                /// Get available points for a target item.
+                /// </summary>
+                public string PointsAvailable
+                {
+                    get
+                    {
+                        if (_scoring.Count == 1)
+                        {
+                            return $"{_scoring[0].Points}";
+                        }
+
+                        var pointsForCorrectResult = _scoring.Single(score =>
+                            score.Score == TargetScore.CorrectResult).Points;
+
+                        var pointsForCorrectWinner = _scoring.Single(score => 
+                            score.Score == TargetScore.CorrectWinner).Points;
+
+                        return $"Result: {pointsForCorrectResult}, winner: {pointsForCorrectWinner}";
+                    }
+                }
+
+                /// <summary>
                 /// Targets bets
                 /// </summary>
                 public List<BetItem> BetItems { get; set; }
 
-                public TargetItem(string question, string result)
+                public TargetItem (Target target)
                 {
-                    Question = question;
+                    var result = target?.Result?.Result ?? "-";
+
+                    if (result == "UNRESOLVED-BET")
+                    {
+                        result = "-";
+                    }
+
                     Result = result;
+                    Question = target.Bet;
+                    _scoring = target.Scoring;
                     BetItems = new List<BetItem>();
                 }
 

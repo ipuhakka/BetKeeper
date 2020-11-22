@@ -14,6 +14,7 @@ namespace Betkeeper.Pages.CompetitionPage
             var tableHeaderItems = new List<string>
             {
                 "Bet",
+                "Points",
                 "Result"
             };
 
@@ -25,6 +26,16 @@ namespace Betkeeper.Pages.CompetitionPage
                     tableHeaderItems,
                     style: CellStyle.Bold));
 
+            var summaryRowCellValues = new List<string> { "Total points", scores.MaximumPoints.ToString(), "-" };
+
+            summaryRowCellValues.AddRange(scores.UserPointsDictionary.Values.Select(value => value.ToString()));
+
+            // Add summary (users points)
+            var summaryRow = new Row(
+                summaryRowCellValues,
+                CellStyle.Bold);
+            table.Rows.Add(summaryRow);
+
             // Add data. Question first, then bets in same order as in header
             scores.TargetItems.ForEach(target =>
             {
@@ -34,6 +45,12 @@ namespace Betkeeper.Pages.CompetitionPage
                 {
                     Style = CellStyle.Bold,
                     Value = target.Question
+                });
+
+                row.Cells.Add(new Cell
+                {
+                    Style = CellStyle.Bold,
+                    Value = target.PointsAvailable
                 });
 
                 row.Cells.Add(new Cell
@@ -73,16 +90,6 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 table.Rows.Add(row);
             });
-
-            var summaryRowCellValues = new List<string> { "Points", scores.MaximumPoints.ToString() };
-
-            summaryRowCellValues.AddRange(scores.UserPointsDictionary.Values.Select(value => value.ToString()));
-
-            // Add summary (users points)
-            var summaryRow = new Row(
-                summaryRowCellValues, 
-                CellStyle.Bold);
-            table.Rows.Add(summaryRow);
 
             return new Tab("resultsViewTab", "Results", new List<Component>
             {
