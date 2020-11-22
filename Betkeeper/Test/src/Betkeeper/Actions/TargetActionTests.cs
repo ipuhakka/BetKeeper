@@ -551,6 +551,8 @@ namespace Betkeeper.Test.Actions
             Assert.AreEqual(
                 TargetResult.Wrong,
                 testTargetItem.BetItems.Single(bet => bet.User == "user3").Result);
+
+            Assert.AreEqual("Result: 2, winner: 1", testTargetItem.PointsAvailable);
         }
     }
 }

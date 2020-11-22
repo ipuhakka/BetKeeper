@@ -76,15 +76,17 @@ namespace Betkeeper.Pages.CompetitionPage
                     new Field("description", "Description", true, FieldType.TextArea, "competition.description"),
                     new DateTimeInput("startTime", "Start", readOnly: true, dataKey: "competition.startTime"),
                     new Field("state", "State", true, FieldType.TextBox, "competition.state")
-                }),
-
-                // Results
-                GetResultsTab(competitionId),
+                })
             };
 
             if (competition.State == CompetitionState.Open)
             {
                 tabs.Add(GetBetsTab(competitionTargets));
+            }
+            else
+            {
+                // Results
+                tabs.Add(GetResultsTab(competitionId));
             }
 
             if (participator.Role == CompetitionRole.Host)
