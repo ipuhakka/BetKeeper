@@ -247,9 +247,9 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                 {
-                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult }
                 },
                 Type = Enums.TargetType.OpenQuestion
             };
@@ -263,10 +263,10 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                 {
-                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult },
-                    new Scoring{ Points = 1, Score = Enums.TargetScore.CorrectWinner }
+                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult },
+                    new ScoringDeprecated{ Points = 1, Score = Enums.TargetScore.CorrectWinner }
                 },
                 Type = Enums.TargetType.Result
             };
@@ -280,9 +280,9 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                 {
-                    new Scoring{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult }
                 },
                 Type = Enums.TargetType.Selection
             };

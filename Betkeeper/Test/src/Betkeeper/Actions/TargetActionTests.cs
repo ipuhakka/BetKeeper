@@ -133,9 +133,9 @@ namespace Betkeeper.Test.Actions
             {
                 new Target
                 {
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 1,
                             Score = TargetScore.CorrectResult
@@ -145,9 +145,9 @@ namespace Betkeeper.Test.Actions
                 },
                 new Target
                 {
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 1,
                             Score = TargetScore.CorrectResult
@@ -188,14 +188,14 @@ namespace Betkeeper.Test.Actions
 
             var target = new Target
             {
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                 {
-                    new Scoring
+                    new ScoringDeprecated
                     {
                         Points = 1,
                         Score = TargetScore.CorrectResult
                     },
-                    new Scoring
+                    new ScoringDeprecated
                     {
                         Points = 5,
                         Score = TargetScore.CorrectResult
@@ -236,9 +236,9 @@ namespace Betkeeper.Test.Actions
             {
                 new Target
                 {
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 1,
                             Score = TargetScore.CorrectWinner
@@ -249,9 +249,9 @@ namespace Betkeeper.Test.Actions
                 },
                 new Target
                 {
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 1,
                             Score = TargetScore.CorrectWinner
@@ -262,14 +262,14 @@ namespace Betkeeper.Test.Actions
                 },
                 new Target
                 {
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 1,
                             Score = TargetScore.CorrectResult
                         },
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 2,
                             Score = TargetScore.CorrectResult
@@ -313,14 +313,14 @@ namespace Betkeeper.Test.Actions
             var target = new Target
             {
                 Type = TargetType.Result,
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                 {
-                    new Scoring
+                    new ScoringDeprecated
                     {
                         Points = 5,
                         Score = TargetScore.CorrectResult
                     },
-                    new Scoring
+                    new ScoringDeprecated
                     {
                         Points = 1,
                         Score = TargetScore.CorrectWinner
@@ -333,7 +333,7 @@ namespace Betkeeper.Test.Actions
 
             var targets = _context.Target.ToList();
             Assert.AreEqual(1, targets.Count);
-            Assert.AreEqual(2, targets[0].Scoring.Count);
+            Assert.AreEqual(2, targets[0].ScoringDeprecated.Count);
             Assert.AreEqual(TargetType.Result, targets[0].Type);
         }
 
@@ -363,9 +363,9 @@ namespace Betkeeper.Test.Actions
                             {2, "Wrong"}
                         }
                     },
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 2,
                             Score = TargetScore.CorrectResult
@@ -381,9 +381,9 @@ namespace Betkeeper.Test.Actions
                     {
                         Result = "test1"
                     },
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Points = 2,
                             Score = TargetScore.CorrectResult
@@ -400,14 +400,14 @@ namespace Betkeeper.Test.Actions
                     {
                         Result = "2-1"
                     },
-                    Scoring = new List<Scoring>
+                    ScoringDeprecated = new List<ScoringDeprecated>
                     {
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Score = TargetScore.CorrectResult,
                             Points = 2
                         },
-                        new Scoring
+                        new ScoringDeprecated
                         {
                             Score = TargetScore.CorrectWinner,
                             Points = 1

@@ -126,7 +126,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     { $"target-id-{i}", target.TargetId }
                 };
 
-            target.Scoring?.ForEach(scoring =>
+            target.ScoringDeprecated?.ForEach(scoring =>
             {
                 var key = scoring.Score == TargetScore.CorrectResult
                     ? $"scoring-{i}"

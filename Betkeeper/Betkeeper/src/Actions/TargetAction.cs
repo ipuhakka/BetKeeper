@@ -153,7 +153,7 @@ namespace Betkeeper.Actions
             {
                 MaximumPoints = targets.Sum(target =>
                 {
-                    return target.Scoring.Max(score => score.Points);
+                    return target.ScoringDeprecated.Max(score => score.Points);
                 }) ?? 0
             };
 
@@ -280,7 +280,7 @@ namespace Betkeeper.Actions
                     }
                 }
 
-                if (target.Scoring
+                if (target.ScoringDeprecated
                     .GroupBy(scoring => scoring.Score)
                     .Any(group => group.Count() > 1))
                 {
@@ -297,8 +297,8 @@ namespace Betkeeper.Actions
             {
                 case TargetType.OpenQuestion:
                 case TargetType.Selection:
-                    return target.Scoring.Count == 1
-                        && target.Scoring[0].Score == TargetScore.CorrectResult;
+                    return target.ScoringDeprecated.Count == 1
+                        && target.ScoringDeprecated[0].Score == TargetScore.CorrectResult;
 
                 default:
                     return true;
@@ -349,7 +349,7 @@ namespace Betkeeper.Actions
                 /// <summary>
                 /// Points possible to get for bet
                 /// </summary>
-                private List<Scoring> _scoring { get; set; }
+                private List<ScoringDeprecated> _scoring { get; set; }
 
                 /// <summary>
                 /// Get available points for a target item.
@@ -389,7 +389,7 @@ namespace Betkeeper.Actions
 
                     Result = result;
                     Question = target.Bet;
-                    _scoring = target.Scoring;
+                    _scoring = target.ScoringDeprecated;
                     BetItems = new List<BetItem>();
                 }
 

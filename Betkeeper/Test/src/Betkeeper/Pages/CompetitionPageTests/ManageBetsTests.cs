@@ -52,9 +52,9 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             {
                 Bet = "Bet",
                 Type = Enums.TargetType.OpenQuestion,
-                Scoring = new List<Scoring>
+                ScoringDeprecated = new List<ScoringDeprecated>
                         {
-                            new Scoring
+                            new ScoringDeprecated
                             {
                                 Score = Enums.TargetScore.CorrectResult,
                                 Points = 1
@@ -87,9 +87,9 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                         TargetId = 1,
                         Bet = "Updated",
                         Type = Enums.TargetType.OpenQuestion,
-                        Scoring = new List<Scoring>
+                        ScoringDeprecated = new List<ScoringDeprecated>
                         {
-                            new Scoring
+                            new ScoringDeprecated
                             {
                                 Score = Enums.TargetScore.CorrectResult,
                                 Points = 1
@@ -100,14 +100,14 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                     {
                         Bet = "Bet",
                         Type = Enums.TargetType.Result,
-                        Scoring = new List<Scoring>
+                        ScoringDeprecated = new List<ScoringDeprecated>
                         {
-                            new Scoring
+                            new ScoringDeprecated
                             {
                                 Score = Enums.TargetScore.CorrectResult,
                                 Points = 2
                             },
-                            new Scoring
+                            new ScoringDeprecated
                             {
                                 Score = Enums.TargetScore.CorrectWinner,
                                 Points = 1
@@ -118,9 +118,9 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                     {
                         Type = Enums.TargetType.Selection,
                         Bet = "Bet2",
-                        Scoring = new List<Scoring>
+                        ScoringDeprecated = new List<ScoringDeprecated>
                         {
-                            new Scoring
+                            new ScoringDeprecated
                             {
                                 Score = Enums.TargetScore.CorrectResult,
                                 Points = 2

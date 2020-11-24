@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Betkeeper.Data;
-using Betkeeper.Enums;
 using Newtonsoft.Json.Linq;
 
 namespace Betkeeper.Models
