@@ -153,7 +153,7 @@ namespace Betkeeper.Actions
             {
                 MaximumPoints = targets.Sum(target =>
                 {
-                    return target.ScoringDeprecated.Max(score => score.Points);
+                    return target.Scoring.PointsForCorrectResult;
                 }) ?? 0
             };
 
@@ -230,14 +230,15 @@ namespace Betkeeper.Actions
                         $"Row {i + 1}: No question given");
                 }
 
-                if (!target.HasScoringType(TargetScore.CorrectResult))
+                if (target.Scoring.PointsForCorrectResult == null)
                 {
                     throw new ActionException(
                         ActionExceptionType.InvalidInput,
                         $"Row {i + 1}: Missing points for correct result");
                 }
 
-                if (target.Type == TargetType.Result && !target.HasScoringType(TargetScore.CorrectWinner))
+                if (target.Type == TargetType.Result 
+                    && target.Scoring.PointsForCorrectWinner == null)
                 {
                     throw new ActionException(
                         ActionExceptionType.InvalidInput,
@@ -280,13 +281,6 @@ namespace Betkeeper.Actions
                     }
                 }
 
-                if (target.ScoringDeprecated
-                    .GroupBy(scoring => scoring.Score)
-                    .Any(group => group.Count() > 1))
-                {
-                    throw new ArgumentException("Invalid scoring arguments");
-                }
-
                 i++;
             });
         }
@@ -297,8 +291,8 @@ namespace Betkeeper.Actions
             {
                 case TargetType.OpenQuestion:
                 case TargetType.Selection:
-                    return target.ScoringDeprecated.Count == 1
-                        && target.ScoringDeprecated[0].Score == TargetScore.CorrectResult;
+                    return target.Scoring.PointsForCorrectWinner == null &&
+                        target.Scoring.PointsForCorrectResult != null;
 
                 default:
                     return true;
@@ -349,7 +343,7 @@ namespace Betkeeper.Actions
                 /// <summary>
                 /// Points possible to get for bet
                 /// </summary>
-                private List<ScoringDeprecated> _scoring { get; set; }
+                private Scoring _scoring { get; set; }
 
                 /// <summary>
                 /// Get available points for a target item.
@@ -358,18 +352,12 @@ namespace Betkeeper.Actions
                 {
                     get
                     {
-                        if (_scoring.Count == 1)
+                        if (_scoring.PointsForCorrectWinner == null)
                         {
-                            return $"{_scoring[0].Points}";
+                            return $"{_scoring.PointsForCorrectResult}";
                         }
 
-                        var pointsForCorrectResult = _scoring.Single(score =>
-                            score.Score == TargetScore.CorrectResult).Points;
-
-                        var pointsForCorrectWinner = _scoring.Single(score => 
-                            score.Score == TargetScore.CorrectWinner).Points;
-
-                        return $"Result: {pointsForCorrectResult}, winner: {pointsForCorrectWinner}";
+                        return $"Result: {_scoring.PointsForCorrectResult}, winner: {_scoring.PointsForCorrectWinner}";
                     }
                 }
 
@@ -389,7 +377,7 @@ namespace Betkeeper.Actions
 
                     Result = result;
                     Question = target.Bet;
-                    _scoring = target.ScoringDeprecated;
+                    _scoring = target.Scoring;
                     BetItems = new List<BetItem>();
                 }
 

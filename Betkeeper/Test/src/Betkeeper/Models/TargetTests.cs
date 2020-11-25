@@ -17,6 +17,7 @@ namespace Betkeeper.Test.Models
         public void OneTimeSetup()
         {
             _context = Tools.GetTestContext();
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _targetRepository = new TargetRepository();
         }
 
@@ -247,9 +248,9 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                ScoringDeprecated = new List<ScoringDeprecated>
+                Scoring = new Scoring
                 {
-                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                    PointsForCorrectResult = 2
                 },
                 Type = Enums.TargetType.OpenQuestion
             };
@@ -263,10 +264,10 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                ScoringDeprecated = new List<ScoringDeprecated>
+                Scoring = new Scoring
                 {
-                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult },
-                    new ScoringDeprecated{ Points = 1, Score = Enums.TargetScore.CorrectWinner }
+                    PointsForCorrectResult = 2,
+                    PointsForCorrectWinner = 1
                 },
                 Type = Enums.TargetType.Result
             };
@@ -280,9 +281,9 @@ namespace Betkeeper.Test.Models
             var target = new Target
             {
                 TargetId = 1,
-                ScoringDeprecated = new List<ScoringDeprecated>
+                Scoring = new Scoring
                 {
-                    new ScoringDeprecated{ Points = 2, Score = Enums.TargetScore.CorrectResult }
+                    PointsForCorrectResult = 2
                 },
                 Type = Enums.TargetType.Selection
             };

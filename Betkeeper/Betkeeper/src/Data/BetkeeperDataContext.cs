@@ -35,13 +35,6 @@ namespace Betkeeper.Data
         {
             modelBuilder
                 .Entity<Target>()
-                .Property(target => target.ScoringDeprecated)
-                .HasConversion(
-                    scoring => JsonConvert.SerializeObject(scoring),
-                    scoring => JsonConvert.DeserializeObject<List<ScoringDeprecated>>(scoring));
-
-            modelBuilder
-                .Entity<Target>()
                 .Property(target => target.Scoring)
                 .HasConversion(
                     scoring => JsonConvert.SerializeObject(scoring),

@@ -24,7 +24,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
         public void OneTimeSetUp()
         {
             _context = Tools.GetTestContext();
-
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             Tools.CreateTestData(
                 competitions: new List<Competition>
                 {
@@ -52,14 +52,10 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
             {
                 Bet = "Bet",
                 Type = Enums.TargetType.OpenQuestion,
-                ScoringDeprecated = new List<ScoringDeprecated>
-                        {
-                            new ScoringDeprecated
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 1
-                            }
-                        },
+                Scoring = new Scoring
+                {
+                    PointsForCorrectResult = 1
+                },
                 CompetitionId = 1,
                 TargetId = 1
             };
@@ -87,44 +83,28 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                         TargetId = 1,
                         Bet = "Updated",
                         Type = Enums.TargetType.OpenQuestion,
-                        ScoringDeprecated = new List<ScoringDeprecated>
+                        Scoring = new Scoring
                         {
-                            new ScoringDeprecated
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 1
-                            }
+                            PointsForCorrectResult = 1
                         }
                     },
                     new Target
                     {
                         Bet = "Bet",
                         Type = Enums.TargetType.Result,
-                        ScoringDeprecated = new List<ScoringDeprecated>
+                        Scoring = new Scoring
                         {
-                            new ScoringDeprecated
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 2
-                            },
-                            new ScoringDeprecated
-                            {
-                                Score = Enums.TargetScore.CorrectWinner,
-                                Points = 1
-                            }
+                            PointsForCorrectResult = 2,
+                            PointsForCorrectWinner = 1
                         }
                     },
                     new Target
                     {
                         Type = Enums.TargetType.Selection,
                         Bet = "Bet2",
-                        ScoringDeprecated = new List<ScoringDeprecated>
+                        Scoring = new Scoring
                         {
-                            new ScoringDeprecated
-                            {
-                                Score = Enums.TargetScore.CorrectResult,
-                                Points = 2
-                            }
+                            PointsForCorrectResult = 2
                         },
                         Selections = new List<string>
                         {

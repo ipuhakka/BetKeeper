@@ -18,13 +18,21 @@ namespace Betkeeper.Test.Extensions
                 {
                     TargetId = 1,
                     CompetitionId = 1,
-                    Bet = "Something"
+                    Bet = "Something",
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 2
+                    }
                 },
                 new Target
                 {
                     TargetId = 2,
                     CompetitionId = 1,
-                    Bet = "Something 2"
+                    Bet = "Something 2",
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 2
+                    }
                 }
             };
 

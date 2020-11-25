@@ -126,14 +126,12 @@ namespace Betkeeper.Pages.CompetitionPage
                     { $"target-id-{i}", target.TargetId }
                 };
 
-            target.ScoringDeprecated?.ForEach(scoring =>
-            {
-                var key = scoring.Score == TargetScore.CorrectResult
-                    ? $"scoring-{i}"
-                    : $"winner-{i}";
+            valueDict.Add($"scoring-{i}", target.Scoring.PointsForCorrectResult);
 
-                valueDict.Add(key, scoring.Points);
-            });
+            if (target.Scoring.PointsForCorrectWinner != null)
+            {
+                valueDict.Add($"winner-{i}", target.Scoring.PointsForCorrectWinner);
+            }
 
             var innerObject = new JObject();
 

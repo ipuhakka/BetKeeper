@@ -133,25 +133,17 @@ namespace Betkeeper.Test.Actions
             {
                 new Target
                 {
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 1,
-                            Score = TargetScore.CorrectResult
-                        },
+                        PointsForCorrectResult = 1
                     },
                     Bet = "Bet"
                 },
                 new Target
                 {
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 1,
-                            Score = TargetScore.CorrectResult
-                        },
+                        PointsForCorrectResult = 1
                     },
                     Bet = "Bet"
                 },
@@ -159,52 +151,6 @@ namespace Betkeeper.Test.Actions
 
             var exception = Assert.Throws<ActionException>(() =>
                 _targetAction.HandleTargetsUpdate(1, 1, targets));
-        }
-
-        [Test]
-        public void HandleTargetsUpdate_ScoringContainsDuplicates_ThrowsActionException()
-        {
-            var competitions = new List<Competition>
-            {
-                new Competition
-                {
-                    CompetitionId = 1,
-                    StartTime = DateTime.Now.AddDays(1)
-                }
-            };
-
-            var participators = new List<Participator>
-            {
-                new Participator
-                {
-                    Competition = 1,
-                    UserId = 1,
-                    ParticipatorId = 1,
-                    Role = CompetitionRole.Host
-                }
-            };
-
-            Tools.CreateTestData(participators: participators, competitions: competitions);
-
-            var target = new Target
-            {
-                ScoringDeprecated = new List<ScoringDeprecated>
-                {
-                    new ScoringDeprecated
-                    {
-                        Points = 1,
-                        Score = TargetScore.CorrectResult
-                    },
-                    new ScoringDeprecated
-                    {
-                        Points = 5,
-                        Score = TargetScore.CorrectResult
-                    },
-                }
-            };
-
-            var exception = Assert.Throws<ActionException>(() =>
-                _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target }));
         }
 
         [Test]
@@ -236,44 +182,18 @@ namespace Betkeeper.Test.Actions
             {
                 new Target
                 {
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 1,
-                            Score = TargetScore.CorrectWinner
-                        }
+                        PointsForCorrectWinner = 1
                     },
                     Type = TargetType.OpenQuestion,
                     Bet = "Some bet"
                 },
                 new Target
                 {
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 1,
-                            Score = TargetScore.CorrectWinner
-                        }
-                    },
-                    Type = TargetType.OpenQuestion,
-                    Bet = "Some bet"
-                },
-                new Target
-                {
-                    ScoringDeprecated = new List<ScoringDeprecated>
-                    {
-                        new ScoringDeprecated
-                        {
-                            Points = 1,
-                            Score = TargetScore.CorrectResult
-                        },
-                        new ScoringDeprecated
-                        {
-                            Points = 2,
-                            Score = TargetScore.CorrectResult
-                        }
+                        PointsForCorrectWinner = 1
                     },
                     Type = TargetType.OpenQuestion,
                     Bet = "Some bet"
@@ -313,18 +233,10 @@ namespace Betkeeper.Test.Actions
             var target = new Target
             {
                 Type = TargetType.Result,
-                ScoringDeprecated = new List<ScoringDeprecated>
+                Scoring = new Scoring
                 {
-                    new ScoringDeprecated
-                    {
-                        Points = 5,
-                        Score = TargetScore.CorrectResult
-                    },
-                    new ScoringDeprecated
-                    {
-                        Points = 1,
-                        Score = TargetScore.CorrectWinner
-                    },
+                    PointsForCorrectResult = 5,
+                    PointsForCorrectWinner = 1
                 },
                 Bet = "Some bet"
             };
@@ -333,7 +245,8 @@ namespace Betkeeper.Test.Actions
 
             var targets = _context.Target.ToList();
             Assert.AreEqual(1, targets.Count);
-            Assert.AreEqual(2, targets[0].ScoringDeprecated.Count);
+            Assert.AreEqual(5, target.Scoring.PointsForCorrectResult);
+            Assert.AreEqual(1, target.Scoring.PointsForCorrectWinner);
             Assert.AreEqual(TargetType.Result, targets[0].Type);
         }
 
@@ -363,13 +276,9 @@ namespace Betkeeper.Test.Actions
                             {2, "Wrong"}
                         }
                     },
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 2,
-                            Score = TargetScore.CorrectResult
-                        }
+                        PointsForCorrectResult = 2
                     },
                     CompetitionId = 1
                 },
@@ -381,13 +290,9 @@ namespace Betkeeper.Test.Actions
                     {
                         Result = "test1"
                     },
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Points = 2,
-                            Score = TargetScore.CorrectResult
-                        }
+                        PointsForCorrectResult = 2
                     },
                     CompetitionId = 1
                 },
@@ -400,18 +305,10 @@ namespace Betkeeper.Test.Actions
                     {
                         Result = "2-1"
                     },
-                    ScoringDeprecated = new List<ScoringDeprecated>
+                    Scoring = new Scoring
                     {
-                        new ScoringDeprecated
-                        {
-                            Score = TargetScore.CorrectResult,
-                            Points = 2
-                        },
-                        new ScoringDeprecated
-                        {
-                            Score = TargetScore.CorrectWinner,
-                            Points = 1
-                        }
+                        PointsForCorrectResult = 2,
+                        PointsForCorrectWinner = 1
                     },
                     CompetitionId = 1
                 }

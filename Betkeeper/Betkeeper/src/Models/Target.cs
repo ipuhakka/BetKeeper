@@ -23,8 +23,6 @@ namespace Betkeeper.Models
         [Column("Competition")]
         public int CompetitionId { get; set; }
 
-        public List<ScoringDeprecated> ScoringDeprecated { get; set; }
-
         public Scoring Scoring { get; set; }
 
         public string Bet { get; set; }
@@ -46,12 +44,12 @@ namespace Betkeeper.Models
 
             if (result == TargetResult.CorrectResult)
             {
-                return (double)ScoringDeprecated.Single(score => score.Score == TargetScore.CorrectResult).Points;
+                return (double)Scoring.PointsForCorrectResult;
             }
 
             if (result == TargetResult.CorrectWinner)
             {
-                return (double)ScoringDeprecated.Single(score => score.Score == TargetScore.CorrectWinner).Points;
+                return (double)Scoring.PointsForCorrectWinner;
             }
 
             return 0;
@@ -164,15 +162,11 @@ namespace Betkeeper.Models
             targetObject.TryGetValue($"question-{i}", out JToken questionJToken);
             targetObject.TryGetValue($"scoring-{i}", out JToken scoringJToken);
 
-            List<ScoringDeprecated> scorings = new List<ScoringDeprecated>();
+            var scoring = new Scoring();
 
             if (!scoringJToken.IsNullOrWhiteSpace())
             {
-                scorings.Add(new ScoringDeprecated
-                {
-                    Score = TargetScore.CorrectResult,
-                    Points = scoringJToken.GetDoubleInvariantCulture()
-                });
+                scoring.PointsForCorrectResult = scoringJToken.GetDoubleInvariantCulture();
             }
 
             if (type == TargetType.Result)
@@ -181,11 +175,7 @@ namespace Betkeeper.Models
 
                 if (!winnerJToken.IsNullOrWhiteSpace())
                 {
-                    scorings.Add(new ScoringDeprecated
-                    {
-                        Score = TargetScore.CorrectWinner,
-                        Points = winnerJToken.GetDoubleInvariantCulture()
-                    });
+                    scoring.PointsForCorrectWinner = winnerJToken.GetDoubleInvariantCulture();
                 }
             }
 
@@ -211,20 +201,10 @@ namespace Betkeeper.Models
                 Type = type,
                 Bet = questionJToken?.ToString(),
                 CompetitionId = competitionId,
-                ScoringDeprecated = scorings,
+                Scoring = scoring,
                 Selections = selections,
                 TargetId = targetId
             };
-        }
-
-        /// <summary>
-        /// Helper method to check if target has a specific scoring type with points set
-        /// </summary>
-        /// <param name="scoring"></param>
-        /// <returns></returns>
-        public bool HasScoringType(TargetScore scoring)
-        {
-            return ScoringDeprecated.Any(score => score.Score == scoring && score.Points != null);
         }
 
         /// <summary>
@@ -238,9 +218,12 @@ namespace Betkeeper.Models
                 ? "Correct"
                 : "Result";
 
-            return string.Join(", ", ScoringDeprecated.Select(score => score.Score == TargetScore.CorrectResult
-                ? $"{scoreTerm}: {score.Points} points"
-                : $"Winner: {score.Points} points"));
+            if (Type == TargetType.Result)
+            {
+                return $"Result: {Scoring.PointsForCorrectResult} points, Winner: {Scoring.PointsForCorrectWinner} points";
+            }
+
+            return $"{scoreTerm}: {Scoring.PointsForCorrectResult} points";
         }
     }
 
@@ -259,7 +242,7 @@ namespace Betkeeper.Models
 
     public class Scoring
     {
-        public double PointsForCorrectResult { get; set; }
+        public double? PointsForCorrectResult { get; set; }
 
         public double? PointsForCorrectWinner { get; set; }
     }
