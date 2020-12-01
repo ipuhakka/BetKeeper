@@ -25,7 +25,7 @@ namespace Betkeeper.Pages
             CompetitionAction = competitionAction;
         }
 
-        public HttpResponseMessage GetResponse(string pageKey, int userId)
+        public PageResponse GetPage(string pageKey, int userId)
         {
             var components = new List<Component>
             {
@@ -61,9 +61,7 @@ namespace Betkeeper.Pages
                 { "Competitions", CompetitionAction.GetUsersCompetitions(userId) }
             };
 
-            return Http.CreateResponse(
-                HttpStatusCode.OK,
-                new PageResponse(pageKey, components, dataDictionary));
+            return new PageResponse(pageKey, components, dataDictionary);
         }
 
         public HttpResponseMessage HandleAction(PageAction action)

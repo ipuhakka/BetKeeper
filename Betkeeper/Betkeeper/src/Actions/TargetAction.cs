@@ -343,7 +343,7 @@ namespace Betkeeper.Actions
                 /// <summary>
                 /// Points possible to get for bet
                 /// </summary>
-                private Scoring _scoring { get; set; }
+                private Scoring Scoring { get; set; }
 
                 /// <summary>
                 /// Get available points for a target item.
@@ -352,12 +352,12 @@ namespace Betkeeper.Actions
                 {
                     get
                     {
-                        if (_scoring.PointsForCorrectWinner == null)
+                        if (Scoring.PointsForCorrectWinner == null)
                         {
-                            return $"{_scoring.PointsForCorrectResult}";
+                            return $"{Scoring.PointsForCorrectResult}";
                         }
 
-                        return $"Result: {_scoring.PointsForCorrectResult}, winner: {_scoring.PointsForCorrectWinner}";
+                        return $"Result: {Scoring.PointsForCorrectResult}, winner: {Scoring.PointsForCorrectWinner}";
                     }
                 }
 
@@ -377,7 +377,7 @@ namespace Betkeeper.Actions
 
                     Result = result;
                     Question = target.Bet;
-                    _scoring = target.Scoring;
+                    Scoring = target.Scoring;
                     BetItems = new List<BetItem>();
                 }
 

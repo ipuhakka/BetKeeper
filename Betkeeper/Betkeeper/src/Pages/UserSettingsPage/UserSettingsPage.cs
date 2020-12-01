@@ -18,7 +18,7 @@ namespace Betkeeper.Pages
             UserAction = new UserAction();
         }
 
-        public HttpResponseMessage GetResponse(string pageKey, int userId)
+        public PageResponse GetPage(string pageKey, int userId)
         {
             var passwordModal = new ModalActionButton(
                 "changePassword",
@@ -30,12 +30,10 @@ namespace Betkeeper.Pages
                 "Change password",
                 requireConfirm: true);
 
-            return Http.CreateResponse(
-                HttpStatusCode.OK,
-                new PageResponse(
-                    "usersettings", 
-                    new List<Component> { passwordModal }, 
-                    new Dictionary<string, object>()));
+            return new PageResponse(
+                    "usersettings",
+                    new List<Component> { passwordModal },
+                    new Dictionary<string, object>());
         }
 
         public HttpResponseMessage HandleAction(PageAction action)

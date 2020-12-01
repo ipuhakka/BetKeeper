@@ -43,11 +43,11 @@ namespace Betkeeper.Pages.CompetitionPage
             TargetBetAction = targetBetAction;
         }
 
-        public HttpResponseMessage GetResponse(string pageId, int userId)
+        public PageResponse GetPage(string pageKey, int userId)
         {
             Data = new Dictionary<string, object>();
 
-            var competitionId = int.Parse(pageId);
+            var competitionId = int.Parse(pageKey);
 
             var participator = CompetitionAction.GetParticipator(userId, competitionId);
             var competition = CompetitionAction.GetCompetition(competitionId);
@@ -55,10 +55,7 @@ namespace Betkeeper.Pages.CompetitionPage
             // User does not have rights to competition, redirect
             if (participator == null)
             {
-                var response = Http.CreateResponse(HttpStatusCode.Redirect);
-                response.Headers.Add("Location", "../competitions/");
-
-                return response;
+                return new PageResponse(redirectTo: "../competitions");
             }
 
             var competitionTargets = TargetAction.GetTargets(competitionId);
@@ -138,9 +135,7 @@ namespace Betkeeper.Pages.CompetitionPage
             Data.Add("betTargets", TargetsToJObject(competitionTargets));
             Data.Add("betsContainer", TargetBetsToJObject(usersBets));
 
-            return Http.CreateResponse(
-                HttpStatusCode.OK,
-                new PageResponse($"competitions/{pageId}", tabs, Data));
+            return new PageResponse($"competitions/{pageKey}", tabs, Data);
         }
 
         public HttpResponseMessage HandleAction(PageAction action)

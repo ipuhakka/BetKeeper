@@ -2,6 +2,7 @@
 using Betkeeper.Page.Components;
 using Betkeeper.Pages;
 using Betkeeper.Pages.CompetitionPage;
+using Betkeeper.Pages.FoldersPage;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,14 +12,13 @@ namespace Betkeeper.Page
 {
     public interface IPage
     {
-
         /// <summary>
-        /// Get page structure and data.
+        /// Gets page structure 
         /// </summary>
         /// <param name="pageKey"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        HttpResponseMessage GetResponse(string pageKey, int userId);
+        PageResponse GetPage(string pageKey, int userId);
 
         /// <summary>
         /// Handles a page action.
@@ -47,6 +47,10 @@ namespace Betkeeper.Page
 
         public Dictionary<string, object> Data { get; set; }
 
+        public bool Redirect { get; set; }
+
+        public string RedirectTo { get; set; }
+
         public PageResponse(
             string pageKey,
             List<Component> components,
@@ -66,24 +70,51 @@ namespace Betkeeper.Page
             Components = components;
         }
 
+        /// <summary>
+        /// Constructor for creating a page response which should redirect user to another url.
+        /// </summary>
+        /// <param name="redirectTo"></param>
+        public PageResponse(string redirectTo)
+        {
+            Redirect = true;
+            RedirectTo = redirectTo;
+        }
+
         public static HttpResponseMessage GetResponseMessage(
             string pageKey,
             int userId,
             int? pageId = null)
         {
+            PageResponse pageResponse;
             switch (pageKey)
             {
                 default:
                     return Http.CreateResponse(HttpStatusCode.NotFound);
 
                 case "competitions":
-                    return pageId != null
-                        ? new CompetitionPage().GetResponse(pageId.ToString(), userId)
-                        : new CompetitionsPage().GetResponse(pageKey, userId);
+                    pageResponse = pageId != null
+                        ? new CompetitionPage().GetPage(pageId.ToString(), userId)
+                        : new CompetitionsPage().GetPage(pageKey, userId);
+                    break;
 
                 case "usersettings":
-                    return new UserSettingsPage().GetResponse(pageKey, userId);
+                    pageResponse = new UserSettingsPage().GetPage(pageKey, userId);
+                    break;
+
+                case "folders":
+                    pageResponse = new FoldersPage().GetPage(pageKey, userId);
+                    break;
             }
+
+            if (pageResponse.Redirect)
+            {
+                var response = Http.CreateResponse(HttpStatusCode.Redirect);
+                response.Headers.Add("Location", pageResponse.RedirectTo);
+
+                return response;
+            }
+
+            return Http.CreateResponse(HttpStatusCode.OK, pageResponse);
         }
 
         /// <summary>
