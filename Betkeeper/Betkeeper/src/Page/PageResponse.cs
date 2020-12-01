@@ -10,7 +10,10 @@ using System.Net.Http;
 
 namespace Betkeeper.Page
 {
-    public interface IPage
+    /// <summary>
+    /// Page base class
+    /// </summary>
+    public abstract class PageBase
     {
         /// <summary>
         /// Gets page structure 
@@ -18,14 +21,14 @@ namespace Betkeeper.Page
         /// <param name="pageKey"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        PageResponse GetPage(string pageKey, int userId);
+        public abstract PageResponse GetPage(string pageKey, int userId);
 
         /// <summary>
         /// Handles a page action.
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        HttpResponseMessage HandleAction(PageAction action);
+        public abstract HttpResponseMessage HandleAction(PageAction action);
 
         /// <summary>
         /// Handle a dropdown value update. 
@@ -34,9 +37,12 @@ namespace Betkeeper.Page
         /// <param name="data"></param>
         /// <param name="pageId"></param>
         /// <returns></returns>
-        HttpResponseMessage HandleDropdownUpdate(
+        public virtual HttpResponseMessage HandleDropdownUpdate(
             Dictionary<string, object> data,
-            int? pageId = null);
+            int? pageId = null)
+        {
+            throw new NotImplementedException("Page does not implement handling dropdown updates");
+        }
     }
 
     public class PageResponse
@@ -144,7 +150,7 @@ namespace Betkeeper.Page
             }
         }
 
-        public static IPage GetPageInstance(string page, int? id = null)
+        public static PageBase GetPageInstance(string page, int? id = null)
         {
             switch (page)
             {

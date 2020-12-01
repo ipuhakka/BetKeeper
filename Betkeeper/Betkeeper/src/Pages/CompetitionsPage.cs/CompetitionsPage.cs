@@ -11,7 +11,7 @@ using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
-    public class CompetitionsPage : IPage
+    public class CompetitionsPage : PageBase
     {
         private CompetitionAction CompetitionAction { get; set; }
 
@@ -25,7 +25,7 @@ namespace Betkeeper.Pages
             CompetitionAction = competitionAction;
         }
 
-        public PageResponse GetPage(string pageKey, int userId)
+        public override PageResponse GetPage(string pageKey, int userId)
         {
             var components = new List<Component>
             {
@@ -64,7 +64,7 @@ namespace Betkeeper.Pages
             return new PageResponse(pageKey, components, dataDictionary);
         }
 
-        public HttpResponseMessage HandleAction(PageAction action)
+        public override HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -77,13 +77,6 @@ namespace Betkeeper.Pages
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        public HttpResponseMessage HandleDropdownUpdate(
-            Dictionary<string, object> data,
-            int? pageId = null)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>

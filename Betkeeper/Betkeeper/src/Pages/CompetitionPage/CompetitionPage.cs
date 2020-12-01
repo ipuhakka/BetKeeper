@@ -16,7 +16,7 @@ namespace Betkeeper.Pages.CompetitionPage
     /// <summary>
     /// A competition page structure.
     /// </summary>
-    public partial class CompetitionPage : IPage
+    public partial class CompetitionPage : PageBase
     {
         private CompetitionAction CompetitionAction { get; }
 
@@ -43,7 +43,7 @@ namespace Betkeeper.Pages.CompetitionPage
             TargetBetAction = targetBetAction;
         }
 
-        public PageResponse GetPage(string pageKey, int userId)
+        public override PageResponse GetPage(string pageKey, int userId)
         {
             Data = new Dictionary<string, object>();
 
@@ -138,7 +138,7 @@ namespace Betkeeper.Pages.CompetitionPage
             return new PageResponse($"competitions/{pageKey}", tabs, Data);
         }
 
-        public HttpResponseMessage HandleAction(PageAction action)
+        public override HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -179,7 +179,7 @@ namespace Betkeeper.Pages.CompetitionPage
             }
         }
 
-        public HttpResponseMessage HandleDropdownUpdate(
+        public override HttpResponseMessage HandleDropdownUpdate(
             Dictionary<string, object> data,
             int? pageId = null)
         {

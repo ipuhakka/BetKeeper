@@ -22,9 +22,7 @@ namespace Betkeeper.Extensions
                 return null;
             }
 
-            DateTime dateTime;
-
-            if (DateTime.TryParse(dictionary[key].ToString(), out dateTime))
+            if (DateTime.TryParse(dictionary[key].ToString(), out DateTime dateTime))
             {
                 return dateTime;
             }

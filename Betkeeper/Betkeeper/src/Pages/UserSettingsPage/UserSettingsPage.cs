@@ -9,7 +9,7 @@ using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
-    public class UserSettingsPage : IPage
+    public class UserSettingsPage : PageBase
     {
         private UserAction UserAction { get; set; }
 
@@ -18,7 +18,7 @@ namespace Betkeeper.Pages
             UserAction = new UserAction();
         }
 
-        public PageResponse GetPage(string pageKey, int userId)
+        public override PageResponse GetPage(string pageKey, int userId)
         {
             var passwordModal = new ModalActionButton(
                 "changePassword",
@@ -36,7 +36,7 @@ namespace Betkeeper.Pages
                     new Dictionary<string, object>());
         }
 
-        public HttpResponseMessage HandleAction(PageAction action)
+        public override HttpResponseMessage HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -45,11 +45,6 @@ namespace Betkeeper.Pages
                 default:
                     throw new NotImplementedException($"{action.ActionName} not implemented!");
             }
-        }
-
-        public HttpResponseMessage HandleDropdownUpdate(Dictionary<string, object> data, int? pageId = null)
-        {
-            throw new NotImplementedException();
         }
 
         private HttpResponseMessage HandlePasswordAction(PageAction action)

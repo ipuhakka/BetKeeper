@@ -2,23 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 
 namespace Betkeeper.Pages.FoldersPage
 {
-    public class FoldersPage : IPage
+    public class FoldersPage : PageBase
     {
-        public PageResponse GetPage(string pageKey, int userId)
+        public override PageResponse GetPage(string pageKey, int userId)
         {
             throw new NotImplementedException();
         }
 
-        public HttpResponseMessage HandleAction(PageAction action)
-        {
-            throw new NotImplementedException();
-        }
-
-        public HttpResponseMessage HandleDropdownUpdate(Dictionary<string, object> data, int? pageId = null)
+        public override HttpResponseMessage HandleAction(PageAction action)
         {
             throw new NotImplementedException();
         }
