@@ -66,7 +66,7 @@ namespace Betkeeper.Actions
             if (UserRepository.GetUsersById(new List<int> { userId }).Count == 0)
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict,
+                    ActionResultType.Conflict,
                     "User not found");
             }
 
@@ -87,7 +87,7 @@ namespace Betkeeper.Actions
             if (GetBet(betId, userId) == null)
             {
                 throw new ActionException(
-                    ActionExceptionType.NotFound,
+                    ActionResultType.NotFound,
                     "Bet trying to be deleted was not found");
             }
 
@@ -116,7 +116,7 @@ namespace Betkeeper.Actions
             if (bet == null)
             {
                 throw new ActionException(
-                    ActionExceptionType.NotFound,
+                    ActionResultType.NotFound,
                     "Bet not found");
             }
 

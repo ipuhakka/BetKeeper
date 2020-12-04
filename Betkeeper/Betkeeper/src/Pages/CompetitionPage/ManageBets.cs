@@ -45,7 +45,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage AddBetContainer(PageAction action)
+        private PageActionResponse AddBetContainer(PageAction action)
         {
             var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");
 
@@ -70,7 +70,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 betTargetContainer.Children.Add(newBetTarget);
             }
 
-            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetContainer));
+            return new PageActionResponse(betTargetContainer);
         }
 
         /// <summary>
@@ -78,20 +78,20 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage GetTargetsFromDatabase(PageAction action)
+        private PageActionResponse GetTargetsFromDatabase(PageAction action)
         {
             var targets = TargetAction.GetTargets((int)action.PageId);
 
             var betTargetsContainer = GetBetTargetsContainer(targets);
 
-            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse(betTargetsContainer)
+            return new PageActionResponse(betTargetsContainer)
             {
                 Data = new Dictionary<string, object>
                 {
                     // Clear bet targets data
                     {"betTargets", TargetsToJObject(targets) }
                 }
-            });
+            };
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage SaveBetTargets(PageAction action)
+        private PageActionResponse SaveBetTargets(PageAction action)
         {
             var competitionId = (int)action.PageId;
 
@@ -107,9 +107,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             if (competition.State != CompetitionState.Open)
             {
-                return Http.CreateResponse(
-                        HttpStatusCode.Conflict,
-                        new PageActionResponse("Competition has started, no new bets can be created"));
+                return new PageActionResponse(ActionResultType.Conflict, "Competition has started, no new bets can be created");
             }
 
             List<Target> targets = new List<Target>();
@@ -124,9 +122,10 @@ namespace Betkeeper.Pages.CompetitionPage
 
             TargetAction.HandleTargetsUpdate(action.UserId, competitionId, targets);
 
-            return Http.CreateResponse(
-                HttpStatusCode.OK, 
-                new PageActionResponse("Targets added successfully", refresh: true));
+            return new PageActionResponse(
+                ActionResultType.OK,
+                "Targets added successfully",
+                refresh: true);
         }
 
         /// <summary>
@@ -134,7 +133,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage DeleteTarget(PageAction action)
+        private PageActionResponse DeleteTarget(PageAction action)
         {
             /*
              * 1: Fetch target-id- value. 
@@ -166,17 +165,14 @@ namespace Betkeeper.Pages.CompetitionPage
             targets.RemoveAt(deleteDataIndex);
 
             var betTargetContainer = GetBetTargetsContainer(targets);
-
-            return Http.CreateResponse(
-                HttpStatusCode.OK, 
-                new PageActionResponse(betTargetContainer)
-                {
-                    Data = new Dictionary<string, object>
+            return new PageActionResponse(betTargetContainer)
+            {
+                Data = new Dictionary<string, object>
                     {
                         { "betTargets", TargetsToJObject(targets) }
                     },
-                    Refresh = true
-                });
+                Refresh = true
+            };
         }
 
         /// <summary>

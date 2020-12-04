@@ -110,7 +110,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="pageAction"></param>
         /// <returns></returns>
-        private HttpResponseMessage SaveUserBets(PageAction pageAction)
+        private PageActionResponse SaveUserBets(PageAction pageAction)
         {
             var asJArray = pageAction.Parameters["betsContainer"] as JArray;
 
@@ -128,9 +128,10 @@ namespace Betkeeper.Pages.CompetitionPage
 
             TargetBetAction.SaveTargetBets((int)pageAction.PageId, pageAction.UserId, targetBets);
 
-            return Http.CreateResponse(
-                System.Net.HttpStatusCode.OK,
-                new PageActionResponse("Bets saved succesfully") { Refresh = true });
+            return new PageActionResponse(
+                ActionResultType.OK,
+                "Bets saved succesfully",
+                refresh: true);
         }
     }
 }

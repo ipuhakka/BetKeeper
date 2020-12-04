@@ -77,7 +77,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
 
             Assert.AreEqual(
                 HttpStatusCode.Unauthorized,
-                response.StatusCode);
+                response.ToHttpResponseMessage().StatusCode);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
 
             Assert.AreEqual(
                 HttpStatusCode.BadRequest,
-                response.StatusCode);
+                response.ToHttpResponseMessage().StatusCode);
         }
 
         [Test]
@@ -143,7 +143,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
 
             Assert.AreEqual(
                 HttpStatusCode.OK,
-                response.StatusCode);
+                response.ToHttpResponseMessage().StatusCode);
             
             Assert.AreEqual(0, _context.Competition.ToList().Count);
         }

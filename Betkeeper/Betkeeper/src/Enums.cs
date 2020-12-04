@@ -63,4 +63,19 @@
         /// </summary>
         OpenQuestion
     }
+
+    /// <summary>
+    /// Action result types
+    /// </summary>
+    public enum ActionResultType
+    {
+        OK = 200,
+        Created = 201,
+        NoContent = 204,
+        InvalidInput = 400,
+        Unauthorized = 401,
+        NotFound = 404,
+        Conflict = 409,
+        ServerError = 500
+    }
 }

@@ -1,5 +1,9 @@
-﻿using Betkeeper.Page.Components;
+﻿using Betkeeper.Classes;
+using Betkeeper.Enums;
+using Betkeeper.Page.Components;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 
 namespace Betkeeper.Page
 {
@@ -79,21 +83,29 @@ namespace Betkeeper.Page
         /// </summary>
         public bool Refresh { get; set; }
 
-        /// <summary>
-        /// Empty constructor
-        /// </summary>
-        public PageActionResponse()
-        {
+        private ActionResultType ActionResultType { get; }
 
+        /// <summary>
+        /// Constructor with only a result type
+        /// </summary>
+        /// <param name="actionResultType"></param>
+        public PageActionResponse(ActionResultType actionResultType)
+        {
+            ActionResultType = actionResultType;
         }
 
         /// <summary>
         /// Creates a pageaction response with message to be displayed
         /// </summary>
+        /// param name="actionResult"></param>
         /// <param name="message"></param>
         /// <param name="refresh"></param>
-        public PageActionResponse(string message, bool refresh = false)
+        public PageActionResponse(
+            ActionResultType actionResult, 
+            string message, 
+            bool refresh = false)
         {
+            ActionResultType = actionResult;
             Message = message;
             ShowAlert = true;
             Refresh = refresh;
@@ -105,6 +117,7 @@ namespace Betkeeper.Page
         /// <param name="components"></param>
         public PageActionResponse(List<Component> components)
         {
+            ActionResultType = ActionResultType.OK;
             Components = components;
         }
 
@@ -114,10 +127,22 @@ namespace Betkeeper.Page
         /// <param name="components"></param>
         public PageActionResponse(Component component)
         {
+            ActionResultType = ActionResultType.OK;
             Components = new List<Component>
             {
                 component
             };
+        }
+
+        /// <summary>
+        /// Creates a Http response from page action response
+        /// </summary>
+        /// <returns></returns>
+        public HttpResponseMessage ToHttpResponseMessage()
+        {
+            return Http.CreateResponse(
+                (HttpStatusCode)ActionResultType, 
+                this);
         }
     }
 }

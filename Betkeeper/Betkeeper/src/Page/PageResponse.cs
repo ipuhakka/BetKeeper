@@ -1,4 +1,5 @@
 ﻿using Betkeeper.Classes;
+using Betkeeper.Enums;
 using Betkeeper.Page.Components;
 using Betkeeper.Pages;
 using Betkeeper.Pages.CompetitionPage;
@@ -28,7 +29,7 @@ namespace Betkeeper.Page
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public abstract HttpResponseMessage HandleAction(PageAction action);
+        public abstract PageActionResponse HandleAction(PageAction action);
 
         /// <summary>
         /// Handle a dropdown value update. 
@@ -140,13 +141,16 @@ namespace Betkeeper.Page
                 case "competitions":
                     if (action.PageId != null)
                     {
-                        return new CompetitionPage().HandleAction(action);
+                        return new CompetitionPage().HandleAction(action).ToHttpResponseMessage();
                     }
 
-                    return new CompetitionsPage().HandleAction(action);
+                    return new CompetitionsPage().HandleAction(action).ToHttpResponseMessage();
 
                 case "usersettings":
-                    return new UserSettingsPage().HandleAction(action);
+                    return new UserSettingsPage().HandleAction(action).ToHttpResponseMessage();
+
+                case "folders":
+                    return new FoldersPage().HandleAction(action).ToHttpResponseMessage();
             }
         }
 

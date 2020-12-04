@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Betkeeper.Actions;
 using Betkeeper.Data;
+using Betkeeper.Enums;
 using Betkeeper.Models;
 using NUnit.Framework;
 using TestTools;
@@ -60,7 +61,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
                 Assert.AreEqual("Competition is not open for betting", e.ErrorMessage);
             }
         }
@@ -91,7 +92,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Unauthorized, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Unauthorized, e.ActionExceptionType);
                 Assert.AreEqual("User not in competition", e.ErrorMessage);
             }
         }
@@ -134,7 +135,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
                 Assert.AreEqual("Target does not exist", e.ErrorMessage);
             }
         }
@@ -187,7 +188,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.InvalidInput, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.InvalidInput, e.ActionExceptionType);
                 Assert.AreEqual("Target 1 is missing an answer", e.ErrorMessage);
             }
         }
@@ -248,7 +249,7 @@ namespace Betkeeper.Test.Actions
                 }
                 catch (ActionException e)
                 {
-                    Assert.AreEqual(ActionExceptionType.InvalidInput, e.ActionExceptionType);
+                    Assert.AreEqual(ActionResultType.InvalidInput, e.ActionExceptionType);
                     Assert.AreEqual("Target 1 has invalid result", e.ErrorMessage);
                 }
             });
@@ -308,7 +309,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.InvalidInput, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.InvalidInput, e.ActionExceptionType);
                 Assert.AreEqual("Target 1 has invalid selection", e.ErrorMessage);
             }
         }

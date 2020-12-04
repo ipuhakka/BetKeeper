@@ -1,5 +1,6 @@
 ﻿using Betkeeper.Actions;
 using Betkeeper.Data;
+using Betkeeper.Enums;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Pages;
@@ -62,7 +63,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
 
                 Assert.AreEqual(
                     HttpStatusCode.BadRequest,
-                    response.StatusCode);
+                    response.ToHttpResponseMessage().StatusCode);
             });
         }
 
@@ -79,7 +80,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             var response = _competitionsPage.HandleAction(
                 new PageAction(1, "competitions", "Post", parameters));
 
-            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Created, response.ToHttpResponseMessage().StatusCode);
 
             var competitions = _competitionRepository.GetCompetitions();
 
@@ -114,7 +115,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             var response = _competitionsPage.HandleAction(
                 new PageAction(1, "competitions", "Post", parameters));
 
-            Assert.AreEqual(HttpStatusCode.Conflict, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Conflict, response.ToHttpResponseMessage().StatusCode);
         }
 
         [Test]
@@ -140,7 +141,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             {
                 Assert.AreEqual(
                     HttpStatusCode.BadRequest,
-                    _competitionsPage.HandleAction(action).StatusCode);
+                    _competitionsPage.HandleAction(action).ToHttpResponseMessage().StatusCode);
             });
         }
 
@@ -163,7 +164,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.NotFound, e.ActionExceptionType);
             }
         }
 
@@ -198,7 +199,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
             }
         }
 
@@ -228,7 +229,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
 
             Assert.AreEqual(
                 HttpStatusCode.OK,
-                _competitionsPage.HandleAction(action).StatusCode);
+                _competitionsPage.HandleAction(action).ToHttpResponseMessage().StatusCode);
         }
     }
 }

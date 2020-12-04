@@ -1,8 +1,7 @@
 ﻿using Betkeeper.Models;
-using System;
+using Betkeeper.Enums;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Betkeeper.Actions
 {
@@ -25,14 +24,14 @@ namespace Betkeeper.Actions
             if (string.IsNullOrEmpty(folder))
             {
                 throw new ActionException(
-                    ActionExceptionType.InvalidInput,
+                    ActionResultType.InvalidInput,
                     $"Folder name cannot be empty");
             }
 
             if (UserHasFolder(userId, folder))
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict,
+                    ActionResultType.Conflict,
                     $"User already has folder named {folder}");
             }
 
@@ -44,7 +43,7 @@ namespace Betkeeper.Actions
             if (!UserHasFolder(userId, folder))
             {
                 throw new ActionException(
-                    ActionExceptionType.NotFound,
+                    ActionResultType.NotFound,
                     $"Folder {folder} does not exist, could not delete");
             }
 
@@ -88,7 +87,7 @@ namespace Betkeeper.Actions
                 !betsFolders.Any(betsFolder => betsFolder.FolderName == folder)))
             {
                 throw new ActionException(
-                    ActionExceptionType.NotFound,
+                    ActionResultType.NotFound,
                     $"Bet not in one of the folders");
             }
 
@@ -112,7 +111,7 @@ namespace Betkeeper.Actions
                 || !usersFolders.Any(usersFolder => usersFolder.FolderName == folderName)))
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict,
+                    ActionResultType.Conflict,
                     "Cannot add bet to all specified folders");
             }
 

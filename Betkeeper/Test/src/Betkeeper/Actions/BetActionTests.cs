@@ -47,7 +47,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
                 Assert.AreEqual("User not found", e.ErrorMessage);
             }
         }
@@ -112,7 +112,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.NotFound, e.ActionExceptionType);
                 Assert.AreEqual("Bet trying to be deleted was not found", e.ErrorMessage);
             }
         }
@@ -157,7 +157,7 @@ namespace Betkeeper.Test.Actions
             }
             catch(ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.NotFound, e.ActionExceptionType);
             }
         }
 

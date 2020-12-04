@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Betkeeper.Models;
+using Betkeeper.Enums;
 
 namespace Betkeeper.Actions
 {
@@ -23,7 +24,7 @@ namespace Betkeeper.Actions
         {
             if (!newPassword.Equals(newPasswordConfirmed))
             {
-                throw new ActionException(ActionExceptionType.InvalidInput, "Passwords do not match");
+                throw new ActionException(ActionResultType.InvalidInput, "Passwords do not match");
             }
 
             var previousPassword = UserRepository
@@ -33,7 +34,7 @@ namespace Betkeeper.Actions
 
             if (previousPassword.Equals(newPassword))
             {
-                throw new ActionException(ActionExceptionType.InvalidInput, "Password cannot be same as previous one");
+                throw new ActionException(ActionResultType.InvalidInput, "Password cannot be same as previous one");
             }
 
             UserRepository.ChangePassword(userId, newPassword);

@@ -217,7 +217,7 @@ namespace Betkeeper.Actions
             if (targets.Select(target => target.Bet).Distinct().Count() != targets.Count)
             {
                 throw new ActionException(
-                    ActionExceptionType.InvalidInput,
+                    ActionResultType.InvalidInput,
                     "Two or more bets contain same question");
             }
 
@@ -226,14 +226,14 @@ namespace Betkeeper.Actions
                 if (string.IsNullOrWhiteSpace(target.Bet))
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Row {i + 1}: No question given");
                 }
 
                 if (target.Scoring.PointsForCorrectResult == null)
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Row {i + 1}: Missing points for correct result");
                 }
 
@@ -241,14 +241,14 @@ namespace Betkeeper.Actions
                     && target.Scoring.PointsForCorrectWinner == null)
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Row {i + 1}: Missing points for correct winner");
                 }
 
                 if (!ValidScoringForType(target))
                 {
                     throw new ActionException(
-                        ActionExceptionType.ServerError,
+                        ActionResultType.ServerError,
                         $"Row {i + 1}: Invalid points");
                 }
 
@@ -256,7 +256,7 @@ namespace Betkeeper.Actions
                    (target.Selections == null || target.Selections.Count == 0))
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Row {i + 1}: No selections given for selection typed bet");
                 }
 
@@ -268,7 +268,7 @@ namespace Betkeeper.Actions
                     if (scores.Length != 2)
                     {
                         throw new ActionException(
-                            ActionExceptionType.InvalidInput,
+                            ActionResultType.InvalidInput,
                             $"Target {i + 1} has invalid result");
                     }
 
@@ -276,7 +276,7 @@ namespace Betkeeper.Actions
                         || !int.TryParse(scores[1], out int awayscore))
                     {
                         throw new ActionException(
-                            ActionExceptionType.InvalidInput,
+                            ActionResultType.InvalidInput,
                             $"Target {i + 1} has invalid result");
                     }
                 }

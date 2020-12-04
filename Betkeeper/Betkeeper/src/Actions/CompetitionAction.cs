@@ -1,6 +1,5 @@
 ﻿using Betkeeper.Classes;
-using Betkeeper.Data;
-using Betkeeper.Exceptions;
+using Betkeeper.Enums;
 using Betkeeper.Models;
 using System;
 using System.Collections.Generic;
@@ -104,17 +103,17 @@ namespace Betkeeper.Actions
 
             if (competition == null)
             {
-                throw new ActionException(ActionExceptionType.NotFound, $"{joinCode} did not match any competition");
+                throw new ActionException(ActionResultType.NotFound, $"{joinCode} did not match any competition");
             }
 
             if (competition.State != Enums.CompetitionState.Open)
             {
-                throw new ActionException(ActionExceptionType.Conflict, "Competition not open for new players");
+                throw new ActionException(ActionResultType.Conflict, "Competition not open for new players");
             }
 
             if (ParticipatorRepository.GetParticipators(userId, competition.CompetitionId).Count > 0)
             {
-                throw new ActionException(ActionExceptionType.Conflict, "Already joined competition");
+                throw new ActionException(ActionResultType.Conflict, "Already joined competition");
             }
 
             ParticipatorRepository.AddParticipator(

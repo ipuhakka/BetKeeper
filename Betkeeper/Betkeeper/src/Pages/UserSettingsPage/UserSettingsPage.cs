@@ -1,11 +1,9 @@
-﻿using Betkeeper.Classes;
+﻿using Betkeeper.Enums;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using Betkeeper.Actions;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 
 namespace Betkeeper.Pages
 {
@@ -36,7 +34,7 @@ namespace Betkeeper.Pages
                     new Dictionary<string, object>());
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public override PageActionResponse HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -47,7 +45,7 @@ namespace Betkeeper.Pages
             }
         }
 
-        private HttpResponseMessage HandlePasswordAction(PageAction action)
+        private PageActionResponse HandlePasswordAction(PageAction action)
         {
             var data = action.Parameters;
 
@@ -56,7 +54,9 @@ namespace Betkeeper.Pages
                 data["newPassword"].ToString(),
                 data["confirmNewPassword"].ToString());
 
-            return Http.CreateResponse(HttpStatusCode.OK, new PageActionResponse("Password changed successfully"));
+            return new PageActionResponse(
+                ActionResultType.OK,
+                "Password changed successfully");
         }
     }
 }

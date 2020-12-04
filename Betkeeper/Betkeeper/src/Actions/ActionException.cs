@@ -1,29 +1,18 @@
-﻿using System;
+﻿using Betkeeper.Enums;
+using System;
 
 namespace Betkeeper.Actions
 {
-    /// <summary>
-    /// Action exception types
-    /// </summary>
-    public enum ActionExceptionType
-    {
-        InvalidInput = 400,
-        Unauthorized = 401,
-        NotFound = 404,
-        Conflict = 409,
-        ServerError = 500
-    }
-
     /// <summary>
     /// Action exception
     /// </summary>
     public class ActionException : Exception
     {
-        public ActionExceptionType ActionExceptionType { get; set; }
+        public ActionResultType ActionExceptionType { get; set; }
         public string ErrorMessage { get; set; }
 
         public ActionException(
-            ActionExceptionType actionExceptionType, 
+            ActionResultType actionExceptionType, 
             string errorMessage)
         {
             ActionExceptionType = actionExceptionType;

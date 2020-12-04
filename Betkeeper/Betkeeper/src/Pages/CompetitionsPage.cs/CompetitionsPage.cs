@@ -2,6 +2,7 @@
 using Betkeeper.Classes;
 using Betkeeper.Exceptions;
 using Betkeeper.Extensions;
+using Betkeeper.Enums;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using System;
@@ -64,7 +65,7 @@ namespace Betkeeper.Pages
             return new PageResponse(pageKey, components, dataDictionary);
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public override PageActionResponse HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
@@ -84,20 +85,20 @@ namespace Betkeeper.Pages
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private HttpResponseMessage Post(PageAction action)
+        private PageActionResponse Post(PageAction action)
         {
             var startTime = action.Parameters.GetDateTime("StartTime");
 
             if (startTime == null)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return new PageActionResponse(ActionResultType.InvalidInput);
             }
 
             var name = action.Parameters.GetString("Name");
 
             if (string.IsNullOrEmpty(name))
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest);
+                return new PageActionResponse(ActionResultType.InvalidInput);
             }
 
             try
@@ -110,30 +111,34 @@ namespace Betkeeper.Pages
             }
             catch (NameInUseException)
             {
-                return Http.CreateResponse(
-                    HttpStatusCode.Conflict,
+                return new PageActionResponse(
+                    ActionResultType.Conflict,
                     "A tournament with specified name already exists");
             }
 
-            return Http.CreateResponse(HttpStatusCode.Created, new PageActionResponse("Competition created successfully", refresh: true));
+            return new PageActionResponse(
+                ActionResultType.Created,
+                "Competition created successfully",
+                refresh: true);
         }
 
-        private HttpResponseMessage JoinCompetition(PageAction action)
+        private PageActionResponse JoinCompetition(PageAction action)
         {
             var joinCode = action.Parameters.GetString("JoinCode");
 
             if (string.IsNullOrEmpty(joinCode))
             {
-                return Http.CreateResponse(
-                    HttpStatusCode.BadRequest,
+                return new PageActionResponse(
+                    ActionResultType.InvalidInput,
                     "Join code empty");
             }
 
             CompetitionAction.JoinCompetition(joinCode, action.UserId);
 
-            return Http.CreateResponse(
-                    HttpStatusCode.OK,
-                    new PageActionResponse("Joined competition successfully", refresh: true));
+            return new PageActionResponse(
+                ActionResultType.OK,
+                "Joined competition successfully",
+                refresh: true);
         }
     }
 }

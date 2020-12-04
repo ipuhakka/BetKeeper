@@ -125,7 +125,7 @@ namespace Betkeeper.Test.Pages.CompetitionPageTests
                 pageId: 1);
 
             var response = _competitionPage.HandleAction(action);
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.ToHttpResponseMessage().StatusCode);
 
             var competitionTargets = _targetAction.GetTargets(competitionId: 1);
             Assert.AreEqual(3, competitionTargets.Count);

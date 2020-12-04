@@ -1,4 +1,5 @@
-﻿using Betkeeper.Actions;
+﻿using Betkeeper.Enums;
+using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
@@ -203,7 +204,7 @@ namespace Betkeeper.Test.Actions
                 }
             };
 
-            var participators = new List<Participator>
+            new List<Participator>
             {
                 new Participator{ Competition = 1, UserId = 1}
             };
@@ -217,7 +218,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
             }
         }
 

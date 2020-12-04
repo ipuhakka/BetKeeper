@@ -1,6 +1,5 @@
-﻿using Betkeeper.Data;
+﻿using Betkeeper.Enums;
 using Betkeeper.Models;
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -54,7 +53,7 @@ namespace Betkeeper.Actions
                 || competition.State != Enums.CompetitionState.Open)
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict, 
+                    ActionResultType.Conflict, 
                     "Competition is not open for betting");
             }
 
@@ -69,7 +68,7 @@ namespace Betkeeper.Actions
             if (participator == null)
             {
                 throw new ActionException(
-                    ActionExceptionType.Unauthorized,
+                    ActionResultType.Unauthorized,
                     "User not in competition");
             }
 
@@ -147,14 +146,14 @@ namespace Betkeeper.Actions
             if (target == null)
             {
                 throw new ActionException(
-                    ActionExceptionType.Conflict,
+                    ActionResultType.Conflict,
                     "Target does not exist");
             }
 
             if (string.IsNullOrEmpty(targetBet.Bet))
             {
                 throw new ActionException(
-                    ActionExceptionType.InvalidInput,
+                    ActionResultType.InvalidInput,
                     $"Target {targetIndex + 1} is missing an answer");
             }
 
@@ -165,7 +164,7 @@ namespace Betkeeper.Actions
                 if (scores.Length != 2)
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Target {targetIndex + 1} has invalid result");
                 }
 
@@ -173,7 +172,7 @@ namespace Betkeeper.Actions
                     || !int.TryParse(scores[1], out int awayscore))
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Target {targetIndex + 1} has invalid result");
                 }
             }
@@ -183,7 +182,7 @@ namespace Betkeeper.Actions
                 if (!target.Selections.Contains(targetBet.Bet))
                 {
                     throw new ActionException(
-                        ActionExceptionType.InvalidInput,
+                        ActionResultType.InvalidInput,
                         $"Target {targetIndex + 1} has invalid selection");
                 }
             }

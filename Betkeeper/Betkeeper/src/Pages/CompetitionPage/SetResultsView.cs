@@ -1,4 +1,4 @@
-﻿using Betkeeper.Classes;
+﻿using Betkeeper.Enums;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
@@ -6,7 +6,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -43,13 +42,14 @@ namespace Betkeeper.Pages.CompetitionPage
             Target target, 
             List<TargetBet> targetBets)
         {
-            var content = new List<Component>();
-
-            content.Add(new Field(
+            var content = new List<Component>
+            {
+                new Field(
                 $"question-{target.TargetId}",
                 "Bet",
                 FieldType.TextBox,
-                readOnly: true));
+                readOnly: true)
+            };
 
             switch (target.Type)
             {
@@ -148,7 +148,7 @@ namespace Betkeeper.Pages.CompetitionPage
             };
         }
 
-        private HttpResponseMessage SaveBetResults(PageAction action)
+        private PageActionResponse SaveBetResults(PageAction action)
         {
             var resultsJArray = action.Parameters["setResultsContainer"] as JArray;
 
@@ -168,9 +168,10 @@ namespace Betkeeper.Pages.CompetitionPage
 
             TargetAction.SetTargetResults((int)action.PageId, action.UserId, targets);
 
-            return Http.CreateResponse(
-                System.Net.HttpStatusCode.OK,
-                new PageActionResponse("Results saved succesfully", refresh: true));
+            return new PageActionResponse(
+                ActionResultType.OK,
+                "Results saved succesfully",
+                refresh: true);
         }
     }
 }

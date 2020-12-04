@@ -138,14 +138,12 @@ namespace Betkeeper.Pages.CompetitionPage
             return new PageResponse($"competitions/{pageKey}", tabs, Data);
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public override PageActionResponse HandleAction(PageAction action)
         {
             switch (action.ActionName)
             {
                 default:
-                    return Http.CreateResponse(
-                        HttpStatusCode.NotFound,
-                        "Action not found");
+                    throw new NotImplementedException($"{action.ActionName} not implemented");
 
                 case "DeleteCompetition":
                     return DeleteCompetition(action);
@@ -167,12 +165,10 @@ namespace Betkeeper.Pages.CompetitionPage
                     return SaveUserBets(action);
 
                 case "CancelUserBetsUpdate":
-                    return Http.CreateResponse(
-                        HttpStatusCode.OK,
-                        new PageActionResponse()
+                    return new PageActionResponse(ActionResultType.OK)
                         {
                             Refresh = true
-                        });
+                        };
 
                 case "SaveBetResults":
                     return SaveBetResults(action);
@@ -209,28 +205,24 @@ namespace Betkeeper.Pages.CompetitionPage
             throw new ArgumentException($"{componentKey} options update not implemented");
         }
 
-        private HttpResponseMessage DeleteCompetition(PageAction action)
+        private PageActionResponse DeleteCompetition(PageAction action)
         {
             var competitionId = action.Parameters.GetInt("competitionId");
 
             if (competitionId == null)
             {
-                return Http.CreateResponse(HttpStatusCode.BadRequest, "Missing CompetitionId parameter");
+                return new PageActionResponse(ActionResultType.InvalidInput, "Missing CompetitionId parameter");
             }
 
             try
             {
                 CompetitionAction.DeleteCompetition(action.UserId, (int)competitionId);
 
-                return Http.CreateResponse(
-                    HttpStatusCode.OK,
-                    new PageActionResponse("Competition deleted successfully"));
+                return new PageActionResponse(ActionResultType.OK, "Competition deleted successfully");
             }
             catch (InvalidOperationException)
             {
-                return Http.CreateResponse(
-                    HttpStatusCode.Unauthorized,
-                    "User not allowed to delete competition");
+                return new PageActionResponse(ActionResultType.Unauthorized, "User not allowed to delete competition");
             }
         }
     }

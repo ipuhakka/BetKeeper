@@ -1,12 +1,10 @@
 ﻿using Betkeeper.Actions;
 using Betkeeper.Data;
 using Betkeeper.Models;
+using Betkeeper.Enums;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TestTools;
 
 namespace Betkeeper.Test.Actions
@@ -14,22 +12,22 @@ namespace Betkeeper.Test.Actions
     [TestFixture]
     public class FolderActionTests
     {
-        private BetkeeperDataContext _context { get; set; }
+        private BetkeeperDataContext Context { get; set; }
 
         [OneTimeSetUp]
         public void OneTimeSetp()
         {
-            _context = Tools.GetTestContext();
+            Context = Tools.GetTestContext();
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]
         public void TearDown()
         {
-            _context.Folder.RemoveRange(_context.Folder);
-            _context.BetInBetFolder.RemoveRange(_context.BetInBetFolder);
+            Context.Folder.RemoveRange(Context.Folder);
+            Context.BetInBetFolder.RemoveRange(Context.BetInBetFolder);
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
 
         [Test]
@@ -130,7 +128,7 @@ namespace Betkeeper.Test.Actions
         {
             new FolderAction().AddFolder(1, "test");
 
-            Assert.AreEqual(1, _context.Folder.Count(folder => folder.FolderName == "test"));
+            Assert.AreEqual(1, Context.Folder.Count(folder => folder.FolderName == "test"));
         }
 
         [Test]
@@ -176,7 +174,7 @@ namespace Betkeeper.Test.Actions
 
             new FolderAction().DeleteFolder(1, "test");
 
-            Assert.AreEqual(1, _context.Folder.Count());
+            Assert.AreEqual(1, Context.Folder.Count());
         }
 
         [Test]
@@ -205,7 +203,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.NotFound, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.NotFound, e.ActionExceptionType);
             }
         }
 
@@ -253,7 +251,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
             }
         }
 
@@ -289,7 +287,7 @@ namespace Betkeeper.Test.Actions
             }
             catch (ActionException e)
             {
-                Assert.AreEqual(ActionExceptionType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
             }
         }
 
@@ -321,7 +319,7 @@ namespace Betkeeper.Test.Actions
                         "test2"
                     });
 
-            var betInBetFolders = _context.BetInBetFolder.ToList();
+            var betInBetFolders = Context.BetInBetFolder.ToList();
 
             Assert.AreEqual(2, betInBetFolders.Count);
         }

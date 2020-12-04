@@ -1,6 +1,5 @@
 ﻿using Betkeeper.Page;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Betkeeper.Pages.FoldersPage
@@ -12,7 +11,7 @@ namespace Betkeeper.Pages.FoldersPage
             throw new NotImplementedException();
         }
 
-        public override HttpResponseMessage HandleAction(PageAction action)
+        public override PageActionResponse HandleAction(PageAction action)
         {
             throw new NotImplementedException();
         }

@@ -43,9 +43,9 @@ namespace Api.Controllers
             catch (ActionException actionException)
             {
                 // Create page action response from action exception
-                return Http.CreateResponse(
-                    (HttpStatusCode)actionException.ActionExceptionType,
-                    new PageActionResponse(actionException.ErrorMessage));
+                return new PageActionResponse(
+                    actionException.ActionExceptionType,
+                    actionException.ErrorMessage).ToHttpResponseMessage();
             }
         }
 
@@ -80,9 +80,9 @@ namespace Api.Controllers
             catch (ActionException actionException)
             {
                 // Create page action response from action exception
-                return Http.CreateResponse(
-                    (HttpStatusCode)actionException.ActionExceptionType,
-                    new PageActionResponse(actionException.ErrorMessage));
+                return new PageActionResponse(
+                    actionException.ActionExceptionType,
+                    actionException.ErrorMessage).ToHttpResponseMessage();
             }
         }
     }
