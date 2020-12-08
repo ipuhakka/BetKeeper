@@ -172,10 +172,7 @@
     <Compile Include="src\Betkeeper\Classes\HttpTests.cs" />
     <Compile Include="src\Betkeeper\Classes\SecurityTests.cs" />
     <Compile Include="src\Betkeeper\Classes\StringUtilsTests.cs" />
-    <Compile Include="src\Betkeeper\Extensions\DataRowExtensionTests.cs" />
-    <Compile Include="src\Betkeeper\Extensions\DateTimeExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\DictionaryExtensionTests.cs" />
-    <Compile Include="src\Betkeeper\Extensions\JArrayExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JObjectExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Extensions\JTokenExtensionTests.cs" />
     <Compile Include="src\Betkeeper\Models\BetTests.cs" />

@@ -61,17 +61,6 @@ namespace Betkeeper.Models
             Owner = userId;
         }
 
-        public Bet(DataRow row)
-        {
-            BetResult = row.ToBetResult("bet_won");
-            Name = row["name"].ToString();
-            Odd = row.ToDouble("odd");
-            Stake = row.ToDouble("bet");
-            PlayedDate = row.ToDateTime("date_time");
-            BetId = row.ToInt32("bet_id");
-            Owner = row.ToInt32("owner");
-        }
-
         /// <summary>
         /// Constructor for creating a new bet from dynamic content.
         /// </summary>
@@ -161,27 +150,15 @@ namespace Betkeeper.Models
                 throw new ParsingException("Parsing dynamic bet content failed");
             }
         }
-
-        public static BetResult GetBetResult(bool? betResult)
-        {
-            if (betResult == null)
-            {
-                return BetResult.Unresolved;
-            }
-
-            return betResult.Value
-                ? BetResult.Won
-                : BetResult.Lost;
-        }
     }
 
     public class BetRepository
     {
-        private BetkeeperDataContext _context { get; set; }
+        private BetkeeperDataContext Context { get; set; }
 
         public BetRepository()
         {
-            _context = new BetkeeperDataContext(Settings.OptionsBuilder);
+            Context = new BetkeeperDataContext(Settings.OptionsBuilder);
         }
 
         public List<Bet> GetBets(
@@ -189,7 +166,7 @@ namespace Betkeeper.Models
             bool? betFinished = null,
             string folder = null)
         {
-            var query = _context.Bet.Where(bet => bet.Owner == userId);
+            var query = Context.Bet.Where(bet => bet.Owner == userId);
 
             if (betFinished == true)
             {
@@ -213,30 +190,30 @@ namespace Betkeeper.Models
 
         public Bet GetBet(int betId, int userId)
         {
-            return _context.Bet.SingleOrDefault(bet => bet.BetId == betId
+            return Context.Bet.SingleOrDefault(bet => bet.BetId == betId
                 && bet.Owner == userId);
         }
 
         public int CreateBet(Bet bet)
         {
-            _context.Bet.Add(bet);
-            _context.SaveChanges();
+            Context.Bet.Add(bet);
+            Context.SaveChanges();
             return bet.BetId;
         }
 
         public void ModifyBet(Bet bet)
         {
-            _context.Bet.Update(bet);
-            _context.SaveChanges();
+            Context.Bet.Update(bet);
+            Context.SaveChanges();
         }
 
         public void DeleteBet(int betId, int userId)
         {
-            _context.Bet.RemoveRange(
-                _context.Bet.Where(bet =>
+            Context.Bet.RemoveRange(
+                Context.Bet.Where(bet =>
                     bet.BetId == betId && bet.Owner == userId));
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
     }
 }
