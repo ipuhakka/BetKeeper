@@ -175,7 +175,7 @@ namespace Betkeeper.Pages.CompetitionPage
             }
         }
 
-        public override HttpResponseMessage HandleDropdownUpdate(
+        public override PageResponse HandleDropdownUpdate(
             Dictionary<string, object> data,
             int? pageId = null)
         {
@@ -191,14 +191,11 @@ namespace Betkeeper.Pages.CompetitionPage
                     // Get index, format of component key is bet-type-{index}
                     var index = int.Parse(componentKey.Split('-').Last());
 
-                    return Http.CreateResponse(
-                        HttpStatusCode.OK,
-                        new PageResponse(
+                    return new PageResponse(
                             new List<Component>
                             {
                                 CreateTargetContainer(index, newTargetType)
-                            })
-                        );
+                            });
                 }
             }
 

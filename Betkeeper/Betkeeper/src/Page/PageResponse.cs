@@ -1,5 +1,4 @@
 ﻿using Betkeeper.Classes;
-using Betkeeper.Enums;
 using Betkeeper.Page.Components;
 using Betkeeper.Pages;
 using Betkeeper.Pages.CompetitionPage;
@@ -11,41 +10,6 @@ using System.Net.Http;
 
 namespace Betkeeper.Page
 {
-    /// <summary>
-    /// Page base class
-    /// </summary>
-    public abstract class PageBase
-    {
-        /// <summary>
-        /// Gets page structure 
-        /// </summary>
-        /// <param name="pageKey"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public abstract PageResponse GetPage(string pageKey, int userId);
-
-        /// <summary>
-        /// Handles a page action.
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public abstract PageActionResponse HandleAction(PageAction action);
-
-        /// <summary>
-        /// Handle a dropdown value update. 
-        /// Allows to change UI with dropdown value change.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="pageId"></param>
-        /// <returns></returns>
-        public virtual HttpResponseMessage HandleDropdownUpdate(
-            Dictionary<string, object> data,
-            int? pageId = null)
-        {
-            throw new NotImplementedException("Page does not implement handling dropdown updates");
-        }
-    }
-
     public class PageResponse
     {
         public string PageKey { get; set; }
