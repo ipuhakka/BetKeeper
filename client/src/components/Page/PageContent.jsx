@@ -7,6 +7,7 @@ import Field from '../../components/Page/Field';
 import Table from '../../components/Page/Table';
 import StaticTable from '../../components/Page/StaticTable';
 import Navbar from '../../components/Navbar/Navbar';
+import ListGroup from '../../components/Page/ListGroup';
 import './customizations.css';
 
 class PageContent extends Component
@@ -99,6 +100,18 @@ class PageContent extends Component
 
                     case 'StaticTable':
                         return <StaticTable componentKey={component.componentKey} key={`custom-table-${i}`} rows={component.rows} header={component.header}/>
+                    
+                    case 'ListGroup':
+                        return <ListGroup
+                            key={component.componentKey}
+                            data={component.data} 
+                            keyField={component.keyField} 
+                            headerKeys={component.headerKeys}
+                            smallItemKeys={component.smallItemKeys}
+                            mode={component.mode}
+                            componentKey={component.componentKey}
+                            onSelect={props.onFieldValueChange} />;
+
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
                 }

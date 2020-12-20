@@ -26,7 +26,8 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Table which data is purely constructed server side
         /// </summary>
-        StaticTable
+        StaticTable,
+        ListGroup
     }
 
     [Serializable]

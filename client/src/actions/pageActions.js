@@ -52,7 +52,7 @@ export function updateComponents(page, components)
 }
 
 /**
- * 
+ * Update page data
  * @param {string} page 
  * @param {*} newData 
  */

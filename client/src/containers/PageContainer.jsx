@@ -61,9 +61,8 @@ const mapStateToProps = (state) =>
 PageContainer.propTypes = {
     page: PropTypes.shape({
         pageKey: PropTypes.string.isRequired,
-        // TODO: shape these
         components: PropTypes.array.isRequired,
-        data: PropTypes.object.isRequired
+        data: PropTypes.object
     })
 };
 
