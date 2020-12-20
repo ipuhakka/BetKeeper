@@ -9,8 +9,7 @@ const menuItems = [
 	{key: 0, text: 'Home', route: '/home'},
 	{key: 1, text: 'Bets', route: '/bets'},
 	{key: 2, text: 'Statistics', route: '/statistics'},
-	{key: 3, text: 'Folders', route: '/folders'},
-	{key: 7, text: 'Folders (page)', route: 'page/folders'},
+	{key: 7, text: 'Folders', route: 'page/folders'},
 	{key: 4, text: 'Competitions', route: 'page/competitions'},
 	{key: 6, text: 'User settings', route: 'page/usersettings'},
 	{key: 5, text: 'Logout', route: '/'}

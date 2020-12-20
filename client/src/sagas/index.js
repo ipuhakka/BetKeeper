@@ -9,8 +9,6 @@ export default function* rootSaga() {
   yield all([
     folderSagas.watchFolders(),
     folderSagas.watchFoldersOfBet(),
-    folderSagas.watchPostFolder(),
-    folderSagas.watchDeleteFolder(),
     betSagas.watchAllBets(),
     betSagas.watchBetsFromFolder(),
     betSagas.watchBetsFromAllFolders(),
