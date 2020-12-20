@@ -14,16 +14,6 @@ export const fetchFoldersSuccess = (folders) => ({
   folders
 });
 
-export const postFolder = (newFolderName) => ({
-  type: "POST_FOLDER",
-  newFolderName
-});
-
-export const deleteFolder = (folderToDelete) => ({
-  type: "DELETE_FOLDER",
-  folderToDelete
-});
-
 export const fetchFoldersOfBet = (betId) => ({
   type: "FETCH_FOLDERS_OF_BET",
   betId
