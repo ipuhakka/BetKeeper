@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System;
 
 namespace Betkeeper.Page.Components
 {
@@ -35,12 +36,15 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public string KeyField { get; }
 
-        public List<string> HeaderKeys { get; set; }
+        /// <summary>
+        /// Data items shown on header
+        /// </summary>
+        public List<ItemField> HeaderItems { get; set; }
 
         /// <summary>
         /// Data items which value is to be shown as small text below header text
         /// </summary>
-        public List<string> SmallItemKeys { get; set; }
+        public List<ItemField> SmallItems { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ListGroupMode Mode { get; set; }
@@ -50,21 +54,36 @@ namespace Betkeeper.Page.Components
         /// </summary>
         /// <param name="data"></param>
         /// <param name="keyField"></param>
-        /// <param name="headerKeys"></param>
-        /// <param name="smallItemKeys"></param>
+        /// <param name="headerItems"></param>
+        /// <param name="smallItems"></param>
         public ListGroup(
             ListGroupMode mode,
             List<T> data, 
             string keyField,
-            List<string> headerKeys, 
-            List<string> smallItemKeys = null,
+            List<ItemField> headerItems, 
+            List<ItemField> smallItems = null,
             string componentKey = null) : base(ComponentType.ListGroup, componentKey)
         {
             Data = data;
             KeyField = keyField;
-            HeaderKeys = headerKeys;
-            SmallItemKeys = smallItemKeys;
+            HeaderItems = headerItems;
+            SmallItems = smallItems;
             Mode = mode;
+        }
+    }
+
+    public class ItemField
+    {
+        public string FieldKey { get; set; }
+
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public TypeCode FieldType { get; set; }
+
+        public ItemField(string fieldKey, TypeCode fieldType)
+        {
+            FieldKey = fieldKey;
+            FieldType = fieldType;
         }
     }
 }

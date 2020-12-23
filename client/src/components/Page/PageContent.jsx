@@ -106,8 +106,8 @@ class PageContent extends Component
                             key={component.componentKey}
                             data={component.data} 
                             keyField={component.keyField} 
-                            headerKeys={component.headerKeys}
-                            smallItemKeys={component.smallItemKeys}
+                            headerItems={component.headerItems}
+                            smallItems={component.smallItems}
                             mode={component.mode}
                             componentKey={component.componentKey}
                             onSelect={props.onFieldValueChange} />;

@@ -4,6 +4,7 @@ import _ from 'lodash';
 import ListGroupRB from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import './ListGroup.css';
+import * as Utils from '../../js/utils';
 
 class ListGroup extends Component
 {
@@ -46,9 +47,24 @@ class ListGroup extends Component
         }
     }
 
+    /**
+     * Gets value shown for item.
+     * @param {object} itemDefinition Object with fieldKey and fieldType string properties
+     * @param {object} itemData
+     */
+    getItemValue(itemDefinition, itemData)
+    {
+        if (itemDefinition.fieldType === 'DateTime')
+        {
+            return Utils.formatDateTime(itemData[itemDefinition.fieldKey])
+        }
+
+        return itemData[itemDefinition.fieldKey];
+    }
+
     render()
     {
-        const { data, headerKeys, smallItemKeys, keyField, mode } = this.props;
+        const { data, headerItems, smallItems, keyField, mode } = this.props;
 
         const items = data.map((dataItem, i) =>
             {
@@ -60,8 +76,8 @@ class ListGroup extends Component
                         this.handleGroupItemClick(dataItem[keyField]); 
                     }}
                     key={`${keyField}-${i}`}>
-                    <div>{headerKeys.map(key => dataItem[key]).join(' ')}</div>
-                    <div className='small-div'>{smallItemKeys || [].map(key => dataItem[key]).join(' ')}</div>
+                    <div>{headerItems.map(item => this.getItemValue(item, dataItem)).join(' ')}</div>
+                    <div className='small-div'>{(smallItems || []).map(item => this.getItemValue(item, dataItem)).join(' ')}</div>
                 </ListGroupItem>;
             });
 
@@ -72,8 +88,16 @@ class ListGroup extends Component
 ListGroup.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     keyField: PropTypes.string.isRequired,
-    headerKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
-    smallItemKeys: PropTypes.arrayOf(PropTypes.string),
+    headerItems: PropTypes.arrayOf(
+        PropTypes.shape({
+            fieldKey: PropTypes.string.isRequired,
+            fieldType: PropTypes.string.isRequired
+        })).isRequired,
+    smallItems: PropTypes.arrayOf(
+        PropTypes.shape({
+            fieldKey: PropTypes.string.isRequired,
+            fieldType: PropTypes.string.isRequired
+        })),
     mode: PropTypes.string.isRequired,
     componentKey: PropTypes.string,
     dataPath: PropTypes.string,

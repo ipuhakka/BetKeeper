@@ -48,7 +48,10 @@ namespace Betkeeper.Pages.FoldersPage
                         ListGroupMode.Selectable,
                         data,
                         "folder",
-                        new List<string>{ "folder" },
+                        new List<ItemField>
+                        {
+                            new ItemField("folder", TypeCode.String)
+                        },
                         componentKey: "folderListGroup")
                 })
             {
