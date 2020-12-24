@@ -27,12 +27,9 @@ namespace Betkeeper.Page
         /// Handle a dropdown value update. 
         /// Allows to change UI with dropdown value change.
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="pageId"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual PageResponse HandleDropdownUpdate(
-            Dictionary<string, object> data,
-            int? pageId = null)
+        public virtual PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)
         {
             throw new NotImplementedException("Page does not implement handling dropdown updates");
         }

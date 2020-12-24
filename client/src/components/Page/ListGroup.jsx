@@ -79,7 +79,7 @@ class ListGroup extends Component
                     variant={this.state.selected.includes(dataItem[keyField]) ? 'info': null}
                     onClick={() => 
                     {
-                        this.handleGroupItemClick(dataItem[keyField]); 
+                        this.handleGroupItemClick(dataItem[keyField]);
                     }}
                     key={`${keyField}-${i}`}>
                     <div>{headerItems.map(item => this.getItemText(item, dataItem)).join(' ')}</div>
