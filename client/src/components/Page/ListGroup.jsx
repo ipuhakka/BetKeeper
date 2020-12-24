@@ -48,18 +48,24 @@ class ListGroup extends Component
     }
 
     /**
-     * Gets value shown for item.
+     * Gets text shown for item.
      * @param {object} itemDefinition Object with fieldKey and fieldType string properties
      * @param {object} itemData
      */
-    getItemValue(itemDefinition, itemData)
+    getItemText(itemDefinition, itemData)
     {
+        let value;
+
         if (itemDefinition.fieldType === 'DateTime')
         {
-            return Utils.formatDateTime(itemData[itemDefinition.fieldKey])
+            value = Utils.formatDateTime(itemData[itemDefinition.fieldKey])
+        }
+        else 
+        {
+            value = itemData[itemDefinition.fieldKey];
         }
 
-        return itemData[itemDefinition.fieldKey];
+        return _.compact([itemDefinition.fieldLegend, value]).join(': ');
     }
 
     render()
@@ -76,8 +82,8 @@ class ListGroup extends Component
                         this.handleGroupItemClick(dataItem[keyField]); 
                     }}
                     key={`${keyField}-${i}`}>
-                    <div>{headerItems.map(item => this.getItemValue(item, dataItem)).join(' ')}</div>
-                    <div className='small-div'>{(smallItems || []).map(item => this.getItemValue(item, dataItem)).join(' ')}</div>
+                    <div>{headerItems.map(item => this.getItemText(item, dataItem)).join(' ')}</div>
+                    <div className='small-div'>{(smallItems || []).map(item => this.getItemText(item, dataItem)).join(' ')}</div>
                 </ListGroupItem>;
             });
 
@@ -91,12 +97,14 @@ ListGroup.propTypes = {
     headerItems: PropTypes.arrayOf(
         PropTypes.shape({
             fieldKey: PropTypes.string.isRequired,
-            fieldType: PropTypes.string.isRequired
+            fieldType: PropTypes.string.isRequired,
+            fieldLegend: PropTypes.string
         })).isRequired,
     smallItems: PropTypes.arrayOf(
         PropTypes.shape({
             fieldKey: PropTypes.string.isRequired,
-            fieldType: PropTypes.string.isRequired
+            fieldType: PropTypes.string.isRequired,
+            fieldLegend: PropTypes.string
         })),
     mode: PropTypes.string.isRequired,
     componentKey: PropTypes.string,

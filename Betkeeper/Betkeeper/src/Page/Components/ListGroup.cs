@@ -74,16 +74,19 @@ namespace Betkeeper.Page.Components
 
     public class ItemField
     {
-        public string FieldKey { get; set; }
+        public string FieldKey { get; }
 
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public TypeCode FieldType { get; set; }
+        public TypeCode FieldType { get; }
 
-        public ItemField(string fieldKey, TypeCode fieldType)
+        public string FieldLegend { get; }
+
+        public ItemField(string fieldKey, TypeCode fieldType, string fieldLegend = null)
         {
             FieldKey = fieldKey;
             FieldType = fieldType;
+            FieldLegend = fieldLegend;
         }
     }
 }
