@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Betkeeper.Extensions
 {
@@ -45,6 +46,33 @@ namespace Betkeeper.Extensions
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Returns last part of key splitted with '-' character as integer.
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <param name="keyLike"></param>
+        /// <returns></returns>
+        public static int? GetIdentifierFromKeyLike(this Dictionary<string, object> dictionary, string keyLike)
+        {
+            if (string.IsNullOrEmpty(keyLike))
+            {
+                return null;
+            }
+
+            var keyMatch = dictionary
+                .Keys
+                .FirstOrDefault(key => key.Contains(keyLike));
+
+            if (keyMatch == null)
+            {
+                return null;
+            }
+
+            return int.TryParse(keyMatch.Split('-').Last(), out int parsed)
+                ? parsed
+                : (int?)null;
         }
     }
 }

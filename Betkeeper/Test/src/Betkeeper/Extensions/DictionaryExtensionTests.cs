@@ -102,5 +102,40 @@ namespace Betkeeper.Test.Extensions
 
             Assert.AreEqual(2, dict.GetInt("Key"));
         }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("almost-but-no-cigar")]
+        public void GetIdentifierFromKeyLike_NoMatch_ReturnsNull(string testCase)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "almost-but-NO-CIGAR", 1 }
+            };
+
+            Assert.IsNull(dict.GetIdentifierFromKeyLike(testCase));
+        }
+
+        [Test]
+        public void GetIdentifierFromKeyLike_CannotParseInt_ReturnsNull()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "almost-but-no-number", 1 }
+            };
+
+            Assert.IsNull(dict.GetIdentifierFromKeyLike("almost-but-no"));
+        }
+
+        [Test]
+        public void GetIdentifierFromKeyLike_Success_ReturnsInteger()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                {"listgroup-bet-80", 1 }
+            };
+
+            Assert.AreEqual(80, dict.GetIdentifierFromKeyLike("listgroup"));
+        }
     }
 }
