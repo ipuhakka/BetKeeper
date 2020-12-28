@@ -16,7 +16,7 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Expand list group item on click
         /// </summary>
-        //Expandable,
+        Expandable,
 
         /// <summary>
         /// Only display
@@ -52,10 +52,12 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="mode"></param>
         /// <param name="data"></param>
         /// <param name="keyField"></param>
         /// <param name="headerItems"></param>
         /// <param name="smallItems"></param>
+        /// <param name="componentKey"></param>
         public ListGroup(
             ListGroupMode mode,
             List<T> data, 
@@ -69,6 +71,37 @@ namespace Betkeeper.Page.Components
             HeaderItems = headerItems;
             SmallItems = smallItems;
             Mode = mode;
+        }
+    }
+
+    /// <summary>
+    /// Class for list gorup which expands items on click.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ExpandableListGroup<T> : ListGroup<T>
+    {
+        /// <summary>
+        /// Item specific actions
+        /// </summary>
+        public List<Button> ItemActions { get; set; }
+
+        /// <summary>
+        /// Fields shown in expanded list group
+        /// </summary>
+        public List<Field> ItemFields { get; set; }
+
+        public ExpandableListGroup(
+            List<T> data,
+            string keyField,
+            List<ItemField> headerItems,
+            List<Field> itemFields,
+            List<ItemField> smallItems = null,
+            string componentKey = null,
+            List<Button> itemActions = null)
+            : base(ListGroupMode.Expandable, data, keyField, headerItems, smallItems, componentKey)
+        {
+            ItemActions = itemActions;
+            ItemFields = itemFields;
         }
     }
 

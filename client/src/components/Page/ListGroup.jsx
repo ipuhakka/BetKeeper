@@ -5,6 +5,9 @@ import ListGroupRB from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import './ListGroup.css';
 import * as Utils from '../../js/utils';
+import * as PageUtils from '../../js/pageUtils';
+import PageContent from './PageContent';
+import * as PageActions from '../../actions/pageActions';
 
 class ListGroup extends Component
 {
@@ -33,16 +36,19 @@ class ListGroup extends Component
             return;
         }
 
+        /** Use selected state for both selectable and expandable type listgroup  */
+        const newSelected = _.xor(selected, [itemIdentifier]);
+        this.setState(
+        {
+            selected: newSelected
+        });
+
+        /** Join dataPath and component key */
+        const dataKey = _.compact([dataPath, componentKey]).join('.');
+
         if (mode === 'Selectable')
         {
-            const newSelected = _.xor(selected, [itemIdentifier]);
-            this.setState(
-            {
-                selected: newSelected
-            });
-
-            /** Join dataPath and component key */
-            const dataKey = _.compact([dataPath, componentKey]).join('.');
+            /** Call select event only for selectable */
             onSelect(dataKey, newSelected);
         }
     }
@@ -68,23 +74,55 @@ class ListGroup extends Component
         return _.compact([itemDefinition.fieldLegend, value]).join(': ');
     }
 
+    /**
+     * Returns page content for expanded item.
+     * @param {*} dataItem 
+     */
+    getItemContent(dataItem)
+    {
+        const { itemActions, itemFields, componentKey, keyField } = {...this.props};
+
+        return itemActions.map(actionButton =>
+        {
+            return {
+                ...actionButton,
+                actionDataKeys: actionButton.actionDataKeys.concat([`listGroup-${componentKey}-${dataItem[keyField]}`])
+            };
+        }).concat(itemFields);
+    }
+
     render()
     {
-        const { data, headerItems, smallItems, keyField, mode } = this.props;
+        const { data, headerItems, smallItems, keyField, mode, componentKey } = this.props;
 
         const items = data.map((dataItem, i) =>
             {
-                return <ListGroupItem 
-                    action={mode !== 'DisplayMode'}
-                    variant={this.state.selected.includes(dataItem[keyField]) ? 'info': null}
-                    onClick={() => 
-                    {
-                        this.handleGroupItemClick(dataItem[keyField]);
-                    }}
-                    key={`${keyField}-${i}`}>
-                    <div>{headerItems.map(item => this.getItemText(item, dataItem)).join(' ')}</div>
-                    <div className='small-div'>{(smallItems || []).map(item => this.getItemText(item, dataItem)).join(' ')}</div>
-                </ListGroupItem>;
+                const itemContent = this.getItemContent(dataItem);
+                return <div key={`${keyField}-div-${i}`}>
+                        <ListGroupItem 
+                        action={mode !== 'DisplayMode'}
+                        variant={this.state.selected.includes(dataItem[keyField]) ? 'info': null}
+                        onClick={() => 
+                        {
+                            this.handleGroupItemClick(dataItem[keyField]);
+                        }}
+                        key={`${keyField}-header-${i}`}>
+                        <div>{headerItems.map(item => this.getItemText(item, dataItem)).join(' ')}</div>
+                        <div className='small-div'>{(smallItems || []).map(item => this.getItemText(item, dataItem)).join(' ')}</div>
+                    </ListGroupItem>
+                    <div className={`listGroupItemBody${this.state.selected.includes(dataItem[keyField]) ? ' visible' : ''}`}>
+                        <PageContent 
+                            onFieldValueChange={(dataPath, newValue) => 
+                            {
+                                PageActions.onDataChange(PageUtils.getActivePageName(), dataPath, newValue);
+                            }}
+                            components={itemContent}
+                            getButtonClick={this.props.onAction}
+                            className='listGroup-content'
+                            absoluteDataPath={`listGroup-${componentKey}-${dataItem[keyField]}`}
+                            data={dataItem}/>
+                    </div>
+                </div>;
             });
 
         return <ListGroupRB>{items}</ListGroupRB>;
@@ -109,7 +147,10 @@ ListGroup.propTypes = {
     mode: PropTypes.string.isRequired,
     componentKey: PropTypes.string,
     dataPath: PropTypes.string,
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    itemActions: PropTypes.array,
+    itemFields: PropTypes.array.isRequired,
+    onAction: PropTypes.func
 }
 
 export default ListGroup;

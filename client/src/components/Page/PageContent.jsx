@@ -48,7 +48,6 @@ class PageContent extends Component
     renderComponents(components, className, depth = 0, dataPath = null)
     {
         const { props } = this;
-        
         let completeDataPath = dataPath;
         if (!_.isNil(props.absoluteDataPath))
         {
@@ -110,7 +109,10 @@ class PageContent extends Component
                             smallItems={component.smallItems}
                             mode={component.mode}
                             componentKey={component.componentKey}
-                            onSelect={props.onFieldValueChange} />;
+                            onSelect={props.onFieldValueChange} 
+                            itemActions={component.itemActions}
+                            itemFields={component.itemFields}
+                            onAction={props.getButtonClick}/>;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);
