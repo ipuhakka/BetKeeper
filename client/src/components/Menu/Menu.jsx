@@ -8,6 +8,7 @@ import _ from 'lodash';
 const menuItems = [
 	{key: 0, text: 'Home', route: '/home'},
 	{key: 1, text: 'Bets', route: '/bets'},
+	{key: 8, text: 'Bets (page)', route: '/page/bets'},
 	{key: 2, text: 'Statistics', route: '/statistics'},
 	{key: 7, text: 'Folders', route: 'page/folders'},
 	{key: 4, text: 'Competitions', route: 'page/competitions'},
