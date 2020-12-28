@@ -4,7 +4,6 @@ using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
 using Betkeeper.Data;
@@ -17,7 +16,7 @@ namespace Betkeeper.Models
     public class Bet
     {
         [Column("bet_won")]
-        public Enums.BetResult BetResult { get; set; }
+        public BetResult BetResult { get; set; }
 
         [Column("name")]
         public string Name { get; set; }
