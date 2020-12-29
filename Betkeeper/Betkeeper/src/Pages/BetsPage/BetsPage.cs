@@ -18,16 +18,17 @@ namespace Betkeeper.Pages.BetsPage
     {
         public override PageResponse GetPage(string pageKey, int userId)
         {
+            var usersFolders = new FolderAction().GetUsersFolders(userId);
             var folderOptions = new List<string>
             {
                 "Overview"
             };
-            folderOptions.AddRange(new FolderAction().GetUsersFolders(userId));
+            folderOptions.AddRange(usersFolders);
 
             return new PageResponse(
                 new List<Component>
                 {
-                    GetAddBetButton(),
+                    GetAddBetButton(usersFolders),
                     new Dropdown(
                         "FolderSelection",
                         "Folder",
@@ -81,6 +82,22 @@ namespace Betkeeper.Pages.BetsPage
         }
 
         /// <summary>
+        /// Handle expanding list group item
+        /// </summary>
+        /// <param name="expandParameters"></param>
+        /// <returns></returns>
+        public override ItemContent ExpandListGroupItem(ListGroupItemExpandParameters expandParameters)
+        {
+            switch (expandParameters.ComponentKey)
+            {
+                case "betsListGroup":
+                    return GetBetItemContent(expandParameters);
+            }
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Get bet list group with specified bets
         /// </summary>
         /// <param name="bets"></param>
@@ -98,47 +115,12 @@ namespace Betkeeper.Pages.BetsPage
                             new ItemField("playedDate", TypeCode.DateTime),
                             new ItemField("betResult", TypeCode.String)
                         },
-                        new List<Field> 
-                        {
-                            new Field("name", "Name", FieldType.TextBox),
-                            new Dropdown("betResult", "Result", new List<string>
-                            {
-                                "Unresolved",
-                                "Won",
-                                "Lost"
-                            }),
-                            new Field("stake", "Bet", FieldType.Double),
-                            new Field("odd", "Odd", FieldType.Double)
-                        },
                         new List<ItemField>
                         {
                             new ItemField("stake", TypeCode.Double, "Bet"),
                             new ItemField("odd", TypeCode.Double, "Odd")
                         },
-                        componentKey: "betsListGroup",
-                        itemActions: new List<Button> 
-                        {
-                            // Item actions specify data keys on client side
-                            new PageActionButton(
-                                "modifyBet", 
-                                new List<string>{ "FolderSelection" }, 
-                                "", 
-                                displayType: DisplayType.Icon, 
-                                componentsToInclude: new List<string>{ "betsListGroup" })
-                            {
-                                IconName = "far fa-save"
-                            },
-                            new PageActionButton(
-                                "deleteBet",
-                                new List<string>{ "FolderSelection" },
-                                "",
-                                style: "outline-danger",
-                                displayType: DisplayType.Icon,
-                                componentsToInclude: new List<string>{ "betsListGroup" })
-                            {
-                                IconName = "far fa-trash-alt"
-                            },
-                        });
+                        componentKey: "betsListGroup");
         }
 
         /// <summary>
@@ -156,7 +138,7 @@ namespace Betkeeper.Pages.BetsPage
             return GetBetListGroup(new BetAction().GetBets(action.UserId, folder: folder));
         }
 
-        private ModalActionButton GetAddBetButton()
+        private ModalActionButton GetAddBetButton(List<string> folders)
         {
             return new ModalActionButton(
                 "addBet",
@@ -170,9 +152,73 @@ namespace Betkeeper.Pages.BetsPage
                         "Lost"
                     }),
                     new Field("stake", "Bet", FieldType.Double),
-                    new Field("odd", "Odd", FieldType.Double)
+                    new Field("odd", "Odd", FieldType.Double),
+                    new Dropdown("folders", "Add to folders", folders){ MultipleSelection = true }
                 },
                 "Create a new bet");
+        }
+
+        /// <summary>
+        /// Return content for expanded list group item
+        /// </summary>
+        /// <param name="expandParameters"></param>
+        /// <returns></returns>
+        private ItemContent GetBetItemContent(ListGroupItemExpandParameters expandParameters)
+        {
+            var betId = Convert.ToInt32(expandParameters.ItemIdentifier);
+            var bet = new BetAction().GetBet(betId, expandParameters.UserId);
+            var folderAction = new FolderAction();
+            var allFolders = folderAction.GetUsersFolders(expandParameters.UserId);
+            var betsFolders = folderAction.GetUsersFolders(expandParameters.UserId, betId);
+
+            var options = allFolders.Select(folder =>
+                new Option(folder, folder, initialValue: betsFolders.Contains(folder)));
+
+            var fields = new List<Field>
+            {
+                new Field("name", "Name", FieldType.TextBox),
+                new Dropdown("betResult", "Result", new List<string>
+                {
+                    "Unresolved",
+                    "Won",
+                    "Lost"
+                }),
+                new Field("stake", "Bet", FieldType.Double),
+                new Field("odd", "Odd", FieldType.Double),
+                new Dropdown(
+                    "folders",
+                    "Add to folders",
+                    allFolders
+                        .Select(folder =>
+                            new Option(folder, folder, initialValue: betsFolders.Contains(folder)))
+                        .ToList()) { MultipleSelection = true }
+            };
+
+            var actions = new List<Button>
+            {
+                // Item actions specify data keys on client side
+                new PageActionButton(
+                    "modifyBet",
+                    new List<string>{ "FolderSelection" },
+                    "",
+                    displayType: DisplayType.Icon,
+                    componentsToInclude: new List<string>{ "betsListGroup" })
+                {
+                    IconName = "far fa-save"
+                },
+                new PageActionButton(
+                    "deleteBet",
+                    new List<string>{ "FolderSelection" },
+                    "",
+                    style: "outline-danger",
+                    displayType: DisplayType.Icon,
+                    componentsToInclude: new List<string>{ "betsListGroup" })
+                {
+                    IconName = "far fa-trash-alt"
+                }
+            };
+
+            return new ItemContent(fields, actions, new BetListGroupData(bet, betsFolders));
         }
 
         /// <summary>
@@ -185,19 +231,51 @@ namespace Betkeeper.Pages.BetsPage
             var dataKey = action.Parameters.GetKeyLike("listGroup-");
 
             var betParameters = (action.Parameters[dataKey] as JObject).ToObject<Dictionary<string, object>>();
+            var betId = (int)action.Parameters.GetIdentifierFromKeyLike("listGroup-");
 
             new BetAction().ModifyBet(
-                (int)action.Parameters.GetIdentifierFromKeyLike("listGroup-"),
+                betId,
                 action.UserId,
                 EnumHelper.FromString<BetResult>(betParameters.GetString("betResult")),
                 betParameters.GetDouble("stake"),
                 betParameters.GetDouble("odd"),
                 betParameters.GetString("name"));
 
-            return new PageActionResponse(new List<Component> 
+            var folders = betParameters.ContainsKey("folders") && betParameters["folders"] != null
+                ? (betParameters["folders"] as JArray).ToObject<List<string>>()
+                : new List<string>();
+
+            var folderAction = new FolderAction();
+
+            var foldersOfBet = folderAction.GetUsersFolders(action.UserId, betId);
+
+            // Add only to folders in which bet is not already
+            var foldersToAdd = folders
+                .Except(foldersOfBet)
+                .ToList();
+
+            // Remove from folders in which bet is not anymore
+            var foldersToDelete = foldersOfBet
+                .Except(folders)
+                .ToList();
+
+            if (foldersToAdd.Count > 0)
             {
-                GetBetListGroup(action)
-            });
+                folderAction.AddBetToFolders(action.UserId, betId, foldersToAdd);
+            }
+
+            if (foldersToDelete.Count > 0)
+            {
+                folderAction.DeleteBetFromFolders(action.UserId, betId, foldersToDelete);
+            }
+
+            return new PageActionResponse(ActionResultType.OK, "Bet updated")
+            {
+                Components = new List<Component>
+                {
+                    GetBetListGroup(action)
+                }
+            };
         }
 
         /// <summary>
@@ -211,10 +289,13 @@ namespace Betkeeper.Pages.BetsPage
                 (int)action.Parameters.GetIdentifierFromKeyLike("listGroup-"),
                 action.UserId);
 
-            return new PageActionResponse(new List<Component>
+            return new PageActionResponse(ActionResultType.OK, "Bet deleted")
             {
-                GetBetListGroup(action)
-            });
+                Components = new List<Component>
+                {
+                    GetBetListGroup(action)
+                }
+            };
         }
 
         private PageActionResponse HandleAddBet(PageAction action)
@@ -229,13 +310,22 @@ namespace Betkeeper.Pages.BetsPage
                 return new PageActionResponse(ActionResultType.InvalidInput, "Need to input odd and stake");
             }
 
-            new BetAction().CreateBet(
+            var betId = new BetAction().CreateBet(
                 EnumHelper.FromString<BetResult>(parameters.GetString("betResult")),
                 parameters.GetString("name"),
                 (double)odd,
                 (double)stake,
                 DateTime.UtcNow,
                 action.UserId);
+
+            var folders = parameters.ContainsKey("folders") && parameters["folders"] != null
+                ? (parameters["folders"] as JArray).ToObject<List<string>>()
+                : null;
+
+            if (folders?.Count > 0)
+            {
+                new FolderAction().AddBetToFolders(action.UserId, betId, folders);
+            }
 
             return new PageActionResponse(ActionResultType.Created, "Bet created successfully", refresh: true);
         }
@@ -255,6 +345,8 @@ namespace Betkeeper.Pages.BetsPage
 
             public DateTime PlayedDate { get; }
 
+            public List<string> Folders { get; }
+
             public BetListGroupData(Bet bet)
             {
                 BetId = bet.BetId;
@@ -263,6 +355,12 @@ namespace Betkeeper.Pages.BetsPage
                 Odd = bet.Odd;
                 PlayedDate = bet.PlayedDate;
                 Name = bet.Name;
+            }
+
+            public BetListGroupData(Bet bet, List<string> folders)
+                : this(bet)
+            {
+                Folders = folders;
             }
         }
     }

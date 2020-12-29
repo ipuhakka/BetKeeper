@@ -39,7 +39,9 @@ class MultiSelectDropdown extends Component
      */
     onChange(selectedOptions)
     {
-        const newValues = selectedOptions.map(option => option.value);
+        const newValues = selectedOptions 
+            ? selectedOptions.map(option => option.value)
+            : null;
         this.props.onChange(newValues);
     }
 
