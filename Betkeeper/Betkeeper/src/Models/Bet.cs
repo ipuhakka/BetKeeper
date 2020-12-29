@@ -4,7 +4,6 @@ using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
 using Betkeeper.Data;
@@ -17,7 +16,7 @@ namespace Betkeeper.Models
     public class Bet
     {
         [Column("bet_won")]
-        public Enums.BetResult BetResult { get; set; }
+        public BetResult BetResult { get; set; }
 
         [Column("name")]
         public string Name { get; set; }
@@ -39,117 +38,6 @@ namespace Betkeeper.Models
         public int BetId { get; set; }
 
         public List<string> Folders { get; }
-
-        public Bet()
-        {
-
-        }
-
-        public Bet(
-            BetResult betResult,
-            string name,
-            double odd,
-            double stake,
-            DateTime playedDate,
-            int userId)
-        {
-            BetResult = betResult;
-            Name = name;
-            Odd = odd;
-            Stake = stake;
-            PlayedDate = playedDate;
-            Owner = userId;
-        }
-
-        /// <summary>
-        /// Constructor for creating a new bet from dynamic content.
-        /// </summary>
-        /// <param name="bet"></param>
-        /// <param name="userId"></param>
-        /// <exception cref="ParsingException"></exception>
-        public Bet(dynamic bet, int userId, DateTime playedDate)
-        {
-            try
-            {
-                BetResult = bet.betResult;
-                Name = bet.name;
-                Odd = bet.odd;
-
-                Stake = bet.stake;
-                PlayedDate = playedDate;
-                Owner = userId;
-
-                if (bet.folders is JArray)
-                {
-                    Folders = bet.folders.ToObject<List<string>>();
-                }
-            }
-            catch (FormatException)
-            {
-                throw new ParsingException("Parsing dynamic bet content failed");
-            }
-            catch (RuntimeBinderException)
-            {
-                throw new ParsingException("Parsing dynamic bet content failed");
-            }
-
-            if (Stake == null || Odd == null)
-            {
-                throw new ParsingException("Empty parameters");
-            }
-        }
-
-        /// <summary>
-        /// Constructor for creating a bet with modify data.
-        /// Returns null if bet cannot be created.
-        /// </summary>
-        /// <param name="bet"></param>
-        /// <param name="userId"></param>
-        /// <exception cref="ParsingException"></exception>
-        public Bet(dynamic bet, int userId)
-        {
-            try
-            {
-                if (!(bet.betResult is null))
-                {
-                    BetResult = bet.betResult;
-                }
-                else
-                {
-                    BetResult = BetResult.Unresolved;
-                }
-
-                if (!(bet.name is null))
-                {
-                    Name = bet.name;
-                }
-
-                if (!(bet.odd is null))
-                {
-                    Odd = bet.odd;
-                }
-
-                if (!(bet.stake is null))
-                {
-                    Stake = bet.stake;
-                }
-
-                Owner = userId;
-
-                if (bet.folders is JArray)
-                {
-                    Folders = bet.folders.ToObject<List<string>>();
-                }
-            }
-            catch (FormatException)
-            {
-                throw new ParsingException("Parsing dynamic bet content failed");
-            }
-            catch (RuntimeBinderException)
-            {
-                throw new ParsingException("Parsing dynamic bet content failed");
-            }
-        }
     }
 
     public class BetRepository

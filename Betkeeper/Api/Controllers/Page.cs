@@ -47,8 +47,31 @@ namespace Api.Controllers
             return PageResponse.GetResponseMessage(page, (int)userId, id);
         }
 
+        [Route("api/page/handleDropdownUpdate/{page}")]
+        public HttpResponseMessage HandleDropdownUpdate([FromUri]string page)
+        {
+            return DropdownUpdate(page);
+        }
+
         [Route("api/page/handleDropdownUpdate/{page}/{id}")]
-        public HttpResponseMessage HandleDropdownUpdate([FromUri]string page, int? id)
+        public HttpResponseMessage HandleDropdownUpdate([FromUri]string page, int id)
+        {
+            return DropdownUpdate(page, id);
+        }
+
+        [Route("api/page/expandListGroupItem/{page}")]
+        public HttpResponseMessage ExpandListGroupItem([FromUri]string page)
+        {
+            return HandleExpandListGroupItem(page);
+        }
+
+        [Route("api/page/expandListGroupItem/{page}/{id}")]
+        public HttpResponseMessage ExpandListGroupItem([FromUri]string page, int id)
+        {
+            return HandleExpandListGroupItem(page, id);
+        }
+
+        private HttpResponseMessage DropdownUpdate(string page, int? id = null)
         {
             if (string.IsNullOrEmpty(page))
             {
@@ -65,13 +88,31 @@ namespace Api.Controllers
             var parameters = Http.GetContentAsDictionary(Request);
 
             return Http.CreateResponse(
-                HttpStatusCode.OK, 
+                HttpStatusCode.OK,
                 PageResponse
                     .GetPageInstance(page, id)
-                    .HandleDropdownUpdate(
-                        parameters,
-                        id
-                    ));
+                    .HandleDropdownUpdate(new DropdownUpdateParameters((int)userId, parameters, id)));
+        }
+        
+        private HttpResponseMessage HandleExpandListGroupItem(string page, int? id = null)
+        {
+            if (string.IsNullOrEmpty(page))
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            return Http.CreateResponse(
+                HttpStatusCode.OK,
+                PageResponse
+                    .GetPageInstance(page, id)
+                    .ExpandListGroupItem(new ListGroupItemExpandParameters((int)userId, Http.GetContentAsDictionary(Request))));
         }
     }
 }

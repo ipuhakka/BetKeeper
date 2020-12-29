@@ -8,8 +8,6 @@ using Betkeeper.Page.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -175,10 +173,9 @@ namespace Betkeeper.Pages.CompetitionPage
             }
         }
 
-        public override PageResponse HandleDropdownUpdate(
-            Dictionary<string, object> data,
-            int? pageId = null)
+        public override PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)
         {
+            var data = parameters.Data;
             var componentKey = data.GetString("key");
             var value = data.GetString("value");
 

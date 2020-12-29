@@ -1,18 +1,14 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import {fetchBetsSuccess, fetchBetsFromFolderSuccess,
   fetchUnresolvedBetsSuccess, fetchBetsFromAllFoldersSuccess, fetchFinishedBetsSuccess,
   FETCH_BETS, FETCH_BETS_FROM_FOLDER,FETCH_BETS_FROM_ALL_FOLDERS, FETCH_FINISHED_BETS,
-  FETCH_UNRESOLVED_BETS, POST_BET, PUT_BET, PUT_BETS, DELETE_BET}
+  FETCH_UNRESOLVED_BETS}
    from '../actions/betsActions';
-import {fetchFoldersOfBetSuccess} from '../actions/foldersActions';
 import {
   getAllBetsByUser, getBetsFromFolder, getFinishedBets, 
-  getUnresolvedBets, postBet, putBet, putBets, deleteBet}
+  getUnresolvedBets}
   from '../js/Requests/Bets.js';
-import {setAlertStatus} from '../actions/alertActions';
 import { withErrorResponseHandler, withLoading } from './helperSagas';
-
-const getUsedFolder = (state) => {return state.bets.betsFromFolder.folder};
 
 export function* fetchAllBets()
 {
@@ -106,103 +102,6 @@ export function* fetchUnresolvedBets()
   });
 }
 
-export function* createBet(action)
-{
-  yield call(withLoading, function*() 
-  { 
-    yield call(withErrorResponseHandler, function*()
-    {
-      yield call(postBet, action.payload.bet);
-      yield put(setAlertStatus(201, "Bet added successfully"));
-      yield call(fetchAllBets);
-      let usedFolder = yield select(getUsedFolder);
-      if (usedFolder !== "")
-      {
-        yield call(fetchBetsFromFolder, usedFolder);
-      }
-      yield call(fetchUnresolvedBets);
-    }); 
-  });
-}
-
-export function* modifyBets(action)
-{
-  yield call(withLoading, function*() 
-  { 
-    yield call(withErrorResponseHandler, function*()
-    {
-      const response = yield call(putBets, action.payload.betIds, action.payload.betsData);
-
-      yield put(setAlertStatus(response.status, response.responseText));
-  
-      yield call(fetchAllBets);
-      let usedFolder = yield select(getUsedFolder);
-  
-      if (usedFolder !== "")
-      {
-        yield call(fetchBetsFromFolder, usedFolder);
-      }
-      yield call(fetchUnresolvedBets);
-    }); 
-  });
-}
-
-export function* modifyBet(action)
-{
-  yield call(withLoading, function*() 
-  { 
-    yield call(withErrorResponseHandler, function*()
-    {
-      yield call(putBet, action.payload.betId, action.payload.data);
-
-      if (action.showAlert)
-      {
-        yield put(setAlertStatus(204, "Updated successfully"));
-      }
-  
-      yield call(fetchAllBets);
-      let usedFolder = yield select(getUsedFolder);
-  
-      if (usedFolder !== "")
-      {
-        yield call(fetchBetsFromFolder, usedFolder);
-      }
-      yield call(fetchUnresolvedBets);
-      if (action.callback !== undefined)
-      {
-        action.callback();
-      }
-    }); 
-  });
-}
-
-export function* removeBet(action)
-{
-  yield call(withLoading, function*() 
-  { 
-    yield call(withErrorResponseHandler, function*()
-    {
-      yield call(deleteBet, action.payload.betId, action.payload.folders);
-
-      yield put(fetchFoldersOfBetSuccess([]));
-  
-      yield put(setAlertStatus(204, "Bet deleted successfully"));
-  
-      yield call(fetchAllBets);
-      let usedFolder = yield select(getUsedFolder);
-      if (usedFolder !== ""){
-        yield call(fetchBetsFromFolder, usedFolder);
-      }
-      yield call(fetchUnresolvedBets);
-  
-      if (action.callback !== undefined)
-      {
-        action.callback();
-      }
-    }); 
-  });
-}
-
 export function* watchAllBets(){
   yield takeLatest(FETCH_BETS, fetchAllBets);
 }
@@ -221,21 +120,4 @@ export function* watchFinishedBets(){
 
 export function* watchUnresolvedBets(){
   yield takeLatest(FETCH_UNRESOLVED_BETS, fetchUnresolvedBets);
-}
-
-export function* watchPostBet(){
-  yield takeLatest(POST_BET, createBet);
-}
-
-export function* watchPutBet(){
-  yield takeLatest(PUT_BET, modifyBet);
-}
-
-export function* watchPutBets()
-{
-  yield takeLatest(PUT_BETS, modifyBets);
-}
-
-export function* watchDeleteBet(){
-  yield takeLatest(DELETE_BET, removeBet);
 }

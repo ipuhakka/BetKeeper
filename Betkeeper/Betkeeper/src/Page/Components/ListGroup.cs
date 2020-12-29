@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
+using System;
 
 namespace Betkeeper.Page.Components
 {
@@ -15,7 +16,7 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Expand list group item on click
         /// </summary>
-        //Expandable,
+        Expandable,
 
         /// <summary>
         /// Only display
@@ -35,12 +36,15 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public string KeyField { get; }
 
-        public List<string> HeaderKeys { get; set; }
+        /// <summary>
+        /// Data items shown on header
+        /// </summary>
+        public List<ItemField> HeaderItems { get; set; }
 
         /// <summary>
         /// Data items which value is to be shown as small text below header text
         /// </summary>
-        public List<string> SmallItemKeys { get; set; }
+        public List<ItemField> SmallItems { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ListGroupMode Mode { get; set; }
@@ -48,23 +52,85 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="mode"></param>
         /// <param name="data"></param>
         /// <param name="keyField"></param>
-        /// <param name="headerKeys"></param>
-        /// <param name="smallItemKeys"></param>
+        /// <param name="headerItems"></param>
+        /// <param name="smallItems"></param>
+        /// <param name="componentKey"></param>
         public ListGroup(
             ListGroupMode mode,
             List<T> data, 
             string keyField,
-            List<string> headerKeys, 
-            List<string> smallItemKeys = null,
+            List<ItemField> headerItems, 
+            List<ItemField> smallItems = null,
             string componentKey = null) : base(ComponentType.ListGroup, componentKey)
         {
             Data = data;
             KeyField = keyField;
-            HeaderKeys = headerKeys;
-            SmallItemKeys = smallItemKeys;
+            HeaderItems = headerItems;
+            SmallItems = smallItems;
             Mode = mode;
+        }
+    }
+
+    /// <summary>
+    /// Class for list gorup which expands items on click.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ExpandableListGroup<T> : ListGroup<T>
+    {
+        /// <summary>
+        /// Item specific actions
+        /// </summary>
+        public List<Button> ItemActions { get; set; }
+
+        /// <summary>
+        /// Fields shown in expanded list group
+        /// </summary>
+        public List<Field> ItemFields { get; set; }
+
+        public ExpandableListGroup(
+            List<T> data,
+            string keyField,
+            List<ItemField> headerItems,
+            List<ItemField> smallItems = null,
+            string componentKey = null)
+            : base(ListGroupMode.Expandable, data, keyField, headerItems, smallItems, componentKey)
+        {
+        }
+    }
+
+    public class ItemField
+    {
+        public string FieldKey { get; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public TypeCode FieldType { get; }
+
+        public string FieldLegend { get; }
+
+        public ItemField(string fieldKey, TypeCode fieldType, string fieldLegend = null)
+        {
+            FieldKey = fieldKey;
+            FieldType = fieldType;
+            FieldLegend = fieldLegend;
+        }
+    }
+
+    public class ItemContent
+    {
+        public List<Button> ItemActions { get; }
+
+        public List<Field> ItemFields { get; }
+
+        public object Data { get; }
+
+        public ItemContent(List<Field> itemFields, List<Button> itemActions, object data)
+        {
+            ItemFields = itemFields;
+            ItemActions = itemActions;
+            Data = data;
         }
     }
 }

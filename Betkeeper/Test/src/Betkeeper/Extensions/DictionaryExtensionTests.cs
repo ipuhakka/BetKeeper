@@ -102,5 +102,99 @@ namespace Betkeeper.Test.Extensions
 
             Assert.AreEqual(2, dict.GetInt("Key"));
         }
-    }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("almost-but-no-cigar")]
+        public void GetIdentifierFromKeyLike_NoMatch_ReturnsNull(string testCase)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "almost-but-NO-CIGAR", 1 }
+            };
+
+            Assert.IsNull(dict.GetIdentifierFromKeyLike(testCase));
+        }
+
+        [Test]
+        public void GetIdentifierFromKeyLike_CannotParseInt_ReturnsNull()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "almost-but-no-number", 1 }
+            };
+
+            Assert.IsNull(dict.GetIdentifierFromKeyLike("almost-but-no"));
+        }
+
+        [Test]
+        public void GetIdentifierFromKeyLike_Success_ReturnsInteger()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                {"listgroup-bet-80", 1 }
+            };
+
+            Assert.AreEqual(80, dict.GetIdentifierFromKeyLike("listgroup"));
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("notexists")]
+        public void GetDouble_NoValueFound_ReturnsNull(string testKey)
+        {
+            Assert.IsNull(new Dictionary<string, object>().GetDouble(testKey));
+        }
+
+        [TestCase("Not a double")]
+        [TestCase(true)]
+        public void GetDouble_NotADouble_ReturnsNull(object testCase)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "test", testCase }
+            };
+
+            Assert.IsNull(dict.GetDouble("test"));
+        }
+
+        [TestCase("7", 7)]
+        [TestCase("7,2", 7.2)]
+        [TestCase("7.2", 7.2)]
+        public void GetDouble_ValidDouble_ReturnsDouble(string doubleAsString, double expected)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "test", doubleAsString }
+            };
+
+            Assert.AreEqual(expected, dict.GetDouble("test"));
+        }
+
+        [TestCase("list")]
+        [TestCase("listGroup-")]
+        [TestCase("listGroup-betListGroup-80")]
+        public void GetKeyLike_Success_ReturnsKey(string testCase)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "listGroup-betListGroup-80", 1 }
+            };
+
+            Assert.AreEqual("listGroup-betListGroup-80", dict.GetKeyLike(testCase));
+        }
+
+        [TestCase("listgroup")]
+        [TestCase("listGroup-80")]
+        [TestCase("listGroup-betListGroup-801")]
+        public void GetKeyLike_NoMatchReturnsNull(string testCase)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "listGroup-betListGroup-80", 1 }
+            };
+
+            Assert.IsNull(dict.GetKeyLike(testCase));
+        }
+    } 
 }

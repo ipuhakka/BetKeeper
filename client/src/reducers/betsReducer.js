@@ -76,11 +76,6 @@ const BetsReducer = (state = { allBets: [], betsFromFolder: {folder: "", bets:[]
         finishedBets: processBets(action.bets)
       }
 
-    case betsActions.POST_BET:
-      return {
-        ...state
-      }
-
     default:
       return state;
   }

@@ -103,7 +103,7 @@ class Dropdown extends Component
 
         const activeOption = _.find(options, option => option.key === activeKey);
 
-        return (<DropdownButton 
+        return (<DropdownButton
             variant="outline-primary"
             title={_.isNil(activeOption)
                 ? ''

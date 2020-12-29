@@ -46,7 +46,7 @@ class Button extends Component
         {
             return <RBButton 
                 className='page-image-button' 
-                variant='outline-danger'
+                variant={props.style}
                 onClick={this.onClick}>
             <i className={props.iconName}></i>
           </RBButton>;

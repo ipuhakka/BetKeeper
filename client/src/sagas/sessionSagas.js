@@ -60,6 +60,10 @@ function* handleLogOut()
     yield put(setLoading(true));
     yield call(deleteToken);
   }
+  catch (err)
+  {
+    // Empty catch for handling error response properly
+  }
   finally 
   {
     yield put(setLoading(false));

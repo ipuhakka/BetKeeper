@@ -48,7 +48,6 @@ class PageContent extends Component
     renderComponents(components, className, depth = 0, dataPath = null)
     {
         const { props } = this;
-        
         let completeDataPath = dataPath;
         if (!_.isNil(props.absoluteDataPath))
         {
@@ -82,7 +81,7 @@ class PageContent extends Component
                             onChange={props.onFieldValueChange}
                             onHandleDropdownServerUpdate={props.onHandleDropdownServerUpdate}
                             key={`field-${component.componentKey}`} 
-                            type={component.fieldType} 
+                            type={component.fieldType}
                             componentKey={component.componentKey}
                             initialValue={_.get(
                                 props.data, 
@@ -106,11 +105,12 @@ class PageContent extends Component
                             key={component.componentKey}
                             data={component.data} 
                             keyField={component.keyField} 
-                            headerKeys={component.headerKeys}
-                            smallItemKeys={component.smallItemKeys}
+                            headerItems={component.headerItems}
+                            smallItems={component.smallItems}
                             mode={component.mode}
                             componentKey={component.componentKey}
-                            onSelect={props.onFieldValueChange} />;
+                            onSelect={props.onFieldValueChange}
+                            onAction={props.getButtonClick}/>;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

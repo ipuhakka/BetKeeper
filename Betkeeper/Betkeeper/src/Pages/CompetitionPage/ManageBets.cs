@@ -282,7 +282,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 displayType: DisplayType.Icon)
                 {
                     IconName = "far fa-trash-alt"
-            });
+                });
 
             return new Container(
                 components,

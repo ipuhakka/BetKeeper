@@ -1,6 +1,7 @@
 ﻿using Betkeeper.Classes;
 using Betkeeper.Page.Components;
 using Betkeeper.Pages;
+using Betkeeper.Pages.BetsPage;
 using Betkeeper.Pages.CompetitionPage;
 using Betkeeper.Pages.FoldersPage;
 using System;
@@ -75,6 +76,10 @@ namespace Betkeeper.Page
                 case "folders":
                     pageResponse = new FoldersPage().GetPage(pageKey, userId);
                     break;
+
+                case "bets":
+                    pageResponse = new BetsPage().GetPage(pageKey, userId);
+                    break;
             }
 
             if (pageResponse.Redirect)
@@ -115,6 +120,9 @@ namespace Betkeeper.Page
 
                 case "folders":
                     return new FoldersPage().HandleAction(action).ToHttpResponseMessage();
+
+                case "bets":
+                    return new BetsPage().HandleAction(action).ToHttpResponseMessage();
             }
         }
 
@@ -135,6 +143,9 @@ namespace Betkeeper.Page
 
                 case "usersettings":
                     return new UserSettingsPage();
+
+                case "bets":
+                    return new BetsPage();
             }
         }
     }
