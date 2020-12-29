@@ -82,6 +82,11 @@ namespace Betkeeper.Actions
                 });
         }
 
+        /// <summary>
+        /// Deletes a bet
+        /// </summary>
+        /// <param name="betId"></param>
+        /// <param name="userId"></param>
         public void DeleteBet(int betId, int userId)
         {
             if (GetBet(betId, userId) == null)
