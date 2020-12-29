@@ -81,7 +81,7 @@ class PageContent extends Component
                             onChange={props.onFieldValueChange}
                             onHandleDropdownServerUpdate={props.onHandleDropdownServerUpdate}
                             key={`field-${component.componentKey}`} 
-                            type={component.fieldType} 
+                            type={component.fieldType}
                             componentKey={component.componentKey}
                             initialValue={_.get(
                                 props.data, 

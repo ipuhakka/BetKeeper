@@ -9,6 +9,7 @@ import consts from '../../js/consts';
 import * as utils from '../../js/utils';
 import './Field.css';
 import InputDropdown from './InputDropdown';
+import MultiSelectDropdown from './MultiSelectDropdown';
 
 class Field extends Component
 {
@@ -93,7 +94,6 @@ class Field extends Component
         {
             /** Join dataPath and component key */
             const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
-
             props.onChange(dataPath, newValue);
         }
         else 
@@ -188,12 +188,23 @@ class Field extends Component
                 break;
 
             case 'Dropdown':
-                wrapperClassName='dropdown';
-                input = <Dropdown 
-                    onChange={this.onChange} 
-                    handleServerUpdate={onHandleDropdownServerUpdate}
-                    {...this.props}/>;
-                    break;
+                if (this.props.multipleSelection)
+                {
+                    input = <MultiSelectDropdown
+                        {...this.props}  
+                        onChange={this.onChange}
+                        initialValues={this.props.initialValue}/>;
+                }
+                else
+                {
+                    // TODO: OnChange ei käytössä?
+                    wrapperClassName='dropdown';
+                    input = <Dropdown 
+                        onChange={this.onChange} 
+                        handleServerUpdate={onHandleDropdownServerUpdate}
+                        {...this.props}/>;
+                }
+                break;
 
             case 'InputDropdown':
                 input = <InputDropdown 
