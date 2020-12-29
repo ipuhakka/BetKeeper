@@ -109,9 +109,7 @@ class PageContent extends Component
                             smallItems={component.smallItems}
                             mode={component.mode}
                             componentKey={component.componentKey}
-                            onSelect={props.onFieldValueChange} 
-                            itemActions={component.itemActions}
-                            itemFields={component.itemFields}
+                            onSelect={props.onFieldValueChange}
                             onAction={props.getButtonClick}/>;
 
                     default:
