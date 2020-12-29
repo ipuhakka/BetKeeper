@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Betkeeper.Page.Components;
+using System;
 
 namespace Betkeeper.Page
 {
@@ -30,6 +30,16 @@ namespace Betkeeper.Page
         /// <param name="parameters"></param>
         /// <returns></returns>
         public virtual PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)
+        {
+            throw new NotImplementedException("Page does not implement handling dropdown updates");
+        }
+
+        /// <summary>
+        /// Method called on expanding an expandable list group item
+        /// </summary>
+        /// <param name="componentKey"></param>
+        /// <param name="itemKey"></param>
+        public virtual ItemContent ExpandListGroupItem(ListGroupItemExpandParameters expandParameters)
         {
             throw new NotImplementedException("Page does not implement handling dropdown updates");
         }

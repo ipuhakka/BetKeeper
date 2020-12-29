@@ -48,7 +48,7 @@ namespace Api.Controllers
         }
 
         [Route("api/page/handleDropdownUpdate/{page}")]
-        public HttpResponseMessage HandleDropdownUpdate([FromUri] string page)
+        public HttpResponseMessage HandleDropdownUpdate([FromUri]string page)
         {
             return DropdownUpdate(page);
         }
@@ -57,6 +57,18 @@ namespace Api.Controllers
         public HttpResponseMessage HandleDropdownUpdate([FromUri]string page, int id)
         {
             return DropdownUpdate(page, id);
+        }
+
+        [Route("api/page/expandListGroupItem/{page}")]
+        public HttpResponseMessage ExpandListGroupItem([FromUri]string page)
+        {
+            return HandleExpandListGroupItem(page);
+        }
+
+        [Route("api/page/expandListGroupItem/{page}/{id}")]
+        public HttpResponseMessage ExpandListGroupItem([FromUri]string page, int id)
+        {
+            return HandleExpandListGroupItem(page, id);
         }
 
         private HttpResponseMessage DropdownUpdate(string page, int? id = null)
@@ -80,6 +92,27 @@ namespace Api.Controllers
                 PageResponse
                     .GetPageInstance(page, id)
                     .HandleDropdownUpdate(new DropdownUpdateParameters((int)userId, parameters, id)));
+        }
+        
+        private HttpResponseMessage HandleExpandListGroupItem(string page, int? id = null)
+        {
+            if (string.IsNullOrEmpty(page))
+            {
+                return Http.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            var userId = TokenLog.GetUserIdFromRequest(Request);
+
+            if (userId == null)
+            {
+                return Http.CreateResponse(HttpStatusCode.Unauthorized);
+            }
+
+            return Http.CreateResponse(
+                HttpStatusCode.OK,
+                PageResponse
+                    .GetPageInstance(page, id)
+                    .ExpandListGroupItem(new ListGroupItemExpandParameters((int)userId, Http.GetContentAsDictionary(Request))));
         }
     }
 }

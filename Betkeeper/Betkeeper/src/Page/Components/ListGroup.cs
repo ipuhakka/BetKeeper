@@ -94,21 +94,16 @@ namespace Betkeeper.Page.Components
             List<T> data,
             string keyField,
             List<ItemField> headerItems,
-            List<Field> itemFields,
             List<ItemField> smallItems = null,
-            string componentKey = null,
-            List<Button> itemActions = null)
+            string componentKey = null)
             : base(ListGroupMode.Expandable, data, keyField, headerItems, smallItems, componentKey)
         {
-            ItemActions = itemActions;
-            ItemFields = itemFields;
         }
     }
 
     public class ItemField
     {
         public string FieldKey { get; }
-
 
         [JsonConverter(typeof(StringEnumConverter))]
         public TypeCode FieldType { get; }
@@ -120,6 +115,22 @@ namespace Betkeeper.Page.Components
             FieldKey = fieldKey;
             FieldType = fieldType;
             FieldLegend = fieldLegend;
+        }
+    }
+
+    public class ItemContent
+    {
+        public List<Button> ItemActions { get; }
+
+        public List<Field> ItemFields { get; }
+
+        public object Data { get; }
+
+        public ItemContent(List<Field> itemFields, List<Button> itemActions, object data)
+        {
+            ItemFields = itemFields;
+            ItemActions = itemActions;
+            Data = data;
         }
     }
 }

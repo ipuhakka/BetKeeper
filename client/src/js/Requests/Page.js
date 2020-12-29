@@ -46,3 +46,19 @@ export function handleServerDropdownUpdate(requestBody, pageRoute)
     ],
     JSON.stringify(requestBody)).sendRequest();
 }
+
+/**
+ * Sends a request to expand a list group item
+ * @param {*} requestBody 
+ */
+export function expandListGroupItem(requestBody)
+{
+  return new HttpRequest(
+    `page/expandListGroupItem${window.location.pathname.replace('page/', '')}`,
+    'POST',
+    [
+      { key: 'Authorization', value: sessionStorage.getItem('token') },
+      { key: 'Content-Type', value: 'application/json'}
+    ],
+    JSON.stringify(requestBody)).sendRequest();
+}

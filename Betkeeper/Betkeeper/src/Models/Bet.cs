@@ -195,7 +195,6 @@ namespace Betkeeper.Models
 
         public int CreateBet(Bet bet)
         {
-            // TODO: Älä palauta inttiä kun siirretty pageen?
             Context.Bet.Add(bet);
             Context.SaveChanges();
             return bet.BetId;
