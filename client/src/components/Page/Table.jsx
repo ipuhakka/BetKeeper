@@ -14,7 +14,7 @@ class Table extends Component
 
         return <tr>
             {_.map(columns, columnField => {
-                return <th key={`table-header-${columnField.key}`}>{utils.camelCaseToText(columnField.key)}</th>;
+                return <th key={`table-header-${columnField.fieldKey}`}>{utils.camelCaseToText(columnField.fieldKey)}</th>;
             })}
         </tr>
     }
@@ -41,9 +41,9 @@ class Table extends Component
         {
             const cells = _.map(columns, (columnField, i) =>
             {
-                const value = columnField.dataType === 'DateTime'
-                    ? utils.formatDateTime(dataRow[columnField.key])
-                    : dataRow[columnField.key];
+                const value = columnField.fieldType === 'DateTime'
+                    ? utils.formatDateTime(dataRow[columnField.fieldKey])
+                    : dataRow[columnField.fieldKey];
 
                 return <td key={`data-row-td-${i}-key`}>{value}</td>;
             })
@@ -80,8 +80,8 @@ Table.propTypes = {
     dataKey: PropTypes.string.isRequired,
     data: PropTypes.object,
     columns: PropTypes.arrayOf(PropTypes.shape({
-        key: PropTypes.string.isRequired,
-        dataType: PropTypes.string.isRequired
+        fieldKey: PropTypes.string.isRequired,
+        fieldType: PropTypes.string.isRequired
     })),
     navigationKey: PropTypes.string,
     onRowClick: PropTypes.func.isRequired

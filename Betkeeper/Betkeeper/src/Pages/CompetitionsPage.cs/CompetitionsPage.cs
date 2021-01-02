@@ -32,11 +32,11 @@ namespace Betkeeper.Pages
             {
                 new Table(
                     "competitions",
-                    new List<DataField>
+                    new List<ItemField>
                     {
-                        new DataField("name", DataType.String),
-                        new DataField("startTime", DataType.DateTime),
-                        new DataField("state", DataType.String)
+                        new ItemField("name", DataType.String),
+                        new ItemField("startTime", DataType.DateTime),
+                        new ItemField("state", DataType.String)
                     },
                     "competitionId"),
                 new ModalActionButton(

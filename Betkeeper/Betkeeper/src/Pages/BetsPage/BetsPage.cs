@@ -111,14 +111,14 @@ namespace Betkeeper.Pages.BetsPage
                         "betId",
                         new List<ItemField>
                         {
-                            new ItemField("name", TypeCode.String),
-                            new ItemField("playedDate", TypeCode.DateTime),
-                            new ItemField("betResult", TypeCode.String)
+                            new ItemField("name", DataType.String),
+                            new ItemField("playedDate", DataType.DateTime),
+                            new ItemField("betResult", DataType.String)
                         },
                         new List<ItemField>
                         {
-                            new ItemField("stake", TypeCode.Double, "Bet"),
-                            new ItemField("odd", TypeCode.Double, "Odd")
+                            new ItemField("stake", DataType.Double, "Bet"),
+                            new ItemField("odd", DataType.Double, "Odd")
                         },
                         componentKey: "betsListGroup");
         }
