@@ -62,8 +62,7 @@ const cellProps = PropTypes.arrayOf(
         value: PropTypes.string
     }));
 
-StaticTable.propTypes = 
-{
+StaticTable.propTypes = {
     componentKey: PropTypes.string,
     header: PropTypes.shape({
             cellProps
