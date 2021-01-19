@@ -20,13 +20,13 @@ class Home extends Component{
 		const {history} = this.props;
 		switch (key){
 			case 0:
-				history.push('/statistics');
+				history.push('/page/statistics');
 				break;
 			case 1:
-				history.push('/bets');
+				history.push('/page/bets');
 				break;
 			case 2:
-				history.push('/folders');
+				history.push('/page/folders');
 				break;
 			default:
 				break;
