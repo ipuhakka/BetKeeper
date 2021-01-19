@@ -177,6 +177,13 @@ namespace Betkeeper.Pages.BetsPage
             var fields = new List<Field>
             {
                 new Field("name", "Name", FieldType.TextBox),
+                new Dropdown(
+                    "folders",
+                    "Add to folders",
+                    allFolders
+                        .Select(folder =>
+                            new Option(folder, folder, initialValue: betsFolders.Contains(folder)))
+                        .ToList()) { MultipleSelection = true },
                 new Dropdown("betResult", "Result", new List<string>
                 {
                     "Unresolved",
@@ -184,14 +191,7 @@ namespace Betkeeper.Pages.BetsPage
                     "Lost"
                 }),
                 new Field("stake", "Bet", FieldType.Double),
-                new Field("odd", "Odd", FieldType.Double),
-                new Dropdown(
-                    "folders",
-                    "Add to folders",
-                    allFolders
-                        .Select(folder =>
-                            new Option(folder, folder, initialValue: betsFolders.Contains(folder)))
-                        .ToList()) { MultipleSelection = true }
+                new Field("odd", "Odd", FieldType.Double)
             };
 
             var actions = new List<Button>
