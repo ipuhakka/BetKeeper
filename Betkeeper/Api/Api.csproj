@@ -264,8 +264,6 @@
     <Compile Include="Classes\TokenLog.cs" />
     <Compile Include="Controllers\Error.cs" />
     <Compile Include="Controllers\PageAction.cs" />
-    <Compile Include="Controllers\Bets.cs" />
-    <Compile Include="Controllers\Folders.cs" />
     <Compile Include="Controllers\Home.cs" />
     <Compile Include="Controllers\Page.cs" />
     <Compile Include="Controllers\Token.cs" />
