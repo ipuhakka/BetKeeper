@@ -12,7 +12,7 @@ namespace Betkeeper.Page.Components
         /// <summary>
         /// Columns shown in table.
         /// </summary>
-        public List<DataField> Columns { get; }
+        public List<ItemField> Columns { get; }
 
         /// <summary>
         /// Data key which is used in url to open a row.
@@ -21,7 +21,7 @@ namespace Betkeeper.Page.Components
 
         public Table(
             string dataKey,
-            List<DataField> columns,
+            List<ItemField> columns,
             string navigationKey = null)
             : base(ComponentType.Table)
         {

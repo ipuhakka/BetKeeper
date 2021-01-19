@@ -6,6 +6,7 @@ import Button from '../../components/Page/Button';
 import Field from '../../components/Page/Field';
 import Table from '../../components/Page/Table';
 import StaticTable from '../../components/Page/StaticTable';
+import Chart from './Chart';
 import Navbar from '../../components/Navbar/Navbar';
 import ListGroup from '../../components/Page/ListGroup';
 import './customizations.css';
@@ -63,7 +64,7 @@ class PageContent extends Component
                         return this.renderComponents(
                             component.children, 
                             !className.includes('container-div')
-                                ? `container-div ${component.customCssClass}` 
+                                ? `container-div ${component.customCssClass}`
                                 : `child-container-div child-${i} ${component.customCssClass}`,
                             depth + 1,
                             /** Datapath */
@@ -111,6 +112,13 @@ class PageContent extends Component
                             componentKey={component.componentKey}
                             onSelect={props.onFieldValueChange}
                             onAction={props.getButtonClick}/>;
+
+                    case 'Chart':
+                        return <Chart 
+                            key={component.componentKey}
+                            keyField={component.keyField}
+                            dataFields={component.dataFields}
+                            data={component.data}/>;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

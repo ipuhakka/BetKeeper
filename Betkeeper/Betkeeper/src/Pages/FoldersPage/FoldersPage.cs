@@ -50,7 +50,7 @@ namespace Betkeeper.Pages.FoldersPage
                         "folder",
                         new List<ItemField>
                         {
-                            new ItemField("folder", TypeCode.String)
+                            new ItemField("folder", DataType.String)
                         },
                         componentKey: "folderListGroup")
                 })

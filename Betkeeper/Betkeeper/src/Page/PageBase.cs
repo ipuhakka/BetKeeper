@@ -21,7 +21,10 @@ namespace Betkeeper.Page
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public abstract PageActionResponse HandleAction(PageAction action);
+        public virtual PageActionResponse HandleAction(PageAction action)
+        {
+            throw new NotImplementedException("Page does not implement actions");
+        }
 
         /// <summary>
         /// Handle a dropdown value update. 

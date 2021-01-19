@@ -214,12 +214,12 @@ namespace Betkeeper.Test.Page.Components
         {
             var tableToTest = new Table(
                 "dataKey",
-                new List<DataField>
+                new List<ItemField>
                 {
-                    new DataField("key1", DataType.DateTime),
-                    new DataField("key2", DataType.Double),
-                    new DataField("key3", DataType.Integer),
-                    new DataField("key4", DataType.String)
+                    new ItemField("key1", DataType.DateTime),
+                    new ItemField("key2", DataType.Double),
+                    new ItemField("key3", DataType.Integer),
+                    new ItemField("key4", DataType.String)
                 },
                 "navigation key");
 
@@ -230,8 +230,8 @@ namespace Betkeeper.Test.Page.Components
 
             for (var i = 0; i < tableToTest.Columns.Count; i++)
             {
-                Assert.AreEqual(tableToTest.Columns[i].Key, result.Columns[i].Key);
-                Assert.AreEqual(tableToTest.Columns[i].DataType, result.Columns[i].DataType);
+                Assert.AreEqual(tableToTest.Columns[i].FieldKey, result.Columns[i].FieldKey);
+                Assert.AreEqual(tableToTest.Columns[i].FieldType, result.Columns[i].FieldType);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Betkeeper.Test.Page.Components
         {
             var tab = new Tab("tabKey", "title", new List<Component>
             {
-                new Table("tableKey", new List<DataField>{ new DataField("dataFieldKey", DataType.DateTime)} ),
+                new Table("tableKey", new List<ItemField>{ new ItemField("dataFieldKey", DataType.DateTime)} ),
                 new ModalActionButton(
                     "modalAction",
                     new List<Component>
@@ -264,8 +264,8 @@ namespace Betkeeper.Test.Page.Components
 
             for (var i = 0; i < originalTable.Columns.Count; i++)
             {
-                Assert.AreEqual(originalTable.Columns[i].Key, table.Columns[i].Key);
-                Assert.AreEqual(originalTable.Columns[i].DataType, table.Columns[i].DataType);
+                Assert.AreEqual(originalTable.Columns[i].FieldKey, table.Columns[i].FieldKey);
+                Assert.AreEqual(originalTable.Columns[i].FieldType, table.Columns[i].FieldType);
             }
 
             // Test modal action button

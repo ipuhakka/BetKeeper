@@ -85,8 +85,7 @@ class Dropdown extends Component
 
     render()
     {
-        const { options } = this.props;
-        
+        const { options } = this.props;  
         const { activeKey } = this.state;
 
         const items = _.map(options, option => 

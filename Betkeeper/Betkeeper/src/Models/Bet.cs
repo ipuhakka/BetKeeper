@@ -36,8 +36,6 @@ namespace Betkeeper.Models
         [Key]
         [Column("bet_id")]
         public int BetId { get; set; }
-
-        public List<string> Folders { get; }
     }
 
     public class BetRepository
