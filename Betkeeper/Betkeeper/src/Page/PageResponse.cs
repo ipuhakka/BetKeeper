@@ -4,6 +4,7 @@ using Betkeeper.Pages;
 using Betkeeper.Pages.BetsPage;
 using Betkeeper.Pages.CompetitionPage;
 using Betkeeper.Pages.FoldersPage;
+using Betkeeper.Pages.StatisticsPage;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -79,6 +80,10 @@ namespace Betkeeper.Page
 
                 case "bets":
                     pageResponse = new BetsPage().GetPage(pageKey, userId);
+                    break;
+
+                case "statistics":
+                    pageResponse = new StatisticsPage().GetPage(pageKey, userId);
                     break;
             }
 

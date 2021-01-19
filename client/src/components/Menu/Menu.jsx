@@ -8,10 +8,10 @@ import _ from 'lodash';
 const menuItems = [
 	{key: 0, text: 'Home', route: '/home'},
 	{key: 8, text: 'Bets', route: '/page/bets'},
-	{key: 2, text: 'Statistics', route: '/statistics'},
-	{key: 7, text: 'Folders', route: 'page/folders'},
-	{key: 4, text: 'Competitions', route: 'page/competitions'},
-	{key: 6, text: 'User settings', route: 'page/usersettings'},
+	{key: 3, text: 'Statistics', route: '/page/statistics'},
+	{key: 7, text: 'Folders', route: '/page/folders'},
+	{key: 4, text: 'Competitions', route: '/page/competitions'},
+	{key: 6, text: 'User settings', route: '/page/usersettings'},
 	{key: 5, text: 'Logout', route: '/'}
 ]
 

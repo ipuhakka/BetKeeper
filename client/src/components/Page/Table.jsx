@@ -16,7 +16,7 @@ class Table extends Component
             {_.map(columns, columnField => {
                 return <th key={`table-header-${columnField.fieldKey}`}>{utils.camelCaseToText(columnField.fieldKey)}</th>;
             })}
-        </tr>
+        </tr>;
     }
 
     getRows()
