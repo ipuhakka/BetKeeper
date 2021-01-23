@@ -1,0 +1,30 @@
+.grid {
+    display: table-cell;
+    width: 50%;
+}
+
+i {
+    margin-top: .35em;
+}
+
+.card {
+    display: inline-block;
+    vertical-align: middle;
+    width: 250px;
+    height: 250px;
+    margin-top: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+    position: relative;
+}
+  
+.cardButton {
+    background: #6B5B95;
+    border-radius: 8px;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    width: 50%;
+    margin: auto;
+    position: absolute;
+}

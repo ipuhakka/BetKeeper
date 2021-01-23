@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const menuItems = [
-	{key: 0, text: 'Home', route: '/home'},
+	{key: 9, text: 'Home', route: '/page/home'},
 	{key: 8, text: 'Bets', route: '/page/bets'},
 	{key: 3, text: 'Statistics', route: '/page/statistics'},
 	{key: 7, text: 'Folders', route: '/page/folders'},
@@ -28,6 +28,23 @@ class Menu extends Component
 			disabled: _.isNil(match)
 				? null
 				: match.key
+		}
+	}
+
+	componentDidUpdate(prevProps)
+	{
+		if (this.props.location !== prevProps.location)
+		{
+			const menuItem = menuItems.find(item => item.route === this.props.location.pathname);
+
+			if (!menuItem)
+			{
+				return;
+			}
+
+			this.setState({
+				disabled: menuItem.key
+			});
 		}
 	}
 	

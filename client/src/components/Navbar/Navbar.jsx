@@ -122,8 +122,9 @@ class Navbar extends Component
 					<Nav variant="tabs" onSelect={this.handleSelect} as="ul">
 						{_.map(items, item =>
 							{
+								const active = item.key === selectedKey || item.key === activeKey;
 								return <Nav.Item key={`nav-item-${item.text}`} as='li'>
-									<Nav.Link eventKey={item.key} disabled={item.key === selectedKey || item.key === activeKey}>
+									<Nav.Link eventKey={item.key} active={active} disabled={active}>
 										{item.text}
 									</Nav.Link>
 								</Nav.Item>

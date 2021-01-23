@@ -45,19 +45,19 @@ class Button extends Component
         if (props.displayType === 'Icon')
         {
             return <RBButton 
-                className='page-image-button' 
-                variant={props.style}
+                className={`page-image-button ${props.className}`} 
+                variant={props.buttonStyle}
                 onClick={this.onClick}>
             <i className={props.iconName}></i>
           </RBButton>;
         }
 
         return <RBButton
-            className='button'
+            className={`button ${props.className}`} 
             variant={props.style}
             onClick={this.onClick}>
                 {props.text}
-            </RBButton>
+            </RBButton>;
     }
 };
 
@@ -68,7 +68,7 @@ Button.defaultProps = {
 Button.propTypes = {
     buttonType: PropTypes.oneOf(['ModalAction', 'PageAction', 'Navigation']).isRequired,
     text: PropTypes.string.isRequired,
-    style: PropTypes.string.isRequired,
+    buttonStyle: PropTypes.string.isRequired,
     action: PropTypes.string,
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
     components: PropTypes.array,
@@ -84,7 +84,8 @@ Button.propTypes = {
         {
             return new Error('iconName prop invalid or missing');
         }
-    }
+    },
+    className: PropTypes.string
 };
 
 export default Button;

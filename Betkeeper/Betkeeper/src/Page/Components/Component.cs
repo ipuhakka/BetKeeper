@@ -28,7 +28,9 @@ namespace Betkeeper.Page.Components
         /// </summary>
         StaticTable,
         ListGroup,
-        Chart
+        Chart,
+
+        CardMenu
     }
 
     [Serializable]
