@@ -40,7 +40,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     "CancelUserBetsUpdate",
                     new List<string> { "betsContainer" },
                     "Cancel bet updates",
-                    style: "outline-danger",
+                    buttonStyle: "outline-danger",
                     requireConfirm: true,
                     componentsToInclude: new List<string> { "betTargets" }));
 

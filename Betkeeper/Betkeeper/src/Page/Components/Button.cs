@@ -42,7 +42,7 @@ namespace Betkeeper.Page.Components
         public Button(
             ButtonType buttonType,
             string text,
-            string style = "primary",
+            string buttonStyle = "primary",
             bool requireConfirm = false,
             string navigateTo = null,
             DisplayType displayType = DisplayType.Text)
@@ -50,7 +50,7 @@ namespace Betkeeper.Page.Components
         {
             Text = text;
             ButtonType = buttonType;
-            ButtonStyle = style;
+            ButtonStyle = buttonStyle;
             RequireConfirm = requireConfirm;
             NavigateTo = navigateTo;
             DisplayType = displayType;
@@ -88,8 +88,8 @@ namespace Betkeeper.Page.Components
     [Serializable]
     public class NavigationButton : Button
     {
-        public NavigationButton(string navigateTo, string text, string style)
-            : base(ButtonType.Navigation, text, style, navigateTo: navigateTo)
+        public NavigationButton(string navigateTo, string text, string buttonStyle)
+            : base(ButtonType.Navigation, text, buttonStyle, navigateTo: navigateTo)
         {
         }
     }
@@ -113,12 +113,12 @@ namespace Betkeeper.Page.Components
             string action,
             List<string> actionDataKeys,
             string text,
-            string style = "outline-primary",
+            string buttonStyle = "outline-primary",
             bool requireConfirm = false,
             string navigateTo = null,
             List<string> componentsToInclude = null,
             DisplayType displayType = DisplayType.Text)
-            : base(ButtonType.PageAction, text, style, requireConfirm, navigateTo, displayType)
+            : base(ButtonType.PageAction, text, buttonStyle, requireConfirm, navigateTo, displayType)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;
@@ -148,11 +148,11 @@ namespace Betkeeper.Page.Components
             string action,
             List<Component> components,
             string text,
-            string style = "primary",
+            string buttonStyle = "primary",
             bool requireConfirm = false,
             string navigateTo = null,
             string absoluteDataPath = null)
-            : base(ButtonType.ModalAction, text, style, requireConfirm, navigateTo)
+            : base(ButtonType.ModalAction, text, buttonStyle, requireConfirm, navigateTo)
         {
             Action = action;
             Components = components;

@@ -210,7 +210,7 @@ namespace Betkeeper.Pages.BetsPage
                     "deleteBet",
                     new List<string>{ "FolderSelection" },
                     "",
-                    style: "outline-danger",
+                    buttonStyle: "outline-danger",
                     displayType: DisplayType.Icon,
                     componentsToInclude: new List<string>{ "betsListGroup" })
                 {

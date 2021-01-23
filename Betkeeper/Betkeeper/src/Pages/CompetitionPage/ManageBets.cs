@@ -185,7 +185,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     "CancelBetTargetsUpdate",
                     new List<string>{ "betTargets" },
                     "Cancel bet targets update",
-                    style: "outline-danger",
+                    buttonStyle: "outline-danger",
                     requireConfirm: true,
                     componentsToInclude: new List<string>{ "betTargets" }),
                 new PageActionButton(
@@ -277,7 +277,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 new List<string> { $"target-id-{index}", $"bet-target-{index}", "betTargets" },
                 "Delete",
                 componentsToInclude: new List<string> { "betTargets" },
-                style: "outline-danger",
+                buttonStyle: "outline-danger",
                 requireConfirm: true,
                 displayType: DisplayType.Icon)
                 {
