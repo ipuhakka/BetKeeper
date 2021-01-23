@@ -75,7 +75,7 @@ namespace Betkeeper.Test.Page.Components
             Assert.AreEqual(button.Action, result.Action);
             Assert.AreEqual(button.ActionDataKeys.Count, result.ActionDataKeys.Count);
             Assert.AreEqual(button.Text, result.Text);
-            Assert.AreEqual(button.Style, result.Style);
+            Assert.AreEqual(button.ButtonStyle, result.ButtonStyle);
             Assert.IsTrue(result.RequireConfirm);
             Assert.AreEqual(button.NavigateTo, result.NavigateTo);
         }
@@ -111,7 +111,7 @@ namespace Betkeeper.Test.Page.Components
 
             Assert.AreEqual(button.Action, result.Action);
             Assert.AreEqual(button.Text, result.Text);
-            Assert.AreEqual(button.Style, result.Style);
+            Assert.AreEqual(button.ButtonStyle, result.ButtonStyle);
             Assert.IsTrue(result.RequireConfirm);
             Assert.AreEqual(button.NavigateTo, result.NavigateTo);
 
@@ -121,14 +121,14 @@ namespace Betkeeper.Test.Page.Components
             Assert.AreEqual(button.Action, resultAsPageAction.Action);
             Assert.AreEqual(pageActionButton.ActionDataKeys.Count, resultAsPageAction.ActionDataKeys.Count);
             Assert.AreEqual(pageActionButton.Text, resultAsPageAction.Text);
-            Assert.AreEqual(pageActionButton.Style, resultAsPageAction.Style);
+            Assert.AreEqual(pageActionButton.ButtonStyle, resultAsPageAction.ButtonStyle);
             Assert.IsTrue(resultAsPageAction.RequireConfirm);
             Assert.AreEqual(pageActionButton.NavigateTo, resultAsPageAction.NavigateTo);
 
             // Assert navigation button
             var resultNavigationButton = result.Components[1] as NavigationButton;
             Assert.AreEqual(navigationButton.Text, resultNavigationButton.Text);
-            Assert.AreEqual(navigationButton.Style, resultNavigationButton.Style);
+            Assert.AreEqual(navigationButton.ButtonStyle, resultNavigationButton.ButtonStyle);
             Assert.IsFalse(resultNavigationButton.RequireConfirm);
             Assert.AreEqual(navigationButton.NavigateTo, resultNavigationButton.NavigateTo);
 
@@ -143,7 +143,7 @@ namespace Betkeeper.Test.Page.Components
                 .ParseComponent(SerializeAsCamelCase(button)) as NavigationButton;
 
             Assert.AreEqual(button.Text, result.Text);
-            Assert.AreEqual(button.Style, result.Style);
+            Assert.AreEqual(button.ButtonStyle, result.ButtonStyle);
             Assert.IsFalse(result.RequireConfirm);
             Assert.AreEqual(button.NavigateTo, result.NavigateTo);
         }
@@ -280,7 +280,7 @@ namespace Betkeeper.Test.Page.Components
 
             Assert.AreEqual(originalNavigationButton.NavigateTo, navigationButton.NavigateTo);
             Assert.AreEqual(originalNavigationButton.Text, navigationButton.Text);
-            Assert.AreEqual(originalNavigationButton.Style, navigationButton.Style);
+            Assert.AreEqual(originalNavigationButton.ButtonStyle, navigationButton.ButtonStyle);
         }
 
         [Test]

@@ -53,7 +53,7 @@ class LoginView extends Component
         username,
         password,
         history,
-        redirectTo: '/home'
+        redirectTo: '/page/home'
       }
     });
   }

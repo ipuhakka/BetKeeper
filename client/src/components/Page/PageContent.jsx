@@ -9,6 +9,7 @@ import StaticTable from '../../components/Page/StaticTable';
 import Chart from './Chart';
 import Navbar from '../../components/Navbar/Navbar';
 import ListGroup from '../../components/Page/ListGroup';
+import CardMenu from './CardMenu';
 import './customizations.css';
 
 class PageContent extends Component
@@ -74,7 +75,7 @@ class PageContent extends Component
                     case 'Button':
                         return <Button 
                             key={`button-${component.action}-${i}`}
-                            onClick={props.getButtonClick(component)} 
+                            onClick={props.getButtonClick(component)}
                             {...component} />;
 
                     case 'Field':
@@ -119,6 +120,12 @@ class PageContent extends Component
                             keyField={component.keyField}
                             dataFields={component.dataFields}
                             data={component.data}/>;
+
+                    case 'CardMenu':
+                        return <CardMenu 
+                        key={component.componentKey}
+                        cards={component.cards} 
+                        onClick={props.getButtonClick({ buttonType: 'Navigation' })} />;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

@@ -198,7 +198,7 @@ class Page extends Component
             return this.navigateTo;
         }
 
-        return null;
+        throw new Error('Button type does not match, button: ', button);
     }
 
     /** 

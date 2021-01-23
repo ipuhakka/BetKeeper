@@ -28,7 +28,7 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public ButtonType ButtonType { get; }
 
-        public string Style { get; }
+        public string ButtonStyle { get; }
 
         public bool RequireConfirm { get; }
 
@@ -50,7 +50,7 @@ namespace Betkeeper.Page.Components
         {
             Text = text;
             ButtonType = buttonType;
-            Style = style;
+            ButtonStyle = style;
             RequireConfirm = requireConfirm;
             NavigateTo = navigateTo;
             DisplayType = displayType;
