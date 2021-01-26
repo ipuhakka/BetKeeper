@@ -9,6 +9,8 @@ namespace Betkeeper.Pages
 {
     public class UserSettingsPage : PageBase
     {
+        public override string PageKey => "usersettings";
+
         private UserAction UserAction { get; set; }
 
         public UserSettingsPage()

@@ -11,6 +11,8 @@ namespace Betkeeper.Pages.FoldersPage
 {
     public class FoldersPage : PageBase
     {
+        public override string PageKey => "folders";
+
         private FolderAction FolderAction { get; set; }
 
         public FoldersPage()

@@ -1,4 +1,5 @@
 ﻿using Betkeeper.Classes;
+using Betkeeper.Services;
 using Betkeeper.Page.Components;
 using Betkeeper.Pages;
 using Betkeeper.Pages.BetsPage;
@@ -59,38 +60,15 @@ namespace Betkeeper.Page
             int userId,
             int? pageId = null)
         {
-            PageResponse pageResponse;
-            switch (pageKey)
+            var pageInstance = PageService.GetPageInstance(pageKey);
+
+            if (pageInstance == null)
             {
-                default:
-                    return Http.CreateResponse(HttpStatusCode.NotFound);
-
-                case "competitions":
-                    pageResponse = pageId != null
-                        ? new CompetitionPage().GetPage(pageId.ToString(), userId)
-                        : new CompetitionsPage().GetPage(pageKey, userId);
-                    break;
-
-                case "usersettings":
-                    pageResponse = new UserSettingsPage().GetPage(pageKey, userId);
-                    break;
-
-                case "folders":
-                    pageResponse = new FoldersPage().GetPage(pageKey, userId);
-                    break;
-
-                case "bets":
-                    pageResponse = new BetsPage().GetPage(pageKey, userId);
-                    break;
-
-                case "statistics":
-                    pageResponse = new StatisticsPage().GetPage(pageKey, userId);
-                    break;
-
-                case "home":
-                    pageResponse = new HomePage().GetPage(pageKey, userId);
-                    break;
+                return Http.CreateResponse(HttpStatusCode.NotFound);
             }
+
+            // Use page id by default, if it is null use pageKey
+            var pageResponse = pageInstance.GetPage(pageId?.ToString() ?? pageKey, userId);
 
             if (pageResponse.Redirect)
             {
@@ -112,51 +90,14 @@ namespace Betkeeper.Page
         /// <returns></returns>
         public static HttpResponseMessage HandlePageAction(PageAction action)
         {
-            switch (action.Page)
+            var pageInstance = PageService.GetPageInstance(action.Page);
+
+            if (pageInstance == null)
             {
-                default:
-                    return Http.CreateResponse(HttpStatusCode.NotFound);
-
-                case "competitions":
-                    if (action.PageId != null)
-                    {
-                        return new CompetitionPage().HandleAction(action).ToHttpResponseMessage();
-                    }
-
-                    return new CompetitionsPage().HandleAction(action).ToHttpResponseMessage();
-
-                case "usersettings":
-                    return new UserSettingsPage().HandleAction(action).ToHttpResponseMessage();
-
-                case "folders":
-                    return new FoldersPage().HandleAction(action).ToHttpResponseMessage();
-
-                case "bets":
-                    return new BetsPage().HandleAction(action).ToHttpResponseMessage();
+                return Http.CreateResponse(HttpStatusCode.NotFound);
             }
-        }
 
-        public static PageBase GetPageInstance(string page, int? id = null)
-        {
-            switch (page)
-            {
-                default:
-                    throw new ArgumentException($"{page} not found");
-
-                case "competitions":
-                    if (id != null)
-                    {
-                        return new CompetitionPage();
-                    }
-
-                    return new CompetitionsPage();
-
-                case "usersettings":
-                    return new UserSettingsPage();
-
-                case "bets":
-                    return new BetsPage();
-            }
+            return pageInstance.HandleAction(action).ToHttpResponseMessage();
         }
     }
 }

@@ -14,6 +14,8 @@ namespace Betkeeper.Pages
 {
     public class CompetitionsPage : PageBase
     {
+        public override string PageKey => "competitions";
+
         private CompetitionAction CompetitionAction { get; set; }
 
         public CompetitionsPage()
@@ -38,6 +40,7 @@ namespace Betkeeper.Pages
                         new ItemField("startTime", DataType.DateTime),
                         new ItemField("state", DataType.String)
                     },
+                    "competition",
                     "competitionId"),
                 new ModalActionButton(
                     "JoinCompetition",

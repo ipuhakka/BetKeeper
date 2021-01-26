@@ -7,6 +7,8 @@ namespace Betkeeper.Pages.HomePage
 {
     public class HomePage : PageBase
     {
+        public override string PageKey => "home";
+
         public override PageResponse GetPage(string pageKey, int userId)
         {
             return new PageResponse(

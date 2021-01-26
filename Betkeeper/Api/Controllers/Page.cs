@@ -1,6 +1,7 @@
 ﻿using Api.Classes;
 using Betkeeper.Classes;
 using Betkeeper.Page;
+using Betkeeper.Services;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -65,12 +66,6 @@ namespace Api.Controllers
             return HandleExpandListGroupItem(page);
         }
 
-        [Route("api/page/expandListGroupItem/{page}/{id}")]
-        public HttpResponseMessage ExpandListGroupItem([FromUri]string page, int id)
-        {
-            return HandleExpandListGroupItem(page, id);
-        }
-
         private HttpResponseMessage DropdownUpdate(string page, int? id = null)
         {
             if (string.IsNullOrEmpty(page))
@@ -89,12 +84,12 @@ namespace Api.Controllers
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
-                PageResponse
-                    .GetPageInstance(page, id)
+                PageService
+                    .GetPageInstance(page)
                     .HandleDropdownUpdate(new DropdownUpdateParameters((int)userId, parameters, id)));
         }
         
-        private HttpResponseMessage HandleExpandListGroupItem(string page, int? id = null)
+        private HttpResponseMessage HandleExpandListGroupItem(string page)
         {
             if (string.IsNullOrEmpty(page))
             {
@@ -110,8 +105,8 @@ namespace Api.Controllers
 
             return Http.CreateResponse(
                 HttpStatusCode.OK,
-                PageResponse
-                    .GetPageInstance(page, id)
+                PageService
+                    .GetPageInstance(page)
                     .ExpandListGroupItem(new ListGroupItemExpandParameters((int)userId, Http.GetContentAsDictionary(Request))));
         }
     }

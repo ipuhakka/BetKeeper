@@ -4,7 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Web.Http;
 using Newtonsoft.Json;
-using System;
+using Betkeeper.Services;
 using System.Web.Http.ExceptionHandling;
 
 namespace Api
@@ -42,6 +42,8 @@ namespace Api
             }
 
             Settings.InitializeOptionsBuilderService();
+
+            PageService.InitializePageTypes();
 
             // Web API configuration and services
             config.EnableCors();

@@ -9,6 +9,11 @@ namespace Betkeeper.Page
     public abstract class PageBase
     {
         /// <summary>
+        /// Page key
+        /// </summary>
+        public abstract string PageKey { get; } 
+
+        /// <summary>
         /// Gets page structure 
         /// </summary>
         /// <param name="pageKey"></param>

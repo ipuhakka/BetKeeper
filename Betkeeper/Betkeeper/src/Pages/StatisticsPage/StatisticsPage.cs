@@ -1,7 +1,6 @@
 ﻿using Betkeeper.Actions;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
-using Betkeeper.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -10,6 +9,8 @@ namespace Betkeeper.Pages.StatisticsPage
 {
     public class StatisticsPage : PageBase
     {
+        public override string PageKey => "statistics";
+
         public override PageResponse GetPage(string pageKey, int userId)
         {
             return new PageResponse(

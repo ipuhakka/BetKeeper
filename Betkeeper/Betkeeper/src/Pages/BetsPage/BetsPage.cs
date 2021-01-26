@@ -16,6 +16,8 @@ namespace Betkeeper.Pages.BetsPage
 {
     public class BetsPage : PageBase
     {
+        public override string PageKey => "bets";
+
         public override PageResponse GetPage(string pageKey, int userId)
         {
             var usersFolders = new FolderAction().GetUsersFolders(userId);

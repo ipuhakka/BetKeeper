@@ -54,7 +54,7 @@ class Button extends Component
 
         return <RBButton
             className={`button ${props.className}`} 
-            variant={props.style}
+            variant={props.buttonStyle}
             onClick={this.onClick}>
                 {props.text}
             </RBButton>;

@@ -16,6 +16,8 @@ namespace Betkeeper.Pages.CompetitionPage
     /// </summary>
     public partial class CompetitionPage : PageBase
     {
+        public override string PageKey => "competition";
+
         private CompetitionAction CompetitionAction { get; }
 
         private TargetAction TargetAction { get; }
@@ -133,7 +135,7 @@ namespace Betkeeper.Pages.CompetitionPage
             Data.Add("betTargets", TargetsToJObject(competitionTargets));
             Data.Add("betsContainer", TargetBetsToJObject(usersBets));
 
-            return new PageResponse($"competitions/{pageKey}", tabs, Data);
+            return new PageResponse($"competition/{pageKey}", tabs, Data);
         }
 
         public override PageActionResponse HandleAction(PageAction action)
