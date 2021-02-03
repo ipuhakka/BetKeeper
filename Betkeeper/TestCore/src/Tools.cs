@@ -1,42 +1,44 @@
 ﻿using Betkeeper;
 using Betkeeper.Data;
 using Betkeeper.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
-using System.Web.Http.Controllers;
+using System.Text;
 
 namespace TestTools
 {
     public static class Tools
     {
         /// <summary>
-        /// Mocks http controller context
+        /// Mock controller context
         /// </summary>
-        /// <param name="dataContent">Mock request content</param>
-        /// <param name="headers">Mock request headers</param>
+        /// <param name="dataContent"></param>
+        /// <param name="headers"></param>
         /// <returns></returns>
-        public static HttpControllerContext MockHttpControllerContext(
+        public static ControllerContext MockControllerContext(
             object dataContent = null,
             Dictionary<string, string> headers = null)
         {
-            var request = new HttpRequestMessage
-            {
-                Content = new StringContent(JsonConvert.SerializeObject(dataContent))
-            };
-
+            var httpContext = new DefaultHttpContext();
+            
             if (headers != null)
             {
-                foreach (var headerDictRow in headers)
+                foreach (var header in headers)
                 {
-                    request.Headers.Add(headerDictRow.Key, headerDictRow.Value);
+                    httpContext.Request.Headers[header.Key] = header.Value;
                 }
             }
 
-            return new HttpControllerContext
+            httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(dataContent)));
+
+            return new ControllerContext
             {
-                Request = request
+                HttpContext = httpContext
             };
         }
 

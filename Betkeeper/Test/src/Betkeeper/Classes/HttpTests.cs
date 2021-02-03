@@ -60,8 +60,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJsonContent = "{ 'testInt': 1}";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJsonContent);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJsonContent)
+            };
 
             var asDynamic = Http.GetHttpContent(request);
 
@@ -73,8 +75,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJsonContent = "{ 'testDouble': 2.8}";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJsonContent);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJsonContent)
+            };
 
             var asDynamic = Http.GetHttpContent(request);
 
@@ -86,8 +90,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJsonContent = "{ 'testString': 'string'}";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJsonContent);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJsonContent)
+            };
 
             var asDynamic = Http.GetHttpContent(request);
 
@@ -99,8 +105,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJsonContent = "{ 'testDateTime': '2019-01-01 12:20:20'}";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJsonContent);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJsonContent)
+            };
 
             var asDynamic = Http.GetHttpContent(request);
 
@@ -114,8 +122,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJsonContent = "{ 'testNull': null}";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJsonContent);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJsonContent)
+            };
 
             var asDynamic = Http.GetHttpContent(request);
 
@@ -127,8 +137,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJson = "{ 'testInt': 1, 'testString': 'tst', 'testDouble': 2.7, 'testBool': true }";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJson);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJson)
+            };
 
             var result = Http.GetHttpContent<ContentTest>(request.Content);
 
@@ -143,8 +155,10 @@ namespace Betkeeper.Test.Classes
         {
             var testJson = "{ 'TestInt': 1, 'TestString': 'tst', 'TestDouble': 2.7, 'TestBool': true }";
 
-            var request = new HttpRequestMessage();
-            request.Content = new StringContent(testJson);
+            var request = new HttpRequestMessage
+            {
+                Content = new StringContent(testJson)
+            };
 
             var result = Http.GetHttpContent<ContentTest>(request.Content);
 
