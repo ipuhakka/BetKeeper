@@ -195,7 +195,7 @@ class ListGroup extends Component
                         <div>{headerItems.map(item => this.getItemText(item, dataItem)).join(' ')}</div>
                         <div className='small-div'>{(smallItems || []).map(item => this.getItemText(item, dataItem)).join(' ')}</div>
                     </ListGroupItem>
-                    {this.renderItemContent(dataItem)}
+                    {mode === 'Expandable' && this.renderItemContent(dataItem)}
                 </div>;
             });
 
