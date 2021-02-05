@@ -13,6 +13,8 @@ namespace Betkeeper
 
         public static DbContextOptionsBuilder OptionsBuilder { get; private set; }
 
+        public static bool LogErrors { get; set; }
+
         public static void InitializeOptionsBuilderService(DbContextOptionsBuilder optionsBuilder = null)
         {
             if (optionsBuilder == null)

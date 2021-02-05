@@ -1,30 +1,29 @@
-﻿using Betkeeper.Models;
+﻿using Betkeeper;
+using Betkeeper.Models;
+using Microsoft.AspNetCore.Diagnostics;
 using System;
-using System.Configuration;
-using System.Web.Http.ExceptionHandling;
 
 namespace Api.Classes
 {
-    public class ErrorLogger : ExceptionLogger
+    public class ErrorLogger
     {
         /// <summary>
         /// Log a backend exception
         /// </summary>
         /// <param name="context"></param>
-        public override void Log(ExceptionLoggerContext context)
+        /// <param name="requestUri"></param>
+        public void LogError(IExceptionHandlerFeature context, string requestUri)
         {
-            base.Log(context);
-
-            if (!bool.Parse(ConfigurationManager.AppSettings.Get("logErrors")))
+            if (!Settings.LogErrors)
             {
                 return;
             }
 
             var error = new ErrorLog
             {
-                Message = context.Exception.Message,
-                StackTrace = context.Exception.StackTrace,
-                Url = context.Request.RequestUri.ToString(),
+                Message = context.Error.Message,
+                StackTrace = context.Error.StackTrace,
+                Url = requestUri,
                 Application = "Api",
                 Time = DateTime.UtcNow
             };
@@ -38,7 +37,7 @@ namespace Api.Classes
         /// <param name="errorLog"></param>
         public static void LogClientError(ErrorLog errorLog)
         {
-            if (!bool.Parse(ConfigurationManager.AppSettings.Get("logErrors")))
+            if (!Settings.LogErrors)
             {
                 return;
             }

@@ -3,8 +3,6 @@ using Betkeeper.Classes;
 using Betkeeper.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 
 namespace Api.Controllers
 {
@@ -25,7 +23,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [Route("api/token/{userId}")]
+        [HttpGet("{id}")]
         public IActionResult Get(int userId)
         {
             Request.Headers.TryGetValue("Authorization", out var authorization);
@@ -83,7 +81,7 @@ namespace Api.Controllers
         }
 
         // DELETE: api/Token/5
-        [HttpGet("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int userId)
         {
             Request.Headers.TryGetValue("Authorization", out var authorization);

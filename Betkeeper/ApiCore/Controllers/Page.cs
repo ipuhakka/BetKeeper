@@ -4,8 +4,6 @@ using Betkeeper.Page;
 using Betkeeper.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 
 namespace Api.Controllers
 {
