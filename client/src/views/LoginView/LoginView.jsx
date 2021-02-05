@@ -22,7 +22,7 @@ class LoginView extends Component
         store.dispatch(checkCurrentLoginCredentials(
           loggedUserId, 
           tokenString, 
-          '/home', 
+          '/page/home', 
           this.props.history));
       }
   }

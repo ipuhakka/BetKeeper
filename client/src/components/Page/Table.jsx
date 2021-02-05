@@ -21,20 +21,17 @@ class Table extends Component
 
     getRows()
     {
-        const { data, dataKey, navigationKey, onRowClick, columns } = this.props;
+        const { data, dataKey, navigationKey, onRowClick, columns, navigationPath } = this.props;
 
         const onClick = (rowIndex) => 
         {
-            if (_.isNil(navigationKey))
+            if (_.isNil(navigationKey) || _.isNil(navigationPath))
             {
                 return;
             }
 
-            const pathname = window.location.pathname;
-
             const itemKey = data[dataKey][rowIndex][navigationKey];
-
-            onRowClick(`${pathname}/${itemKey}`);
+            onRowClick(`/page/${navigationPath}/${itemKey}`);
         }
 
         return _.map(data[dataKey], (dataRow, i) =>
@@ -83,6 +80,7 @@ Table.propTypes = {
         fieldKey: PropTypes.string.isRequired,
         fieldType: PropTypes.string.isRequired
     })),
+    navigationPath: PropTypes.string,
     navigationKey: PropTypes.string,
     onRowClick: PropTypes.func.isRequired
 };
