@@ -32,16 +32,17 @@ namespace ApiCore
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder
-                                      .WithOrigins("http://localhost:3001",
-                                        "http://localhost:5000",
-                                        "http://betkeeper.azurewebsites.net",
-                                        "https://betkeeper.azurewebsites.net")
-                                      .WithHeaders(HeaderNames.Authorization, HeaderNames.ContentType)
-                                      .WithMethods("POST", "PUT", "DELETE", "GET");
-                                  });
+                    builder =>
+                    {
+                        builder
+                        .WithOrigins(
+                            "http://localhost:3001",
+                            "http://localhost:5000",
+                            "http://betkeeper.azurewebsites.net",
+                            "https://betkeeper.azurewebsites.net")
+                        .WithHeaders(HeaderNames.Authorization, HeaderNames.ContentType)
+                        .WithMethods("POST", "PUT", "DELETE", "GET");
+                    });
             });
 
             services.AddControllers();
@@ -91,7 +92,7 @@ namespace ApiCore
                 ? JsonConvert.DeserializeObject(File.ReadAllText(devSecretsPath)) as dynamic
                 : null;
             // Set database connection
-            Settings.ConnectionString = Configuration.GetValue<string>("Sql")
+            Settings.ConnectionString = Configuration.GetConnectionString("Sql")
                 ?? secretsObject["ConnectionString"]?.ToString();
             Settings.SecretKey = Configuration.GetValue<string>("SecretKey")
                 ?? secretsObject["SecretKey"]?.ToString();
