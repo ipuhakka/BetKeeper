@@ -31,7 +31,7 @@ class Info extends Component
 			show={!_.isNil(props.status)} 
 			autohide 
 			delay={2500}
-			className={`info ${style}`}>
+			className={`info ${style}${_.isNil(props.status) ? ' hidden' : ''}`}>
 		<Toast.Header>
 		  <strong className="mr-auto">Betkeeper</strong>
 		  <small>{new Date().toLocaleDateString()}</small>

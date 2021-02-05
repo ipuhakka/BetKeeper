@@ -2,6 +2,7 @@
   position: fixed;
   bottom: 0;
   min-width: 250px;
+  z-index: 9999;
 }
 
 .warning {
@@ -14,6 +15,10 @@
 
 .success {
   border-color: #48cc45;
+}
+
+.hidden {
+  display: none;
 }
 
 @media screen and (max-width: 800px) {
