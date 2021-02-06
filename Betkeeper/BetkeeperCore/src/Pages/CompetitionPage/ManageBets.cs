@@ -168,8 +168,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 Data = new Dictionary<string, object>
                     {
                         { "betTargets", TargetsToJObject(targets) }
-                    },
-                Refresh = true
+                    }
             };
         }
 
