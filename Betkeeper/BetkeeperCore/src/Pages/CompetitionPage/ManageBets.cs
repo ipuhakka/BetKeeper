@@ -43,7 +43,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse AddBetContainer(PageAction action)
+        private static PageActionResponse AddBetContainer(PageAction action)
         {
             var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");
 
@@ -168,8 +168,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 Data = new Dictionary<string, object>
                     {
                         { "betTargets", TargetsToJObject(targets) }
-                    },
-                Refresh = true
+                    }
             };
         }
 
@@ -177,7 +176,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// Gets bet targets container.
         /// </summary>
         /// <param name="competitionTargets"></param>
-        private Container GetBetTargetsContainer(List<Target> competitionTargets)
+        private static Container GetBetTargetsContainer(List<Target> competitionTargets)
         {
             var components = new List<Component>
             {
@@ -217,7 +216,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <param name="index"></param>
         /// <param name="targetType"></param>
         /// <param name="includeDeleteButton"></param>
-        private Container CreateTargetContainer(
+        private static Container CreateTargetContainer(
             int index,
             TargetType targetType)
         {

@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 
 namespace Betkeeper.Page.Components
 {
-    [Serializable]
     public class Tab : Component
     {
         public string Title { get; }

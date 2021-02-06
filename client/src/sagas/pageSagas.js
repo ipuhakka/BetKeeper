@@ -94,7 +94,7 @@ export function* callAction(action)
         yield put(setAlertStatus(error.status, message || "Requested page was not found"));
         break;
       case 0:
-        yield put(setAlertStatus(error.status, "Connection refused, server is likely down"));
+        yield put(setAlertStatus(error.status, message || 'Server side error occured'));
         break;
       case 409:
         yield put(setAlertStatus(error.status, message));

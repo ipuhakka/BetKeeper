@@ -151,28 +151,31 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private static JObject GetInnerTargetBetObject(TargetBet targetBet)
         {
-            var innerObject = new JObject();
-
-            innerObject.Add($"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet));
+            var innerObject = new JObject
+            {
+                { $"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet) }
+            };
 
             return innerObject;
         }
 
         private static JObject GetInnerTargetResultObject(Target target)
         {
-            var innerObject = new JObject();
-
-            innerObject.Add($"question-{target.TargetId}", new JValue(target.Bet));
-            innerObject.Add($"result-{target.TargetId}", new JValue(target.Result?.Result));
-            innerObject.Add("type", new JValue(target.Type));
+            var innerObject = new JObject
+            {
+                { $"question-{target.TargetId}", new JValue(target.Bet) },
+                { $"result-{target.TargetId}", new JValue(target.Result?.Result) },
+                { "type", new JValue(target.Type) }
+            };
             return innerObject;
         }
 
         private static JObject GetInnerOpenQuestionResultObject(Target target, List<TargetBet> targetBets)
         {
-            var innerObject = new JObject();
-
-            innerObject.Add($"question-{target.TargetId}", new JValue(target.Bet));
+            var innerObject = new JObject
+            {
+                { $"question-{target.TargetId}", new JValue(target.Bet) }
+            };
             targetBets.ForEach(targetBet =>
             {
                 var targetBetValue = target.Result?.TargetBetResultDictionary.ContainsKey(targetBet.TargetBetId) ?? false

@@ -200,16 +200,16 @@ namespace Betkeeper.Test.Actions
                 {
                     CompetitionId = 1,
                     JoinCode = "joincode1",
-                    StartTime = DateTime.UtcNow.AddDays(-1)
+                    StartTime = DateTime.UtcNow.AddDays(1)
                 }
             };
 
-            new List<Participator>
+            var participators = new List<Participator>
             {
                 new Participator{ Competition = 1, UserId = 1}
             };
 
-            Tools.CreateTestData(competitions: competitions);
+            Tools.CreateTestData(competitions: competitions, participators: participators);
 
             try
             {
@@ -219,6 +219,7 @@ namespace Betkeeper.Test.Actions
             catch (ActionException e)
             {
                 Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual("Already joined competition", e.ErrorMessage);
             }
         }
 

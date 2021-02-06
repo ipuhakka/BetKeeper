@@ -210,7 +210,7 @@ namespace Betkeeper.Actions
         /// </summary>
         /// <param name="targets"></param>
         /// <exception cref="ActionException"></exception>
-        private void ValidateTargets(List<Target> targets)
+        private static void ValidateTargets(List<Target> targets)
         {
             var i = 0;
 
@@ -285,7 +285,7 @@ namespace Betkeeper.Actions
             });
         }
 
-        private bool ValidScoringForType(Target target)
+        private static bool ValidScoringForType(Target target)
         {
             switch (target.Type)
             {

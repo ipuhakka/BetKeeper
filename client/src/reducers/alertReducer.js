@@ -16,7 +16,7 @@ function handleErrorResponseAlert(state, errorResponse)
         break;
       case 0:
         status = errorResponse.status;
-        message = "Connection refused, server is likely down";
+        message = 'Server error';
         break;
       case 404:
         status = errorResponse.status;

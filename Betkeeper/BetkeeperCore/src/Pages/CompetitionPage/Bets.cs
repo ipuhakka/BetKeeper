@@ -17,7 +17,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="targets"></param>
         /// <returns></returns>
-        private Tab GetBetsTab(List<Target> targets)
+        private static Tab GetBetsTab(List<Target> targets)
         {
             return new Tab(
                 "bets",
@@ -30,7 +30,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// Get bets view components.
         /// </summary>
         /// <param name="targets"></param>
-        private Container GetBetsView(List<Target> targets)
+        private static Container GetBetsView(List<Target> targets)
         {
             var components = new List<Component>();
 

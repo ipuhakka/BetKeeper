@@ -130,8 +130,8 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var usersBets = TargetBetAction.GetParticipatorsBets(participator.ParticipatorId);
 
-            Data.Add("CompetitionId", competitionId);
-            Data.Add("Competition", competition);
+            Data.Add("competitionId", competitionId);
+            Data.Add("competition", competition);
             Data.Add("betTargets", TargetsToJObject(competitionTargets));
             Data.Add("betsContainer", TargetBetsToJObject(usersBets));
 

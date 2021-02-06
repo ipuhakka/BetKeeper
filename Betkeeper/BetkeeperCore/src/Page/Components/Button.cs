@@ -20,7 +20,6 @@ namespace Betkeeper.Page.Components
         Icon
     }
 
-    [Serializable]
     public abstract class Button : Component
     {
         public string Text { get; }
@@ -85,7 +84,6 @@ namespace Betkeeper.Page.Components
         }
     }
 
-    [Serializable]
     public class NavigationButton : Button
     {
         public NavigationButton(string navigateTo, string text, string buttonStyle)
@@ -94,7 +92,6 @@ namespace Betkeeper.Page.Components
         }
     }
 
-    [Serializable]
     public class PageActionButton : Button
     {
         public string Action { get; }
@@ -126,7 +123,6 @@ namespace Betkeeper.Page.Components
         }
     }
 
-    [Serializable]
     /// <summary>
     /// Button which opens a modal for performing action
     /// </summary>

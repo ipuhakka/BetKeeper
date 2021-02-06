@@ -104,7 +104,7 @@ namespace Betkeeper.Pages.BetsPage
         /// </summary>
         /// <param name="bets"></param>
         /// <returns></returns>
-        private ListGroup<BetListGroupData> GetBetListGroup(List<Bet> bets)
+        private static ListGroup<BetListGroupData> GetBetListGroup(List<Bet> bets)
         {
             return new ExpandableListGroup<BetListGroupData>(
                         bets.Select(bet => new BetListGroupData(bet))
@@ -130,7 +130,7 @@ namespace Betkeeper.Pages.BetsPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private ListGroup<BetListGroupData> GetBetListGroup(PageAction action)
+        private static ListGroup<BetListGroupData> GetBetListGroup(PageAction action)
         {
             var folderParameter = action.Parameters.GetString("FolderSelection");
             var folder = string.IsNullOrEmpty(folderParameter) || folderParameter == "Overview"
@@ -140,7 +140,7 @@ namespace Betkeeper.Pages.BetsPage
             return GetBetListGroup(new BetAction().GetBets(action.UserId, folder: folder));
         }
 
-        private ModalActionButton GetAddBetButton(List<string> folders)
+        private static ModalActionButton GetAddBetButton(List<string> folders)
         {
             return new ModalActionButton(
                 "addBet",
@@ -165,7 +165,7 @@ namespace Betkeeper.Pages.BetsPage
         /// </summary>
         /// <param name="expandParameters"></param>
         /// <returns></returns>
-        private ItemContent GetBetItemContent(ListGroupItemExpandParameters expandParameters)
+        private static ItemContent GetBetItemContent(ListGroupItemExpandParameters expandParameters)
         {
             var betId = Convert.ToInt32(expandParameters.ItemIdentifier);
             var bet = new BetAction().GetBet(betId, expandParameters.UserId);
@@ -228,7 +228,7 @@ namespace Betkeeper.Pages.BetsPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse HandleModifyBet(PageAction action)
+        private static PageActionResponse HandleModifyBet(PageAction action)
         {
             var dataKey = action.Parameters.GetKeyLike("listGroup-");
 
@@ -285,7 +285,7 @@ namespace Betkeeper.Pages.BetsPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse HandleDeleteBet(PageAction action)
+        private static PageActionResponse HandleDeleteBet(PageAction action)
         {
             new BetAction().DeleteBet(
                 (int)action.Parameters.GetIdentifierFromKeyLike("listGroup-"),
@@ -300,7 +300,7 @@ namespace Betkeeper.Pages.BetsPage
             };
         }
 
-        private PageActionResponse HandleAddBet(PageAction action)
+        private static PageActionResponse HandleAddBet(PageAction action)
         {
             var parameters = action.Parameters;
 

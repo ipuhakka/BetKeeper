@@ -16,7 +16,6 @@ namespace Betkeeper.Page.Components
         InputDropdown
     }
 
-    [Serializable]
     public class Field : Component
     {
         public string DataKey { get; }
@@ -106,7 +105,6 @@ namespace Betkeeper.Page.Components
         }
     }
 
-    [Serializable]
     public class DateTimeInput : Field
     {
         public DateTime? MinimumDateTime { get; }

@@ -13,7 +13,7 @@ namespace Betkeeper.Extensions
         /// <returns></returns>
         public static string ToCamelCase(this string target)
         {
-            return char.ToLowerInvariant(target[0]) + target.Substring(1);
+            return char.ToLowerInvariant(target[0]) + target[1..];
         }
     }
 }
