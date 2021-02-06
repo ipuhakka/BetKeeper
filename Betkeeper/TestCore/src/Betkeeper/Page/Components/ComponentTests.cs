@@ -307,7 +307,7 @@ namespace Betkeeper.Test.Page.Components
         /// </summary>
         /// <param name="component"></param>
         /// <returns></returns>
-        private string SerializeAsCamelCase(object component)
+        private static string SerializeAsCamelCase(object component)
         {
             return JsonConvert.SerializeObject(
                 component,

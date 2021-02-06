@@ -3,9 +3,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Betkeeper.Page.Components
 {
@@ -33,7 +31,6 @@ namespace Betkeeper.Page.Components
         CardMenu
     }
 
-    [Serializable]
     public class Component
     {
         [JsonConverter(typeof(StringEnumConverter))]
@@ -50,23 +47,6 @@ namespace Betkeeper.Page.Components
         }
 
         /// <summary>
-        /// Clones a component.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="toClone"></param>
-        /// <returns></returns>
-        public static T CloneComponent<T>(T toClone)
-        {
-            using var stream = new MemoryStream();
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, toClone);
-
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return (T)formatter.Deserialize(stream);
-        }
-
-        /// <summary>
         /// Get component from action.
         /// </summary>
         /// <param name="action"></param>
@@ -78,8 +58,7 @@ namespace Betkeeper.Page.Components
         {
             var asJObject = JObject.Parse(action.Parameters["components"].ToString())[componentKey];
 
-            return Component
-                .ParseComponent(asJObject.ToString()) as T;
+            return ParseComponent(asJObject.ToString()) as T;
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +21,6 @@ namespace Betkeeper.Page.Components
         }
     }
 
-    [Serializable]
     public class Dropdown : DropdownBase
     {
         /// <summary>
@@ -85,7 +83,6 @@ namespace Betkeeper.Page.Components
     /// <summary>
     /// Class for dropdown which is used to input selections
     /// </summary>
-    [Serializable]
     public class InputDropdown : Field
     {
         public InputDropdown(string componentKey, string label, string dataKey = null)
@@ -98,7 +95,6 @@ namespace Betkeeper.Page.Components
     /// <summary>
     /// Dropdown list option class.
     /// </summary>
-    [Serializable]
     public class Option
     {
         public string Key { get; }

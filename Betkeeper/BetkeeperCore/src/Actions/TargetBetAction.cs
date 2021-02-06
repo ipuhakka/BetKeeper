@@ -119,7 +119,7 @@ namespace Betkeeper.Actions
         /// <summary>
         /// Set participator to target bets.
         /// </summary>
-        private void SetParticipatorToTargetBets(
+        private static void SetParticipatorToTargetBets(
             List<TargetBet> targetBets, 
             Participator participator)
         {
@@ -135,7 +135,7 @@ namespace Betkeeper.Actions
         /// <param name="targetBet"></param>
         /// <param name="competitionTargets"></param>
         /// <param name="targetIndex"></param>
-        private void ValidateTarget(
+        private static void ValidateTarget(
             TargetBet targetBet, 
             List<Target> competitionTargets,
             int targetIndex)
