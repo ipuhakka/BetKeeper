@@ -1,3 +1,31 @@
+/* Button */
+.button {
+    margin: 0.3em;
+    width: auto;
+}
+
+.page-image-button {
+    flex: 0.2 1 auto !important;
+    height: 2.3em;
+    width: 2.3em;
+    margin-top: 2.2em;
+}
+
+/* Chart */
+.page-chart {
+    height: 50vh;
+}
+
+.barchart-custom-tooltip {
+    background-color: white;
+    box-shadow: 5px 5px 4px #888888;
+}
+
+.chart-selection {
+    margin-bottom: .5em;
+}
+
+/* Field */
 .input-field-wrapper {
     display: flex;
     margin-top: 0.2em;
@@ -55,4 +83,24 @@
 
 .add-selection-item-remove:hover {
     color: #e2e5ea;
+}
+
+/* List group */
+.small-div {
+    font-size: smaller;
+  }
+  
+  .listGroupItemBody {
+    display: none;
+    background-color: #f0f0f0;
+    padding: .3em;
+  }
+  
+  .listGroupItemBody.visible {
+    display: block;
+  }
+
+  /* Table */
+tr {
+	cursor: pointer !important;
 }

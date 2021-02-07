@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import RBTable from 'react-bootstrap/Table';
 import * as utils from '../../js/utils';
-import './Table.css';
+import './Page.css';
 
 class Table extends Component
 {

@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import ListGroupRB from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import './ListGroup.css';
 import * as Utils from '../../js/utils';
 import * as PageUtils from '../../js/pageUtils';
 import PageContent from './PageContent';
 import * as PageActions from '../../actions/pageActions';
 import { expandListGroupItem } from '../../js/Requests/Page';
+import './Page.css';
 
 class ListGroup extends Component
 {
