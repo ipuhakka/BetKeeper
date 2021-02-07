@@ -124,7 +124,7 @@ class Navbar extends Component
 							{
 								const active = item.key === selectedKey || item.key === activeKey;
 								return <Nav.Item key={`nav-item-${item.text}`} as='li'>
-									<Nav.Link eventKey={item.key} active={active} disabled={active}>
+									<Nav.Link eventKey={item.key} active={active}>
 										{item.text}
 									</Nav.Link>
 								</Nav.Item>

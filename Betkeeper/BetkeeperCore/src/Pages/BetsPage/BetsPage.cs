@@ -203,9 +203,10 @@ namespace Betkeeper.Pages.BetsPage
                 new PageActionButton(
                     "deleteBet",
                     new List<string>{ "FolderSelection" },
-                    "",
+                    "Delete bet",
                     buttonStyle: "outline-danger",
                     displayType: DisplayType.Icon,
+                    requireConfirm: true,
                     componentsToInclude: new List<string>{ "betsListGroup" })
                 {
                     IconName = "far fa-trash-alt"
