@@ -34,6 +34,10 @@
     display: flex;
 }
 
+.add-options-input {
+    min-width: 8em;
+}
+
 .add-selection-item {
     border-top: .5px solid gray;
     border-bottom: .5px solid gray;

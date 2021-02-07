@@ -129,6 +129,7 @@ class InputDropdown extends Component
     {
         return <DropdownItem key='dropdown-add-options' className='add-options-item'>
             <Form.Control
+                className='add-options-input'
                 ref={this.inputRef}
                 value={this.state.newValue || ''}
                 onChange={(e) => 
@@ -166,7 +167,7 @@ class InputDropdown extends Component
     render()
     {
         const { props } = this;
-        return (<DropdownButton 
+        return (<DropdownButton
             variant="outline-primary"
             title={props.label}>
                 {this.renderItems()}

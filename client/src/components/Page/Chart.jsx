@@ -75,7 +75,8 @@ class Chart extends Component
         return <Dropdown 
             options={options}
             componentKey='chart-selection-dropdown'
-            onChange={onChange}/>;
+            onChange={onChange}
+            className='chart-selection'/>;
     }
 
     /**

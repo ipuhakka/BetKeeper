@@ -85,7 +85,7 @@ class Dropdown extends Component
 
     render()
     {
-        const { options } = this.props;  
+        const { options, className } = this.props;  
         const { activeKey } = this.state;
 
         const items = _.map(options, option => 
@@ -103,6 +103,7 @@ class Dropdown extends Component
         const activeOption = _.find(options, option => option.key === activeKey);
 
         return (<DropdownButton
+            className={className}
             variant="outline-primary"
             title={_.isNil(activeOption)
                 ? ''
@@ -126,7 +127,8 @@ Dropdown.propTypes = {
     handleServerUpdate: PropTypes.func,
     /** Path consisting of parent Container splitted by '.'. 
      * Used to set data to correct path.  */
-    dataPath: PropTypes.string
+    dataPath: PropTypes.string,
+    className: PropTypes.string
 };
 
 export default Dropdown;
