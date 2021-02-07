@@ -287,16 +287,12 @@ namespace Betkeeper.Actions
 
         private static bool ValidScoringForType(Target target)
         {
-            switch (target.Type)
+            return target.Type switch
             {
-                case TargetType.OpenQuestion:
-                case TargetType.Selection:
-                    return target.Scoring.PointsForCorrectWinner == null &&
-                        target.Scoring.PointsForCorrectResult != null;
-
-                default:
-                    return true;
-            }
+                TargetType.OpenQuestion or TargetType.Selection => target.Scoring.PointsForCorrectWinner == null &&
+                                       target.Scoring.PointsForCorrectResult != null,
+                _ => true,
+            };
         }
 
         /// <summary>

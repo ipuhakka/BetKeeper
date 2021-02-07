@@ -62,30 +62,6 @@ namespace Betkeeper.Page.Components
         }
 
         /// <summary>
-        /// Deletes first component from component listing with matching key.
-        /// </summary>
-        /// <param name="components"></param>
-        /// <param name="componentKey"></param>
-        public static void DeleteComponent(List<Component> components, string componentKey)
-        {
-            var match = components.FirstOrDefault(component => component.ComponentKey == componentKey);
-
-            if (match != null)
-            {
-                components.Remove(match);
-                return;
-            }
-
-            foreach (var component in components)
-            {
-                if (component is Container asContainer && asContainer.Children.Count > 0)
-                {
-                    DeleteComponent(asContainer.Children, componentKey);
-                }
-            }
-        }
-
-        /// <summary>
         /// Parses a component from json.
         /// </summary>
         /// <param name="componentJson"></param>
@@ -96,28 +72,17 @@ namespace Betkeeper.Page.Components
 
             var componentType = asJObject["componentType"].ToString();
 
-            switch (componentType)
+            return componentType switch
             {
-                case "Button":
-                    return Button.Parse(asJObject);
-
-                case "Field":
-                    return Field.Parse(asJObject);
-
-                case "Table":
-                    return Table.Parse(asJObject);
-
-                case "Tab":
-                    return Tab.Parse(asJObject);
-
-                case "Container":
-                    return Container.Parse(asJObject);
-
-                default:
-                    throw new NotImplementedException(
-                        $"Component type {componentType} parsing not implemented"
-                    );
-            }
+                "Button" => Button.Parse(asJObject),
+                "Field" => Field.Parse(asJObject),
+                "Table" => Table.Parse(asJObject),
+                "Tab" => Tab.Parse(asJObject),
+                "Container" => Container.Parse(asJObject),
+                _ => throw new NotImplementedException(
+                    $"Component type {componentType} parsing not implemented"
+),
+            };
         }
 
         /// <summary>

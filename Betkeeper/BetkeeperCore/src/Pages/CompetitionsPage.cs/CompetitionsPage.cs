@@ -70,17 +70,12 @@ namespace Betkeeper.Pages
 
         public override PageActionResponse HandleAction(PageAction action)
         {
-            switch (action.ActionName)
+            return action.ActionName switch
             {
-                case "Post":
-                    return Post(action);
-
-                case "JoinCompetition":
-                    return JoinCompetition(action);
-
-                default:
-                    throw new NotImplementedException();
-            }
+                "Post" => Post(action),
+                "JoinCompetition" => JoinCompetition(action),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="targets"></param>
         /// <returns></returns>
-        private Tab GetManageBetsTab(List<Target> targets)
+        private static Tab GetManageBetsTab(List<Target> targets)
         {
             return new Tab(
                 "manageBets",

@@ -64,16 +64,12 @@ namespace Betkeeper.Pages.FoldersPage
 
         public override PageActionResponse HandleAction(PageAction action)
         {
-            switch (action.ActionName)
+            return action.ActionName switch
             {
-                case "deleteFolders":
-                    return DeleteFolders(action);
-
-                case "addFolder":
-                    return AddFolder(action);
-            }
-
-            throw new NotImplementedException();
+                "deleteFolders" => DeleteFolders(action),
+                "addFolder" => AddFolder(action),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>

@@ -49,19 +49,13 @@ namespace Betkeeper.Pages.BetsPage
 
         public override PageActionResponse HandleAction(PageAction action)
         {
-            switch (action.ActionName)
+            return action.ActionName switch
             {
-                case "modifyBet":
-                    return HandleModifyBet(action);
-
-                case "deleteBet":
-                    return HandleDeleteBet(action);
-
-                case "addBet":
-                    return HandleAddBet(action);
-            }
-
-            throw new NotImplementedException($"Not implemented action {action.ActionName} called");
+                "modifyBet" => HandleModifyBet(action),
+                "deleteBet" => HandleDeleteBet(action),
+                "addBet" => HandleAddBet(action),
+                _ => throw new NotImplementedException($"Not implemented action {action.ActionName} called"),
+            };
         }
 
         public override PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)
@@ -90,13 +84,11 @@ namespace Betkeeper.Pages.BetsPage
         /// <returns></returns>
         public override ItemContent ExpandListGroupItem(ListGroupItemExpandParameters expandParameters)
         {
-            switch (expandParameters.ComponentKey)
+            return expandParameters.ComponentKey switch
             {
-                case "betsListGroup":
-                    return GetBetItemContent(expandParameters);
-            }
-
-            throw new NotImplementedException();
+                "betsListGroup" => GetBetItemContent(expandParameters),
+                _ => throw new NotImplementedException(),
+            };
         }
 
         /// <summary>
@@ -107,22 +99,22 @@ namespace Betkeeper.Pages.BetsPage
         private static ListGroup<BetListGroupData> GetBetListGroup(List<Bet> bets)
         {
             return new ExpandableListGroup<BetListGroupData>(
-                        bets.Select(bet => new BetListGroupData(bet))
-                            .OrderByDescending(bet => bet.BetId)
-                            .ToList(),
-                        "betId",
-                        new List<ItemField>
-                        {
-                            new ItemField("name", DataType.String),
-                            new ItemField("playedDate", DataType.DateTime),
-                            new ItemField("betResult", DataType.String)
-                        },
-                        new List<ItemField>
-                        {
-                            new ItemField("stake", DataType.Double, "Bet"),
-                            new ItemField("odd", DataType.Double, "Odd")
-                        },
-                        componentKey: "betsListGroup");
+                bets.Select(bet => new BetListGroupData(bet))
+                    .OrderByDescending(bet => bet.BetId)
+                    .ToList(),
+                "betId",
+                new List<ItemField>
+                {
+                    new ItemField("name", DataType.String),
+                    new ItemField("playedDate", DataType.DateTime),
+                    new ItemField("betResult", DataType.String)
+                },
+                new List<ItemField>
+                {
+                    new ItemField("stake", DataType.Double, "Bet"),
+                    new ItemField("odd", DataType.Double, "Odd")
+                },
+                componentKey: "betsListGroup");
         }
 
         /// <summary>

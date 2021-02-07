@@ -38,13 +38,11 @@ namespace Betkeeper.Pages
 
         public override PageActionResponse HandleAction(PageAction action)
         {
-            switch (action.ActionName)
+            return action.ActionName switch
             {
-                case "changePassword":
-                    return HandlePasswordAction(action);
-                default:
-                    throw new NotImplementedException($"{action.ActionName} not implemented!");
-            }
+                "changePassword" => HandlePasswordAction(action),
+                _ => throw new NotImplementedException($"{action.ActionName} not implemented!"),
+            };
         }
 
         private PageActionResponse HandlePasswordAction(PageAction action)

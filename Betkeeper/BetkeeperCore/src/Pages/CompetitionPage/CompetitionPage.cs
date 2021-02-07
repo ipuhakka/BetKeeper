@@ -140,39 +140,22 @@ namespace Betkeeper.Pages.CompetitionPage
 
         public override PageActionResponse HandleAction(PageAction action)
         {
-            switch (action.ActionName)
+            return action.ActionName switch
             {
-                default:
-                    throw new NotImplementedException($"{action.ActionName} not implemented");
-
-                case "DeleteCompetition":
-                    return DeleteCompetition(action);
-
-                case "AddBetContainer":
-                    return AddBetContainer(action);
-
-                case "CancelBetTargetsUpdate":
-                    //Clears new changes to bet targets. Does not remove already save data.
-                    return GetTargetsFromDatabase(action);
-
-                case "SaveBetTargets":
-                    return SaveBetTargets(action);
-
-                case "DeleteTarget":
-                    return DeleteTarget(action);
-
-                case "SaveUserBets":
-                    return SaveUserBets(action);
-
-                case "CancelUserBetsUpdate":
-                    return new PageActionResponse(ActionResultType.OK)
-                        {
-                            Refresh = true
-                        };
-
-                case "SaveBetResults":
-                    return SaveBetResults(action);
-            }
+                "DeleteCompetition" => DeleteCompetition(action),
+                "AddBetContainer" => AddBetContainer(action),
+                // Clears new changes to bet targets. Does not remove already save data.
+                "CancelBetTargetsUpdate" => GetTargetsFromDatabase(action),
+                "SaveBetTargets" => SaveBetTargets(action),
+                "DeleteTarget" => DeleteTarget(action),
+                "SaveUserBets" => SaveUserBets(action),
+                "CancelUserBetsUpdate" => new PageActionResponse(ActionResultType.OK)
+                {
+                    Refresh = true
+                },
+                "SaveBetResults" => SaveBetResults(action),
+                _ => throw new NotImplementedException($"{action.ActionName} not implemented"),
+            };
         }
 
         public override PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)
