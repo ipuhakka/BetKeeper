@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Betkeeper.Extensions
+﻿namespace Betkeeper.Extensions
 {
     public static class StringExtensions
     {

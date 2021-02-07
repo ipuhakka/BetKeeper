@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RBButton from 'react-bootstrap/Button';
-import './Button.css';
+import './Page.css';
 
 class Button extends Component
 {

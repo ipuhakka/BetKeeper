@@ -7,9 +7,9 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from './Dropdown';
 import consts from '../../js/consts';
 import * as utils from '../../js/utils';
-import './Field.css';
 import InputDropdown from './InputDropdown';
 import MultiSelectDropdown from './MultiSelectDropdown';
+import './Page.css';
 
 class Field extends Component
 {

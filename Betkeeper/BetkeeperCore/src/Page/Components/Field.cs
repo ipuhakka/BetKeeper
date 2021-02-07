@@ -80,17 +80,12 @@ namespace Betkeeper.Page.Components
         {
             var fieldType = asJObject["fieldType"].ToString();
 
-            switch (fieldType)
+            return fieldType switch
             {
-                case "Dropdown":
-                    return asJObject.ToObject<Dropdown>();
-
-                case "DateTime":
-                    return asJObject.ToObject<DateTimeInput>();
-
-                default:
-                    return asJObject.ToObject<Field>();
-            }
+                "Dropdown" => asJObject.ToObject<Dropdown>(),
+                "DateTime" => asJObject.ToObject<DateTimeInput>(),
+                _ => asJObject.ToObject<Field>(),
+            };
         }
     }
 

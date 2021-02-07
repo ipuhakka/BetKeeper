@@ -5,7 +5,7 @@ import { BarChart, Bar, PieChart, Pie, CartesianGrid, XAxis, YAxis, ResponsiveCo
 import Dropdown from './Dropdown';
 import Table from 'react-bootstrap/Table';
 import * as utils from '../../js/utils';
-import './Chart.css';
+import './Page.css';
 
 /** Color palette to color data items */
 const colors = [
@@ -75,7 +75,8 @@ class Chart extends Component
         return <Dropdown 
             options={options}
             componentKey='chart-selection-dropdown'
-            onChange={onChange}/>;
+            onChange={onChange}
+            className='chart-selection'/>;
     }
 
     /**

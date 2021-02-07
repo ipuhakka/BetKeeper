@@ -61,26 +61,14 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 target.BetItems.ForEach(bet =>
                 {
-                    Color backgroundColor;
-
-                    switch (bet.Result)
+                    var backgroundColor = bet.Result switch
                     {
-                        case Enums.TargetResult.CorrectResult:
-                            backgroundColor = Color.Green;
-                            break;
+                        Enums.TargetResult.CorrectResult => Color.Green,
+                        Enums.TargetResult.CorrectWinner => Color.LightGreen,
+                        Enums.TargetResult.Wrong => Color.Red,
+                        _ => Color.Gray,
+                    };
 
-                        case Enums.TargetResult.CorrectWinner:
-                            backgroundColor = Color.LightGreen;
-                            break;
-
-                        case Enums.TargetResult.Wrong:
-                            backgroundColor = Color.Red;
-                            break;
-
-                        default:
-                            backgroundColor = Color.Gray;
-                            break;
-                    }
                     row.Cells.Add(new Cell
                     {
                         Color = backgroundColor,
