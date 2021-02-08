@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Button from './Button';
-import './CardMenu.css';
+import './Page.css';
 
 class CardMenu extends Component
 {

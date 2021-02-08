@@ -223,10 +223,10 @@ class Chart extends Component
         
         return <div>
             {this.renderChartSelection()}
-            <Dropdown 
+            {activeChart !== 'table' && <Dropdown 
                 options={options}
                 componentKey={`chart-field-selection-dropdown`}
-                onChange={this.onDataFieldChange}/>
+                onChange={this.onDataFieldChange}/>}
             <div className={`${activeChart !== 'table' ? 'page-chart' : ''}`}>
             {this.renderChart()}
         </div>
