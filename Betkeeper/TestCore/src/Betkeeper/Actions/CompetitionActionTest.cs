@@ -123,7 +123,7 @@ namespace Betkeeper.Test.Actions
 
             Assert.AreEqual("Description to remember", competitions[0].Description);
 
-            Assert.AreEqual(Enums.CompetitionState.Open, competitions[0].State);
+            Assert.AreEqual(CompetitionState.Open, competitions[0].State);
         }
 
         [Test]
