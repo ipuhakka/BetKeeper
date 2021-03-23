@@ -162,13 +162,12 @@ namespace Betkeeper.Pages.CompetitionPage
             // Remove deleted one
             targets.RemoveAt(deleteDataIndex);
 
-            var betTargetContainer = GetBetTargetsContainer(targets);
-            return new PageActionResponse(betTargetContainer)
+            return new PageActionResponse(GetBetTargetsContainer(targets))
             {
                 Data = new Dictionary<string, object>
-                    {
-                        { "betTargets", TargetsToJObject(targets) }
-                    }
+                {
+                    { "betTargets", TargetsToJObject(targets) }
+                }
             };
         }
 
@@ -197,9 +196,7 @@ namespace Betkeeper.Pages.CompetitionPage
             var targets = new List<Component>();
             for (var i = 0; i < competitionTargets.Count; i++)
             {
-                targets.Add(CreateTargetContainer(
-                    i,
-                    competitionTargets[i].Type));
+                targets.Add(CreateTargetContainer(i, competitionTargets[i].Type));
             }
 
             components.AddRange(targets);

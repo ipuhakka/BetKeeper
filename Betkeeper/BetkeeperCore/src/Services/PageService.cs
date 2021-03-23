@@ -16,8 +16,12 @@ namespace Betkeeper.Services
         public static void InitializePageTypes()
         {
             PageTypeDictionary = new Dictionary<string, Type>();
-            foreach (Type type in Assembly.GetAssembly(typeof(PageBase)).GetTypes()
-                .Where(pageType => pageType.IsClass && !pageType.IsAbstract && pageType.IsSubclassOf(typeof(PageBase))))
+
+            foreach (var type in Assembly.GetAssembly(typeof(PageBase)).GetTypes()
+                .Where(pageType => 
+                    pageType.IsClass && 
+                    !pageType.IsAbstract && 
+                    pageType.IsSubclassOf(typeof(PageBase))))
             {
                 var pageKey = ((PageBase)Activator.CreateInstance(type)).PageKey;
                 PageTypeDictionary.Add(pageKey, type);

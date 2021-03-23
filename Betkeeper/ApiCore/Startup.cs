@@ -1,6 +1,5 @@
 using Api.Classes;
 using Betkeeper;
-using Betkeeper.Exceptions;
 using Betkeeper.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace ApiCore
@@ -46,8 +46,10 @@ namespace ApiCore
             });
 
             services.AddControllers();
-
-            services.AddMvc().AddNewtonsoftJson();
+            services.AddMvc().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCore", Version = "v1" });
@@ -101,13 +103,11 @@ namespace ApiCore
 
             if (string.IsNullOrEmpty(Settings.ConnectionString))
             {
-                throw new ConfigurationException(
-                    "Connection string was not given");
+                throw new Exception("Connection string was not given");
             }
             if (string.IsNullOrEmpty(Settings.SecretKey))
             {
-                throw new ConfigurationException(
-                    "Secret key was not given");
+                throw new Exception("Secret key was not given");
             }
 
             Settings.InitializeOptionsBuilderService();

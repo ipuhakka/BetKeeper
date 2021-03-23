@@ -1,16 +1,16 @@
-﻿using Betkeeper.Page;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Betkeeper.Page;
 using Betkeeper.Page.Components;
 using Betkeeper.Models;
 using Betkeeper.Actions;
-using System.Collections.Generic;
-using System;
 using Betkeeper.Enums;
+using Betkeeper.Extensions;
+using Betkeeper.Classes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Linq;
-using Betkeeper.Extensions;
 using Newtonsoft.Json.Linq;
-using Betkeeper.Classes;
 
 namespace Betkeeper.Pages.BetsPage
 {

@@ -125,8 +125,7 @@ namespace Betkeeper.Models
             int? competitionId = null,
             string name = null,
             string joinCode = null)
-        {
-            
+        {    
             var query = _context.Competition.AsQueryable();
 
             if (competitionId != null)
