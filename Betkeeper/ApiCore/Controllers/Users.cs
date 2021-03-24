@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Api.Controllers
 {
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private UserRepository UserRepository { get; set; }
