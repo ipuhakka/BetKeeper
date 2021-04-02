@@ -140,6 +140,11 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<Component> Components { get; set; }
 
+        /// <summary>
+        /// Components included in action call
+        /// </summary>
+        public List<string> ComponentsToInclude { get; set; }
+
         public ModalActionButton(
             string action,
             List<Component> components,
@@ -147,12 +152,14 @@ namespace Betkeeper.Page.Components
             string buttonStyle = "primary",
             bool requireConfirm = false,
             string navigateTo = null,
-            string absoluteDataPath = null)
+            string absoluteDataPath = null,
+            List<string> componentsToInclude = null)
             : base(ButtonType.ModalAction, text, buttonStyle, requireConfirm, navigateTo)
         {
             Action = action;
             Components = components;
             AbsoluteDataPath = absoluteDataPath;
+            ComponentsToInclude = componentsToInclude;
         }
     }
 }

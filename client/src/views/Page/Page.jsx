@@ -75,7 +75,7 @@ class Page extends Component
     executePageActionFromConfirm()
     {
         const { onSuccessNavigateTo } = this.state;
-        const {action, actionDataKeys, componentsToInclude } = this.state.confirm;
+        const { action, actionDataKeys, componentsToInclude } = this.state.confirm;
 
         this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
     }
@@ -152,8 +152,9 @@ class Page extends Component
      * @param {bool} requireConfirm 
      * @param {string} confirmStyle 
      * @param {string} absoluteDataPath
+     * @param {Array.<string>} componentsToInclude Page components included in action
      */
-    clickModalAction(action, components, title, requireConfirm, confirmStyle, absoluteDataPath)
+    clickModalAction(action, components, title, requireConfirm, confirmStyle, absoluteDataPath, componentsToInclude)
     {
         this.setState({
             actionModalOpen: true,
@@ -163,7 +164,8 @@ class Page extends Component
                 requireConfirm,
                 confirmVariant: confirmStyle,
                 components,
-                absoluteDataPath
+                absoluteDataPath,
+                componentsToInclude
             }
         });
     }
@@ -229,9 +231,10 @@ class Page extends Component
                     this.setState({ actionModalOpen: false });
                 }} 
                 page={pageKey || ''}
-                show={state.actionModalOpen} 
-                {...state.actionModalProps}
-                data={props.data}/>
+                show={state.actionModalOpen}
+                data={props.data}
+                pageComponents={props.components}  
+                {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
             <Confirm 
