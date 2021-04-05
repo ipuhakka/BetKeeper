@@ -243,9 +243,10 @@ export function getActivePageName()
  * @param {object} data 
  * @param {Array} actionDataKeys
  * @param {Array} components
- * @param {Array} componentsToInclude 
+ * @param {Array} componentsToInclude
+ * @param {object} staticData
  */
-export function getActionData(data, actionDataKeys, components, componentsToInclude)
+export function getActionData(data, actionDataKeys, components, componentsToInclude, staticData)
 {
     const parameters = {};
 
@@ -273,6 +274,7 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
         }
     });
 
+    _.merge(parameters, staticData);
     setIncludedComponents(components, parameters, componentsToInclude);
 
     return parameters;
