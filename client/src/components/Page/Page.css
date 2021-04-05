@@ -88,17 +88,17 @@
 /* List group */
 .small-div {
     font-size: smaller;
-  }
+}
   
-  .listGroupItemBody {
+.listGroupItemBody {
     display: none;
     background-color: #f0f0f0;
     padding: .3em;
-  }
-  
-  .listGroupItemBody.visible {
+}
+
+.listGroupItemBody.visible {
     display: block;
-  }
+}
 
 /* Table */
 tr {
@@ -152,4 +152,37 @@ i {
 .grid{
   display: table-cell;
   width: 50%;
+}
+
+/** Page panel styles */
+.page-panel-header {
+    font-size: 1.5em;
+    background: rgb(226, 229, 234);
+}
+
+.page-panel-header:hover {
+    background: lightgray;
+}
+
+.arrow-div {
+    float: right;
+    font-size: 1.5em;
+    margin-top: .27em;
+}
+
+.arrow {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 5px;
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+  }
+  
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
