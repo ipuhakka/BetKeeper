@@ -89,10 +89,12 @@ namespace Betkeeper.Pages.CompetitionPage
             if (participator.Role == CompetitionRole.Host)
             {
                 var targetBets = new List<TargetBet>();
+
                 if (competition.State == CompetitionState.Open)
                 {
                     tabs.Add(GetManageBetsTab(competitionTargets));
                 }
+
                 if (competition.State != CompetitionState.Open)
                 {
                     // Setting bet results
@@ -144,6 +146,7 @@ namespace Betkeeper.Pages.CompetitionPage
             {
                 "DeleteCompetition" => DeleteCompetition(action),
                 "AddBetContainer" => AddBetContainer(action),
+                "AddBetContainerToPanel" => AddBetContainerToPanel(action),
                 // Clears new changes to bet targets. Does not remove already save data.
                 "CancelBetTargetsUpdate" => GetTargetsFromDatabase(action),
                 "SaveBetTargets" => SaveBetTargets(action),
@@ -154,6 +157,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     Refresh = true
                 },
                 "SaveBetResults" => SaveBetResults(action),
+                "AddGroup" => AddGroup(action),
                 _ => throw new NotImplementedException($"{action.ActionName} not implemented"),
             };
         }

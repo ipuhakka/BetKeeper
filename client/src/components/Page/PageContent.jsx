@@ -136,7 +136,7 @@ class PageContent extends Component
                             {this.renderComponents(
                                 component.children, 
                                 `${className} ${component.customCssClass}`,
-                                depth,
+                                depth + 1,
                                 dataPath)}
                         </Panel>;
 
