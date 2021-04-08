@@ -4,6 +4,14 @@
     width: 100%;
 }
 
+.child-container-div.bets {
+    padding: 2px;
+}
+
+.child-container-div.bets:nth-child(even) {
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+
 .setResults {
     border-bottom: 1px solid #ccc;
     padding-bottom: 0.5em;
