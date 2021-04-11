@@ -28,7 +28,12 @@ namespace Betkeeper.Page.Components
         ListGroup,
         Chart,
 
-        CardMenu
+        CardMenu,
+
+        /// <summary>
+        /// Closable panel, does not affect data paths
+        /// </summary>
+        Panel
     }
 
     public class Component
@@ -79,6 +84,7 @@ namespace Betkeeper.Page.Components
                 "Table" => Table.Parse(asJObject),
                 "Tab" => Tab.Parse(asJObject),
                 "Container" => Container.Parse(asJObject),
+                "Panel" => Panel.Parse(asJObject),
                 _ => throw new NotImplementedException(
                     $"Component type {componentType} parsing not implemented"
 ),

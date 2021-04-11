@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import RBModal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as PageActions from '../../actions/pageActions';
+import * as PageUtils from '../../js/pageUtils';
 import Confirm from '../Confirm/Confirm';
 import PageContent from '../Page/PageContent';
 
@@ -25,6 +26,7 @@ class Modal extends Component
       }
 
       this.onChangeInputValue = this.onChangeInputValue.bind(this);
+      this.callAction = this.callAction.bind(this);
     }
 
     onChangeInputValue(key, newValue)
@@ -40,6 +42,22 @@ class Modal extends Component
       });
 
       PageActions.onDataChange(this.props.page, key, newValue);
+    }
+
+    /**
+     * Page action call
+     */
+    callAction()
+    {
+      const { componentsToInclude, pageComponents, page, action, onClose } = this.props;
+      const parameters = {...this.state.actionResponseValues};
+
+      if (!_.isNil(componentsToInclude) && componentsToInclude.length > 0)
+      {
+        PageUtils.setIncludedComponents(pageComponents, parameters, componentsToInclude);
+      }
+
+      PageActions.callAction(page, action, parameters, onClose);
     }
 
     render()
@@ -65,7 +83,7 @@ class Modal extends Component
             }
             else 
             {
-              PageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose);
+              this.callAction();
             }
           }}>Ok</Button>;
         
@@ -98,7 +116,7 @@ class Modal extends Component
                         actionDataKeys: []
                       }
                     })
-                  PageActions.callAction(props.page, props.action, state.actionResponseValues, props.onClose)
+                  this.callAction();
                 }}
                 variant={props.confirmVariant}/>
               <PageContent 
@@ -139,7 +157,11 @@ Modal.propTypes = {
   confirmVariant: PropTypes.string,
   components: PropTypes.array.isRequired,
   absoluteDataPath: PropTypes.string,
-  data: PropTypes.object
+  data: PropTypes.object,
+  /** Components from page to be included in action */
+  componentsToInclude: PropTypes.arrayOf(PropTypes.string),
+  /** Components of page. Needed if components are to be included in page action call */
+  pageComponents: PropTypes.array
 };
 
 export default Modal;

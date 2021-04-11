@@ -106,6 +106,11 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<string> ComponentsToInclude { get; }
 
+        /// <summary>
+        /// Static data added to action call
+        /// </summary>
+        public Dictionary<string, object> StaticData { get; set; }
+
         public PageActionButton(
             string action,
             List<string> actionDataKeys,
@@ -114,12 +119,14 @@ namespace Betkeeper.Page.Components
             bool requireConfirm = false,
             string navigateTo = null,
             List<string> componentsToInclude = null,
-            DisplayType displayType = DisplayType.Text)
+            DisplayType displayType = DisplayType.Text,
+            Dictionary<string, object> staticData = null)
             : base(ButtonType.PageAction, text, buttonStyle, requireConfirm, navigateTo, displayType)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;
             ComponentsToInclude = componentsToInclude;
+            StaticData = staticData;
         }
     }
 
@@ -140,6 +147,11 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public List<Component> Components { get; set; }
 
+        /// <summary>
+        /// Components included in action call
+        /// </summary>
+        public List<string> ComponentsToInclude { get; set; }
+
         public ModalActionButton(
             string action,
             List<Component> components,
@@ -147,12 +159,14 @@ namespace Betkeeper.Page.Components
             string buttonStyle = "primary",
             bool requireConfirm = false,
             string navigateTo = null,
-            string absoluteDataPath = null)
+            string absoluteDataPath = null,
+            List<string> componentsToInclude = null)
             : base(ButtonType.ModalAction, text, buttonStyle, requireConfirm, navigateTo)
         {
             Action = action;
             Components = components;
             AbsoluteDataPath = absoluteDataPath;
+            ComponentsToInclude = componentsToInclude;
         }
     }
 }

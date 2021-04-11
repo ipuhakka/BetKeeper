@@ -243,9 +243,10 @@ export function getActivePageName()
  * @param {object} data 
  * @param {Array} actionDataKeys
  * @param {Array} components
- * @param {Array} componentsToInclude 
+ * @param {Array} componentsToInclude
+ * @param {object} staticData
  */
-export function getActionData(data, actionDataKeys, components, componentsToInclude)
+export function getActionData(data, actionDataKeys, components, componentsToInclude, staticData)
 {
     const parameters = {};
 
@@ -273,6 +274,21 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
         }
     });
 
+    _.merge(parameters, staticData);
+    setIncludedComponents(components, parameters, componentsToInclude);
+
+    return parameters;
+}
+
+/**
+ * Find components to be included in action from components listing and add them to parameters
+ * @param {*} components 
+ * @param {*} parameters 
+ * @param {*} componentsToInclude 
+ */
+export function setIncludedComponents(components, parameters, componentsToInclude)
+{
+    // Initialize object if it's not initialized already
     parameters.components = parameters.components || {};
 
     _.forEach(componentsToInclude, componentKey => 
@@ -281,6 +297,4 @@ export function getActionData(data, actionDataKeys, components, componentsToIncl
                 { components: components },
                 componentKey);
         });
-
-    return parameters;
 }

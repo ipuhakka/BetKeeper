@@ -4,9 +4,7 @@ using Betkeeper.Enums;
 using System.Linq;
 using System.Collections.Generic;
 using Betkeeper.Page;
-using System.Net.Http;
 using Newtonsoft.Json.Linq;
-using Betkeeper.Classes;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -50,8 +48,32 @@ namespace Betkeeper.Pages.CompetitionPage
                     "Save bets",
                     requireConfirm: true));
             }
-            components.AddRange(targets
-                .Select(target => GetBetContainer(target)));
+
+            var targetGroups = targets.GroupBy(target => target.Grouping);
+
+            foreach (var group in targetGroups)
+            {
+                var groupTargets = group.ToList();
+                var targetComponents = new List<Component>();
+
+                // No grouping defined, don't add to panel
+                if (string.IsNullOrEmpty(group.Key))
+                {
+                    components.AddRange(groupTargets
+                        .Select(target => GetBetContainer(target)));
+                }
+                else
+                {
+                    foreach (var target in groupTargets)
+                    {
+                        targetComponents.Add(GetBetContainer(target));
+                    }
+
+                    components.Add(new Panel(
+                        targetComponents,
+                        group.Key ?? ""));
+                }
+            }
 
             return new Container(
                 children: components,

@@ -4,6 +4,14 @@
     width: 100%;
 }
 
+.child-container-div.bets {
+    padding: 2px;
+}
+
+.child-container-div.bets:nth-child(even) {
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+
 .setResults {
     border-bottom: 1px solid #ccc;
     padding-bottom: 0.5em;
@@ -26,20 +34,30 @@
     .setResults.openQuestion button {
         flex: 0.8;
     }
+}
 
-    .manageBets {
-        grid-template-columns: auto;
-        display: block !important;
-        background: #dee2e6;
-        margin-bottom: 0.3em;
-        border-radius: 4px;
-    }
+.manageBets {
+    grid-template-columns: auto;
+    display: block !important;
+    background: #dee2e6;
+    margin-bottom: 0.3em;
+    border-radius: 4px;
+}
 
-    .manageBets .page-image-button {
-          margin-bottom: 0.3em;  
-    }
+.manageBets .page-image-button {
+      margin-bottom: 0.3em;  
+}
 
-    .manageBets:nth-child(even){
-        background: white;
-    }
+.manageBets:nth-child(even){
+    background: white;
+}
+
+.manageBets.manageBets-betContainer.within-panel {
+    width: 100%;
+    display: flex;
+    flex-direction: column
+}
+
+.manageBets.manageBets-betContainer.within-panel .page-image-button {
+    align-self: center;
 }

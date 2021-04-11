@@ -33,6 +33,8 @@ namespace Betkeeper.Models
 
         public List<string> Selections { get; set; }
 
+        public string Grouping { get; set; }
+
         /// <summary>
         /// Returns points for a given target bet
         /// </summary>
@@ -161,6 +163,7 @@ namespace Betkeeper.Models
 
             targetObject.TryGetValue($"question-{i}", out JToken questionJToken);
             targetObject.TryGetValue($"scoring-{i}", out JToken scoringJToken);
+            targetObject.TryGetValue($"grouping-{i}", out JToken groupingJToken);
 
             var scoring = new Scoring();
 
@@ -203,7 +206,8 @@ namespace Betkeeper.Models
                 CompetitionId = competitionId,
                 Scoring = scoring,
                 Selections = selections,
-                TargetId = targetId
+                TargetId = targetId,
+                Grouping = groupingJToken?.ToString()
             };
         }
 

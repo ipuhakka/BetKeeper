@@ -92,7 +92,10 @@ namespace Betkeeper.Actions
                 .Select(participator => participator.Competition)
                 .ToList();
 
-            return CompetitionRepository.GetCompetitionsById(competitionIds);
+            return CompetitionRepository
+                .GetCompetitionsById(competitionIds)
+                .OrderByDescending(competition => competition.StartTime)
+                .ToList();
         }
 
         public void JoinCompetition(string joinCode, int userId)

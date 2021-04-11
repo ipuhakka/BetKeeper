@@ -8,8 +8,9 @@ import Table from '../../components/Page/Table';
 import StaticTable from '../../components/Page/StaticTable';
 import Chart from './Chart';
 import Navbar from '../../components/Navbar/Navbar';
-import ListGroup from '../../components/Page/ListGroup';
+import ListGroup from './ListGroup';
 import CardMenu from './CardMenu';
+import Panel from './Panel';
 import './customizations.css';
 
 class PageContent extends Component
@@ -75,6 +76,7 @@ class PageContent extends Component
                     case 'Button':
                         return <Button 
                             key={`button-${component.action}-${i}`}
+                            className={component.customCssClass}
                             onClick={props.getButtonClick(component)}
                             {...component} />;
 
@@ -126,6 +128,17 @@ class PageContent extends Component
                         key={component.componentKey}
                         cards={component.cards} 
                         onClick={props.getButtonClick({ buttonType: 'Navigation' })} />;
+
+                    case 'Panel':
+                        return <Panel
+                            key={component.componentKey}
+                            legend={component.legend}>
+                            {this.renderComponents(
+                                component.children, 
+                                `${className} ${component.customCssClass}`,
+                                depth + 1,
+                                dataPath)}
+                        </Panel>;
 
                     default:
                         throw new Error(`Component type ${component.componentType} not implemented`);

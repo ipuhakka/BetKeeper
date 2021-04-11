@@ -18,9 +18,26 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <returns></returns>
         private Tab GetSetResultsTab(Dictionary<Target, List<TargetBet>> bets)
         {
-            var container = new Container(bets
-                .Select(kvp => GetComponentsForTarget(kvp.Key, kvp.Value))
-                .ToList(),
+            var groups = bets.GroupBy(kvp => kvp.Key.Grouping);
+
+            var viewComponents = new List<Component>();
+            foreach (var group in groups)
+            {
+                var groupComponents = group.Select(kvp => GetComponentsForTarget(kvp.Key, kvp.Value)).ToList();
+
+                if (!string.IsNullOrEmpty(group.Key))
+                {
+                    var panel = new Panel(groupComponents, group.Key);
+                    viewComponents.Add(panel);
+                }
+                else
+                {
+                    viewComponents.AddRange(groupComponents);
+                }
+            }
+
+            var container = new Container(
+                viewComponents,
                 "setResultsContainer",
                 storeDataAsArray: true);
 
