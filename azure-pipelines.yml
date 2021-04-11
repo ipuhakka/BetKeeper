@@ -26,11 +26,10 @@ steps:
     configuration: '$(buildConfiguration)'
   displayName: ".NET build"
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: '.NET test'
+    command: 'test'
+    testRunTitle: 'Run core test'
 
 - task: NodeTool@0
   inputs:
