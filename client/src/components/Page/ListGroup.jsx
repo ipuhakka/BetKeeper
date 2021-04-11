@@ -184,7 +184,7 @@ class ListGroup extends Component
         const items = data.map((dataItem, i) =>
             {
                 return <div key={`${keyField}-div-${i}`}>
-                        <ListGroupItem 
+                    <ListGroupItem 
                         action={mode !== 'DisplayMode'}
                         variant={this.state.selected.includes(dataItem[keyField]) ? 'info': null}
                         onClick={() => 

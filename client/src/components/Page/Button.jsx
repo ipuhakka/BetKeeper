@@ -21,16 +21,24 @@ class Button extends Component
         {
             props.onClick(
                 props.action, 
-                props.actionDataKeys, 
+                props.actionDataKeys,
                 props.requireConfirm, 
                 props.componentsToInclude, 
                 props.text, 
                 props.style, 
-                props.navigateTo);
+                props.navigateTo,
+                props.staticData);
         }
         else if (props.buttonType === 'ModalAction')
         {
-            props.onClick(props.action, props.components, props.text, props.requireConfirm, props.style, props.absoluteDataPath);
+            props.onClick(
+                props.action,
+                props.components,
+                props.text,
+                props.requireConfirm,
+                props.style,
+                props.absoluteDataPath,
+                props.componentsToInclude);
         }
         else if (props.buttonType === 'Navigation')
         {
@@ -71,6 +79,8 @@ Button.propTypes = {
     buttonStyle: PropTypes.string.isRequired,
     action: PropTypes.string,
     actionDataKeys: PropTypes.arrayOf(PropTypes.string),
+    /** Data set in server side */
+    staticData: PropTypes.object,
     components: PropTypes.array,
     navigateTo: PropTypes.string,
     onClick: PropTypes.func.isRequired,

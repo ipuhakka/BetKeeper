@@ -75,7 +75,7 @@ class Page extends Component
     executePageActionFromConfirm()
     {
         const { onSuccessNavigateTo } = this.state;
-        const {action, actionDataKeys, componentsToInclude } = this.state.confirm;
+        const { action, actionDataKeys, componentsToInclude } = this.state.confirm;
 
         this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
     }
@@ -85,17 +85,19 @@ class Page extends Component
      * @param {string} action 
      * @param {Array} actionDataKeys 
      * @param {string} onSuccessNavigateTo Navigate to this address on success
+     * @param {Array.<string>} Components included in action
+     * @param {object} staticData Server side set data
      */
-    executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
+    executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude, staticData)
     {
         const { props } = this;
 
         const data = props.data;
 
-        const parameters = PageUtils.getActionData(data, actionDataKeys, props.components, componentsToInclude);
+        const parameters = PageUtils.getActionData(data, actionDataKeys, props.components, componentsToInclude, staticData);
 
         const pageKey = PageUtils.getActivePageName();
-
+        
         PageActions.callAction(pageKey, action, parameters, _.isNil(onSuccessNavigateTo)
             ? null
             : () => 
@@ -113,7 +115,8 @@ class Page extends Component
      * @param {bool} requireConfirm Will a confirm dialog be displayed before completing action 
      * @param {string} confirmHeader Header for confirm dialog
      * @param {string} confirmStyle Confirm dialog style
-     * @param {string} onSuccessNavigateTo If given, redirect to this address after successful action 
+     * @param {string} onSuccessNavigateTo If given, redirect to this address after successful action
+     * @param {string} staticData Data set server side for action call
      */
     clickPageAction(
         action, 
@@ -122,7 +125,8 @@ class Page extends Component
         componentsToInclude,
         confirmHeader, 
         confirmStyle, 
-        onSuccessNavigateTo = null)
+        onSuccessNavigateTo = null,
+        staticData)
     {
         if (requireConfirm)
         {
@@ -133,14 +137,15 @@ class Page extends Component
                     actionDataKeys,
                     componentsToInclude,
                     header: confirmHeader,
-                    variant: confirmStyle
+                    variant: confirmStyle,
+                    staticData: staticData
                 },
                 onSuccessNavigateTo
             });
         }
         else 
         {
-            this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude);
+            this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude, staticData);
         }
     }
 
@@ -152,8 +157,9 @@ class Page extends Component
      * @param {bool} requireConfirm 
      * @param {string} confirmStyle 
      * @param {string} absoluteDataPath
+     * @param {Array.<string>} componentsToInclude Page components included in action
      */
-    clickModalAction(action, components, title, requireConfirm, confirmStyle, absoluteDataPath)
+    clickModalAction(action, components, title, requireConfirm, confirmStyle, absoluteDataPath, componentsToInclude)
     {
         this.setState({
             actionModalOpen: true,
@@ -163,7 +169,8 @@ class Page extends Component
                 requireConfirm,
                 confirmVariant: confirmStyle,
                 components,
-                absoluteDataPath
+                absoluteDataPath,
+                componentsToInclude
             }
         });
     }
@@ -229,9 +236,10 @@ class Page extends Component
                     this.setState({ actionModalOpen: false });
                 }} 
                 page={pageKey || ''}
-                show={state.actionModalOpen} 
-                {...state.actionModalProps}
-                data={props.data}/>
+                show={state.actionModalOpen}
+                data={props.data}
+                pageComponents={props.components} 
+                {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
             <Confirm 

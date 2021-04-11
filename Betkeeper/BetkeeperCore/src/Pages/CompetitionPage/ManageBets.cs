@@ -34,6 +34,14 @@ namespace Betkeeper.Pages.CompetitionPage
                         "AddBetContainer",
                         new List<string>{ "betTargets" },
                         "Add bet",
+                        componentsToInclude: new List<string>{ "betTargets" }),
+                    new ModalActionButton(
+                        "AddGroup",
+                        new List<Component>
+                        {
+                            new Field("GroupName", "Group", FieldType.TextBox)
+                        },
+                        "New group",
                         componentsToInclude: new List<string>{ "betTargets" })
                 });
         }
@@ -67,6 +75,87 @@ namespace Betkeeper.Pages.CompetitionPage
                 var newBetTarget = CreateTargetContainer(betTargetCount, newTargetType);
                 betTargetContainer.Children.Add(newBetTarget);
             }
+
+            return new PageActionResponse(betTargetContainer);
+        }
+
+        /// <summary>
+        /// Add a bet container to inner panel
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private static PageActionResponse AddBetContainerToPanel(PageAction action)
+        {
+            var groupName = action.Parameters.GetString("panelName");
+            var panel = Component.GetComponentFromAction<Panel>(action, groupName);
+
+            var betTargetData = action.Parameters.ContainsKey("betTargets")
+                ? action.Parameters?["betTargets"] as JArray
+                : null;
+
+            var targets = Target.JArrayToTargets(betTargetData);
+
+            if (targets.Count(target => target.Grouping == groupName) == 0)
+            {
+                var defaultBetTarget = CreateTargetContainer(targets.Count, TargetType.OpenQuestion, groupName);
+                panel.Children.Add(defaultBetTarget);
+
+                // Add target object to data
+                targets.Add(new Target
+                {
+                    Type = TargetType.OpenQuestion,
+                    Grouping = groupName,
+                    Scoring = new Scoring()
+                });
+            }
+            else
+            {
+                var newTargetType = targets.Where(target => target.Grouping == groupName).Last().Type;
+                var newBetTarget = CreateTargetContainer(targets.Count, newTargetType, groupName);
+                panel.Children.Add(newBetTarget);
+
+                // Add target object to data
+                targets.Add(new Target
+                {
+                    Type = newTargetType,
+                    Grouping = groupName,
+                    Scoring = new Scoring()
+                });
+            }
+
+            return new PageActionResponse(panel)
+            {
+                Data = new Dictionary<string, object>
+                {
+                    {"betTargets", TargetsToJObject(targets)}
+                }
+            };
+        }
+
+        /// <summary>
+        /// Add a panel for new group
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private PageActionResponse AddGroup(PageAction action)
+        {
+            var groupName = action.Parameters.GetString("GroupName");
+            var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");
+
+            betTargetContainer.Children.Add(new Panel(
+                new List<Component>
+                {
+                    new PageActionButton(
+                        "AddBetContainerToPanel",
+                        new List<string>{ "betTargets" },
+                        $"Add bet to {groupName}",
+                        componentsToInclude: new List<string>{ groupName },
+                        staticData: new Dictionary<string, object>
+                        {
+                            {"panelName", groupName}
+                        })
+                },
+                componentKey: groupName));
 
             return new PageActionResponse(betTargetContainer);
         }
@@ -113,7 +202,7 @@ namespace Betkeeper.Pages.CompetitionPage
             // Create targets
             for (int i = 0; i < targetData.Count; i++)
             {
-                var targetObject = targetData[i]as JObject;
+                var targetObject = targetData[i] as JObject;
                 var target = Target.FromJObject(targetObject, i, competitionId);
                 targets.Add(target);
             }
@@ -193,13 +282,32 @@ namespace Betkeeper.Pages.CompetitionPage
                     requireConfirm: true)
             };
 
-            var targets = new List<Component>();
-            for (var i = 0; i < competitionTargets.Count; i++)
-            {
-                targets.Add(CreateTargetContainer(i, competitionTargets[i].Type));
-            }
+            var targetGroups = competitionTargets.GroupBy(target => target.Grouping);
 
-            components.AddRange(targets);
+            var targetIndex = 0;
+            foreach (var group in targetGroups)
+            {
+                var groupTargets = group.ToList();
+                var targetComponents = new List<Component>();
+
+                for (var i = 0; i < groupTargets.Count; i++)
+                {
+                    targetComponents.Add(CreateTargetContainer(targetIndex, groupTargets[i].Type));
+                    targetIndex++;
+                }
+
+                // No grouping defined, don't add to panel
+                if (string.IsNullOrEmpty(group.Key))
+                {
+                    components.AddRange(targetComponents);
+                }
+                else
+                {
+                    components.Add(new Panel(
+                        targetComponents,
+                        group.Key ?? ""));
+                }
+            }
 
             return new Container(
                 components,
@@ -212,10 +320,11 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="index"></param>
         /// <param name="targetType"></param>
-        /// <param name="includeDeleteButton"></param>
+        /// <param name="group"></param>
         private static Container CreateTargetContainer(
             int index,
-            TargetType targetType)
+            TargetType targetType,
+            string group = null)
         {
             var options = new List<Option>
             {
@@ -284,7 +393,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 components,
                 $"bet-target-{index}")
             {
-                CustomCssClass = $"manageBets {targetType.ToString().ToCamelCase()}"
+                CustomCssClass = $"manageBets manageBets-betContainer {targetType.ToString().ToCamelCase()} {(!string.IsNullOrEmpty(group) ? "within-panel" : "")}"
             };
         }
     }

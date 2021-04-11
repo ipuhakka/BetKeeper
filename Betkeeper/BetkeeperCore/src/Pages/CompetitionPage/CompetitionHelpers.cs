@@ -123,7 +123,8 @@ namespace Betkeeper.Pages.CompetitionPage
                 {
                     { $"question-{i}", target.Bet },
                     { $"bet-type-{i}", target.Type.ToString() },
-                    { $"target-id-{i}", target.TargetId }
+                    { $"target-id-{i}", target.TargetId },
+                    { $"grouping-{i}", target.Grouping }
                 };
 
             valueDict.Add($"scoring-{i}", target.Scoring.PointsForCorrectResult);
