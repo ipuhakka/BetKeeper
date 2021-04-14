@@ -5,6 +5,7 @@ using Betkeeper.Extensions;
 using Betkeeper.Models;
 using Betkeeper.Page;
 using Betkeeper.Page.Components;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,8 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private TargetBetAction TargetBetAction { get; }
 
+        private CompetitionInvitationAction InvitationAction { get; }
+
         private Dictionary<string, object> Data { get; set; }
 
         public CompetitionPage()
@@ -31,16 +34,19 @@ namespace Betkeeper.Pages.CompetitionPage
             CompetitionAction = new CompetitionAction();
             TargetAction = new TargetAction();
             TargetBetAction = new TargetBetAction();
+            InvitationAction = new CompetitionInvitationAction();
         }
 
         public CompetitionPage(
             CompetitionAction competitionAction = null, 
             TargetAction targetAction = null,
-            TargetBetAction targetBetAction = null)
+            TargetBetAction targetBetAction = null,
+            CompetitionInvitationAction invitationAction = null)
         {
             CompetitionAction = competitionAction;
             TargetAction = targetAction;
             TargetBetAction = targetBetAction;
+            InvitationAction = invitationAction;
         }
 
         public override PageResponse GetPage(string pageKey, int userId)
@@ -115,7 +121,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     tabs.Add(GetSetResultsTab(betDict));
                 }
 
-                tabs.Add(new Tab(
+                var settingsTab = new Tab(
                     "settings",
                     "Settings",
                     new List<Component>
@@ -127,7 +133,21 @@ namespace Betkeeper.Pages.CompetitionPage
                             "outline-danger",
                             requireConfirm: true,
                             navigateTo: "../competitions")
-                    }));
+                    });
+
+                if (competition.State == CompetitionState.Open)
+                {
+                    settingsTab.TabContent.Add(new ModalActionButton(
+                        "InviteUsers",
+                        new List<Component>
+                        {
+                            new InputDropdown("usersToInvite", "Users to invite")
+                        },
+                        "Invite users",
+                        requireConfirm: true));
+                }
+
+                tabs.Add(settingsTab);
             }
 
             var usersBets = TargetBetAction.GetParticipatorsBets(participator.ParticipatorId);
@@ -158,8 +178,29 @@ namespace Betkeeper.Pages.CompetitionPage
                 },
                 "SaveBetResults" => SaveBetResults(action),
                 "AddGroup" => AddGroup(action),
+                "InviteUsers" => InviteUsers(action),
                 _ => throw new NotImplementedException($"{action.ActionName} not implemented"),
             };
+        }
+
+        /// <summary>
+        /// Invite users to competition
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public PageActionResponse InviteUsers(PageAction action)
+        {
+            var usersToInvite = action.Parameters.ContainsKey("usersToInvite")
+                ? ((JArray)action.Parameters["usersToInvite"]).ToObject<List<string>>()
+                : null;
+
+            if (usersToInvite == null || usersToInvite.Count == 0)
+            {
+                return new PageActionResponse(ActionResultType.InvalidInput, "No users selected");
+            }
+
+            InvitationAction.InviteUsers((int)action.PageId, action.UserId, usersToInvite);
+            return new PageActionResponse(ActionResultType.OK, "Invites sent to users with valid usernames");
         }
 
         public override PageResponse HandleDropdownUpdate(DropdownUpdateParameters parameters)

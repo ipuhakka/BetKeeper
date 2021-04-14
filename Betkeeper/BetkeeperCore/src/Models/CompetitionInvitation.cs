@@ -1,10 +1,8 @@
 ﻿using Betkeeper.Data;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betkeeper.Models
 {
@@ -13,6 +11,7 @@ namespace Betkeeper.Models
         [Key]
         public int InvitationId { get; set; }
 
+        [Column("Competition")]
         public int CompetitionId { get; set; }
 
         public int UserId { get; set; }
