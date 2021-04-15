@@ -68,6 +68,14 @@ namespace Betkeeper.Actions
                 throw new ActionException(Enums.ActionResultType.Conflict, "Cannot accept invitation of another user");
             }
 
+            var competition = new CompetitionRepository().GetCompetition(competitionId: invitation.CompetitionId);
+
+            if (competition == null || competition.State != Enums.CompetitionState.Open)
+            {
+                new CompetitionInvitationRepository().DeleteInvitation(invitationId);
+                throw new ActionException(Enums.ActionResultType.Conflict, "Competition not open");
+            }
+
             new ParticipatorRepository().AddParticipator(invitation.UserId, invitation.CompetitionId, Enums.CompetitionRole.Participator);
             new CompetitionInvitationRepository().DeleteInvitation(invitationId);
         }

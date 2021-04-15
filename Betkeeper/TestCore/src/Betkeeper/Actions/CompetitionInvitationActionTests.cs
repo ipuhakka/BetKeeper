@@ -33,6 +33,57 @@ namespace Betkeeper.Test.Betkeeper.Actions
         }
 
         [Test]
+        public void GetUsersInvitation_ReturnsUsersInvitations()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    Name = "test1",
+                    StartTime = DateTime.Now.AddDays(1)
+                },
+                new Competition
+                {
+                    CompetitionId = 2,
+                    Name = "test2",
+                    StartTime = DateTime.Now.AddDays(1)
+                },
+                new Competition
+                {
+                    CompetitionId = 3,
+                    Name = "test3",
+                    StartTime = DateTime.Now.AddDays(1)
+                }
+            };
+
+            var invitations = new List<CompetitionInvitation>
+            {
+                new CompetitionInvitation
+                {
+                    UserId = 1,
+                    CompetitionId = 1
+                },
+                new CompetitionInvitation
+                {
+                    UserId = 2,
+                    CompetitionId = 2
+                },
+                new CompetitionInvitation
+                {
+                    UserId = 1,
+                    CompetitionId = 3
+                }
+            };
+
+            Tools.CreateTestData(invitations: invitations, competitions: competitions);
+
+            var results = new CompetitionInvitationAction().GetUsersInvitation(1);
+
+            Assert.AreEqual(2, results.Count);
+        }
+
+        [Test]
         public void InviteUsers_CompetitionDoesNotExist_ThrowsActionException()
         {
             try
@@ -231,7 +282,7 @@ namespace Betkeeper.Test.Betkeeper.Actions
         }
 
         [Test]
-        public void AcceptInvitation_OwnInvitation_Succeeds()
+        public void AcceptInvitation_CompetitionNotOpen_InviteDeleted_ThrowsActionException()
         {
             var competitions = new List<Competition>
             {
@@ -239,6 +290,44 @@ namespace Betkeeper.Test.Betkeeper.Actions
                 {
                     CompetitionId = 1,
                     StartTime = DateTime.Now.AddDays(-1)
+                }
+            };
+
+            var invitations = new List<CompetitionInvitation>
+            {
+                new CompetitionInvitation
+                {
+                    UserId = 1,
+                    CompetitionId = 1,
+                    InvitationId = 1
+                }
+            };
+
+            Tools.CreateTestData(competitions: competitions, invitations: invitations);
+
+            try
+            {
+                new CompetitionInvitationAction().AcceptInvitation(1, 1);
+                Assert.Fail();
+            }
+            catch (ActionException e)
+            {
+                Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
+                Assert.AreEqual("Competition not open", e.ErrorMessage);
+
+                Assert.AreEqual(0, _context.CompetitionInvitation.Count());
+            }
+        }
+
+        [Test]
+        public void AcceptInvitation_OwnInvitation_Succeeds()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    StartTime = DateTime.Now.AddDays(1)
                 }
             };
 
