@@ -1,4 +1,5 @@
 ﻿using Betkeeper.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,29 @@ namespace Betkeeper.Actions
 {
     public class CompetitionInvitationAction
     {
+        /// <summary>
+        /// Returns users invitationn (competition name and start time)
+        /// </summary>
+        /// <returns></returns>
+        public List<PrettyInvitation> GetUsersInvitations(int userId)
+        {
+            var invitations = new CompetitionInvitationRepository().GetInvitations(userId: userId);
+
+            var competitions = new CompetitionRepository()
+                .GetCompetitionsById(invitations.Select(invitation => invitation.CompetitionId).ToList());
+
+            return competitions
+                .Select(competition => new PrettyInvitation
+                    {
+                        CompetitionName = competition.Name,
+                        StartTime = competition.StartTime,
+                        InvitationId = invitations
+                            .Single(invitations => invitations.CompetitionId == competition.CompetitionId)
+                            .InvitationId
+                    })
+                .ToList();
+        } 
+
         /// <summary>
         /// Invite users to competition
         /// </summary>
@@ -98,5 +122,14 @@ namespace Betkeeper.Actions
 
             new CompetitionInvitationRepository().DeleteInvitation(invitationId);
         }
+    }
+
+    public class PrettyInvitation
+    {
+        public DateTime StartTime { get; set; }
+
+        public string CompetitionName { get; set; }
+
+        public int InvitationId { get; set; }
     }
 }

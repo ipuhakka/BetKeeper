@@ -33,7 +33,7 @@ namespace Betkeeper.Test.Betkeeper.Actions
         }
 
         [Test]
-        public void GetUsersInvitation_ReturnsUsersInvitations()
+        public void GetUsersInvitations_ReturnsUsersInvitations()
         {
             var competitions = new List<Competition>
             {
@@ -78,7 +78,7 @@ namespace Betkeeper.Test.Betkeeper.Actions
 
             Tools.CreateTestData(invitations: invitations, competitions: competitions);
 
-            var results = new CompetitionInvitationAction().GetUsersInvitation(1);
+            var results = new CompetitionInvitationAction().GetUsersInvitations(1);
 
             Assert.AreEqual(2, results.Count);
         }

@@ -122,7 +122,7 @@ class Modal extends Component
               <PageContent 
                 onFieldValueChange={this.onChangeInputValue}
                 components={props.components}
-                getButtonClick={() => { throw new Error('No button click')}}
+                getButtonClick={this.props.getPageButtonClick}
                 className='modal-content'
                 absoluteDataPath={props.absoluteDataPath}
                 data={props.data}
@@ -161,7 +161,8 @@ Modal.propTypes = {
   /** Components from page to be included in action */
   componentsToInclude: PropTypes.arrayOf(PropTypes.string),
   /** Components of page. Needed if components are to be included in page action call */
-  pageComponents: PropTypes.array
+  pageComponents: PropTypes.array,
+  getPageButtonClick: PropTypes.func
 };
 
 export default Modal;

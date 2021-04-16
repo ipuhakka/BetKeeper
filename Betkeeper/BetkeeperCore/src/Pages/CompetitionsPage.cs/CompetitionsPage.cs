@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Linq;
 
 namespace Betkeeper.Pages
 {
@@ -17,19 +18,69 @@ namespace Betkeeper.Pages
         public override string PageKey => "competitions";
 
         private CompetitionAction CompetitionAction { get; set; }
+        private CompetitionInvitationAction InvitationAction { get; set; }
 
         public CompetitionsPage()
         {
             CompetitionAction = new CompetitionAction();
+            InvitationAction = new CompetitionInvitationAction();
         }
 
-        public CompetitionsPage(CompetitionAction competitionAction)
+        public CompetitionsPage(CompetitionAction competitionAction, CompetitionInvitationAction invitationAction)
         {
             CompetitionAction = competitionAction;
+            InvitationAction = invitationAction;
         }
 
         public override PageResponse GetPage(string pageKey, int userId)
         {
+            var invitations = InvitationAction.GetUsersInvitations(userId);
+
+            var invitationContainers = invitations
+                .Select(invitation => new Container(
+                    new List<Component>
+                    {
+                        new Label(invitation.CompetitionName),
+                        new Label(invitation.StartTime.ToString("yyyy-MM-dd HH:mm:ss")),
+                        new PageActionButton(
+                            action: "DeclineInvitation",
+                            actionDataKeys: new List<string>(),
+                            text: "Decline",
+                            buttonStyle: "danger",
+                            requireConfirm: true,
+                            componentsToInclude: new List<string>(),
+                            displayType: DisplayType.Icon,
+                            staticData: new Dictionary<string, object>
+                            {
+                                { "invitationId", invitation.InvitationId }
+                            })
+                        {
+                            IconName = "fas fa-times"
+                        },
+                        new PageActionButton(
+                            action: "AcceptInvitation",
+                            actionDataKeys: new List<string>(),
+                            text: "Accept",
+                            buttonStyle: "success",
+                            requireConfirm: true,
+                            componentsToInclude: new List<string>(),
+                            displayType: DisplayType.Icon,
+                            staticData: new Dictionary<string, object>
+                            {
+                                { "invitationId", invitation.InvitationId }
+                            })
+                        {
+                            IconName = "fas fa-check"
+                        }
+                    })
+                { 
+                    CustomCssClass = "competitions-invitation-container"
+                })
+                .Cast<Component>()
+                .ToList();
+
+            var invitationsContainer = new Container(invitationContainers);
+
             var components = new List<Component>
             {
                 new Table(
@@ -46,7 +97,8 @@ namespace Betkeeper.Pages
                     "JoinCompetition",
                     new List<Component>
                     {
-                        new Field("JoinCode", "Join code", FieldType.TextBox)
+                        new Field("JoinCode", "Join code", FieldType.TextBox),
+                        invitationsContainer
                     },
                     "Join competition"),
                 new ModalActionButton(
@@ -74,6 +126,8 @@ namespace Betkeeper.Pages
             {
                 "Post" => Post(action),
                 "JoinCompetition" => JoinCompetition(action),
+                "DeclineInvitation" => DeclineInvitation(action),
+                "AcceptInvitation" => AcceptInvitation(action),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -137,6 +191,34 @@ namespace Betkeeper.Pages
                 ActionResultType.OK,
                 "Joined competition successfully",
                 refresh: true);
+        }
+
+        /// <summary>
+        /// Decline an invitation to competition
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private PageActionResponse DeclineInvitation(PageAction action)
+        {
+            var invitation = (int)action.Parameters.GetInt("invitationId");
+
+            new CompetitionInvitationAction().DeclineInvitation(action.UserId, invitation);
+
+            return new PageActionResponse(ActionResultType.OK, "Invitation declined", refresh: true);
+        }
+
+        /// <summary>
+        /// Accept invitation to competition
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        private PageActionResponse AcceptInvitation(PageAction action)
+        {
+            var invitation = (int)action.Parameters.GetInt("invitationId");
+
+            new CompetitionInvitationAction().AcceptInvitation(action.UserId, invitation);
+
+            return new PageActionResponse(ActionResultType.OK, "Invitation accepted", refresh: true);
         }
     }
 }
