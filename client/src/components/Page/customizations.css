@@ -61,3 +61,7 @@
 .manageBets.manageBets-betContainer.within-panel .page-image-button {
     align-self: center;
 }
+
+.competitions-invitation-container .page-content-label {
+    flex-grow: 1;
+}

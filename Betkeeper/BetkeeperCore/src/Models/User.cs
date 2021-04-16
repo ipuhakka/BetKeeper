@@ -45,6 +45,18 @@ namespace Betkeeper.Models
                 .ToList();
         }
 
+        /// <summary>
+        /// Returns users for existing usernames in list
+        /// </summary>
+        /// <param name="usernames"></param>
+        /// <returns></returns>
+        public List<User> GetUsersByName(List<string> usernames)
+        {
+            return _context.User
+                .Where(user => usernames.Contains(user.Username))
+                .ToList();
+        }
+
         public List<string> GetUsernamesById(List<int> userIds)
         {     
             return _context
