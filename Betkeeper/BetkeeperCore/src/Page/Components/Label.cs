@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Betkeeper.Page.Components
+﻿namespace Betkeeper.Page.Components
 {
     /// <summary>
     /// Component for displaying a label with no field attached to it.

@@ -75,9 +75,9 @@ class Page extends Component
     executePageActionFromConfirm()
     {
         const { onSuccessNavigateTo } = this.state;
-        const { action, actionDataKeys, componentsToInclude } = this.state.confirm;
+        const { action, actionDataKeys, componentsToInclude, staticData } = this.state.confirm;
 
-        this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude)
+        this.executePageAction(action, actionDataKeys, onSuccessNavigateTo, componentsToInclude, staticData)
     }
 
     /**
@@ -105,6 +105,8 @@ class Page extends Component
                 this.navigateTo(onSuccessNavigateTo);
             }
         );
+
+        this.setState({ actionModalOpen: false });
     }
 
     /**
@@ -238,7 +240,8 @@ class Page extends Component
                 page={pageKey || ''}
                 show={state.actionModalOpen}
                 data={props.data}
-                pageComponents={props.components} 
+                pageComponents={props.components}
+                getPageButtonClick={this.getButtonClick.bind(this)}
                 {...state.actionModalProps}/>
             <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>

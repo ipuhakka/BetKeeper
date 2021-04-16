@@ -22,7 +22,7 @@ namespace Betkeeper.Test.Pages.CompetitionsPageTests
         {
             _context = Tools.GetTestContext();
             _competitionRepository = new CompetitionRepository();
-            _competitionsPage = new CompetitionsPage(new CompetitionAction());
+            _competitionsPage = new CompetitionsPage(new CompetitionAction(), new CompetitionInvitationAction());
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 

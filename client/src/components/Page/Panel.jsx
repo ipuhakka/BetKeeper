@@ -36,7 +36,7 @@ class Panel extends Component
                     this.setState({visible: !this.state.visible});
                 }}>
                 {this.props.legend}
-                <div className={`arrow-div arrow ${this.state.visible ? 'down' : 'right'} `} />
+                <div className={`arrow-div arrow ${this.state.visible ? 'arrow-down' : 'arrow-right'} `} />
             </ListGroupItem>
             {this.state.visible && this.renderPanelContent()}
         </div>;
