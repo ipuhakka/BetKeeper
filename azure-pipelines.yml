@@ -72,9 +72,11 @@ steps:
     command: 'publish'
     publishWebProjects: false
     projects: '**/*.csproj'
-    arguments: '-o $(Build.ArtifactStagingDirectory)/drop'
+    arguments: '-o $(Build.ArtifactStagingDirectory)/drop/ApiCore'
     zipAfterPublish: true
     modifyOutputPath: true
+    artifactName: 'drop'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)\drop\ApiCore'
 
 - task: PublishBuildArtifacts@1
   inputs:
