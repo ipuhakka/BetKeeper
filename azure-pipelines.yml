@@ -1,5 +1,6 @@
 trigger:
 - master
+- development
 
 pool:
   vmImage: 'windows-latest'
@@ -67,9 +68,11 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
     artifactName: 'drop'
   displayName: "Publish api artifacts"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'build'
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
   displayName: 'Publish client artifacts'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
