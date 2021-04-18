@@ -27,11 +27,12 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: ".NET Test"
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: '.NET test'
+    command: test
+    projects: '**/TestCore.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: NodeTool@0
   inputs:
