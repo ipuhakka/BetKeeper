@@ -1,5 +1,6 @@
 trigger:
 - master
+- development
 
 pool:
   vmImage: 'windows-latest'
@@ -18,19 +19,20 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
   displayName: "NuGetCommand"
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\drop\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: ".NET build"
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: ".NET Build"
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: '.NET test'
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: ".NET Test"
+  inputs:
+    command: test
+    projects: '**/TestCore.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: NodeTool@0
   inputs:
@@ -67,9 +69,11 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
     artifactName: 'drop'
   displayName: "Publish api artifacts"
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'build'
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
   displayName: 'Publish client artifacts'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
