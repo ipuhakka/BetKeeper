@@ -26,6 +26,7 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
+    outputDir: '$(build.artifactStagingDirectory)\drop\WebApp.zip'
 
 - task: DotNetCoreCLI@2
   displayName: ".NET Test"
@@ -64,16 +65,19 @@ steps:
     replaceExistingArchive: true
   displayName: 'Archive js'
 
-- task: PublishBuildArtifacts@1
+# Publish api projects to specified folder.
+- task: DotNetCoreCLI@2
+  displayName: 'Publish api'
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
-    artifactName: 'drop'
-  displayName: "Publish api artifacts"
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*.csproj'
+    arguments: '-o $(Build.ArtifactStagingDirectory)/drop'
+    zipAfterPublish: true
+    modifyOutputPath: true
 
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'build'
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
   displayName: 'Publish client artifacts'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
