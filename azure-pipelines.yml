@@ -19,13 +19,13 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
   displayName: "NuGetCommand"
-- task: VSBuild@1
+
+- task: DotNetCoreCLI@2
+  displayName: ".NET Build"
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\drop\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-  displayName: ".NET build"
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: VSTest@2
   inputs:
