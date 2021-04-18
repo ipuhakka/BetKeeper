@@ -26,7 +26,7 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
-    outputDir: '$(build.artifactStagingDirectory)\drop\WebApp.zip'
+    outputDir: '$(build.artifactStagingDirectory)\drop'
 
 - task: DotNetCoreCLI@2
   displayName: ".NET Test"
@@ -67,16 +67,17 @@ steps:
 
 # Publish api projects to specified folder.
 - task: DotNetCoreCLI@2
-  displayName: 'Publish api'
   inputs:
-    command: 'publish'
-    publishWebProjects: false
-    projects: '**/*.csproj'
-    arguments: '-o $(Build.ArtifactStagingDirectory)/drop/ApiCore'
-    zipAfterPublish: true
-    modifyOutputPath: true
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\drop'
+    zipAfterPublish: True
+
+# this code takes all the files in $(Build.ArtifactStagingDirectory)\drop and uploads them as an artifact of your build.
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
     artifactName: 'drop'
-    pathToPublish: '$(Build.ArtifactStagingDirectory)\drop\ApiCore'
 
 - task: PublishBuildArtifacts@1
   inputs:
