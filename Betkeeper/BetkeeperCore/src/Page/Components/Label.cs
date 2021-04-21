@@ -7,10 +7,13 @@
     {
         public string Text { get; set; }
 
-        public Label(string text)
+        public bool IsDate { get; set; }
+
+        public Label(string text, bool isDate = false)
             : base(ComponentType.Label)
         {
             Text = text;
+            IsDate = isDate;
         }
     }
 }

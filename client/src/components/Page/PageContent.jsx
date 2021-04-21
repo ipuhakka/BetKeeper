@@ -31,6 +31,20 @@ class PageContent extends Component
         this.setState({ activeKey: key });
     }
 
+    /**
+     * Get tedt for label component
+     * @param {*} label 
+     */
+    getLabelText(label)
+    {
+        if (label.isDate)
+        {
+            return new Date(label.text).toLocaleString();
+        }
+
+        return label.text;
+    }
+
     renderTabs(tabs)
     {
         const { activeKey } = this.state;
@@ -96,7 +110,7 @@ class PageContent extends Component
                             {...component} />;
 
                     case 'Label':
-                        return <label className='page-content-label' key={`label-${i}`}>{component.text}</label>;
+                        return <label className='page-content-label' key={`label-${i}`}>{this.getLabelText(component)}</label>;
 
                     case 'Table':
                         return <Table onRowClick={props.onTableRowClick} key={`itemlist-${i}`} {...component} />;

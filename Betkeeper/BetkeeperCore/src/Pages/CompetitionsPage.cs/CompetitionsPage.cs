@@ -41,7 +41,7 @@ namespace Betkeeper.Pages
                     new List<Component>
                     {
                         new Label(invitation.CompetitionName),
-                        new Label(invitation.StartTime.ToString("yyyy-MM-dd HH:mm:ss")),
+                        new Label(invitation.StartTime.ToString("u"), isDate: true),
                         new PageActionButton(
                             action: "DeclineInvitation",
                             actionDataKeys: new List<string>(),
