@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetkeeperCore", "BetkeeperC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiCore", "ApiCore\ApiCore.csproj", "{F1D58CEE-B8AE-4ED0-AD3B-CF3A83DAEB81}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BetkeeperDb", "BetkeeperDb\BetkeeperDb.sqlproj", "{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{F1D58CEE-B8AE-4ED0-AD3B-CF3A83DAEB81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1D58CEE-B8AE-4ED0-AD3B-CF3A83DAEB81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1D58CEE-B8AE-4ED0-AD3B-CF3A83DAEB81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2389DB8A-CFA8-42B6-91CE-8E23F3D8D71C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
