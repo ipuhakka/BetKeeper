@@ -115,9 +115,12 @@ namespace Betkeeper.Pages.CompetitionPage
                     cssClass += "result";
                     children.Add(
                         new Field(
-                            $"bet-answer-{target.TargetId}", 
-                            $"{target.Bet} ({target.GetPointInformation()})", 
-                            FieldType.TextBox));
+                            $"bet-answer-{target.TargetId}",
+                            $"{target.Bet} ({target.GetPointInformation()})",
+                            FieldType.TextBox)
+                        {
+                            AutoFormatter = AutoFormatter.Result
+                        });
                     break;
             }
 

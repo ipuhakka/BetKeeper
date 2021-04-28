@@ -9,6 +9,7 @@ import consts from '../../js/consts';
 import * as utils from '../../js/utils';
 import InputDropdown from './InputDropdown';
 import MultiSelectDropdown from './MultiSelectDropdown';
+import * as autoFormatter from '../../js/autoformatter';
 import './Page.css';
 
 class Field extends Component
@@ -84,6 +85,11 @@ class Field extends Component
         const isValid = props.type === 'Integer'
         ? newValue.length <= 0  || utils.isInteger(newValue)
         : true;
+
+        if (props.autoFormatter)
+        {
+            newValue = autoFormatter.format(props.autoFormatter, newValue, this.state.value);
+        }
 
         this.setState({
             value: newValue,
@@ -242,7 +248,8 @@ Field.propTypes = {
     /** Parent container component keys joined with '.' Defines data path where components value is stored. */
     dataPath: PropTypes.string,
     /** Should the input be treated as a password input */
-    hideText: PropTypes.bool
+    hideText: PropTypes.bool,
+    autoFormatter: PropTypes.oneOf(['Result'])
 };
 
 export default Field;

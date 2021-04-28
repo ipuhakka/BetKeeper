@@ -27,6 +27,9 @@ namespace Betkeeper.Page.Components
         [JsonConverter(typeof(StringEnumConverter))]
         public FieldType FieldType { get; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
+        public AutoFormatter? AutoFormatter { get; set; }
+
         public Field(
             string componentKey, 
             string label, 
@@ -114,5 +117,13 @@ namespace Betkeeper.Page.Components
         {
             MinimumDateTime = minimumDateTime;
         }
+    }
+
+    /// <summary>
+    /// Automatic input formatters
+    /// </summary>
+    public enum AutoFormatter
+    {
+        Result
     }
 }
