@@ -74,7 +74,10 @@ namespace Betkeeper.Pages.CompetitionPage
                     content.Add(new Field(
                         $"result-{target.TargetId}",
                         "Result",
-                        FieldType.TextBox));
+                        FieldType.TextBox)
+                    {
+                        AutoFormatter = AutoFormatter.Result
+                    });
                     break;
                 case Enums.TargetType.Selection:
                     var options = new List<Option>
