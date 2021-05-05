@@ -231,19 +231,6 @@ namespace Betkeeper.Models
         }
     }
 
-    public class ScoringDeprecated
-    {
-        /// <summary>
-        /// How many points scoring provides
-        /// </summary>
-        public double? Points { get; set; }
-
-        /// <summary>
-        /// Score type
-        /// </summary>
-        public TargetScore Score { get; set; }
-    }
-
     public class Scoring
     {
         public double? PointsForCorrectResult { get; set; }
