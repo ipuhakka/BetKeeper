@@ -27,10 +27,12 @@ class MultiSelectDropdown extends Component
 
         this.state = {
             // Values selected by default
-            defaultValues: defaultValues
+            defaultValues: defaultValues,
+            selectedCount: defaultValues.length
         };
 
         this.onChange = this.onChange.bind(this);
+        this.areSelectionsDisabled = this.areSelectionsDisabled.bind(this);
     }
 
     /**
@@ -42,7 +44,23 @@ class MultiSelectDropdown extends Component
         const newValues = selectedOptions 
             ? selectedOptions.map(option => option.value)
             : null;
-        this.props.onChange(newValues);
+
+        const { onChange } = this.props;
+
+        this.setState({
+            selectedCount: selectedOptions.length
+        });
+
+        onChange(newValues);
+    }
+
+    /** Function for checking is making a new selection is allowed */
+    areSelectionsDisabled()
+    {
+        const { selectedCount } = this.state;
+        const { allowedSelectionCount } = this.props;
+
+        return selectedCount === allowedSelectionCount;
     }
 
     render()
@@ -56,11 +74,13 @@ class MultiSelectDropdown extends Component
         });
 
         return <Select
+            isOptionDisabled={this.areSelectionsDisabled}
             defaultValue={defaultValues}
             options={optionProps}
             isMulti={true}
             placeholder={label}
-            onChange={this.onChange}/>;
+            onChange={this.onChange}
+            closeMenuOnSelect={false} />;
     }
 };
 
@@ -73,7 +93,8 @@ MultiSelectDropdown.propTypes = {
         })
     ),
     onChange: PropTypes.func,
-    componentKey: PropTypes.string.isRequired
+    componentKey: PropTypes.string.isRequired,
+    allowedSelectionCount: PropTypes.number
 };
 
 export default MultiSelectDropdown;

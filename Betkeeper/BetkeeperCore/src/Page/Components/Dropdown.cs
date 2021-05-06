@@ -29,18 +29,33 @@ namespace Betkeeper.Page.Components
         public bool MultipleSelection { get; set; }
 
         /// <summary>
+        /// If specified for multiple selection dropdown, describes the number of selection allowed
+        /// </summary>
+        public int? AllowedSelectionCount { get; set; }
+
+        /// <summary>
         /// Keys for components to update on value change.
         /// </summary>
         public List<string> ComponentsToUpdate { get; set; }
 
+        /// <summary>
+        /// Dropdown constructor
+        /// </summary>
+        /// <param name="componentKey"></param>
+        /// <param name="label"></param>
+        /// <param name="options"></param>
+        /// <param name="componentsToUpdate"></param>
+        /// <param name="multiple"></param>
         public Dropdown(
             string componentKey,
             string label,
             List<Option> options,
-            List<string> componentsToUpdate = null)
+            List<string> componentsToUpdate = null,
+            bool multiple = false)
             : base(componentKey, label, FieldType.Dropdown, options)
         {
             ComponentsToUpdate = componentsToUpdate;
+            MultipleSelection = multiple;
         }
 
         /// <summary>
@@ -50,11 +65,13 @@ namespace Betkeeper.Page.Components
         /// <param name="label"></param>
         /// <param name="options"></param>
         /// <param name="componentsToUpdate"></param>
+        /// <param name="multiple"></param>
         public Dropdown(
             string componentKey,
             string label,
             List<string> options,
-            List<string> componentsToUpdate = null)
+            List<string> componentsToUpdate = null,
+            bool multiple = false)
             : base(
                   componentKey, 
                   label, 
@@ -64,6 +81,7 @@ namespace Betkeeper.Page.Components
                     .ToList())
         {
             ComponentsToUpdate = componentsToUpdate;
+            MultipleSelection = multiple;
         }
 
         [JsonConstructor]
