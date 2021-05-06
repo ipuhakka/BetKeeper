@@ -102,11 +102,6 @@ class Field extends Component
             const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
             props.onChange(dataPath, newValue);
         }
-        else 
-        {
-            props.onError();
-        }
-        
     }
 
     renderDateTimeInput()
@@ -172,7 +167,6 @@ class Field extends Component
     render()
     {
         const { type, label, onHandleDropdownServerUpdate, componentKey } = this.props;
-
         let input;
 
         let wrapperClassName = '';
@@ -241,7 +235,6 @@ Field.propTypes = {
     label: PropTypes.string.isRequired,
     componentKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    onError: PropTypes.func,
     initialValue: PropTypes.any,
     readOnly: PropTypes.bool,
     onHandleDropdownServerUpdate: PropTypes.func,
