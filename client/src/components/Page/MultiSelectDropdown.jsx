@@ -16,7 +16,7 @@ class MultiSelectDropdown extends Component
             return;
         }
 
-        const defaultValues = options
+        let defaultValues = options
             .filter(option => option.initialValue)
             .map(option => { 
                 return { 
@@ -24,6 +24,19 @@ class MultiSelectDropdown extends Component
                     label: option.value
                 }; 
             });
+
+        // If default values are not specified in component model, they can be in data
+        if (defaultValues.length === 0 && Array.isArray(props.initialValue) && props.initialValue.length > 0)
+        {
+            defaultValues = options
+                .filter(option => props.initialValue.includes(option.key))
+                .map(option => { 
+                    return { 
+                        value: option.key,
+                        label: option.value
+                    }; 
+                });   
+        }
 
         this.state = {
             // Values selected by default
