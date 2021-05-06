@@ -1,9 +1,13 @@
+.page-tab-content-div {
+    height: 100%;
+}
+
 .page-content {
     margin-bottom: 0.5em;
 }
 
 .tab-content {
-    overflow-y: auto;
+    height: 100%;
 }
 
 .child-container-div {

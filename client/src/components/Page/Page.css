@@ -139,9 +139,10 @@ i {
 }
 
 .content{
+    height: 100%;
 	text-align: center;
-	overflow-x: auto;
-	overflow-y: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 @media screen and (max-width: 600px) {

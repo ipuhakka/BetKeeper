@@ -54,11 +54,11 @@ class PageContent extends Component
         })
 
         const tab = _.find(tabs, tab => tab.componentKey === activeKey) || tabs[0];
-        return <div>
+        return <div className='page-tab-content-div'>
             <Navbar 
                 items={items}
                 handleSelect={this.handleSelect}/>
-            <TabContainer>{this.renderComponents(tab.tabContent, 'tab-content')}</TabContainer>
+            <TabContainer className='tab-container'>{this.renderComponents(tab.tabContent, 'tab-content')}</TabContainer>
         </div>;
     }
 
