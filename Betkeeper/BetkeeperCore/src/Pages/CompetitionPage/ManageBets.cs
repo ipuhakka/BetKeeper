@@ -87,7 +87,7 @@ namespace Betkeeper.Pages.CompetitionPage
         private static PageActionResponse AddBetContainerToPanel(PageAction action)
         {
             var groupName = action.Parameters.GetString("panelName");
-            var panel = Component.GetComponentFromAction<Panel>(action, groupName);
+            var panel = Component.GetComponentFromAction<Panel>(action, $"manageBets-{groupName}");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray
@@ -149,13 +149,14 @@ namespace Betkeeper.Pages.CompetitionPage
                         "AddBetContainerToPanel",
                         new List<string>{ "betTargets" },
                         $"Add bet to {groupName}",
-                        componentsToInclude: new List<string>{ groupName },
+                        componentsToInclude: new List<string>{ $"manageBets-{groupName}"},
                         staticData: new Dictionary<string, object>
                         {
                             {"panelName", groupName}
                         })
                 },
-                componentKey: groupName));
+                componentKey: $"manageBets-{groupName}",
+                legend: groupName));
 
             return new PageActionResponse(betTargetContainer);
         }
@@ -303,9 +304,19 @@ namespace Betkeeper.Pages.CompetitionPage
                 }
                 else
                 {
+                    targetComponents.Insert(0, new PageActionButton(
+                        "AddBetContainerToPanel",
+                        new List<string> { "betTargets" },
+                        $"Add bet to {group.Key}",
+                        componentsToInclude: new List<string> { $"manageBets-{group.Key}"},
+                        staticData: new Dictionary<string, object>
+                        {
+                            {"panelName", group.Key}
+                        }));
                     components.Add(new Panel(
                         targetComponents,
-                        group.Key ?? ""));
+                        $"manageBets-{group.Key}" ?? "",
+                        legend: group.Key));
                 }
             }
 

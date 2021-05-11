@@ -84,6 +84,24 @@ function handleDataChange(state, action)
 }
 
 /**
+ * Update dropdown selections for page.
+ * Used for filling an input dropdown from an already created list
+ * @param {*} state
+ * @param {string} pageKey 
+ * @param {string} componentKey 
+ * @param {Array} selections 
+ */
+function handleDropdownSelectionUpdate(state, pageKey, componentKey, selections)
+{
+  const page = _.find(state.pages, page =>
+    page.pageKey === pageKey);
+
+  _.set(page, `existingSelections.${componentKey}`, selections);
+
+  return state;
+}
+
+/**
  * PageReducer.
  * @param {object} state
  * @param {object} action 
@@ -114,6 +132,13 @@ const PageReducer = (state = { pages: []}, action ) =>
           const { page, data } = action.payload;
           return handleUpdateData(_.cloneDeep(state), page, data);
         }
+
+      case PageActions.UPDATE_DROPDOWN_SELECTIONS:
+        {
+          const { pageKey, componentKey, selections } = action.payload;
+          return handleDropdownSelectionUpdate(_.cloneDeep(state), pageKey, componentKey, selections);
+        }
+        
       default:
         return state;
     }

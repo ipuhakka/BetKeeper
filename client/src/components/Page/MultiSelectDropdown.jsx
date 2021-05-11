@@ -61,7 +61,9 @@ class MultiSelectDropdown extends Component
         const { onChange } = this.props;
 
         this.setState({
-            selectedCount: selectedOptions.length
+            selectedCount: !_.isNil(selectedOptions)
+                ? selectedOptions.length
+                : 0
         });
 
         onChange(newValues);

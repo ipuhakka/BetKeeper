@@ -262,6 +262,7 @@ class Page extends Component
                 onTableRowClick={this.navigateTo.bind(this)}
                 onFieldValueChange={this.onDataChange.bind(this)}
                 onHandleDropdownServerUpdate={this.handleDropdownServerUpdate}
+                existingSelections={props.existingSelections}
                 data={props.data}/>
         </div>;
     }

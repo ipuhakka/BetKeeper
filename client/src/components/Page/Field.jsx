@@ -211,7 +211,8 @@ class Field extends Component
                     onChange={this.onChange} 
                     label={label}
                     componentKey={componentKey}
-                    initialSelections={this.props.initialValue}/>;
+                    initialSelections={this.props.initialValue}
+                    existingSelections={this.props.existingSelections} />;
                     break;
 
         }
@@ -242,7 +243,9 @@ Field.propTypes = {
     dataPath: PropTypes.string,
     /** Should the input be treated as a password input */
     hideText: PropTypes.bool,
-    autoFormatter: PropTypes.oneOf(['Result'])
+    autoFormatter: PropTypes.oneOf(['Result']),
+    /** Existing input dropdown selections */
+    existingSelections: PropTypes.object
 };
 
 export default Field;

@@ -106,7 +106,8 @@ class PageContent extends Component
                                 _.compact([completeDataPath, component.dataKey]).join('.'),
                                  null) ||
                                  _.get(props.data, component.dataKey, null)}
-                            dataPath={completeDataPath} 
+                            dataPath={completeDataPath}
+                            existingSelections={props.existingSelections} 
                             {...component} />;
 
                     case 'Label':
@@ -181,7 +182,9 @@ PageContent.propTypes = {
     onFieldValueChange: PropTypes.func.isRequired,
     onHandleDropdownServerUpdate: PropTypes.func,
     data: PropTypes.object,
-    absoluteDataPath: PropTypes.string
+    absoluteDataPath: PropTypes.string,
+    /** Input drodown values lists for copying an existing options list */
+    existingSelections: PropTypes.object
 };
 
 export default PageContent;
