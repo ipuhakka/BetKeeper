@@ -1,5 +1,6 @@
 ﻿using Betkeeper.Enums;
 using Betkeeper.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
@@ -134,6 +135,11 @@ namespace Betkeeper.Pages.CompetitionPage
                 valueDict.Add($"winner-{i}", target.Scoring.PointsForCorrectWinner);
             }
 
+            if (target.Type == TargetType.MultiSelection)
+            {
+                valueDict.Add($"selection-count-{i}", target.AllowedSelectionCount);
+            }
+
             var innerObject = new JObject();
 
             foreach (var kvp in valueDict)
@@ -152,10 +158,15 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private static JObject GetInnerTargetBetObject(TargetBet targetBet)
         {
-            var innerObject = new JObject
+            var innerObject = new JObject();
+            if (targetBet.Bet.StartsWith("[") && targetBet.Bet.EndsWith("]"))
             {
-                { $"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet) }
-            };
+                innerObject.Add($"bet-answer-{targetBet.Target}", new JArray(JsonConvert.DeserializeObject<List<string>>(targetBet.Bet)));
+            }
+            else
+            {
+                innerObject.Add($"bet-answer-{targetBet.Target}", new JValue(targetBet.Bet));
+            }
 
             return innerObject;
         }
@@ -165,9 +176,18 @@ namespace Betkeeper.Pages.CompetitionPage
             var innerObject = new JObject
             {
                 { $"question-{target.TargetId}", new JValue(target.Bet) },
-                { $"result-{target.TargetId}", new JValue(target.Result?.Result) },
                 { "type", new JValue(target.Type) }
             };
+
+            if (target.Type == TargetType.MultiSelection)
+            {
+                innerObject.Add($"result-{target.TargetId}", new JArray(target.Result?.MultiSelectionResult ?? new List<string>()));
+            }
+            else
+            {
+                innerObject.Add($"result-{target.TargetId}", new JValue(target.Result?.Result));
+            }
+
             return innerObject;
         }
 

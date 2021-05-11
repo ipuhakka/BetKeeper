@@ -19,9 +19,9 @@ namespace Betkeeper.Test.Actions
         [SetUp]
         public void SetUp()
         {
+            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
             _targetBetAction = new TargetBetAction();
-            Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
         }
 
         [TearDown]
@@ -137,59 +137,6 @@ namespace Betkeeper.Test.Actions
             {
                 Assert.AreEqual(ActionResultType.Conflict, e.ActionExceptionType);
                 Assert.AreEqual("Target does not exist", e.ErrorMessage);
-            }
-        }
-
-        [Test]
-        public void SaveBetTargets_NoAnswer_ThrowsActionException()
-        {
-            var competitions = new List<Competition>
-            {
-                new Competition
-                {
-                    CompetitionId = 1,
-                    StartTime = DateTime.UtcNow.AddDays(1)
-                }
-            };
-
-            var participators = new List<Participator>
-            {
-                new Participator
-                {
-                    UserId = 1,
-                    ParticipatorId = 1,
-                    Competition = 1
-                }
-            };
-
-            var targets = new List<Target>
-            {
-                new Target
-                {
-                    TargetId = 1,
-                    CompetitionId = 1
-                }
-            };
-
-            Tools.CreateTestData(
-                competitions: competitions,
-                participators: participators,
-                targets: targets);
-
-            var targetBets = new List<TargetBet>
-            {
-                new TargetBet{ Target = 1 }
-            };
-
-            try
-            {
-                _targetBetAction.SaveTargetBets(1, 1, targetBets);
-                Assert.Fail("Failed");
-            }
-            catch (ActionException e)
-            {
-                Assert.AreEqual(ActionResultType.InvalidInput, e.ActionExceptionType);
-                Assert.AreEqual("Target 1 is missing an answer", e.ErrorMessage);
             }
         }
 

@@ -150,14 +150,7 @@ namespace Betkeeper.Actions
                     "Target does not exist");
             }
 
-            if (string.IsNullOrEmpty(targetBet.Bet))
-            {
-                throw new ActionException(
-                    ActionResultType.InvalidInput,
-                    $"Target {targetIndex + 1} is missing an answer");
-            }
-
-            if (target.Type == Enums.TargetType.Result)
+            if (target.Type == TargetType.Result)
             {
                 var scores = targetBet.Bet.Split('-');
 

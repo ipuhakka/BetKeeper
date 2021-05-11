@@ -102,11 +102,6 @@ class Field extends Component
             const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
             props.onChange(dataPath, newValue);
         }
-        else 
-        {
-            props.onError();
-        }
-        
     }
 
     renderDateTimeInput()
@@ -172,7 +167,6 @@ class Field extends Component
     render()
     {
         const { type, label, onHandleDropdownServerUpdate, componentKey } = this.props;
-
         let input;
 
         let wrapperClassName = '';
@@ -217,7 +211,8 @@ class Field extends Component
                     onChange={this.onChange} 
                     label={label}
                     componentKey={componentKey}
-                    initialSelections={this.props.initialValue}/>;
+                    initialSelections={this.props.initialValue}
+                    existingSelections={this.props.existingSelections} />;
                     break;
 
         }
@@ -241,7 +236,6 @@ Field.propTypes = {
     label: PropTypes.string.isRequired,
     componentKey: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
-    onError: PropTypes.func,
     initialValue: PropTypes.any,
     readOnly: PropTypes.bool,
     onHandleDropdownServerUpdate: PropTypes.func,
@@ -249,7 +243,9 @@ Field.propTypes = {
     dataPath: PropTypes.string,
     /** Should the input be treated as a password input */
     hideText: PropTypes.bool,
-    autoFormatter: PropTypes.oneOf(['Result'])
+    autoFormatter: PropTypes.oneOf(['Result']),
+    /** Existing input dropdown selections */
+    existingSelections: PropTypes.object
 };
 
 export default Field;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Betkeeper.Page;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Betkeeper.Pages.CompetitionPage
 {
@@ -122,6 +123,22 @@ namespace Betkeeper.Pages.CompetitionPage
                             AutoFormatter = AutoFormatter.Result
                         });
                     break;
+
+                case TargetType.MultiSelection:
+                    cssClass += "selection";
+                    children.Add(
+                        new Dropdown(
+                            $"bet-answer-{target.TargetId}",
+                            $"{target.Bet} ({target.GetPointInformation()})",
+                            target.Selections,
+                            multiple: true)
+                        {
+                            AllowedSelectionCount = target.AllowedSelectionCount
+                        });
+                    break;
+
+                default:
+                    throw new NotImplementedException($"Unhandled target type {target.Type}");
             }
 
             return new Container(children, $"target-{target.TargetId}")
@@ -142,13 +159,7 @@ namespace Betkeeper.Pages.CompetitionPage
             var targetBets = new List<TargetBet>();
             foreach (var jToken in asJArray)
             {
-                var targetBet = TargetBet.FromJObject(jToken as JObject);
-
-                // Only manage bets which have a bet inputted
-                if (!string.IsNullOrEmpty(targetBet.Bet))
-                {
-                    targetBets.Add(targetBet);
-                }
+                targetBets.Add(TargetBet.FromJObject(jToken as JObject));
             }
 
             TargetBetAction.SaveTargetBets((int)pageAction.PageId, pageAction.UserId, targetBets);

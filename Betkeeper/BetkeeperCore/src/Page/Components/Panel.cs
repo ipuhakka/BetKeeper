@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -13,9 +14,9 @@ namespace Betkeeper.Page.Components
 
         public string Legend { get; set; }
 
-        public Panel(List<Component> children, string componentKey = null) : base(ComponentType.Panel, componentKey)
+        public Panel(List<Component> children, string componentKey, string legend = null) : base(ComponentType.Panel, componentKey)
         {
-            Legend = componentKey;
+            Legend = legend ?? componentKey;
             Children = children;
         }
 

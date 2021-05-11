@@ -36,12 +36,22 @@ namespace Betkeeper.Models
         public string Grouping { get; set; }
 
         /// <summary>
+        /// Number of selections possible to make for multiselection target
+        /// </summary>
+        public int? AllowedSelectionCount { get; set; }
+
+        /// <summary>
         /// Returns points for a given target bet
         /// </summary>
         /// <param name="targetBet"></param>
         /// <returns></returns>
         public double GetPoints(TargetBet targetBet)
         {
+            if (Type == TargetType.MultiSelection)
+            {
+                return GetMultiSelectionTargetPoints(targetBet);
+            }
+
             var result = GetResult(targetBet);
 
             if (result == TargetResult.CorrectResult)
@@ -55,6 +65,25 @@ namespace Betkeeper.Models
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Calculate target bet points for a multi selection bet
+        /// </summary>
+        /// <param name="bet"></param>
+        /// <returns></returns>
+        public double GetMultiSelectionTargetPoints(TargetBet bet)
+        {
+            var pointsPerCorrectBet = Scoring.PointsForCorrectResult;
+
+            if (string.IsNullOrEmpty(bet.Bet))
+            {
+                return 0;
+            }
+
+            var selections = JsonConvert.DeserializeObject<List<string>>(bet.Bet);
+
+            return (selections.Count(selection => Result?.MultiSelectionResult?.Contains(selection) ?? false) * pointsPerCorrectBet) ?? 0;
         }
 
         /// <summary>
@@ -183,13 +212,26 @@ namespace Betkeeper.Models
             }
 
             List<string> selections = null;
-            if (type == TargetType.Selection)
+            if (type == TargetType.Selection || type == TargetType.MultiSelection)
             {
                 targetObject.TryGetValue($"selection-{i}", out JToken selectionsToken);
 
                 if (selectionsToken != null)
                 {
                     selections = selectionsToken.ToObject<List<string>>();
+                }
+            }
+
+            int? allowedSelectionCount = null;
+            if (type == TargetType.MultiSelection)
+            {
+                targetObject.TryGetValue($"selection-count-{i}", out JToken selectionCountToken);
+
+                if (selectionCountToken != null)
+                {
+                    allowedSelectionCount = int.TryParse(selectionCountToken.ToString(), out var selectionCount)
+                        ? selectionCount
+                        : null;
                 }
             }
 
@@ -207,7 +249,8 @@ namespace Betkeeper.Models
                 Scoring = scoring,
                 Selections = selections,
                 TargetId = targetId,
-                Grouping = groupingJToken?.ToString()
+                Grouping = groupingJToken?.ToString(),
+                AllowedSelectionCount = allowedSelectionCount
             };
         }
 
@@ -222,6 +265,11 @@ namespace Betkeeper.Models
                 ? "Correct"
                 : "Result";
 
+            if (Type == TargetType.MultiSelection)
+            {
+                return $"Points: {Scoring.PointsForCorrectResult} per correct answer";
+            }
+
             if (Type == TargetType.Result)
             {
                 return $"Result: {Scoring.PointsForCorrectResult} points, Winner: {Scoring.PointsForCorrectWinner} points";
@@ -229,19 +277,6 @@ namespace Betkeeper.Models
 
             return $"{scoreTerm}: {Scoring.PointsForCorrectResult} points";
         }
-    }
-
-    public class ScoringDeprecated
-    {
-        /// <summary>
-        /// How many points scoring provides
-        /// </summary>
-        public double? Points { get; set; }
-
-        /// <summary>
-        /// Score type
-        /// </summary>
-        public TargetScore Score { get; set; }
     }
 
     public class Scoring
@@ -262,6 +297,11 @@ namespace Betkeeper.Models
         /// Stores target bets and their results.
         /// </summary>
         public Dictionary<int, string> TargetBetResultDictionary { get; set; }
+
+        /// <summary>
+        /// Correct result listing for multi selection targets
+        /// </summary>
+        public List<string> MultiSelectionResult { get; set; }
 
         [JsonIgnore]
         public int TargetId { get; }
@@ -295,6 +335,10 @@ namespace Betkeeper.Models
                         var targetBetId = innerObject.GetIdentifierValueFromKeyLike(key);
                         TargetBetResultDictionary.Add(targetBetId, innerObject[key].ToString());
                     });
+            }
+            else if (targetType == TargetType.MultiSelection)
+            {
+                MultiSelectionResult = innerObject[$"result-{TargetId}"].ToObject<List<string>>();
             }
             else
             {

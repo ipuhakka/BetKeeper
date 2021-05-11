@@ -70,7 +70,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             switch (target.Type)
             {
-                case Enums.TargetType.Result:
+                case TargetType.Result:
                     content.Add(new Field(
                         $"result-{target.TargetId}",
                         "Result",
@@ -79,7 +79,7 @@ namespace Betkeeper.Pages.CompetitionPage
                         AutoFormatter = AutoFormatter.Result
                     });
                     break;
-                case Enums.TargetType.Selection:
+                case TargetType.Selection:
                     var options = new List<Option>
                     {
                         new Option("UNRESOLVED-BET", "Unresolved")
@@ -92,7 +92,7 @@ namespace Betkeeper.Pages.CompetitionPage
                         "Result",
                         options.ToList()));
                     break;
-                case Enums.TargetType.OpenQuestion:
+                case TargetType.OpenQuestion:
                     content.Add(new ModalActionButton(
                         action: "",
                         components: GetSetOpenQuestionResultModal(
@@ -102,6 +102,20 @@ namespace Betkeeper.Pages.CompetitionPage
                                 .ToList()),
                         text: "Set result",
                         absoluteDataPath: "setResultsContainer"));
+                    break;
+                case TargetType.MultiSelection:
+                    var selections = target.Selections
+                        .Select(selection => new Option(selection, selection))
+                        .ToList();
+
+                    content.Add(new Dropdown(
+                        $"result-{target.TargetId}",
+                        "Correct answers",
+                        selections,
+                        multiple: true)
+                    {
+                        AllowedSelectionCount = target.AllowedSelectionCount
+                    });
                     break;
                 default:
                     throw new NotImplementedException();

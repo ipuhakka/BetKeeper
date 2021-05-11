@@ -33,7 +33,7 @@
     border: none;
     height: 2em; 
     width: 1.5em;
-    position: absolute;
+    position: sticky;
     padding-left: 10px;
     z-index: 1;
   }

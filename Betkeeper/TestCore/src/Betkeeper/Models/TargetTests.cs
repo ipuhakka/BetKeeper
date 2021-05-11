@@ -290,5 +290,21 @@ namespace Betkeeper.Test.Models
 
             Assert.AreEqual("Correct: 2 points", target.GetPointInformation());
         }
+
+        [Test]
+        public void GetPointInformation_TypeMultiSelection_ReturnsCorrectInformation()
+        {
+            var target = new Target
+            {
+                TargetId = 1,
+                Scoring = new Scoring
+                {
+                    PointsForCorrectResult = 1
+                },
+                Type = Enums.TargetType.MultiSelection
+            };
+
+            Assert.AreEqual("Points: 1 per correct answer", target.GetPointInformation());
+        }
     }
 }

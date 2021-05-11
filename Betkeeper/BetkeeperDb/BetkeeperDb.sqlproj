@@ -71,5 +71,6 @@
     <Build Include="dbo\Tables\bets.sql" />
     <Build Include="dbo\Tables\ErrorLog.sql" />
     <Build Include="dbo\Tables\Target.sql" />
+    <Build Include="dbo\Tables\CompetitionInvitation.sql" />
   </ItemGroup>
 </Project>

@@ -62,7 +62,8 @@ PageContainer.propTypes = {
     page: PropTypes.shape({
         pageKey: PropTypes.string.isRequired,
         components: PropTypes.array.isRequired,
-        data: PropTypes.object
+        data: PropTypes.object,
+        existingSelections: PropTypes.object
     })
 };
 

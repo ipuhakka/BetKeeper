@@ -87,7 +87,7 @@ namespace Betkeeper.Pages.CompetitionPage
         private static PageActionResponse AddBetContainerToPanel(PageAction action)
         {
             var groupName = action.Parameters.GetString("panelName");
-            var panel = Component.GetComponentFromAction<Panel>(action, groupName);
+            var panel = Component.GetComponentFromAction<Panel>(action, $"manageBets-{groupName}");
 
             var betTargetData = action.Parameters.ContainsKey("betTargets")
                 ? action.Parameters?["betTargets"] as JArray
@@ -95,7 +95,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var targets = Target.JArrayToTargets(betTargetData);
 
-            if (targets.Count(target => target.Grouping == groupName) == 0)
+            if (!targets.Any(target => target.Grouping == groupName))
             {
                 var defaultBetTarget = CreateTargetContainer(targets.Count, TargetType.OpenQuestion, groupName);
                 panel.Children.Add(defaultBetTarget);
@@ -149,13 +149,14 @@ namespace Betkeeper.Pages.CompetitionPage
                         "AddBetContainerToPanel",
                         new List<string>{ "betTargets" },
                         $"Add bet to {groupName}",
-                        componentsToInclude: new List<string>{ groupName },
+                        componentsToInclude: new List<string>{ $"manageBets-{groupName}"},
                         staticData: new Dictionary<string, object>
                         {
                             {"panelName", groupName}
                         })
                 },
-                componentKey: groupName));
+                componentKey: $"manageBets-{groupName}",
+                legend: groupName));
 
             return new PageActionResponse(betTargetContainer);
         }
@@ -303,9 +304,19 @@ namespace Betkeeper.Pages.CompetitionPage
                 }
                 else
                 {
+                    targetComponents.Insert(0, new PageActionButton(
+                        "AddBetContainerToPanel",
+                        new List<string> { "betTargets" },
+                        $"Add bet to {group.Key}",
+                        componentsToInclude: new List<string> { $"manageBets-{group.Key}"},
+                        staticData: new Dictionary<string, object>
+                        {
+                            {"panelName", group.Key}
+                        }));
                     components.Add(new Panel(
                         targetComponents,
-                        group.Key ?? ""));
+                        $"manageBets-{group.Key}" ?? "",
+                        legend: group.Key));
                 }
             }
 
@@ -330,7 +341,8 @@ namespace Betkeeper.Pages.CompetitionPage
             {
                 new Option("result", "Result", initialValue: targetType == TargetType.Result),
                 new Option("selection", "Selection", initialValue: targetType == TargetType.Selection),
-                new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion)
+                new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion),
+                new Option("multiSelection", "Multiselection", initialValue: targetType == TargetType.MultiSelection)
             };
 
             var components = new List<Component>
@@ -373,6 +385,17 @@ namespace Betkeeper.Pages.CompetitionPage
                             new Field($"question-{index}", "Bet", FieldType.TextBox),
                             new InputDropdown($"selection-{index}", "Selections"),
                             new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
+                        });
+                    break;
+
+                case TargetType.MultiSelection:
+                    components.AddRange(
+                        new List<Component>
+                        {
+                            new Field($"question-{index}", "Bet", FieldType.TextBox),
+                            new InputDropdown($"selection-{index}", "Selections"),
+                            new Field($"scoring-{index}", "Points per correct answer", FieldType.Double),
+                            new Field($"selection-count-{index}", "Allowed selection count", FieldType.Integer)
                         });
                     break;
             }

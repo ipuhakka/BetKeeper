@@ -8,6 +8,7 @@ export const UPDATE_DATA = 'UPDATE_DATA';
 export const HANDLE_SERVER_DROPDOWN_UPDATE = "HANDLE_SERVER_DROPDOWN_UPDATE";
 export const HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS = "HANDLE_SERVER_DROPDOWN_UPDATE_SUCCESS";
 export const DATA_CHANGE = "DATA_CHANGE";
+export const UPDATE_DROPDOWN_SELECTIONS = "UPDATE_DROPDOWN_SELECTIONS";
 
 /**
  * Get page structure.
@@ -113,6 +114,24 @@ export function onDataChange(pageKey, dataKeyPath, newValue)
             pageKey,
             dataKeyPath,
             newValue
+          }
+      });
+}
+
+/**
+ * Update dropdown selections list for page
+ * @param {string} pageKey 
+ * @param {string} componentKey 
+ * @param {Array} selections 
+ */
+export function updatePageDropdownSelections(pageKey, componentKey, selections)
+{
+    store.dispatch({
+        type: UPDATE_DROPDOWN_SELECTIONS,
+        payload: {
+            pageKey,
+            componentKey,
+            selections
           }
       });
 }

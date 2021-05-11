@@ -86,6 +86,29 @@
     color: #e2e5ea;
 }
 
+.dropdown-selection-div {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.open-copy-selections-button {
+    width: 100%;
+}
+
+.copy-selections-div {
+    display: flex;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    margin-bottom: .2em;
+}
+
+.copy-selections-div p {
+    flex-basis: 100%;
+}
+
+.copy-selections-button {
+    margin-bottom: .2em;
+}
+
 /* List group */
 .small-div {
     font-size: smaller;
@@ -139,9 +162,10 @@ i {
 }
 
 .content{
+    height: 100%;
 	text-align: center;
-	overflow-x: auto;
-	overflow-y: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 @media screen and (max-width: 600px) {
