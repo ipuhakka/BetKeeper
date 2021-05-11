@@ -1,6 +1,7 @@
 ﻿using Betkeeper.Enums;
 using Betkeeper.Exceptions;
 using Betkeeper.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -153,6 +154,11 @@ namespace Betkeeper.Actions
             {
                 MaximumPoints = targets.Sum(target =>
                 {
+                    if (target.Type == TargetType.MultiSelection)
+                    {
+                        return target.Scoring.PointsForCorrectResult * target.AllowedSelectionCount;
+                    }
+
                     return target.Scoring.PointsForCorrectResult;
                 }) ?? 0
             };
@@ -182,23 +188,29 @@ namespace Betkeeper.Actions
                                 .Single(targetItem => targetItem.Question == target.Bet)
                                 .BetItems
                                 .Add(new CompetitionScores.TargetItem.BetItem(
+                                    target,
                                     TargetResult.DidNotBet, 
                                     null,
-                                    username));
+                                    username,
+                                    null));
 
                             continue;
                         }
 
+                        var points = target.GetPoints(targetBet);
                         competitionScores
                             .TargetItems
                             .Single(targetItem => targetItem.Question == target.Bet)
                             .BetItems
                             .Add(new CompetitionScores.TargetItem.BetItem(
+                                target,
                                 target.GetResult(targetBet), 
                                 targetBet.Bet,
-                                username));
+                                username,
+                                points
+                                ));
 
-                        competitionScores.UserPointsDictionary[username] += target.GetPoints(targetBet);
+                        competitionScores.UserPointsDictionary[username] += points;
                     }
                 });
 
@@ -337,6 +349,11 @@ namespace Betkeeper.Actions
                 public string Result { get; set; }
 
                 /// <summary>
+                /// Target type
+                /// </summary>
+                public TargetType Type { get; set; }
+
+                /// <summary>
                 /// Points possible to get for bet
                 /// </summary>
                 private Scoring Scoring { get; set; }
@@ -371,10 +388,21 @@ namespace Betkeeper.Actions
                         result = "-";
                     }
 
-                    Result = result;
+                    if (target.Type == TargetType.MultiSelection)
+                    {
+                        Result = target.Result?.MultiSelectionResult?.Count > 0
+                            ? string.Join(",", target.Result.MultiSelectionResult)
+                            : "-";
+                    }
+                    else
+                    {
+                        Result = result;
+                    }
+
                     Question = target.Bet;
                     Scoring = target.Scoring;
                     BetItems = new List<BetItem>();
+                    Type = target.Type;
                 }
 
                 /// <summary>
@@ -397,10 +425,24 @@ namespace Betkeeper.Actions
                     /// </summary>
                     public TargetResult Result { get; set; }
 
-                    public BetItem(TargetResult result, string bet, string user)
+                    public BetItem(Target target, TargetResult result, string bet, string user, double? points)
                     {
+                        if (target.Type == TargetType.MultiSelection)
+                        {
+                            if (!string.IsNullOrEmpty(bet))
+                            {
+                                Bet = string.Join(",", JsonConvert.DeserializeObject<List<string>>(bet));
+                               if (points != null)
+                                {
+                                    Bet = $"{Bet} ({points})";
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Bet = bet;
+                        }
                         Result = result;
-                        Bet = bet;
                         User = user;
                     }
                 }

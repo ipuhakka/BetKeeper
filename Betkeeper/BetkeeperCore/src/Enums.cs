@@ -61,7 +61,12 @@
         /// <summary>
         /// Answer an open question.
         /// </summary>
-        OpenQuestion
+        OpenQuestion,
+
+        /// <summary>
+        /// Select multiple from a list of options
+        /// </summary>
+        MultiSelection
     }
 
     /// <summary>

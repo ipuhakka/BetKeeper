@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Betkeeper.Data;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Betkeeper.Models
 {
@@ -42,10 +43,22 @@ namespace Betkeeper.Models
                 .Split('-')
                 .Last());
 
+            var value = jObject[$"target-{targetId}"][$"bet-answer-{targetId}"];
+
+            string bet;
+            if (value is JArray)
+            {
+                bet = JsonConvert.SerializeObject(value.ToObject<List<string>>());
+            }
+            else
+            {
+                bet = value.ToString();
+            }
+
             return new TargetBet
             {
                 Target = targetId,
-                Bet = jObject[$"target-{targetId}"][$"bet-answer-{targetId}"].ToString()
+                Bet = bet
             };
         }
     }

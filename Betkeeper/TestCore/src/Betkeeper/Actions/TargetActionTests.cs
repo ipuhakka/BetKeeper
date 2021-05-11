@@ -311,6 +311,32 @@ namespace Betkeeper.Test.Actions
                         PointsForCorrectWinner = 1
                     },
                     CompetitionId = 1
+                },
+                new Target
+                {
+                    CompetitionId = 1,
+                    TargetId = 4,
+                    Type = TargetType.MultiSelection,
+                    Bet = "2 parasta",
+                    AllowedSelectionCount = 2,
+                    Selections = new List<string>
+                    {
+                        "Suomi",
+                        "Tanska",
+                        "Portugali"
+                    },
+                    Result = new TargetResultItem
+                    {
+                        MultiSelectionResult = new List<string>
+                        {
+                            "Suomi",
+                            "Tanska"
+                        }
+                    },
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 1.5
+                    }
                 }
             };
 
@@ -374,6 +400,29 @@ namespace Betkeeper.Test.Actions
                     Target = 3,
                     Participator = 3,
                     Bet = "1-1"
+                },
+                // Multiselection bet: All correct (3 points)
+                new TargetBet
+                {
+                    Target = 4,
+                    TargetBetId = 9,
+                    Bet = "[\"Suomi\", \"Tanska\"]",
+                    Participator = 1
+                },
+                // Multiselection bet: 1 correct (1.5 points)
+                new TargetBet
+                {
+                    Target = 4,
+                    TargetBetId = 10,
+                    Bet = "[\"Suomi\", \"Portugali\"]",
+                    Participator = 2
+                },
+                // Multiselection bet: No bet
+                new TargetBet
+                {
+                    Target = 4,
+                    TargetBetId = 11,
+                    Participator = 3
                 }
             };
 
@@ -424,11 +473,11 @@ namespace Betkeeper.Test.Actions
             var points = scores.UserPointsDictionary;
             var targetItems = scores.TargetItems;
 
-            Assert.AreEqual(6, scores.MaximumPoints);
+            Assert.AreEqual(9, scores.MaximumPoints);
 
             Assert.AreEqual(3, points.Count);
-            Assert.AreEqual(6, points["user1"]);
-            Assert.AreEqual(1, points["user2"]);
+            Assert.AreEqual(9, points["user1"]);
+            Assert.AreEqual(2.5, points["user2"]);
             Assert.AreEqual(0, points["user3"]);
 
             var didNotPlayTestTargetItem = targetItems[0];

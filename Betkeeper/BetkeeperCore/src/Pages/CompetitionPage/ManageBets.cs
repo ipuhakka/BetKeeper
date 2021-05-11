@@ -95,7 +95,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             var targets = Target.JArrayToTargets(betTargetData);
 
-            if (targets.Count(target => target.Grouping == groupName) == 0)
+            if (!targets.Any(target => target.Grouping == groupName))
             {
                 var defaultBetTarget = CreateTargetContainer(targets.Count, TargetType.OpenQuestion, groupName);
                 panel.Children.Add(defaultBetTarget);
@@ -341,7 +341,8 @@ namespace Betkeeper.Pages.CompetitionPage
             {
                 new Option("result", "Result", initialValue: targetType == TargetType.Result),
                 new Option("selection", "Selection", initialValue: targetType == TargetType.Selection),
-                new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion)
+                new Option("openQuestion", "Open question", initialValue: targetType == TargetType.OpenQuestion),
+                new Option("multiSelection", "Multiselection", initialValue: targetType == TargetType.MultiSelection)
             };
 
             var components = new List<Component>
@@ -384,6 +385,17 @@ namespace Betkeeper.Pages.CompetitionPage
                             new Field($"question-{index}", "Bet", FieldType.TextBox),
                             new InputDropdown($"selection-{index}", "Selections"),
                             new Field($"scoring-{index}", "Points for correct answer", FieldType.Double)
+                        });
+                    break;
+
+                case TargetType.MultiSelection:
+                    components.AddRange(
+                        new List<Component>
+                        {
+                            new Field($"question-{index}", "Bet", FieldType.TextBox),
+                            new InputDropdown($"selection-{index}", "Selections"),
+                            new Field($"scoring-{index}", "Points per correct answer", FieldType.Double),
+                            new Field($"selection-count-{index}", "Allowed selection count", FieldType.Integer)
                         });
                     break;
             }
