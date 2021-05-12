@@ -205,6 +205,105 @@ namespace Betkeeper.Test.Actions
             });
         }
 
+        [TestCase(TargetType.Selection)]
+        [TestCase(TargetType.MultiSelection)]
+        public void HandleTargetsUpdate_NoSelections_ThrowsActionException(TargetType targetType)
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    StartTime = DateTime.Now.AddDays(1)
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            new List<Target>
+            {
+                new Target
+                {
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 1
+                    },
+                    Selections = new List<string>(),
+                    Type = targetType,
+                    Bet = "Some bet"
+                },
+                new Target
+                {
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 1
+                    },
+                    Selections = null,
+                    Type = targetType,
+                    Bet = "Some bet"
+                }
+            }.ForEach(target =>
+            {
+                var exception = Assert.Throws<ActionException>(() =>
+                    _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target }));
+            });
+        }
+
+        [Test]
+        public void HandleTargetsUpdate_MultiSelection_NoSelectionsCount_ThrowsException()
+        {
+            var competitions = new List<Competition>
+            {
+                new Competition
+                {
+                    CompetitionId = 1,
+                    StartTime = DateTime.Now.AddDays(1)
+                }
+            };
+
+            var participators = new List<Participator>
+            {
+                new Participator
+                {
+                    Competition = 1,
+                    UserId = 1,
+                    ParticipatorId = 1,
+                    Role = CompetitionRole.Host
+                }
+            };
+
+            Tools.CreateTestData(participators: participators, competitions: competitions);
+
+            new List<Target>
+            {
+                new Target
+                {
+                    Scoring = new Scoring
+                    {
+                        PointsForCorrectResult = 1
+                    },
+                    Selections = new List<string>{ "Selection1", "Selection2" },
+                    Type = TargetType.MultiSelection,
+                    Bet = "Some bet"
+                }
+            }.ForEach(target =>
+            {
+                var exception = Assert.Throws<ActionException>(() =>
+                    _targetAction.HandleTargetsUpdate(1, 1, new List<Target> { target }));
+            });
+        }
+
         [Test]
         public void HandleTargetsUpdate_AddsTarget()
         {

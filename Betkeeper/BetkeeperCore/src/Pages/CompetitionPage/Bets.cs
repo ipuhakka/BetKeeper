@@ -129,7 +129,7 @@ namespace Betkeeper.Pages.CompetitionPage
                     children.Add(
                         new Dropdown(
                             $"bet-answer-{target.TargetId}",
-                            $"{target.Bet} ({target.GetPointInformation()})",
+                            $"{target.Bet} ({target.GetPointInformation()}, {target.AllowedSelectionCount} selections)",
                             target.Selections,
                             multiple: true)
                         {

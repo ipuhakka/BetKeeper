@@ -105,8 +105,8 @@ namespace Betkeeper.Pages.CompetitionPage
                     break;
                 case TargetType.MultiSelection:
                     var selections = target.Selections
-                        .Select(selection => new Option(selection, selection))
-                        .ToList();
+                        ?.Select(selection => new Option(selection, selection))
+                        .ToList() ?? new List<Option>();
 
                     content.Add(new Dropdown(
                         $"result-{target.TargetId}",
@@ -161,17 +161,20 @@ namespace Betkeeper.Pages.CompetitionPage
                     new Container(
                         children: new List<Component>
                         {
-                            new Field($"answer-{target.TargetId}-{targetBet.TargetBetId}", "Answer", FieldType.TextBox, readOnly: true),
+                            new Field($"answer-{target.TargetId}-{targetBet.TargetBetId}", "Answer", FieldType.TextArea, readOnly: true),
                             new Dropdown(
-                                $"result-{target.TargetId}-{targetBet.TargetBetId}", 
-                                "Result", 
+                                $"result-{target.TargetId}-{targetBet.TargetBetId}",
+                                "Result",
                                 new List<Option>
                                 {
                                     new Option("Correct", "Correct"),
                                     new Option("Wrong", "Wrong"),
                                     new Option("Unresolved", "Unresolved")
                                 })
-                        }));
+                        })
+                    {
+                        CustomCssClass = "setBetResultsModalIndividualContainer"
+                    });
             });
 
             return new List<Component>

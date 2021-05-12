@@ -246,7 +246,7 @@ namespace Betkeeper.Actions
                 {
                     throw new ActionException(
                         ActionResultType.InvalidInput,
-                        $"Row {i + 1}: Missing points for correct result");
+                        $"Bet {target.Bet} : Missing points for correct result");
                 }
 
                 if (target.Type == TargetType.Result 
@@ -254,22 +254,29 @@ namespace Betkeeper.Actions
                 {
                     throw new ActionException(
                         ActionResultType.InvalidInput,
-                        $"Row {i + 1}: Missing points for correct winner");
+                        $"Bet {target.Bet} : Missing points for correct winner");
                 }
 
                 if (!ValidScoringForType(target))
                 {
                     throw new ActionException(
                         ActionResultType.ServerError,
-                        $"Row {i + 1}: Invalid points");
+                        $"Bet {target.Bet} : Invalid points");
                 }
 
-                if (target.Type == TargetType.Selection &&
+                if ((target.Type == TargetType.Selection || target.Type == TargetType.MultiSelection) &&
                    (target.Selections == null || target.Selections.Count == 0))
                 {
                     throw new ActionException(
                         ActionResultType.InvalidInput,
-                        $"Row {i + 1}: No selections given for selection typed bet");
+                        $"Bet {target.Bet} : No selections given for selection typed bet");
+                }
+
+                if (target.Type == TargetType.MultiSelection && (target.AllowedSelectionCount ?? 0) == 0)
+                {
+                    throw new ActionException(
+                        ActionResultType.InvalidInput,
+                        $"Bet {target.Bet} : No allowed selections count given");
                 }
 
                 if (target.Type == TargetType.Result && 
@@ -281,7 +288,7 @@ namespace Betkeeper.Actions
                     {
                         throw new ActionException(
                             ActionResultType.InvalidInput,
-                            $"Target {i + 1} has invalid result");
+                            $"Bet {target.Bet} has invalid result");
                     }
 
                     if (!int.TryParse(scores[0], out int homescore)
@@ -289,7 +296,7 @@ namespace Betkeeper.Actions
                     {
                         throw new ActionException(
                             ActionResultType.InvalidInput,
-                            $"Target {i + 1} has invalid result");
+                            $"Bet {target.Bet} has invalid result");
                     }
                 }
 
@@ -365,6 +372,11 @@ namespace Betkeeper.Actions
                 {
                     get
                     {
+                        if (Type == TargetType.MultiSelection)
+                        {
+                            return $"{Scoring.PointsForCorrectResult} per correct answer";
+                        }
+
                         if (Scoring.PointsForCorrectWinner == null)
                         {
                             return $"{Scoring.PointsForCorrectResult}";

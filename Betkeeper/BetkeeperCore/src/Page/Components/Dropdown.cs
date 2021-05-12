@@ -77,8 +77,8 @@ namespace Betkeeper.Page.Components
                   label, 
                   FieldType.Dropdown, 
                   options
-                    .Select(option => new Option(option, option))
-                    .ToList())
+                    ?.Select(option => new Option(option, option))
+                    .ToList() ?? new List<Option>())
         {
             ComponentsToUpdate = componentsToUpdate;
             MultipleSelection = multiple;
