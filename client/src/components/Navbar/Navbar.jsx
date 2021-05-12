@@ -46,7 +46,7 @@ class Navbar extends Component
 		menu.scrollTo({
 			left: direction === 'left'
 				? 0
-				: menu.scrollWidth,
+				: menu.scrollWidth - menu.clientWidth,
 			top: 0,
 			behavior: 'smooth'
 		});

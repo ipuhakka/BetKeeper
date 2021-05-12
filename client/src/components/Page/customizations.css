@@ -16,24 +16,17 @@
     border-bottom: 1px solid #ccc;
     padding-bottom: 0.5em;
     background: #f8f9fa;
+    flex-direction: column;
 }
 
-/* Set set results button to take as much height as field (without label)*/ 
-.setResults.openQuestion button{
-    align-self: flex-end;
-    margin: 0;
-    margin-right: 0.1em;
+.setResults .openQuestion button {
+    margin-top: .2em;
 }
 
-/* Set result field to take less space than bet */
-.setResults.result .input-field-wrapper:last-child {
-    flex: 1;
-}
-
-@media screen and (max-width: 768px) {
-    .setResults.openQuestion button {
-        flex: 0.8;
-    }
+.setBetResultsModalIndividualContainer {
+    flex-direction: column;
+    margin-top: .5em;
+    border-top: 1px solid rgba(0,0,0,.125);
 }
 
 .manageBets {
