@@ -64,7 +64,10 @@ namespace Betkeeper.Pages.CompetitionPage
                 return new PageResponse(redirectTo: "../competitions");
             }
 
-            var competitionTargets = TargetAction.GetTargets(competitionId);
+            var competitionTargets = TargetAction.GetTargets(competitionId)
+                .OrderBy(target => target.Grouping)
+                .ThenBy(target => target.TargetId)
+                .ToList();
 
             var tabs = new List<Component>
             {
