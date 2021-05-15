@@ -165,7 +165,7 @@ i {
     height: 100%;
 	text-align: center;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 @media screen and (max-width: 600px) {

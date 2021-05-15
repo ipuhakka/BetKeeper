@@ -22,7 +22,8 @@
   
   .menu-div {
     display: -webkit-box;
-    overflow-x: hidden;
+    overflow: hidden;
+    height: 42px;
   }
   
   .scroll-button {
@@ -33,7 +34,7 @@
     border: none;
     height: 2em; 
     width: 1.5em;
-    position: sticky;
+    position: absolute;
     padding-left: 10px;
     z-index: 1;
   }
