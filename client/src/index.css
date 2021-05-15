@@ -34,19 +34,20 @@ body {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 5px;
+    width: .5em;
+    height: .5em;
 }
 
 ::-webkit-scrollbar-track {
-    background: #e2e5ea;
+    background: white;
 }
 
 ::-webkit-scrollbar-thumb:horizontal {
-    background:  #A9A9A9;
+    background:  #e2e5ea;
 }
 
 ::-webkit-scrollbar-thumb:vertical {
-    background:  white;
+    background:  #e2e5ea;
 }
 
 /* Global table styles */
