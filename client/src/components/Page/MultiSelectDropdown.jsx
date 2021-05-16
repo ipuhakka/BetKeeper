@@ -80,7 +80,7 @@ class MultiSelectDropdown extends Component
 
     render()
     {
-        const { options, label } = this.props;
+        const { options, allowedSelectionCount } = this.props;
         const { defaultValues } = this.state;
 
         const optionProps = options.map(option => 
@@ -93,9 +93,13 @@ class MultiSelectDropdown extends Component
             defaultValue={defaultValues}
             options={optionProps}
             isMulti={true}
-            placeholder={label}
+            placeholder={allowedSelectionCount 
+                ? `${allowedSelectionCount} selections`
+                : ''}
             onChange={this.onChange}
-            closeMenuOnSelect={false} />;
+            closeMenuOnSelect={false}
+            blurInputOnSelect={false}
+            isSearchable={optionProps.length > 10} />;
     }
 };
 
