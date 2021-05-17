@@ -20,10 +20,44 @@ class PageContent extends Component
         super(props);
 
         this.state = {
-            activeKey: null
+            activeKey: null,
+            invalidFields: []
         }
 
         this.handleSelect = this.handleSelect.bind(this);
+        this.onFieldValueChange = this.onFieldValueChange.bind(this);
+    }
+
+    /**
+     * Field value change function. Keeps track of erroneous fields
+     * @param {string} dataPath 
+     * @param {*} newValue 
+     * @param {*} isValid 
+     */
+    onFieldValueChange(dataPath, newValue, isValid)
+    {
+        const { props } = this;
+        const invalidFields = [...this.state.invalidFields];
+
+        if (!isValid)
+        {
+            if (!invalidFields.includes(dataPath))
+            {
+                invalidFields.push(dataPath);
+                this.setState({ invalidFields });
+            }
+        }
+        else
+        {
+            if (invalidFields.includes(dataPath))
+            {
+                const index = invalidFields.findIndex(item => item === dataPath);
+                invalidFields.splice(index, 1);
+                this.setState({ invalidFields });
+            }
+
+            props.onFieldValueChange(dataPath, newValue);
+        }
     }
 
     handleSelect(key)
@@ -92,11 +126,12 @@ class PageContent extends Component
                             key={`button-${component.action}-${i}`}
                             className={component.customCssClass}
                             onClick={props.getButtonClick(component)}
+                            invalidFields={this.state.invalidFields.length > 0}
                             {...component} />;
 
                     case 'Field':
                         return <Field 
-                            onChange={props.onFieldValueChange}
+                            onChange={this.onFieldValueChange}
                             onHandleDropdownServerUpdate={props.onHandleDropdownServerUpdate}
                             key={`field-${component.componentKey}`} 
                             type={component.fieldType}

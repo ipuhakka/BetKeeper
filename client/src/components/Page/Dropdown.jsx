@@ -70,9 +70,7 @@ class Dropdown extends Component
 
         this.setState({
             activeKey: newValue
-        });
-
-        const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
+        })
 
         if (!ignoreServerUpdate && _.get(props, 'componentsToUpdate.length', 0) > 0)
         {
@@ -80,7 +78,7 @@ class Dropdown extends Component
             props.handleServerUpdate(props.componentKey, newValue, props.componentsToUpdate);
         }
 
-        props.onChange(dataPath, newValue);
+        props.onChange(newValue);
     }
 
     render()

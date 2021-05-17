@@ -111,6 +111,11 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public Dictionary<string, object> StaticData { get; set; }
 
+        /// <summary>
+        /// Action can only be launched when all of tabs fields are valid
+        /// </summary>
+        public bool RequireValidFields { get; set; }
+
         public PageActionButton(
             string action,
             List<string> actionDataKeys,
@@ -120,13 +125,15 @@ namespace Betkeeper.Page.Components
             string navigateTo = null,
             List<string> componentsToInclude = null,
             DisplayType displayType = DisplayType.Text,
-            Dictionary<string, object> staticData = null)
+            Dictionary<string, object> staticData = null,
+            bool requireValidFields = false)
             : base(ButtonType.PageAction, text, buttonStyle, requireConfirm, navigateTo, displayType)
         {
             Action = action;
             ActionDataKeys = actionDataKeys;
             ComponentsToInclude = componentsToInclude;
             StaticData = staticData;
+            RequireValidFields = requireValidFields;
         }
     }
 

@@ -96,12 +96,9 @@ class Field extends Component
             isValid
         });
 
-        if (isValid)
-        {
-            /** Join dataPath and component key */
-            const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
-            props.onChange(dataPath, newValue);
-        }
+        /** Join dataPath and component key */
+        const dataPath = _.compact([props.dataPath, props.componentKey]).join('.');
+        props.onChange(dataPath, newValue, isValid);
     }
 
     renderDateTimeInput()
@@ -191,18 +188,17 @@ class Field extends Component
                 if (this.props.multipleSelection)
                 {
                     input = <MultiSelectDropdown
-                        {...this.props}  
+                        {...this.props} 
                         onChange={this.onChange}
                         initialValues={this.props.initialValue}/>;
                 }
                 else
                 {
-                    // TODO: OnChange ei käytössä?
                     wrapperClassName='dropdown';
                     input = <Dropdown 
+                        {...this.props}
                         onChange={this.onChange} 
-                        handleServerUpdate={onHandleDropdownServerUpdate}
-                        {...this.props}/>;
+                        handleServerUpdate={onHandleDropdownServerUpdate}/>;
                 }
                 break;
 

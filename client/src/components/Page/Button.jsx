@@ -63,6 +63,7 @@ class Button extends Component
         return <RBButton
             className={`button ${props.className}`} 
             variant={props.buttonStyle}
+            disabled={props.requireValidFields && props.invalidFields}
             onClick={this.onClick}>
                 {props.text}
             </RBButton>;
@@ -95,7 +96,9 @@ Button.propTypes = {
             return new Error('iconName prop invalid or missing');
         }
     },
-    className: PropTypes.string
+    className: PropTypes.string,
+    invalidFields: PropTypes.bool,
+    requireValidFields: PropTypes.bool
 };
 
 export default Button;

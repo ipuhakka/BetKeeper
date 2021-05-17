@@ -280,7 +280,8 @@ namespace Betkeeper.Pages.CompetitionPage
                     "SaveBetTargets",
                     new List<string>{ "betTargets" },
                     "Save bet targets",
-                    requireConfirm: true)
+                    requireConfirm: true,
+                    requireValidFields: true)
             };
 
             var targetGroups = competitionTargets.GroupBy(target => target.Grouping);
