@@ -75,11 +75,13 @@ steps:
 
 # this code takes all the files in $(Build.ArtifactStagingDirectory)\drop and uploads them as an artifact of your build.
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\drop' 
     artifactName: 'drop'
 
 - task: PublishBuildArtifacts@1
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     artifactName: 'build'
     pathtoPublish: '$(Build.ArtifactStagingDirectory)\build'
