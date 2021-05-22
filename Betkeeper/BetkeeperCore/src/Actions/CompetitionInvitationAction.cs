@@ -11,7 +11,7 @@ namespace Betkeeper.Actions
         /// Returns users invitationn (competition name and start time)
         /// </summary>
         /// <returns></returns>
-        public List<PrettyInvitation> GetUsersInvitations(int userId)
+        public static List<PrettyInvitation> GetUsersInvitations(int userId)
         {
             var invitations = new CompetitionInvitationRepository().GetInvitations(userId: userId);
 
@@ -36,7 +36,7 @@ namespace Betkeeper.Actions
         /// <param name="competitionId"></param>
         /// <param name="hostUserId"></param>
         /// <param name="userIds"></param>
-        public void InviteUsers(int competitionId, int hostUserId, List<string> usernames)
+        public static void InviteUsers(int competitionId, int hostUserId, List<string> usernames)
         {
             var competition = new CompetitionAction().GetCompetition(competitionId);
 
@@ -81,7 +81,7 @@ namespace Betkeeper.Actions
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="invitationId"></param>
-        public void AcceptInvitation(int userId, int invitationId)
+        public static void AcceptInvitation(int userId, int invitationId)
         {
             var invitation = new CompetitionInvitationRepository()
                 .GetInvitations(invitationId: invitationId, userId: userId)
@@ -109,7 +109,7 @@ namespace Betkeeper.Actions
         /// </summary>
         /// <param name="userId"
         /// <param name="invitationId"></param>
-        public void DeclineInvitation(int userId, int invitationId)
+        public static void DeclineInvitation(int userId, int invitationId)
         {
             var invitation = new CompetitionInvitationRepository()
                 .GetInvitations(invitationId: invitationId, userId: userId)

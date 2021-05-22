@@ -18,23 +18,20 @@ namespace Betkeeper.Pages
         public override string PageKey => "competitions";
 
         private CompetitionAction CompetitionAction { get; set; }
-        private CompetitionInvitationAction InvitationAction { get; set; }
 
         public CompetitionsPage()
         {
             CompetitionAction = new CompetitionAction();
-            InvitationAction = new CompetitionInvitationAction();
         }
 
-        public CompetitionsPage(CompetitionAction competitionAction, CompetitionInvitationAction invitationAction)
+        public CompetitionsPage(CompetitionAction competitionAction)
         {
             CompetitionAction = competitionAction;
-            InvitationAction = invitationAction;
         }
 
         public override PageResponse GetPage(string pageKey, int userId)
         {
-            var invitations = InvitationAction.GetUsersInvitations(userId);
+            var invitations = CompetitionInvitationAction.GetUsersInvitations(userId);
 
             var invitationContainers = invitations
                 .Select(invitation => new Container(
@@ -198,11 +195,11 @@ namespace Betkeeper.Pages
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse DeclineInvitation(PageAction action)
+        private static PageActionResponse DeclineInvitation(PageAction action)
         {
             var invitation = (int)action.Parameters.GetInt("invitationId");
 
-            new CompetitionInvitationAction().DeclineInvitation(action.UserId, invitation);
+            CompetitionInvitationAction.DeclineInvitation(action.UserId, invitation);
 
             return new PageActionResponse(ActionResultType.OK, "Invitation declined", refresh: true);
         }
@@ -212,11 +209,11 @@ namespace Betkeeper.Pages
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse AcceptInvitation(PageAction action)
+        private static PageActionResponse AcceptInvitation(PageAction action)
         {
             var invitation = (int)action.Parameters.GetInt("invitationId");
 
-            new CompetitionInvitationAction().AcceptInvitation(action.UserId, invitation);
+            CompetitionInvitationAction.AcceptInvitation(action.UserId, invitation);
 
             return new PageActionResponse(ActionResultType.OK, "Invitation accepted", refresh: true);
         }

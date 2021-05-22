@@ -78,7 +78,7 @@ namespace Betkeeper.Test.Actions
 
             Tools.CreateTestData(invitations: invitations, competitions: competitions);
 
-            var results = new CompetitionInvitationAction().GetUsersInvitations(1);
+            var results = CompetitionInvitationAction.GetUsersInvitations(1);
 
             Assert.AreEqual(2, results.Count);
         }
@@ -88,7 +88,7 @@ namespace Betkeeper.Test.Actions
         {
             try
             {
-                new CompetitionInvitationAction().InviteUsers(1, 2, new List<string> { "testi" });
+                CompetitionInvitationAction.InviteUsers(1, 2, new List<string> { "testi" });
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -121,7 +121,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                new CompetitionInvitationAction().InviteUsers(1, 2, new List<string> { "testi" });
+                CompetitionInvitationAction.InviteUsers(1, 2, new List<string> { "testi" });
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -154,7 +154,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                new CompetitionInvitationAction().InviteUsers(1, 2, new List<string> { "testi" });
+                CompetitionInvitationAction.InviteUsers(1, 2, new List<string> { "testi" });
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -225,7 +225,7 @@ namespace Betkeeper.Test.Actions
                 participators: participators,
                 invitations: invitations);
 
-            new CompetitionInvitationAction().InviteUsers(1, 2, new List<string> { "testi", "notexistingUser", "IsInvited", "IsInCompetition" });
+            CompetitionInvitationAction.InviteUsers(1, 2, new List<string> { "testi", "notexistingUser", "IsInvited", "IsInCompetition" });
 
             var results = _context.CompetitionInvitation.ToList();
             // One already exists
@@ -273,7 +273,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                new CompetitionInvitationAction().AcceptInvitation(2, 1);
+                CompetitionInvitationAction.AcceptInvitation(2, 1);
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -308,7 +308,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                new CompetitionInvitationAction().AcceptInvitation(1, 1);
+                CompetitionInvitationAction.AcceptInvitation(1, 1);
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -359,7 +359,7 @@ namespace Betkeeper.Test.Actions
 
             Tools.CreateTestData(competitions: competitions, users: users, invitations: invitations);
 
-            new CompetitionInvitationAction().AcceptInvitation(2, 2);
+            CompetitionInvitationAction.AcceptInvitation(2, 2);
 
             Assert.AreEqual(1, _context.Participator.ToList().Count, "Participator count");
             // Check that invitation was deleted
@@ -407,7 +407,7 @@ namespace Betkeeper.Test.Actions
 
             try
             {
-                new CompetitionInvitationAction().DeclineInvitation(2, 1);
+                CompetitionInvitationAction.DeclineInvitation(2, 1);
                 Assert.Fail();
             }
             catch (ActionException e)
@@ -455,7 +455,7 @@ namespace Betkeeper.Test.Actions
 
             Tools.CreateTestData(competitions: competitions, users: users, invitations: invitations);
 
-            new CompetitionInvitationAction().DeclineInvitation(2, 2);
+            CompetitionInvitationAction.DeclineInvitation(2, 2);
 
             // Check that invitation was deleted
             Assert.AreEqual(1, _context.CompetitionInvitation.ToList().Count, "Invitation count");

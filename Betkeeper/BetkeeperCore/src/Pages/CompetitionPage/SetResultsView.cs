@@ -16,7 +16,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="bets"></param>
         /// <returns></returns>
-        private Tab GetSetResultsTab(Dictionary<Target, List<TargetBet>> bets)
+        private static Tab GetSetResultsTab(Dictionary<Target, List<TargetBet>> bets)
         {
             var groups = bets.GroupBy(kvp => kvp.Key.Grouping);
 
@@ -55,7 +55,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 });
         }
 
-        private Component GetComponentsForTarget(
+        private static Component GetComponentsForTarget(
             Target target, 
             List<TargetBet> targetBets)
         {
@@ -150,7 +150,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// <param name="target"></param>
         /// <param name="targetBets"></param>
         /// <returns></returns>
-        private List<Component> GetSetOpenQuestionResultModal(Target target, List<TargetBet> targetBets)
+        private static List<Component> GetSetOpenQuestionResultModal(Target target, List<TargetBet> targetBets)
         {
             var targetBetContainerChildren = new List<Component>
             {

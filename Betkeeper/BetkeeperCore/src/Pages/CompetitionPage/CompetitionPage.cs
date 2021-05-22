@@ -25,8 +25,6 @@ namespace Betkeeper.Pages.CompetitionPage
 
         private TargetBetAction TargetBetAction { get; }
 
-        private CompetitionInvitationAction InvitationAction { get; }
-
         private Dictionary<string, object> Data { get; set; }
 
         public CompetitionPage()
@@ -34,19 +32,16 @@ namespace Betkeeper.Pages.CompetitionPage
             CompetitionAction = new CompetitionAction();
             TargetAction = new TargetAction();
             TargetBetAction = new TargetBetAction();
-            InvitationAction = new CompetitionInvitationAction();
         }
 
         public CompetitionPage(
             CompetitionAction competitionAction = null, 
             TargetAction targetAction = null,
-            TargetBetAction targetBetAction = null,
-            CompetitionInvitationAction invitationAction = null)
+            TargetBetAction targetBetAction = null)
         {
             CompetitionAction = competitionAction;
             TargetAction = targetAction;
             TargetBetAction = targetBetAction;
-            InvitationAction = invitationAction;
         }
 
         public override PageResponse GetPage(string pageKey, int userId)
@@ -191,7 +186,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        public PageActionResponse InviteUsers(PageAction action)
+        public static PageActionResponse InviteUsers(PageAction action)
         {
             var usersToInvite = action.Parameters.ContainsKey("usersToInvite")
                 ? ((JArray)action.Parameters["usersToInvite"]).ToObject<List<string>>()
@@ -202,7 +197,7 @@ namespace Betkeeper.Pages.CompetitionPage
                 return new PageActionResponse(ActionResultType.InvalidInput, "No users selected");
             }
 
-            InvitationAction.InviteUsers((int)action.PageId, action.UserId, usersToInvite);
+            CompetitionInvitationAction.InviteUsers((int)action.PageId, action.UserId, usersToInvite);
             return new PageActionResponse(ActionResultType.OK, "Invites sent to users with valid usernames");
         }
 

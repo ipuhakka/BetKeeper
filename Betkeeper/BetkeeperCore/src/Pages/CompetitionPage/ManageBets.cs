@@ -137,7 +137,7 @@ namespace Betkeeper.Pages.CompetitionPage
         /// </summary>
         /// <param name="action"></param>
         /// <returns></returns>
-        private PageActionResponse AddGroup(PageAction action)
+        private static PageActionResponse AddGroup(PageAction action)
         {
             var groupName = action.Parameters.GetString("GroupName");
             var betTargetContainer = Component.GetComponentFromAction<Container>(action, "betTargets");

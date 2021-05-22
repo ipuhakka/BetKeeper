@@ -16,10 +16,4 @@
     <ProjectReference Include="..\BetkeeperCore\BetkeeperCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Web.Http">
-      <HintPath>..\Test\bin\Debug\System.Web.Http.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

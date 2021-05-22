@@ -67,7 +67,7 @@ namespace Betkeeper.Page.Components
             switch (buttonType)
             {
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"Not implemented button type {buttonType}");
 
                 case ButtonType.PageAction:
                     return asJObject.ToObject<PageActionButton>();
