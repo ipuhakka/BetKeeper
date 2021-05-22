@@ -46,7 +46,7 @@ class StaticTable extends Component
             </thead>
             : null;
 
-        return <Table striped bordered>
+        return <Table striped bordered size="sm">
             {tableHeader}
             <tbody>
                 {tableRows}

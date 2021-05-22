@@ -1,7 +1,5 @@
 .page-tab-content-div {
     height: calc(100% - 112px);
-    overflow-y: auto;
-    overflow-x: auto;
 }
 
 .page-content {
@@ -12,7 +10,9 @@
 }
 
 .tab-content {
-    height: 100%;
+    height: calc(100% - 154px);
+    overflow-y: auto;
+    overflow-x: auto;
 }
 
 .child-container-div {

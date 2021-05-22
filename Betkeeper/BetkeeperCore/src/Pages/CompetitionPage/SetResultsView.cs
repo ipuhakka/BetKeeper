@@ -64,7 +64,9 @@ namespace Betkeeper.Pages.CompetitionPage
                 new Field(
                 $"question-{target.TargetId}",
                 "Bet",
-                FieldType.TextBox,
+                target.Bet.Length > 35 
+                    ? FieldType.TextArea
+                    : FieldType.TextBox,
                 readOnly: true)
             };
 

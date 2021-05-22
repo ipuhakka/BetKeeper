@@ -11,6 +11,14 @@ namespace Betkeeper.Pages.CompetitionPage
         {
             var scores = TargetAction.CalculateCompetitionPoints(competitionId);
 
+            var pointOverviewTable = new StaticTable(header: new Row(new List<string> { "User", "Points" }, CellStyle.Bold));
+
+            // Sort overview table in descending order by total points
+            pointOverviewTable.Rows = scores.UserPointsDictionary.OrderByDescending(kvp => kvp.Value)
+                .Select(kvp => new Row(new List<string> { kvp.Key, kvp.Value.ToString() }))
+                .ToList();
+
+            // Create a more specific table
             var tableHeaderItems = new List<string>
             {
                 "Bet",
@@ -81,6 +89,7 @@ namespace Betkeeper.Pages.CompetitionPage
 
             return new Tab("resultsViewTab", "Results", new List<Component>
             {
+                pointOverviewTable,
                 table
             });
         }
