@@ -51,7 +51,7 @@ class Chart extends Component
         }
     }
 
-    onDataFieldChange(componentKey, newActiveKey)
+    onDataFieldChange(newActiveKey)
     {
         const { dataFields } = this.props;
         this.setState({ activeDataField: dataFields.find(field => field.fieldKey === newActiveKey)});
@@ -67,7 +67,7 @@ class Chart extends Component
         ];
 
         // Handle chart selection change
-        const onChange = (componentKey, newValue) => 
+        const onChange = (newValue) => 
         {
             this.setState({ activeChart: newValue });
         }

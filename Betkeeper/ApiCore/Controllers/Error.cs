@@ -11,7 +11,7 @@ namespace Api.Controllers
         /// <param name="clientError"></param>
         /// <returns></returns>
         [Route("api/error")]
-        public IActionResult Post(ClientError clientError)
+        public IActionResult Post([FromBody]ClientError clientError)
         {
             clientError.LogError();
 
