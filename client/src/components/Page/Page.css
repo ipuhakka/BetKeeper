@@ -129,6 +129,21 @@ tr {
 	cursor: pointer !important;
 }
 
+.table-div {
+    overflow-x: auto;
+}
+
+.header-column {
+    position: sticky;
+    width: 5em;
+    left: 0;
+    background: white;
+}
+
+.header-column.gray {
+    background: #f2f2f2;
+}
+
 /* Card menu */
 .grid {
     display: table-cell;

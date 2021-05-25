@@ -13,14 +13,20 @@ namespace Betkeeper.Page.Components
 
         public Row Header { get; set; }
 
+        /// <summary>
+        /// If true, first column in table locked in place and rest of the columns are scrollable
+        /// </summary>
+        public bool UseColumnHeader { get; set; }
+
         public StaticTable() : base(ComponentType.StaticTable)
         {
             Rows = new List<Row>();
         }
 
-        public StaticTable(Row header) : this()
+        public StaticTable(Row header, bool useColumnHeader = false) : this()
         {
             Header = header;
+            UseColumnHeader = useColumnHeader;
         }
     }
 

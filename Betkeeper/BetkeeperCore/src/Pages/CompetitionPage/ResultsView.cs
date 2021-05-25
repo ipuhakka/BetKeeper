@@ -11,7 +11,7 @@ namespace Betkeeper.Pages.CompetitionPage
         {
             var scores = TargetAction.CalculateCompetitionPoints(competitionId);
 
-            var pointOverviewTable = new StaticTable(header: new Row(new List<string> { "User", "Points" }, CellStyle.Bold))
+            var pointOverviewTable = new StaticTable(header: new Row(new List<string> { "User", "Points" }, CellStyle.Bold), useColumnHeader: true)
             {
                 // Sort overview table in descending order by total points
                 Rows = scores.UserPointsDictionary.OrderByDescending(kvp => kvp.Value)
@@ -30,10 +30,11 @@ namespace Betkeeper.Pages.CompetitionPage
             tableHeaderItems.AddRange(scores.UserPointsDictionary.Keys.ToList());
 
             // Add header row (users) in constructor
-            var table = new StaticTable(header: 
-                new Row(
+            var table = new StaticTable(
+                header: new Row(
                     tableHeaderItems,
-                    style: CellStyle.Bold));
+                    style: CellStyle.Bold),
+                useColumnHeader: true);
 
             var summaryRowCellValues = new List<string> { "Total points", scores.MaximumPoints.ToString(), "-" };
 

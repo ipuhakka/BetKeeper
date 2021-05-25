@@ -6,7 +6,7 @@ class StaticTable extends Component
 {
     renderTableRow(rowData, i)
     {
-        const {componentKey} = this.props;
+        const {componentKey, useColumnHeader} = this.props;
         const { cells } = rowData;
 
         const getStyles = (cell) => 
@@ -21,15 +21,16 @@ class StaticTable extends Component
 
         return <tr key={`tr-${componentKey}-${i}`}>{cells.map((cell, j) => 
             {
-                return <td 
+                return <td
+                    className={`${j === 0 && useColumnHeader ? 'header-column' : ''} ${i % 2 === 0 ? 'gray' : ''}`}
                     style={getStyles(cell)} 
                     key={`td-${i}-${j}`}>{cell.value}</td>;
-            })}</tr>
+            })}</tr>;
     }
 
     render()
     {
-        const { rows, header } = this.props;
+        const { rows, header, useColumnHeader } = this.props;
 
         const tableRows = rows.map((row, i) => 
             {
@@ -39,19 +40,21 @@ class StaticTable extends Component
         const tableHeader = header
             ? <thead>
                 <tr>
-                    {header.cells.map(headerCell => {
-                        return <th key={`header-cell-${headerCell.value}`}>{headerCell.value}</th>
+                    {header.cells.map((headerCell, i) => {
+                        return <th className={`${i === 0 && useColumnHeader ? 'header-column' : ''}`} key={`header-cell-${headerCell.value}`}>{headerCell.value}</th>
                     })}
                 </tr>
             </thead>
             : null;
 
-        return <Table striped bordered size="sm">
+        return <div className='table-div'>
+        <Table striped bordered size="sm">
             {tableHeader}
             <tbody>
                 {tableRows}
             </tbody>
-        </Table>;
+        </Table>
+        </div>;
     }
 };
 
@@ -69,8 +72,8 @@ StaticTable.propTypes = {
         }
     ),
     rows: PropTypes.arrayOf(
-        PropTypes.shape({ cells: cellProps })
-        )
+        PropTypes.shape({ cells: cellProps })),
+    useColumnHeader: PropTypes.bool.isRequired
 }
 
 export default StaticTable;

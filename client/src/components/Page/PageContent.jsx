@@ -152,7 +152,12 @@ class PageContent extends Component
                         return <Table onRowClick={props.onTableRowClick} key={`itemlist-${i}`} {...component} />;
 
                     case 'StaticTable':
-                        return <StaticTable componentKey={component.componentKey} key={`custom-table-${i}`} rows={component.rows} header={component.header}/>
+                        return <StaticTable 
+                            componentKey={component.componentKey}
+                            key={`custom-table-${i}`}
+                            rows={component.rows}
+                            header={component.header}
+                            useColumnHeader={component.useColumnHeader} />
                     
                     case 'ListGroup':
                         return <ListGroup
