@@ -5,7 +5,7 @@ import store from './store';
 import Routes from './routes.jsx';
 import './index.css';
 import 'react-datepicker/dist/react-datepicker.css';
-import registerServiceWorker from './registerServiceWorker';
+import { unregister as unregisterServiceWorker } from './registerServiceWorker'
 import * as ErrorActions from './actions/errorActions';
 import Info from './components/Info/Info';
 
@@ -22,4 +22,4 @@ const app = (
 );
 
 ReactDOM.render(app, document.getElementById('root'));
-registerServiceWorker();
+unregisterServiceWorker();
