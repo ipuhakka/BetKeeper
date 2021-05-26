@@ -30,7 +30,7 @@ class StaticTable extends Component
 
     render()
     {
-        const { rows, header, useColumnHeader } = this.props;
+        const { rows, header, useColumnHeader, useStickyHeader } = this.props;
 
         const tableRows = rows.map((row, i) => 
             {
@@ -41,13 +41,13 @@ class StaticTable extends Component
             ? <thead>
                 <tr>
                     {header.cells.map((headerCell, i) => {
-                        return <th className={`${i === 0 && useColumnHeader ? 'header-column' : ''}`} key={`header-cell-${headerCell.value}`}>{headerCell.value}</th>
+                        return <th className={`${useStickyHeader ? 'static-table-sticky-head-cell' : ''}${i === 0 && useColumnHeader ? ' header-column' : ''}`} key={`header-cell-${headerCell.value}`}>{headerCell.value}</th>
                     })}
                 </tr>
             </thead>
             : null;
 
-        return <div className='table-div'>
+        return <div className='static-table-div'>
         <Table striped bordered size="sm">
             {tableHeader}
             <tbody>
@@ -73,7 +73,8 @@ StaticTable.propTypes = {
     ),
     rows: PropTypes.arrayOf(
         PropTypes.shape({ cells: cellProps })),
-    useColumnHeader: PropTypes.bool.isRequired
+    useColumnHeader: PropTypes.bool.isRequired,
+    useStickyHeader: PropTypes.bool.isRequired
 }
 
 export default StaticTable;

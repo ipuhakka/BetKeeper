@@ -129,19 +129,29 @@ tr {
 	cursor: pointer !important;
 }
 
-.table-div {
-    overflow-x: auto;
+.static-table-div {
+    overflow: auto;
+    max-height: 100%;
 }
 
 .header-column {
     position: sticky;
-    width: 5em;
     left: 0;
     background: white;
 }
 
 .header-column.gray {
     background: #f2f2f2;
+}
+
+.static-table-sticky-head-cell {
+    position: sticky;
+    background: white;
+    top: 0;
+}
+
+.static-table-sticky-head-cell.header-column {
+    z-index: 1;
 }
 
 /* Card menu */

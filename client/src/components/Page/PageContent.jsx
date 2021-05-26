@@ -157,7 +157,8 @@ class PageContent extends Component
                             key={`custom-table-${i}`}
                             rows={component.rows}
                             header={component.header}
-                            useColumnHeader={component.useColumnHeader} />
+                            useColumnHeader={component.useColumnHeader}
+                            useStickyHeader={component.useStickyHeader} />
                     
                     case 'ListGroup':
                         return <ListGroup

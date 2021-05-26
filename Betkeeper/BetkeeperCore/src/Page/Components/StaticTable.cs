@@ -18,15 +18,21 @@ namespace Betkeeper.Page.Components
         /// </summary>
         public bool UseColumnHeader { get; set; }
 
+        /// <summary>
+        /// If true, header row is stickied to top of the table
+        /// </summary>
+        public bool UseStickyHeader { get; set; }
+
         public StaticTable() : base(ComponentType.StaticTable)
         {
             Rows = new List<Row>();
         }
 
-        public StaticTable(Row header, bool useColumnHeader = false) : this()
+        public StaticTable(Row header, bool useColumnHeader = false, bool useStickyHeader = false) : this()
         {
             Header = header;
             UseColumnHeader = useColumnHeader;
+            UseStickyHeader = useStickyHeader;
         }
     }
 
