@@ -12,13 +12,16 @@ export const UPDATE_DROPDOWN_SELECTIONS = "UPDATE_DROPDOWN_SELECTIONS";
 
 /**
  * Get page structure.
+ * @param {string} pathname
+ * @param {object} history
  */
-export function getPage(pathname)
+export function getPage(pathname, history)
 {
     store.dispatch({
         type: GET_PAGE,
         payload: {
-            pathname: pathname
+            pathname: pathname,
+            history: history
           }
       });
 }

@@ -23,6 +23,8 @@ export function* getPage(action)
       {
         case 401:
           yield put(setAlertStatus(error.status, "Session expired, please login again"));
+          const { history } = action.payload;
+          history.push('/');
           break;
         case 404:
           yield put(setAlertStatus(error.status, "Requested page was not found"));

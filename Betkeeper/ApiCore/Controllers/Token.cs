@@ -23,7 +23,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{userId}")]
         public IActionResult Get(int userId)
         {
             Request.Headers.TryGetValue("Authorization", out var authorization);

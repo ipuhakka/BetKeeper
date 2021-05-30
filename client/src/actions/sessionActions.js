@@ -1,3 +1,5 @@
+import store from '../store';
+
 export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
@@ -15,9 +17,16 @@ export const loginSuccess = () => ({
   type: 'LOGIN_SUCCESS'
 });
 
-export const logOut = () => ({
-  type: 'LOGOUT'
-});
+export function logOut(history, redirectTo)
+{
+  store.dispatch({
+    type: 'LOGOUT', 
+    payload: {
+      history,
+      redirectTo
+    }
+  });
+};
 
 export const signUp = (username, password, callback) => ({
   type: 'SIGNUP',

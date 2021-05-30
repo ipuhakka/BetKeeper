@@ -18,13 +18,13 @@ class PageContainer extends Component
     }
 
     /**
-     * Load page structure 
+     * Load page structure
      */
     componentDidMount()
     {
         if (_.isNil(this.props.page))
         {
-            pageActions.getPage(window.location.pathname);
+            pageActions.getPage(window.location.pathname, this.props.history);
         }
     }
 
@@ -34,7 +34,7 @@ class PageContainer extends Component
 
         if (state.pathname !== window.location.pathname)
         {
-            pageActions.getPage(window.location.pathname);
+            pageActions.getPage(window.location.pathname, this.props.history);
          
             this.setState({ pathname: window.location.pathname });
         }

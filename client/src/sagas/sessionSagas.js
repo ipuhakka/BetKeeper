@@ -10,7 +10,7 @@ function clearCredentials()
 {
   window.sessionStorage.setItem('loggedUser', null);
   window.sessionStorage.setItem('token', null);
-  window.sessionStorage.setItem('loggedUserId', -1);
+  window.sessionStorage.setItem('loggedUserId', null);
 }
 
 export function* handleLogin(action){
@@ -53,8 +53,9 @@ export function* handleLogin(action){
 
 }
 
-function* handleLogOut()
+function* handleLogOut(action)
 {
+  const {redirectTo, history} = action.payload;
   try 
   {
     yield put(setLoading(true));
@@ -66,8 +67,9 @@ function* handleLogOut()
   }
   finally 
   {
-    yield put(setLoading(false));
     clearCredentials();
+    yield put(setLoading(false));
+    history.push(redirectTo);
   }
 }
 

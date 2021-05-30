@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import {withRouter} from 'react-router-dom';
-import store from '../../store';
 import Navbar from '../Navbar/Navbar';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import * as sessionActions from '../../actions/sessionActions';
 
 const menuItems = [
 	{key: 9, text: 'Home', route: '/page/home'},
+	{key: 4, text: 'Competitions', route: '/page/competitions'},
 	{key: 8, text: 'Bets', route: '/page/bets'},
 	{key: 3, text: 'Statistics', route: '/page/statistics'},
 	{key: 7, text: 'Folders', route: '/page/folders'},
-	{key: 4, text: 'Competitions', route: '/page/competitions'},
 	{key: 6, text: 'User settings', route: '/page/usersettings'},
-	{key: 5, text: 'Logout', route: '/'}
+	{key: 5, text: 'Logout'}
 ]
 
 /** Application menu */
@@ -68,7 +68,8 @@ class Menu extends Component
 
 		if (item.key === 5)
 		{
-			store.dispatch({type: 'LOGOUT'});
+			sessionActions.logOut(history, '/');
+			return;
 		}
 
 		history.push('/');
