@@ -13,8 +13,8 @@ class LoginView extends Component
 {
   componentDidMount()
   {
-    const loggedUserId = window.sessionStorage.getItem('loggedUserId');
-    const tokenString = window.sessionStorage.getItem('token');
+    const loggedUserId = window.localStorage.getItem('loggedUserId');
+    const tokenString = window.localStorage.getItem('token');
 
     if (!_.isNil(loggedUserId) 
       && !_.isNil(tokenString))
@@ -40,7 +40,7 @@ class LoginView extends Component
   }
 
   //Makes a post request to resource at URI/token. On success, sets the token from response, and user inputted username
-  //to sessionStorage and changes html page.
+  //to localStorage and changes html page.
   requestToken = async (username, password) => 
   {
     const {history} = this.props;

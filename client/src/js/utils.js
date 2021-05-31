@@ -107,8 +107,8 @@ export function deepCopy(obj){
 }
 
 export function loginCredentialsExist(){
-  return sessionStorage.getItem('token') != null &&
-    sessionStorage.getItem('token').toString() !== 'null';
+  return localStorage.getItem('token') != null &&
+    localStorage.getItem('token').toString() !== 'null';
 }
 
 export function isInteger(value)

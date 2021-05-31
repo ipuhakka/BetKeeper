@@ -57,6 +57,7 @@ steps:
   workingDirectory: 'client'
 
 - task: ArchiveFiles@2
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     rootFolderOrFile: 'client\build'
     includeRootFolder: false
@@ -67,6 +68,7 @@ steps:
 
 # Publish api projects to specified folder.
 - task: DotNetCoreCLI@2
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     command: publish
     publishWebProjects: True

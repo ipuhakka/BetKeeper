@@ -8,9 +8,9 @@ import _ from 'lodash';
 
 function clearCredentials()
 {
-  window.sessionStorage.setItem('loggedUser', null);
-  window.sessionStorage.setItem('token', null);
-  window.sessionStorage.setItem('loggedUserId', null);
+  window.localStorage.removeItem('loggedUser');
+  window.localStorage.removeItem('token');
+  window.localStorage.removeItem('loggedUserId');
 }
 
 export function* handleLogin(action){
@@ -22,9 +22,9 @@ export function* handleLogin(action){
 
     let res = yield call(postToken, username, password);
 
-    window.sessionStorage.setItem('token', res.token);
-    window.sessionStorage.setItem('loggedUser', res.username);
-    window.sessionStorage.setItem('loggedUserId', res.owner);
+    window.localStorage.setItem('token', res.token);
+    window.localStorage.setItem('loggedUser', res.username);
+    window.localStorage.setItem('loggedUserId', res.owner);
 
     if (redirectTo !== undefined && history !== undefined)
     {

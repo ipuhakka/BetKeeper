@@ -37,10 +37,10 @@ rejects on other responses.
 export function deleteToken()
 {
   return new HttpRequest(
-    'token/' + sessionStorage.getItem('loggedUserId'), 
+    'token/' + localStorage.getItem('loggedUserId'), 
     'DELETE',
     [
-      { key: 'Authorization', value: sessionStorage.getItem('token') }
+      { key: 'Authorization', value: localStorage.getItem('token') }
     ]).sendRequest();
 }
 

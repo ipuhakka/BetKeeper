@@ -243,7 +243,7 @@ class Page extends Component
                 pageComponents={props.components}
                 getPageButtonClick={this.getButtonClick.bind(this)}
                 {...state.actionModalProps}/>
-            <Header title={"Logged in as " + window.sessionStorage.getItem('loggedUser')}></Header>
+            <Header title={"Logged in as " + window.localStorage.getItem('loggedUser')}></Header>
 			<Menu disableValue={pageKey}></Menu>
             <Confirm 
                 visible={state.confirm.show}
