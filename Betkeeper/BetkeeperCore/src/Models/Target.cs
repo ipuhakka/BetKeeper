@@ -132,9 +132,26 @@ namespace Betkeeper.Models
             }
 
             // Selection
-            if (targetBet.Bet == Result.Result)
+            if (Type == TargetType.Selection && targetBet.Bet == Result.Result)
             {
                 return TargetResult.CorrectResult;
+            }
+
+            if (Type == TargetType.MultiSelection && !string.IsNullOrEmpty(targetBet.Bet))
+            {
+                var betList = JsonConvert.DeserializeObject<List<string>>(targetBet.Bet);
+
+                var correctCount = betList.Count(bet => Result.MultiSelectionResult?.Contains(bet) ?? false);
+
+                if (correctCount == AllowedSelectionCount)
+                {
+                    return TargetResult.CorrectResult;
+                }
+
+                if (correctCount > 0)
+                {
+                    return TargetResult.CorrectWinner;
+                }
             }
 
             return TargetResult.Wrong;
@@ -146,18 +163,28 @@ namespace Betkeeper.Models
         /// <returns></returns>
         public bool TargetResultSet()
         {
+            if (Result == null)
+            {
+                return false;
+            }
+
             if (Type == TargetType.OpenQuestion)
             {
-                var resolvedCount = Result?.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0;
+                var resolvedCount = Result.TargetBetResultDictionary?.Count(kvp => kvp.Value != "Unresolved") ?? 0;
                 return resolvedCount > 0 && resolvedCount == Result.TargetBetResultDictionary.Count;
             }
 
             if (Type == TargetType.Selection)
             {
-                return Result != null && !string.IsNullOrEmpty(Result.Result) && Result.Result != "UNRESOLVED-BET";
+                return !string.IsNullOrEmpty(Result.Result) && Result.Result != "UNRESOLVED-BET";
             }
 
-            return !string.IsNullOrEmpty(Result?.Result);
+            if (Type == TargetType.MultiSelection)
+            {
+                return (Result.MultiSelectionResult?.Count ?? 0) == AllowedSelectionCount;
+            }
+
+            return !string.IsNullOrEmpty(Result.Result);
         }
 
         /// <summary>

@@ -74,8 +74,8 @@ namespace Betkeeper.Pages.CompetitionPage
                 {
                     var backgroundColor = bet.Result switch
                     {
-                        Enums.TargetResult.CorrectResult => Color.Green,
-                        Enums.TargetResult.CorrectWinner => Color.LightGreen,
+                        Enums.TargetResult.CorrectResult => Color.LightGreen,
+                        Enums.TargetResult.CorrectWinner => Color.Green,
                         Enums.TargetResult.Wrong => Color.Red,
                         _ => Color.Gray,
                     };

@@ -33,23 +33,6 @@ namespace Betkeeper.Pages.CompetitionPage
         {
             var components = new List<Component>();
 
-            if (targets.Count > 0)
-            {
-                components.Add(new PageActionButton(
-                    "CancelUserBetsUpdate",
-                    new List<string> { "betsContainer" },
-                    "Cancel bet updates",
-                    buttonStyle: "outline-danger",
-                    requireConfirm: true,
-                    componentsToInclude: new List<string> { "betTargets" }));
-
-                components.Add(new PageActionButton(
-                    "SaveUserBets",
-                    new List<string> { "betsContainer" },
-                    "Save bets",
-                    requireConfirm: true));
-            }
-
             var targetGroups = targets.GroupBy(target => target.Grouping);
 
             foreach (var group in targetGroups)
@@ -74,6 +57,23 @@ namespace Betkeeper.Pages.CompetitionPage
                         targetComponents,
                         group.Key ?? ""));
                 }
+            }
+
+            if (targets.Count > 0)
+            {
+                components.Add(new PageActionButton(
+                    "CancelUserBetsUpdate",
+                    new List<string> { "betsContainer" },
+                    "Cancel bet updates",
+                    buttonStyle: "outline-danger",
+                    requireConfirm: true,
+                    componentsToInclude: new List<string> { "betTargets" }));
+
+                components.Add(new PageActionButton(
+                    "SaveUserBets",
+                    new List<string> { "betsContainer" },
+                    "Save bets",
+                    requireConfirm: true));
             }
 
             return new Container(
