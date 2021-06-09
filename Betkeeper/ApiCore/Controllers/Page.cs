@@ -1,4 +1,4 @@
-﻿using Api.Classes;
+﻿using Betkeeper.Actions;
 using Betkeeper.Classes;
 using Betkeeper.Page;
 using Betkeeper.Services;
@@ -17,7 +17,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {
@@ -35,7 +35,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {
@@ -70,7 +70,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {
@@ -91,7 +91,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {

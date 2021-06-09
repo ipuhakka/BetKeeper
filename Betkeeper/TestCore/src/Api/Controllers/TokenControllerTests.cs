@@ -38,7 +38,7 @@ namespace Api.Test.Controllers
         public void TearDown()
         {
             _context.User.RemoveRange(_context.User);
-            TokenLog.ClearTokenLog();
+            _context.Sessions.RemoveRange(_context.Sessions);
             _context.SaveChanges();
         }
 
@@ -129,7 +129,7 @@ namespace Api.Test.Controllers
             var token = response.Value as Token;
 
             Assert.AreEqual(200, response.StatusCode);
-            Assert.AreEqual(12, token.TokenString.Length);
+            Assert.AreEqual(24, token.TokenString.Length);
             Assert.AreEqual(1, token.Owner);
         }
 
@@ -146,9 +146,13 @@ namespace Api.Test.Controllers
                 }
             };
 
-            Tools.CreateTestData(users: users);
+            var session = Session.GenerateSession(new Token(1));
+            var sessions = new List<Session>
+            {
+                session
+            };
 
-            var testToken = TokenLog.CreateToken(1);
+            Tools.CreateTestData(users: users, sessions: sessions);
 
             var testData = new { username = "user" };
 
@@ -163,7 +167,7 @@ namespace Api.Test.Controllers
             var token = response.Value as Token;
 
             Assert.AreEqual(200, response.StatusCode);
-            Assert.AreEqual(testToken.TokenString, token.TokenString);
+            Assert.AreEqual(session.Token, token.TokenString);
             Assert.AreEqual(1, token.Owner);
         }
 
@@ -182,12 +186,18 @@ namespace Api.Test.Controllers
         [Test]
         public void Get_TokenBelongsToUser_ReturnsOK()
         {
-            var token = TokenLog.CreateToken(1);
+            var session = Session.GenerateSession(new Token(1));
+            var sessions = new List<Session>
+            {
+                session
+            };
+
+            Tools.CreateTestData(sessions: sessions);
 
             _controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
-                        { "Authorization", token.TokenString}
+                        { "Authorization", session.Token }
                     });
 
             var response = _controller.Get(1) as OkResult;
@@ -206,9 +216,15 @@ namespace Api.Test.Controllers
         }
 
         [Test]
-        public void Get_TokenLogDoesNotContainToken_ReturnsNotFound()
+        public void Get_TokenLogDoesNotContainToken_ReturnsUnauthorized()
         {
-            TokenLog.CreateToken(1);
+            var session = Session.GenerateSession(new Token(1));
+            var sessions = new List<Session>
+            {
+                session
+            };
+
+            Tools.CreateTestData(sessions: sessions);
 
             _controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
@@ -216,20 +232,26 @@ namespace Api.Test.Controllers
                         { "Authorization", "UnusedToken"}
                     });
 
-            var response = _controller.Get(1) as NotFoundResult;
+            var response = _controller.Get(1) as UnauthorizedResult;
 
-            Assert.AreEqual(404, response.StatusCode);
+            Assert.AreEqual(401, response.StatusCode);
         }
 
         [Test]
         public void Get_TokenDoesNotBelongToUser_ReturnsUnauthorized()
         {
-            var token = TokenLog.CreateToken(1);
+            var session = Session.GenerateSession(new Token(1));
+            var sessions = new List<Session>
+            {
+                session
+            };
+
+            Tools.CreateTestData(sessions: sessions);
 
             _controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
-                        { "Authorization", token.TokenString}
+                        { "Authorization", session.Token}
                     });
 
             var response = _controller.Get(2) as UnauthorizedResult;
@@ -248,31 +270,44 @@ namespace Api.Test.Controllers
         }
 
         [Test]
-        public void Delete_TokenDoesNotBelongToUser_ReturnsUnauthorized()
+        public void Delete_TokenDoesNotBelongToUser_ReturnsNoContent()
         {
-            TokenLog.CreateToken(1);
-            var token2 = TokenLog.CreateToken(2);
+            var session1 = Session.GenerateSession(new Token(1));
+            var session2 = Session.GenerateSession(new Token(2));
+            var sessions = new List<Session>
+            {
+                session1,
+                session2
+            };
+
+            Tools.CreateTestData(sessions: sessions);
 
             _controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
-                        { "Authorization", token2.TokenString}
+                        { "Authorization", session2.Token}
                     });
 
-            var response = _controller.Delete(1) as UnauthorizedResult;
+            var response = _controller.Delete(1) as NoContentResult;
 
-            Assert.AreEqual(401, response.StatusCode);
+            Assert.AreEqual(204, response.StatusCode);
         }
 
         [Test]
         public void Delete_TokenBelongsToUser_ReturnsNoContent()
         {
-            var token = TokenLog.CreateToken(1);
+            var session = Session.GenerateSession(new Token(1));
+            var sessions = new List<Session>
+            {
+                session
+            };
+
+            Tools.CreateTestData(sessions: sessions);
 
             _controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
-                        { "Authorization", token.TokenString}
+                        { "Authorization", session.Token }
                     });
 
             var response = _controller.Delete(1) as NoContentResult;

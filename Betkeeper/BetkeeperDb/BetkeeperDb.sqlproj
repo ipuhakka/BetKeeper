@@ -72,5 +72,6 @@
     <Build Include="dbo\Tables\ErrorLog.sql" />
     <Build Include="dbo\Tables\Target.sql" />
     <Build Include="dbo\Tables\CompetitionInvitation.sql" />
+    <Build Include="dbo\Tables\Session.sql" />
   </ItemGroup>
 </Project>
