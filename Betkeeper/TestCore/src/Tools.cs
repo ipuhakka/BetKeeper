@@ -54,6 +54,7 @@ namespace TestTools
         /// <param name="betInBetFolders"></param>
         /// <param name="bets"></param>
         /// <param name="invitations"></param>
+        /// <param name="sessions"></param>
         public static void CreateTestData(
            List<Participator> participators = null,
            List<Competition> competitions = null,
@@ -63,7 +64,8 @@ namespace TestTools
            List<Folder> folders = null,
            List<BetInBetFolder> betInBetFolders = null,
            List<Bet> bets = null,
-           List<CompetitionInvitation> invitations = null)
+           List<CompetitionInvitation> invitations = null,
+           List<Session> sessions = null)
         {
             var context = GetTestContext();
 
@@ -110,6 +112,11 @@ namespace TestTools
             if (invitations != null)
             {
                 context.CompetitionInvitation.AddRange(invitations);
+            }
+
+            if (sessions != null)
+            {
+                context.Sessions.AddRange(sessions);
             }
 
             context.SaveChanges();
