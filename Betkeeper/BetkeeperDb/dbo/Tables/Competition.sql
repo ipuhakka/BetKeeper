@@ -8,6 +8,8 @@
 );
 
 
+
+
 GO
 CREATE TRIGGER competitionTargetsTrigger
     ON dbo.Competition
