@@ -27,7 +27,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {
@@ -64,7 +64,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            var userId = TokenLog.GetUserIdFromRequest(Request);
+            var userId = SessionAction.GetUserIdFromRequest(Request);
 
             if (userId == null)
             {

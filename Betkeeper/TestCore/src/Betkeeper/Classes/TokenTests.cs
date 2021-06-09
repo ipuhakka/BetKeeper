@@ -6,13 +6,12 @@ namespace Betkeeper.Test.Classes
     [TestFixture]
     public class TokenTests
     {
-
         [Test]
-        public void TokenConstructor_Creates12CharacterTokenString()
+        public void TokenConstructor_Creates24CharacterTokenString()
         {
             var token = new Token(1);
 
-            Assert.AreEqual(12, token.TokenString.Length);
+            Assert.AreEqual(24, token.TokenString.Length);
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿using Api.Classes;
+﻿using Betkeeper.Actions;
 using Betkeeper.Classes;
 using Betkeeper.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -35,12 +35,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            if (!TokenLog.ContainsToken(tokenString))
-            {
-                return NotFound();
-            }
-
-            if (TokenLog.GetTokenOwner(tokenString) == userId)
+            if (SessionAction.SessionActive(userId, tokenString))
             {
                 return Ok();
             }
@@ -74,14 +69,13 @@ namespace Api.Controllers
                 return Unauthorized();
             }
 
-            var token = TokenLog.GetExistingToken((int)userId)
-                ?? TokenLog.CreateToken((int)userId);
+            var token = SessionAction.InstantiateSession((int)userId);
 
             return Ok(token);
         }
 
         // DELETE: api/Token/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{userId}")]
         public IActionResult Delete(int userId)
         {
             Request.Headers.TryGetValue("Authorization", out var authorization);
@@ -92,14 +86,8 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            if (TokenLog.GetTokenOwner(tokenString) == userId)
-            {
-                TokenLog.DeleteToken(userId, tokenString);
-
-                return NoContent();
-            }
-
-            return Unauthorized();
+            SessionAction.DeleteSession(userId, tokenString);
+            return NoContent();
         }
     }
 }
