@@ -1,7 +1,7 @@
-﻿using Api.Classes;
+﻿using Betkeeper.Classes;
 using NUnit.Framework;
 
-namespace Api.Test.Classes
+namespace Betkeeper.Test.Classes
 {
     [TestFixture]
     public class TokenTests
