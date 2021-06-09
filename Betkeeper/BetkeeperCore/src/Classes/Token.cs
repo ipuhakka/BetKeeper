@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Betkeeper.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,16 @@ namespace Betkeeper.Classes
         {
             Owner = userId;
             TokenString = StringUtils.GenerateRandomString(24);
+        }
+
+        /// <summary>
+        /// Constructs a token from an existing session
+        /// </summary>
+        /// <param name="session"></param>
+        public Token (Session session)
+        {
+            Owner = session.UserId;
+            TokenString = session.Token;
         }
     }
 }
