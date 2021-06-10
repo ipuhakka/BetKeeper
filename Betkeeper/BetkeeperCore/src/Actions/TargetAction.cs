@@ -403,7 +403,7 @@ namespace Betkeeper.Actions
                     if (target.Type == TargetType.MultiSelection)
                     {
                         Result = target.Result?.MultiSelectionResult?.Count > 0
-                            ? string.Join(", ", target.Result.MultiSelectionResult)
+                            ? string.Join(", ", target.Result.MultiSelectionResult.OrderBy(answer => answer))
                             : "-";
                     }
                     else
@@ -443,7 +443,9 @@ namespace Betkeeper.Actions
                         {
                             if (!string.IsNullOrEmpty(bet))
                             {
-                                Bet = string.Join(", ", JsonConvert.DeserializeObject<List<string>>(bet));
+                                Bet = string.Join(", ", JsonConvert.DeserializeObject<List<string>>(bet)
+                                    .OrderBy(answer => answer));
+
                                 if (points != null)
                                 {
                                     Bet = $"{Bet} ({points})";
