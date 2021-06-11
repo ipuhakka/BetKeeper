@@ -154,7 +154,11 @@ namespace Betkeeper.Pages.CompetitionPage
         {
             var targetBetContainerChildren = new List<Component>
             {
-                new Field($"question-{target.TargetId}", "Bet", fieldType: FieldType.TextBox, readOnly: true)
+                new Field(
+                    $"question-{target.TargetId}", 
+                    "Bet",
+                    fieldType: target.Bet.Length > 35 ? FieldType.TextArea : FieldType.TextBox,
+                    readOnly: true)
             };
 
             targetBets.ForEach(targetBet =>
