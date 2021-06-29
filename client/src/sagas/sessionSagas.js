@@ -33,7 +33,7 @@ export function* handleLogin(action){
   }
   catch (error)
   {
-    yield call(logOut);
+    yield call(logOut, history, redirectTo);
     switch(error.status)
     {
       case 401:
@@ -55,7 +55,7 @@ export function* handleLogin(action){
 
 function* handleLogOut(action)
 {
-  const {redirectTo, history} = action.payload;
+  const { redirectTo, history } = action.payload;
   try 
   {
     yield put(setLoading(true));
