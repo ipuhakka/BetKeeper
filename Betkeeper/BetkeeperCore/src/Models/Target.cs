@@ -87,6 +87,25 @@ namespace Betkeeper.Models
         }
 
         /// <summary>
+        /// Returns a dictionary for bets and their correctness
+        /// </summary>
+        /// <param name="bet"></param>
+        /// <returns></returns>
+        public Dictionary<string, bool> GetMultiSelectionBetTargetResults(TargetBet bet)
+        {
+            if (string.IsNullOrEmpty(bet.Bet))
+            {
+                return new Dictionary<string, bool>();
+            }
+
+            var selections = JsonConvert.DeserializeObject<List<string>>(bet.Bet);
+
+            return selections.ToDictionary(
+                selection => selection,
+                selection => Result?.MultiSelectionResult?.Contains(selection) ?? false);
+        }
+
+        /// <summary>
         /// Returns result for bet
         /// </summary>
         /// <param name="targetBet"></param>

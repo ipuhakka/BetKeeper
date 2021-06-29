@@ -56,7 +56,7 @@ namespace Betkeeper.Page.Components
 
             values.ForEach(value =>
             {
-                Cells.Add(new Cell
+                Cells.Add(new BasicCell
                 {
                     Value = value,
                     Style = style
@@ -79,7 +79,7 @@ namespace Betkeeper.Page.Components
 
             Cells.AddRange(
                 valueTuples
-                    .Select(tuple => new Cell
+                    .Select(tuple => new BasicCell
                     {
                         Value = tuple.Item1,
                         Style = style,
@@ -91,7 +91,11 @@ namespace Betkeeper.Page.Components
     /// <summary>
     /// Class representing an individual cell in table
     /// </summary>
-    public class Cell
+    public abstract class Cell
+    {
+    }
+
+    public class BasicCell : Cell
     {
         /// <summary>
         /// Text color
@@ -102,6 +106,32 @@ namespace Betkeeper.Page.Components
         public CellStyle Style { get; set; }
 
         public string Value { get; set; }
+    }
+
+    /// <summary>
+    /// Cell for different colored text content
+    /// </summary>
+    public class ColoredCell : Cell
+    {
+        public List<ColoredCellItem> Items;
+
+        public ColoredCell(List<ColoredCellItem> items)
+        {
+            Items = items;
+        }
+    }
+
+    public class ColoredCellItem
+    {
+        public string Value { get; set; }
+
+        public Color Color { get; set; }
+
+        public ColoredCellItem(string value, Color color)
+        {
+            Value = value;
+            Color = color;
+        }
     }
 
     public enum CellStyle

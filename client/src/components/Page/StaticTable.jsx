@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Table from 'react-bootstrap/Table';
+import DynamicColorText from './DynamicColorText';
 
 class StaticTable extends Component 
 {
@@ -11,6 +12,12 @@ class StaticTable extends Component
 
         const getStyles = (cell) => 
         {
+            if (cell.items)
+            {
+                // Dynamically coloured content, ignore styling
+                return null;
+            }
+
             return {
                 color: cell.color,
                 fontWeight: cell.style === 'Bold'
@@ -24,7 +31,9 @@ class StaticTable extends Component
                 return <td
                     className={`${j === 0 && useColumnHeader ? 'header-column' : ''} ${i % 2 === 0 ? 'gray' : ''}`}
                     style={getStyles(cell)} 
-                    key={`td-${i}-${j}`}>{cell.value}</td>;
+                    key={`td-${i}-${j}`}>{cell.items 
+                        ? <DynamicColorText {...cell} /> 
+                        :cell.value}</td>;
             })}</tr>;
     }
 
@@ -58,21 +67,35 @@ class StaticTable extends Component
     }
 };
 
-const cellProps = PropTypes.arrayOf(
-    PropTypes.shape({
+const cellProps = PropTypes.shape({
         color: PropTypes.string,
         style: PropTypes.string,
         value: PropTypes.string
-    }));
+    });
+
+const coloredCellProps = PropTypes.shape({
+    items: PropTypes.arrayOf({
+        value: PropTypes.string.isRequired,
+        color: PropTypes.string.isRequired
+    })
+});
 
 StaticTable.propTypes = {
     componentKey: PropTypes.string,
-    header: PropTypes.shape({
-            cellProps
+    header: cellProps,
+    rows: function(props, propName, componentName) 
+    {
+        const rows = props[propName];
+        if (!Array.isArray(rows))
+        {
+            return new Error('rows is not an array');
         }
-    ),
-    rows: PropTypes.arrayOf(
-        PropTypes.shape({ cells: cellProps })),
+
+        if (!PropTypes.arrayOf(cellProps) || !PropTypes.arrayOf(coloredCellProps))
+        {
+            return new Error('Rows props invalid');
+        }
+      },
     useColumnHeader: PropTypes.bool.isRequired,
     useStickyHeader: PropTypes.bool.isRequired
 }

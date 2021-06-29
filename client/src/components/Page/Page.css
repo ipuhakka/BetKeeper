@@ -242,3 +242,16 @@ i {
     margin-left: .2em;
     align-self: flex-end;
 }
+
+/** Dynamic color text */
+.dynamic-color-text.LightGreen {
+    color: lightgreen;
+}
+
+.dynamic-color-text.Red {
+    color: red;
+}
+
+.dynamic-color-text.Gray {
+    color: gray;
+}

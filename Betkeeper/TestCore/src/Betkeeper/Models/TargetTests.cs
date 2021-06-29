@@ -4,6 +4,7 @@ using Betkeeper.Models;
 using NUnit.Framework;
 using System.Collections.Generic;
 using TestTools;
+using Newtonsoft.Json;
 
 namespace Betkeeper.Test.Models
 {
@@ -305,6 +306,29 @@ namespace Betkeeper.Test.Models
             };
 
             Assert.AreEqual("Points: 1 per correct answer", target.GetPointInformation());
+        }
+
+        [Test]
+        public void GetMultiSelectionBetTargetResults_WorksAsExpected()
+        {
+            var target = new Target
+            {
+                Type = Enums.TargetType.MultiSelection,
+                Result = new TargetResultItem
+                {
+                    MultiSelectionResult = new List<string> { "Tanska", "Suomi" }
+                }
+            };
+            
+            var targetBet = new TargetBet
+            {
+                Bet = JsonConvert.SerializeObject(new List<string> { "Suomi", "Belgia" })
+            };
+
+            var resultDict = target.GetMultiSelectionBetTargetResults(targetBet);
+
+            Assert.IsTrue(resultDict["Suomi"]);
+            Assert.IsFalse(resultDict["Belgia"]);
         }
     }
 }

@@ -52,19 +52,19 @@ namespace Betkeeper.Pages.CompetitionPage
             {
                 var row = new Row();
 
-                row.Cells.Add(new Cell
+                row.Cells.Add(new BasicCell
                 {
                     Style = CellStyle.Bold,
                     Value = target.Question
                 });
 
-                row.Cells.Add(new Cell
+                row.Cells.Add(new BasicCell
                 {
                     Style = CellStyle.Bold,
                     Value = target.PointsAvailable
                 });
 
-                row.Cells.Add(new Cell
+                row.Cells.Add(new BasicCell
                 {
                     Style = CellStyle.Bold,
                     Value = target.Result
@@ -72,19 +72,29 @@ namespace Betkeeper.Pages.CompetitionPage
 
                 target.BetItems.ForEach(bet =>
                 {
-                    var backgroundColor = bet.Result switch
+                    if (target.Type == Enums.TargetType.MultiSelection && bet.MultiSelectionBets != null)
                     {
-                        Enums.TargetResult.CorrectResult => Color.LightGreen,
-                        Enums.TargetResult.CorrectWinner => Color.Green,
-                        Enums.TargetResult.Wrong => Color.Red,
-                        _ => Color.Gray,
-                    };
+                        row.Cells.Add(new ColoredCell(bet.MultiSelectionBets
+                            .OrderBy(kvp => kvp.Key)
+                            .Select(kvp => new ColoredCellItem(kvp.Key, kvp.Value ? Color.LightGreen : Color.Gray))
+                            .ToList()));
+                    }
+                    else
+                    {
+                        var backgroundColor = bet.Result switch
+                        {
+                            Enums.TargetResult.CorrectResult => Color.LightGreen,
+                            Enums.TargetResult.CorrectWinner => Color.Green,
+                            Enums.TargetResult.Wrong => Color.Red,
+                            _ => Color.Gray,
+                        };
 
-                    row.Cells.Add(new Cell
-                    {
-                        Color = backgroundColor,
-                        Value = bet.Bet
-                    });
+                        row.Cells.Add(new BasicCell
+                        {
+                            Color = backgroundColor,
+                            Value = bet.Bet
+                        });
+                    }
                 });
 
                 table.Rows.Add(row);

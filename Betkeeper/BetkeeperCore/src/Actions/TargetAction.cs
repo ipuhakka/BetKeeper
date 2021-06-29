@@ -207,7 +207,8 @@ namespace Betkeeper.Actions
                                 target.GetResult(targetBet), 
                                 targetBet.Bet,
                                 username,
-                                points
+                                points,
+                                targetBet
                                 ));
 
                         competitionScores.UserPointsDictionary[username] += points;
@@ -437,10 +438,25 @@ namespace Betkeeper.Actions
                     /// </summary>
                     public TargetResult Result { get; set; }
 
-                    public BetItem(Target target, TargetResult result, string bet, string user, double? points)
+                    /// <summary>
+                    /// Dictionary of multiselection bets and their correctness
+                    /// </summary>
+                    public Dictionary<string, bool> MultiSelectionBets { get; private set; }
+
+                    public BetItem(
+                        Target target, 
+                        TargetResult result, 
+                        string bet, 
+                        string user, 
+                        double? points,
+                        TargetBet targetBet = null)
                     {
                         if (target.Type == TargetType.MultiSelection)
                         {
+                            if (targetBet != null)
+                            {
+                                MultiSelectionBets = target.GetMultiSelectionBetTargetResults(targetBet);
+                            }
                             if (!string.IsNullOrEmpty(bet))
                             {
                                 Bet = string.Join(", ", JsonConvert.DeserializeObject<List<string>>(bet)
