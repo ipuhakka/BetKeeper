@@ -90,7 +90,7 @@ namespace Betkeeper.Test.Actions
             userAction.ChangePassword(1, "test2", "test2");
 
             var user = new UserRepository().GetUsersById(new List<int> { 1 }).Single();
-            Assert.AreEqual("test2", Security.Decrypt(user.Password));
+            Assert.AreEqual(Security.HashPlainText("test2", user.Salt), user.Password);
         }
     }
 }

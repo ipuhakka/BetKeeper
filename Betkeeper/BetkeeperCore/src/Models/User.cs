@@ -98,7 +98,9 @@ namespace Betkeeper.Models
         {
             var userEntity =_context.User.Single(user => user.UserId == userId);
 
-            userEntity.Password = Security.Encrypt(newPassword);
+            var salt = StringUtils.GenerateRandomString(64);
+            userEntity.Password = Security.HashPlainText(newPassword, salt);
+            userEntity.Salt = salt;
 
             _context.Update(userEntity);
             _context.SaveChanges();
