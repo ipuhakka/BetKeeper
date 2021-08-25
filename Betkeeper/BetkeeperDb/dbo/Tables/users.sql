@@ -2,6 +2,7 @@
     [user_id]  INT            IDENTITY (1, 1) NOT NULL,
     [username] NVARCHAR (MAX) NOT NULL,
     [password] NVARCHAR (MAX) NOT NULL,
+    [salt] NVARCHAR(MAX) NULL, 
     PRIMARY KEY CLUSTERED ([user_id] ASC)
 );
 
