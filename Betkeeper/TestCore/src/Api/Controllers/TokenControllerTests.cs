@@ -40,13 +40,16 @@ namespace Api.Test.Controllers
         [Test]
         public void Post_PasswordDoesNotMatch_ReturnsUnauthorized()
         {
+            var salt = StringUtils.GenerateRandomString(64);
+
             var users = new List<User>
             {
                 new User
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = Security.Encrypt("somepassword")
+                    Password = Security.HashPlainText("somepassword", salt),
+                    Salt = salt
                 }
             };
 
