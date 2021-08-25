@@ -84,12 +84,14 @@ namespace Betkeeper.Models
 
         public bool Authenticate(int userId, string password)
         {
-            var hashed = Security.Encrypt(password);
+            var user = _context.User.SingleOrDefault(user => user.UserId == userId);
 
-            return _context
-                .User
-                .Any(user => user.UserId == userId
-                    && user.Password == hashed);           
+            if (user == null)
+            {
+                return false;
+            }
+
+            return user.Password == Security.HashPlainText(password, user.Salt);           
         }
 
         public void ChangePassword(int userId, string newPassword)

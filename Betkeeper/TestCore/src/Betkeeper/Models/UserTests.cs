@@ -13,14 +13,12 @@ namespace Betkeeper.Test.Models
     public class UserTests
     {
         private BetkeeperDataContext _context;
-        private UserRepository _userRepository;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
-            _userRepository = new UserRepository();
             Tools.InitTestSecretKey();
         }
 
@@ -61,7 +59,8 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            var usernames = _userRepository.GetUsernamesById(new List<int> { 1, 3 });
+            var userRepository = new UserRepository();
+            var usernames = userRepository.GetUsernamesById(new List<int> { 1, 3 });
 
             Assert.AreEqual(2, usernames.Count);
             Assert.AreEqual(1, usernames.Count(user => user == "Username 1"));
@@ -82,7 +81,7 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            Assert.IsNull(_userRepository.GetUserId("username"));
+            Assert.IsNull(new UserRepository().GetUserId("username"));
         }
 
         [Test]
@@ -104,7 +103,7 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            Assert.AreEqual(2, _userRepository.GetUserId("username"));
+            Assert.AreEqual(2, new UserRepository().GetUserId("username"));
         }
 
         [Test]
@@ -115,18 +114,20 @@ namespace Betkeeper.Test.Models
                 new User
                 {
                     UserId = 1,
-                    Password = "secret"
+                    Password = Security.HashPlainText("secret", "testSalt"),
+                    Salt = "testSalt"
                 },
                 new User
                 {
                     UserId = 2,
-                    Password = "secret2"
+                    Password = Security.HashPlainText("secret2", "testSalt2"),
+                    Salt = "testSalt2"
                 }
             };
 
             Tools.CreateTestData(users: users);
 
-            Assert.IsFalse(_userRepository.Authenticate(1, "secret2"));
+            Assert.IsFalse(new UserRepository().Authenticate(1, "secret2"));
         }
 
         [Test]
@@ -137,18 +138,20 @@ namespace Betkeeper.Test.Models
                 new User
                 {
                     UserId = 1,
-                    Password = Security.Encrypt("secret")
+                    Password = Security.HashPlainText("secret", "salt"),
+                    Salt = "salt"
                 },
                 new User
                 {
                     UserId = 2,
-                    Password = Security.Encrypt("secret2")
+                    Password = Security.HashPlainText("secret2", "salt2"),
+                    Salt = "salt2"
                 }
             };
 
             Tools.CreateTestData(users: users);
 
-            Assert.IsTrue(_userRepository.Authenticate(2, "secret2"));
+            Assert.IsTrue(new UserRepository().Authenticate(2, "secret2"));
         }
 
         [Test]
@@ -165,7 +168,7 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            Assert.IsTrue(_userRepository.UsernameInUse("test"));
+            Assert.IsTrue(new UserRepository().UsernameInUse("test"));
         }
 
         [Test]
@@ -182,7 +185,7 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            Assert.IsFalse(_userRepository.UsernameInUse("test2"));
+            Assert.IsFalse(new UserRepository().UsernameInUse("test2"));
         }
 
         [Test]
@@ -200,7 +203,7 @@ namespace Betkeeper.Test.Models
             Tools.CreateTestData(users: users);
 
             Assert.Throws<UsernameInUseException>(() =>
-                _userRepository.AddUser("test", "secret"));
+                new UserRepository().AddUser("test", "secret"));
         }
 
         [Test]
@@ -217,7 +220,7 @@ namespace Betkeeper.Test.Models
 
             Tools.CreateTestData(users: users);
 
-            _userRepository.AddUser("test2", "secret");
+            new UserRepository().AddUser("test2", "secret");
 
             Assert.AreEqual(2, _context.User.Count());
             Assert.AreEqual(1, _context.User.Count(user => user.Username == "test2"));

@@ -1,5 +1,4 @@
-﻿using Api.Classes;
-using Api.Controllers;
+﻿using Api.Controllers;
 using Betkeeper;
 using Betkeeper.Classes;
 using Betkeeper.Data;
@@ -7,7 +6,6 @@ using Betkeeper.Models;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Net;
 using TestTools;
 
 namespace Api.Test.Controllers
@@ -17,14 +15,11 @@ namespace Api.Test.Controllers
     {
         private BetkeeperDataContext _context;
 
-        private TestController _controller;
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             Settings.InitializeOptionsBuilderService(Tools.GetTestOptionsBuilder());
             _context = Tools.GetTestContext();
-            _controller = new TestController();
             Tools.InitTestSecretKey();
         }
 
@@ -59,14 +54,16 @@ namespace Api.Test.Controllers
 
             var testData = new { username = "user" };
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+
+            controller.ControllerContext = Tools.MockControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
                     });
 
-            var result = _controller.Post() as UnauthorizedResult;
+            var result = controller.Post() as UnauthorizedResult;
 
             Assert.AreEqual(401, result.StatusCode);
         }
@@ -88,14 +85,15 @@ namespace Api.Test.Controllers
 
             var testData = new { username = "notexistingusername" };
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "fakePassword"}
                     });
 
-            var result = _controller.Post() as UnauthorizedResult;
+            var result = controller.Post() as UnauthorizedResult;
 
             Assert.AreEqual(401, result.StatusCode);
         }
@@ -109,7 +107,8 @@ namespace Api.Test.Controllers
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = Security.Encrypt("somepassword")
+                    Password = Security.HashPlainText("somepassword", "somesalt"),
+                    Salt = "somesalt"
                 }
             };
 
@@ -117,14 +116,15 @@ namespace Api.Test.Controllers
 
             var testData = new { username = "user" };
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
                         { "Authorization", "somepassword" }
                     });
 
-            var result = _controller.Post();
+            var result = controller.Post();
             var response = result as OkObjectResult;
             var token = response.Value as Token;
 
@@ -142,7 +142,8 @@ namespace Api.Test.Controllers
                 {
                     UserId = 1,
                     Username = "user",
-                    Password = Security.Encrypt("fakePassword")
+                    Password = Security.HashPlainText("fakepassword", "somesalt"),
+                    Salt = "somesalt"
                 }
             };
 
@@ -156,14 +157,15 @@ namespace Api.Test.Controllers
 
             var testData = new { username = "user" };
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     testData,
                     new Dictionary<string, string>
                     {
-                        { "Authorization", "fakePassword"}
+                        { "Authorization", "fakepassword"}
                     });
 
-            var response = _controller.Post() as OkObjectResult;
+            var response = controller.Post() as OkObjectResult;
             var token = response.Value as Token;
 
             Assert.AreEqual(200, response.StatusCode);
@@ -176,9 +178,10 @@ namespace Api.Test.Controllers
         {
             var testData = new { username = "user" };
 
-            _controller.ControllerContext = Tools.MockControllerContext(testData);
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(testData);
 
-            var response = _controller.Post() as BadRequestResult;
+            var response = controller.Post() as BadRequestResult;
 
             Assert.AreEqual(400, response.StatusCode);
         }
@@ -194,13 +197,14 @@ namespace Api.Test.Controllers
 
             Tools.CreateTestData(sessions: sessions);
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", session.Token }
                     });
 
-            var response = _controller.Get(1) as OkResult;
+            var response = controller.Get(1) as OkResult;
 
             Assert.AreEqual(200, response.StatusCode);
         }
@@ -208,9 +212,10 @@ namespace Api.Test.Controllers
         [Test]
         public void Get_TokenMissing_ReturnsBadRequest()
         {
-            _controller.ControllerContext = Tools.MockControllerContext();
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext();
 
-            var response = _controller.Get(1) as BadRequestResult;
+            var response = controller.Get(1) as BadRequestResult;
 
             Assert.AreEqual(400, response.StatusCode);
         }
@@ -226,13 +231,14 @@ namespace Api.Test.Controllers
 
             Tools.CreateTestData(sessions: sessions);
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", "UnusedToken"}
                     });
 
-            var response = _controller.Get(1) as UnauthorizedResult;
+            var response = controller.Get(1) as UnauthorizedResult;
 
             Assert.AreEqual(401, response.StatusCode);
         }
@@ -248,13 +254,14 @@ namespace Api.Test.Controllers
 
             Tools.CreateTestData(sessions: sessions);
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", session.Token}
                     });
 
-            var response = _controller.Get(2) as UnauthorizedResult;
+            var response = controller.Get(2) as UnauthorizedResult;
 
             Assert.AreEqual(401, response.StatusCode);
         }
@@ -262,9 +269,10 @@ namespace Api.Test.Controllers
         [Test]
         public void Delete_NoAuthorizationHeader_ReturnsBadRequest()
         {
-            _controller.ControllerContext = Tools.MockControllerContext();
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext();
 
-            var response = _controller.Delete(1) as BadRequestResult;
+            var response = controller.Delete(1) as BadRequestResult;
 
             Assert.AreEqual(400, response.StatusCode);
         }
@@ -282,13 +290,14 @@ namespace Api.Test.Controllers
 
             Tools.CreateTestData(sessions: sessions);
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", session2.Token}
                     });
 
-            var response = _controller.Delete(1) as NoContentResult;
+            var response = controller.Delete(1) as NoContentResult;
 
             Assert.AreEqual(204, response.StatusCode);
         }
@@ -304,13 +313,14 @@ namespace Api.Test.Controllers
 
             Tools.CreateTestData(sessions: sessions);
 
-            _controller.ControllerContext = Tools.MockControllerContext(
+            var controller = new TestController();
+            controller.ControllerContext = Tools.MockControllerContext(
                     headers: new Dictionary<string, string>
                     {
                         { "Authorization", session.Token }
                     });
 
-            var response = _controller.Delete(1) as NoContentResult;
+            var response = controller.Delete(1) as NoContentResult;
 
             Assert.AreEqual(204, response.StatusCode);
         }
