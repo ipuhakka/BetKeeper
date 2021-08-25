@@ -121,10 +121,13 @@ namespace Betkeeper.Models
                         username));
             }
 
+            var salt = StringUtils.GenerateRandomString(64);
+
             _context.User.Add(new User
             {
                 Username = username,
-                Password = Security.Encrypt(password)
+                Password = Security.HashPlainText(password, salt),
+                Salt = salt
             });
 
             _context.SaveChanges();
